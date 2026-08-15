@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">
+{"imports":{"three":"/three/three.module.js","three/addons/":"/three/addons/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const W = +(new URLSearchParams(location.search).get('w') || 1400);
+const H = +(new URLSearchParams(location.search).get('h') || 2400);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+/* A metal surface is only as good as what it reflects. A flat directional rig
+   leaves the fuselage looking like grey plastic, so the studio itself is the
+   light source: RoomEnvironment through PMREM gives the long soft highlight
+   that runs down the spine of the airframe. */
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+/* Studio light: a soft key from the front-top, a cool fill from behind and a
+   warm rim, so the fuselage reads as a metal cylinder rather than a flat cut-out. */
+scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5b49, 1.15));
+const key = new THREE.DirectionalLight(0xfff4e2, 2.6); key.position.set(-3, 6, 4); scene.add(key);
+const fill = new THREE.DirectionalLight(0xdfe8f0, 1.0); fill.position.set(4, 2, -5); scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffd9a0, 1.4); rim.position.set(0, -4, -3); scene.add(rim);
+
+const loader = new GLTFLoader();
+loader.load('/model/scene.gltf', gltf => {
+  const root = gltf.scene;
+
+  /* Repaint. The donor model wears a real airline's livery, which cannot go on
+     another company's site — so the textured material is replaced by a plain
+     pearl-ivory metal in the brand's own palette. Only the geometry is used. */
+  const paint = new THREE.MeshPhysicalMaterial({
+    color: 0xC9A96B,          // champagne — the brand gold, not a chrome mirror
+    metalness: 0.92,
+    roughness: 0.30,
+    clearcoat: 0.85,
+    clearcoatRoughness: 0.18,
+    envMapIntensity: 1.5,
+  });
+  root.traverse(o => {
+    if (o.isMesh) { o.material = paint; }
+  });
+
+  // normalise: centre at origin, longest axis to a known length
+  const box = new THREE.Box3().setFromObject(root);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  root.position.sub(center);
+
+  const pivot = new THREE.Group();
+  pivot.add(root);
+  scene.add(pivot);
+
+  // top-down: camera above, looking straight down, nose pointing to +Y on screen
+  const longest = Math.max(size.x, size.y, size.z);
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
+  const aspect = W / H;
+  const halfH = longest * 0.56;          // a little air around the airframe
+  const halfW = halfH * aspect;
+  cam.left = -halfW; cam.right = halfW; cam.top = halfH; cam.bottom = -halfH;
+  cam.position.set(0, 400, 0);
+  cam.up.set(0, 0, 1);                   // nose to the top of the frame
+  cam.lookAt(0, 0, 0);
+  cam.updateProjectionMatrix();
+
+  const yaw = +(new URLSearchParams(location.search).get('yaw') || 0);
+  pivot.rotation.y = yaw * Math.PI / 180;
+
+  renderer.render(scene, cam);
+  window.__dims = {sx:size.x, sy:size.y, sz:size.z};
+  window.__ready = true;
+}, undefined, err => { window.__error = String(err); window.__ready = true; });
+</script>

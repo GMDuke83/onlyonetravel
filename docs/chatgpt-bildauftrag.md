@@ -380,3 +380,78 @@ npm run dev
 (Regionen-Rail und Ausflüge), Suche, ein Hotel öffnen und die Galerie wischen,
 Karte. Wirkt ein Bild verzerrt oder fehlt ein wichtiger Bildteil, stimmt das
 Seitenverhältnis der Quelle nicht — dann mit dem Befehl oben nachschneiden.
+
+---
+
+# Nachtrag · Die vier Erlebnis-Banner
+
+Auf der Startseite liegen vier randlose Banner übereinander — grosses Foto,
+Titel und Unterzeile in Weiss darüber (Vorbild: die „Experiences"-Bänder von
+Kiwi Collection). Aktuell stecken dort **Zwischenlösungen**: Ausschnitte aus
+Bildern, die ohnehin schon im Repo liegen. Die Gestaltung stimmt damit, aber
+jedes Banner soll ein eigenes, dafür gemachtes Foto bekommen.
+
+**Wichtig für alle vier:** Querformat **1200 × 750 px** (16:10), Motiv so
+aufgebaut, dass das **untere Drittel ruhig** bleibt — dort liegt der Text. Kein
+Text, kein Logo, keine Wasserzeichen im Bild. Warmes Licht, ruhige Farben, kein
+HDR-Look, keine Menschenmengen. Ziel ist Reisemagazin, nicht Katalog.
+
+Ablage: `public/images/experiences/`
+
+| # | Datei | Banner | Status |
+|---|---|---|---|
+| 1 | `exp-beach.webp` | Strandresorts | ⬜ ersetzen |
+| 2 | `exp-honeymoon.webp` | Flitterwochen | ⬜ ersetzen |
+| 3 | `exp-ancient.webp` | Antike Welten | ⬜ ersetzen |
+| 4 | `exp-cappadocia.webp` | Kappadokien | ⬜ ersetzen |
+
+### 1 · `exp-beach.webp` — Strandresorts
+
+> A wide aerial photograph of the Turkish Riviera coastline near Belek at
+> golden hour, seen from about 120 metres. A long sandy beach curves from the
+> lower left into the distance, rows of white parasols and sun loungers in neat
+> lines, turquoise water shading into deep blue, dense green pine forest behind
+> the beach and the Taurus mountains soft and hazy on the horizon. Warm late
+> afternoon sunlight, long soft shadows, calm sea, no people recognisable, no
+> text or logos. Editorial travel photography, natural colours, 16:10 landscape.
+
+### 2 · `exp-honeymoon.webp` — Flitterwochen
+
+> A private terrace of a luxury villa above the Mediterranean near Kalkan at
+> sunset. In the foreground the edge of a small infinity pool reflecting warm
+> light, two loungers with cream cushions, a low table with two glasses. Beyond
+> the pool the sea stretches to the horizon, the sky in soft apricot and rose.
+> Bougainvillea and olive trees frame the left edge. Intimate and quiet, warm
+> ambient light, no people, no text or logos. Editorial travel photography,
+> natural colours, 16:10 landscape.
+
+### 3 · `exp-ancient.webp` — Antike Welten
+
+> The white travertine terraces of Pamukkale in the late afternoon, shot wide.
+> Layered mineral pools of pale turquoise thermal water step down the slope,
+> the calcite is bright white but not blown out, the valley below fades into
+> warm haze. A few weathered ancient columns of Hierapolis stand on the ridge
+> at the upper right, small in the frame. Low warm sunlight raking across the
+> terraces to bring out their texture, no people, no text or logos. Editorial
+> travel photography, natural colours, 16:10 landscape.
+
+### 4 · `exp-cappadocia.webp` — Kappadokien
+
+> Hot air balloons rising over the Göreme valley in Cappadocia at sunrise,
+> photographed from a ridge. Twenty to thirty balloons at different heights in
+> soft morning light, the fairy chimneys and carved tuff rock formations below
+> in warm ochre and rose, thin mist in the valley floor, the sky pale gold
+> shading to soft blue. Balloons in muted natural colours, not garish. No
+> people in the foreground, no text or logos. Editorial travel photography,
+> natural colours, 16:10 landscape.
+
+### Einbauen
+
+Die vier Dateien einfach unter genau diesen Namen nach
+`public/images/experiences/` legen — der Code referenziert sie bereits, es ist
+keine Änderung nötig. Falls das Seitenverhältnis nicht 16:10 ist:
+
+```bash
+ffmpeg -i quelle.png -vf "scale=1200:750:force_original_aspect_ratio=increase,crop=1200:750" \
+       -quality 82 public/images/experiences/exp-beach.webp
+```

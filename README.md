@@ -392,6 +392,32 @@ intentional.
 
 ## Design system
 
+Two worlds, on purpose. The intro is one cinematic moment and keeps the deep
+navy it was built around. Everything behind it — the platform you actually
+browse in — is ivory, and carries **no blue at all**: browsing two dozen houses
+in navy read cold and heavy, so every dark tone there is warm brown-black
+rather than blue-black.
+
+### Platform (ivory)
+
+| Token | Value | Contrast on `--ground` | |
+|---|---|---|---|
+| `--ground` | `#F7F3ED` | — | page, ivory |
+| `--ground-2` | `#FFFFFF` | — | raised |
+| `--ground-3` | `#EFE8DC` | — | image placeholder |
+| `--txt` | `#2A2119` | 14.3:1 | warm espresso ink |
+| `--txt-2` | `#6B5B49` | 5.9:1 | body copy |
+| `--txt-3` | `#7A6957` | 4.6:1 | labels, counts |
+| `--dark` | `#2A2119` | — | filled buttons, chips, bubbles |
+| `--gold-ink` | `#7F611B` | 5.2:1 | gold as text |
+| `--gold` | `#D8B45C` | 1.8:1 | decoration only — never small text |
+
+Contrast is measured, not eyeballed. The brand gold reaches only 1.8:1 on
+ivory, so it is limited to rules, borders and anything over a photograph;
+`--gold-ink` is the version that may carry words.
+
+### Intro (unchanged)
+
 | Token | Value | |
 |---|---|---|
 | `--navy` | `#08293C` | dark blue |
@@ -399,8 +425,38 @@ intentional.
 | `--gold` | `#D8B45C` | champagne gold |
 | `--gold-light` | `#F0D787` | light gold |
 
-Plus white, turquoise and Mediterranean blue.
+### Type
 
-Rules: no loud app colours. **No emoji icons** — every icon is an inline SVG
-line icon. The intro carries no bottom navigation; the tab bar exists only on
-the main experience.
+**Inter Variable**, self-hosted in `public/fonts/` — latin, latin-ext (the
+Turkish `ş ğ ı` in place names) and cyrillic, each behind its own
+`unicode-range`, so a German visitor never downloads the Russian cut. It is
+self-hosted rather than linked from Google's CDN: a hotlink sends every
+visitor's IP to a third party before the first headline paints, which is a
+real problem for a German operator.
+
+The intro is the one screen that keeps the old type — Georgia for the display
+line, the system script face for *Journey*, the system UI stack for the small
+tracked labels.
+
+Headings need the opposite treatment to the serif they replaced: more weight
+(600) and negative tracking that grows with size, or a grotesk reads loose and
+thin at display sizes.
+
+### Rules
+
+No loud app colours. **No emoji icons** — every icon is an inline SVG line
+icon. The intro carries no bottom navigation; the tab bar exists only on the
+main experience. Text sitting on a photograph must set its colour explicitly
+(see the `TEXT OVER IMAGERY` block in `app.css`) — inheriting the ground's ink
+is what once turned the platform headline navy-on-daylight.
+
+---
+
+## Third-party credits
+
+The aircraft in the arrival band is based on "Airplane CRJ-900 Cityjet"
+(<https://sketchfab.com/3d-models/airplane-crj-900-cityjet-02c4fa44604243c2bb48db64506a39af>)
+by CityJet Training (<https://sketchfab.com/artoud>), licensed under
+[CC BY 4.0](http://creativecommons.org/licenses/by/4.0/). Only the geometry is
+used — the donor airline's livery was removed and replaced with the brand's own
+finish. See `docs/3d-flugzeug.md`.

@@ -600,6 +600,10 @@
       where:'Куда?', wherePh:'Выберите регион', dates:'Даты поездки', datesPh:'Выберите даты',
       guests:'Гости', searchBtn:'Найти жильё', recommended:'Рекомендуем', all:'Все',
       experiences:'Впечатления', conciergeName:'Мария Грычко', conciergeMark:'МГ',
+      flyEyebrow:'Дорога', flyTitle:'Прилететь<br>без пересадок',
+      flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
+      flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
+      flyCta:'Спросить консьержа',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
       filters:'Фильтры', apply:'Применить', reset:'Сбросить', results:'найдено',
       category:'Категория', holidayType:'Тип отдыха', amenities:'Удобства', rating:'Оценка',
@@ -695,6 +699,10 @@
       where:'Wohin?', wherePh:'Region auswählen', dates:'Reisezeitraum', datesPh:'Zeitraum wählen',
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
       experiences:'Erlebnisse', conciergeName:'Maria Grychko', conciergeMark:'MG',
+      flyEyebrow:'Anreise', flyTitle:'Ankommen<br>ohne Umwege',
+      flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
+      flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
+      flyCta:'Concierge fragen',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
       filters:'Filter', apply:'Anwenden', reset:'Zurücksetzen', results:'Ergebnisse',
       category:'Kategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
@@ -790,6 +798,10 @@
       where:'Where to?', wherePh:'Choose a region', dates:'Travel dates', datesPh:'Select dates',
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
       experiences:'Experiences', conciergeName:'Maria Grychko', conciergeMark:'MG',
+      flyEyebrow:'Getting there', flyTitle:'Arrive<br>without detours',
+      flySpecA:'Flight & transfer', flySpecB:'Around the clock',
+      flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
+      flyCta:'Ask the concierge',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
       filters:'Filters', apply:'Apply', reset:'Reset', results:'results',
       category:'Category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
@@ -1332,6 +1344,20 @@
           <i>${esc(x.s[LANG]||x.s.en)}</i>
         </span>
       </button>`).join('')}
+    </section>
+
+    <section class="flyBand">
+      <div class="flyBand__head">
+        <div class="eyebrow">${t('flyEyebrow')}</div>
+        <h2 class="flyBand__title">${t('flyTitle')}</h2>
+      </div>
+      <img class="flyBand__plane" src="./images/3d/plane-top.webp" alt="" aria-hidden="true"
+           loading="lazy" decoding="async" width="900" height="1543">
+      <div class="flyBand__card">
+        <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
+        <p>${t('flyBody')}</p>
+        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+      </div>
     </section>
 
     <div class="pageBottom"></div>
@@ -2005,6 +2031,55 @@
     vids.forEach(v => bgObserver.observe(v));
   }
 
+  /* Scroll-linked arrival band. The airframe sits between the headline and the
+     card, so scrolling pushes it through the layers instead of past them —
+     that sandwich is the whole effect, and it is why the plane is three
+     separate elements rather than a background image.
+
+     Progress is written to a custom property and every move happens in a
+     transform, so the work stays on the compositor: no layout, no paint, no
+     scroll jank on a phone. The listener is passive and rAF-coalesced because
+     iOS fires scroll far faster than it paints. */
+  let flyScroller=null, flyHandler=null;
+  function armFlyBand(){
+    if (flyScroller && flyHandler) {
+      flyScroller.removeEventListener('scroll', flyHandler);
+      window.removeEventListener('resize', flyHandler);
+      flyScroller = flyHandler = null;
+    }
+    const band=$('.flyBand'); if(!band) return;
+    const scroller=$('#app'); if(!scroller) return;
+    let raf=0;
+    const update=()=>{
+      raf=0;
+      const r=band.getBoundingClientRect();
+      const vh=window.innerHeight||1;
+      /* 0 as the band's top reaches the bottom of the screen, 1 once its
+         bottom has left the top. */
+      const span=vh+r.height;
+      let p=(vh-r.top)/span;
+      /* The band is the last thing on the page, so the reader runs out of
+         scroll long before that full pass completes — measured, it stopped at
+         0.507 and the aircraft finished half its arc. Normalising against the
+         progress actually reachable at maximum scroll gives back the whole
+         movement, and costs nothing when the band is not last (pMax is then 1). */
+      const maxScroll=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+      const topAtEnd=(band.offsetTop-maxScroll);
+      const pMax=Math.min(1,Math.max(0.001,(vh-topAtEnd)/span));
+      p=Math.min(1,Math.max(0,p/pMax));
+      band.style.setProperty('--p',p.toFixed(4));
+    };
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
+      band.style.setProperty('--p','0.5');   /* park it mid-flight, no motion */
+      return;
+    }
+    flyHandler=()=>{ if(!raf) raf=requestAnimationFrame(update); };
+    flyScroller=scroller;
+    scroller.addEventListener('scroll',flyHandler,{passive:true});
+    window.addEventListener('resize',flyHandler,{passive:true});
+    update();
+  }
+
   /* ====================================================================
      10 · Render
      ==================================================================== */
@@ -2037,6 +2112,7 @@
     document.documentElement.lang=LANG;
     if(VIEW.name==='hotel')bindGallery();
     armBgVideos();
+    armFlyBand();
     if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startPlatformHero)window.ONLYONE.startPlatformHero();
   }
   function bindGallery(){
@@ -2162,6 +2238,9 @@
       <div class="field"><label class="label">${t('mLang')}</label>
         <div class="langRow">${['ru','de','en'].map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
       <div style="margin-top:18px"><button class="btn btn--dark" data-mgo="staff">${icon('lock')}${t('mStaff')}</button></div>
+      <p class="credit">3D-Modell „Airplane CRJ-900 Cityjet“ von CityJet Training
+        (sketchfab.com/artoud), <a href="https://creativecommons.org/licenses/by/4.0/"
+        target="_blank" rel="noopener">CC BY 4.0</a> — umlackiert, Rendering von ONLYONE.</p>
     </div>`);
   }
   function sheetContact(){

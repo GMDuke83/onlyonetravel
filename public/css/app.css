@@ -1155,6 +1155,72 @@ select.input option{background:#fff;color:var(--txt)}
 @media (prefers-reduced-motion:reduce){.expBand img{transition:none}}
 
 /* ==========================================================================
+   ARRIVAL BAND — the scroll-linked aircraft
+
+   Three layers in a fixed order: headline (1), airframe (2), card (3). The
+   airframe passes between the type and the card as you scroll, which only
+   reads as depth because they are separate elements — a background image
+   cannot go in front of one thing and behind another.
+
+   Every scroll-driven change is a transform on a single element. No width,
+   top or margin is touched, so the phone composites the move instead of
+   re-laying out the page on every frame.
+   ========================================================================== */
+.flyBand{
+  position:relative;overflow:hidden;
+  min-height:82svh;
+  padding:46px 20px 34px;
+  display:flex;flex-direction:column;justify-content:space-between;gap:20px;
+  background:linear-gradient(180deg,var(--ground-2) 0%,var(--ground) 52%,var(--ground-3) 100%);
+  border-top:1px solid var(--hair-soft);
+}
+.flyBand__head{position:relative;z-index:1;text-align:center}
+.flyBand__title{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(33px,10vw,44px);line-height:1.03;letter-spacing:-.042em;
+  margin:10px 0 0;color:var(--txt);
+}
+.flyBand__plane{
+  position:absolute;z-index:2;
+  left:50%;top:9%;
+  width:min(63%,290px);height:auto;
+  transform:
+    translate3d(-50%, calc(var(--p,0) * -15svh + 7svh), 0)
+    rotate(calc((var(--p,0) - .5) * 5deg))
+    scale(calc(1 + var(--p,0) * .12));
+  filter:drop-shadow(0 24px 38px rgba(42,33,25,.26));
+  will-change:transform;
+  pointer-events:none;
+}
+.flyBand__card{
+  position:relative;z-index:3;
+  background:rgba(255,255,255,.90);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border:1px solid var(--hair-soft);
+  padding:17px 18px 18px;
+}
+.flyBand__spec{
+  display:flex;justify-content:space-between;gap:12px;
+  padding-bottom:11px;margin-bottom:12px;
+  border-bottom:1px solid var(--hair-soft);
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:600;color:var(--gold-ink);
+}
+.flyBand__card p{
+  margin:0 0 15px;font-size:13.5px;line-height:1.62;color:var(--txt-2);
+}
+@media (prefers-reduced-motion:reduce){
+  .flyBand__plane{will-change:auto}
+}
+/* CC BY 4.0 requires the credit to travel with the work, so it lives in the
+   menu rather than only in the README. */
+.credit{
+  margin:22px 0 0;font-size:9.5px;line-height:1.6;
+  letter-spacing:.04em;color:var(--txt-3);
+}
+.credit a{color:var(--txt-3)}
+
+/* ==========================================================================
    TEXT OVER IMAGERY
 
    The platform ground is light, so the default type colour is navy. Anything
