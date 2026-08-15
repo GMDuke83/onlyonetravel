@@ -45,7 +45,7 @@
   var soundToggle  = document.getElementById('soundToggle');
   var skipIntro    = document.getElementById('skipIntro');
   var main         = document.getElementById('main');
-  var marinaVideo  = null;   // the platform home renders it; looked up on demand
+  var platformHeroVideo  = null;   // the platform home renders it; looked up on demand
 
   if (!intro || !video || !main) return;
 
@@ -267,25 +267,25 @@
     try { video.currentTime = 0; } catch (e) {}
   }
 
-  /* The page-two banner is silent by construction — its audio track was
-     stripped when it was encoded, so it cannot carry sound into the main
-     experience no matter what the element's muted flag says. */
-  function startMarina() {
-    marinaVideo = document.getElementById('marinaVideo');
-    if (!marinaVideo) return;
-    marinaVideo.muted = true;
-    if (marinaVideo.preload === 'none') {
-      marinaVideo.preload = 'auto';
-      try { marinaVideo.load(); } catch (e) {}
+  /* The platform hero is silent by construction — its audio track was
+     stripped when it was encoded, so it cannot carry sound past the intro
+     no matter what the element's muted flag says. */
+  function startPlatformHero() {
+    platformHeroVideo = document.getElementById('platformHeroVideo');
+    if (!platformHeroVideo) return;
+    platformHeroVideo.muted = true;
+    if (platformHeroVideo.preload === 'none') {
+      platformHeroVideo.preload = 'auto';
+      try { platformHeroVideo.load(); } catch (e) {}
     }
-    var p = marinaVideo.play();
+    var p = platformHeroVideo.play();
     if (p && typeof p.catch === 'function') p.catch(function () {});
   }
 
-  function stopMarina() {
-    marinaVideo = document.getElementById('marinaVideo');
-    if (!marinaVideo) return;
-    try { marinaVideo.pause(); } catch (e) {}
+  function stopPlatformHero() {
+    platformHeroVideo = document.getElementById('platformHeroVideo');
+    if (!platformHeroVideo) return;
+    try { platformHeroVideo.pause(); } catch (e) {}
   }
 
   function goToMain() {
@@ -312,7 +312,7 @@
       }, 700);
 
       if (window.ONLYONE && window.ONLYONE.boot) window.ONLYONE.boot();
-      startMarina();
+      startPlatformHero();
     }, FLASH_MS);
   }
 
@@ -324,7 +324,7 @@
     if (!onMain) return;
     onMain = false;
 
-    stopMarina();
+    stopPlatformHero();
     main.classList.remove('is-active');
     main.setAttribute('aria-hidden', 'true');
 
@@ -466,9 +466,9 @@
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       try { video.pause(); } catch (e) {}
-      stopMarina();
+      stopPlatformHero();
     } else if (onMain) {
-      startMarina();
+      startPlatformHero();
     } else if (!leaving && video.paused) {
       var p = video.play();
       if (p && typeof p.catch === 'function') p.catch(function () {});
@@ -485,12 +485,12 @@
 
 
   /* ======================================================================
-     Public API — the platform starts the marina banner and can replay the
+     Public API — the platform starts its hero clip and can replay the
      intro from its menu.
      ====================================================================== */
   window.ONLYONE = window.ONLYONE || {};
   window.ONLYONE.replayIntro = backToIntro;
-  window.ONLYONE.startMarina = startMarina;
+  window.ONLYONE.startPlatformHero = startPlatformHero;
 
   /* ======================================================================
      Boot
@@ -558,6 +558,32 @@
      ==================================================================== */
   const I18N = {
     ru:{
+      kind:'Тип размещения',
+      yourContact:'Ваш контакт',
+      noThreadYet:'Здесь появится прямая связь с вашим менеджером, как только вы отправите запрос.',
+      startRequest:'Подобрать жильё',
+      writeMsg:'Написать сообщение',
+      send:'Отправить',
+      msgSent:'Сообщение отправлено',
+      replyTo:'Ответить клиенту',
+      threadFor:'Запрос',
+      you:'Вы',
+      team:'Команда ONLYONE',
+      noMessages:'Пока нет сообщений',
+      newMsg:'Новое сообщение',
+      navConcierge:'Консьерж',
+      navVip:'VIP экскурсии',
+      conciergeTitle:'Ваш персональный консьерж',
+      conciergeRole:'Консьерж ONLYONE · Анталья',
+      conciergeLead:'Один человек сопровождает вашу поездку — от первого вопроса до возвращения домой.',
+      cDo1:'Подбор жилья под ваши пожелания',
+      cDo2:'Индивидуальное предложение без обязательств',
+      cDo3:'Трансферы, столики, экскурсии',
+      cDo4:'На связи во время поездки',
+      callNow:'Позвонить',
+      writeWa:'Написать в WhatsApp',
+      writeMail:'Написать письмо',
+      hours:'Ежедневно 08:00 – 22:00 по местному времени',
       excursions:'Экскурсии',
       excSub:'Больше, чем отель',
       excAll:'Все экскурсии',
@@ -568,18 +594,18 @@
       duration:'Длительность',
       heroEyebrow:'Анталья · Средиземное море',
       heroTitle:'Твоё путешествие начинается здесь.',
-      heroSub:'Отобранные вручную отели, особенные места и персональная консультация.',
-      discover:'Подобрать отели', trust1:'Отели, отобранные вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
+      heroSub:'Отобранное вручную жильё, особенные места и персональная консультация.',
+      discover:'Подобрать жильё', trust1:'Жильё, отобранное вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
       navHome:'Главная', navSearch:'Поиск', navMap:'Карта', navFav:'Избранное', navTrips:'Мои поездки',
       where:'Куда?', wherePh:'Выберите регион', dates:'Даты поездки', datesPh:'Выберите даты',
-      guests:'Гости', searchBtn:'Найти отели', recommended:'Рекомендуем', all:'Все',
-      regions:'Регионы', allRegions:'Все регионы', hotels:'отелей', hotel:'Отель',
+      guests:'Гости', searchBtn:'Найти жильё', recommended:'Рекомендуем', all:'Все',
+      regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
       filters:'Фильтры', apply:'Применить', reset:'Сбросить', results:'найдено',
       category:'Категория', holidayType:'Тип отдыха', amenities:'Удобства', rating:'Оценка',
       beachDist:'До пляжа', board:'Питание', anyRating:'Любая', from9:'от 9,0', from85:'от 8,5', from8:'от 8,0',
-      viewHotel:'Смотреть отель', description:'Описание', location:'Расположение',
-      rooms:'Номера', reviews:'отзывов', policies:'Правила отеля', map:'Карта',
-      requestRoom:'Запросить этот номер', interested:'Интересует этот отель?', requestOffer:'Запросить предложение',
+      viewHotel:'Смотреть', description:'Описание', location:'Расположение',
+      rooms:'Номера', reviews:'отзывов', policies:'Правила размещения', map:'Карта',
+      requestRoom:'Запросить этот номер', interested:'Интересует это размещение?', requestOffer:'Запросить предложение',
       nonBinding:'Без обязательств',
       step:'Шаг', of:'из', next:'Далее', back:'Назад',
       s1:'Даты поездки', s2:'Гости', s3:'Номер', s4:'Пожелания', s5:'Контактные данные', s6:'Обзор',
@@ -607,25 +633,51 @@
       copyLink:'Копировать ссылку', sendWa:'Отправить в WhatsApp',
       guestData:'Данные клиента', period:'Период', roomReq:'Пожелание по номеру', custWishes:'Пожелания клиента',
       staffOnly:'Цены видны только сотрудникам', backToCust:'Вернуться в клиентскую часть',
-      confirmHotel:'Подтвердить бронь в отеле', tripConfirmed:'Поездка подтверждена',
+      confirmHotel:'Подтвердить бронирование', tripConfirmed:'Поездка подтверждена',
       offerSentWait:'Предложение отправлено. Ожидаем ответ клиента.',
       demoPay:'Демо-оплата', payDemoNote:'Демонстрация. Реальный платёж не выполняется.', payNowBtn:'Оплатить (демо)',
       cardNo:'Номер карты', login:'Войти', staffLogin:'Вход для сотрудников', loginNote:'Демо-доступ — введите любое имя.',
       yourName:'Ваше имя', addFav:'Добавлено в избранное', remFav:'Удалено из избранного',
       offerSent:'Предложение отправлено клиенту', offerAccepted:'Предложение принято',
-      linkCopied:'Ссылка скопирована', paidOk:'Оплата получена', hotelConfirmed:'Отель подтвердил бронь',
+      linkCopied:'Ссылка скопирована', paidOk:'Оплата получена', hotelConfirmed:'Размещение подтверждено',
       questionSent:'Вопрос отправлен команде', shared:'Ссылка скопирована',
       adultsShort:'взр.', childrenShort:'дет.', sqm:'м²', persons:'чел.', yrs:'лет',
       exceptional:'Превосходно', wonderful:'Великолепно', veryGood:'Очень хорошо',
       selectRegion:'Выберите регион', done:'Готово', required:'Заполните обязательные поля',
       contactUs:'Свяжитесь с нами', contactTxt:'Наша команда в Анталье ответит вам в течение дня.',
-      hotelsIn:'Отели —', selHotels:'отобранных отелей', noResults:'Ничего не найдено',
+      hotelsIn:'Размещение —', selHotels:'отобранных вариантов', noResults:'Ничего не найдено',
       tryReset:'Попробуйте изменить фильтры', freeCancel:'Бесплатная отмена', onRequest:'по запросу',
       onBeach:'на пляже', noPricesNote:'Цены не показываются — вы получите индивидуальное предложение.',
       noInternalPrices:'Внутренние закупочные цены не хранятся: цена возникает только при создании предложения.',
       transferIncl:'Трансфер включён...',
     },
     de:{
+      kind:'Art der Unterkunft',
+      yourContact:'Dein Ansprechpartner',
+      noThreadYet:'Hier entsteht die direkte Leitung zu deinem Betreuer, sobald du eine Anfrage gesendet hast.',
+      startRequest:'Unterkünfte entdecken',
+      writeMsg:'Nachricht schreiben',
+      send:'Senden',
+      msgSent:'Nachricht gesendet',
+      replyTo:'Dem Kunden antworten',
+      threadFor:'Anfrage',
+      you:'Du',
+      team:'ONLYONE Team',
+      noMessages:'Noch keine Nachrichten',
+      newMsg:'Neue Nachricht',
+      navConcierge:'Concierge',
+      navVip:'VIP Ausflüge',
+      conciergeTitle:'Dein persönlicher Concierge',
+      conciergeRole:'ONLYONE Concierge · Antalya',
+      conciergeLead:'Ein Mensch begleitet deine Reise — von der ersten Frage bis zur Heimkehr.',
+      cDo1:'Auswahl nach deinen Wünschen',
+      cDo2:'Individuelles Angebot, unverbindlich',
+      cDo3:'Transfers, Tische, Ausflüge',
+      cDo4:'Erreichbar während der Reise',
+      callNow:'Anrufen',
+      writeWa:'Über WhatsApp schreiben',
+      writeMail:'E-Mail schreiben',
+      hours:'Täglich 08:00 – 22:00 Ortszeit',
       excursions:'Ausflüge',
       excSub:'Mehr als das Hotel',
       excAll:'Alle Ausflüge',
@@ -636,18 +688,18 @@
       duration:'Dauer',
       heroEyebrow:'Antalya · Mittelmeer',
       heroTitle:'Deine Reise beginnt hier.',
-      heroSub:'Handverlesene Hotels, besondere Orte und persönliche Beratung.',
-      discover:'Hotels entdecken', trust1:'Handverlesene Hotels', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
+      heroSub:'Handverlesene Unterkünfte, besondere Orte und persönliche Beratung.',
+      discover:'Unterkünfte entdecken', trust1:'Handverlesene Unterkünfte', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
       navHome:'Home', navSearch:'Suche', navMap:'Karte', navFav:'Favoriten', navTrips:'Meine Reise',
       where:'Wohin?', wherePh:'Region auswählen', dates:'Reisezeitraum', datesPh:'Zeitraum wählen',
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
-      regions:'Regionen', allRegions:'Alle Regionen', hotels:'Hotels', hotel:'Hotel',
+      regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
       filters:'Filter', apply:'Anwenden', reset:'Zurücksetzen', results:'Ergebnisse',
-      category:'Hotelkategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
+      category:'Kategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
       beachDist:'Entfernung Strand', board:'Verpflegung', anyRating:'Alle', from9:'ab 9,0', from85:'ab 8,5', from8:'ab 8,0',
-      viewHotel:'Hotel ansehen', description:'Beschreibung', location:'Lage',
-      rooms:'Zimmer', reviews:'Bewertungen', policies:'Hotelrichtlinien', map:'Karte',
-      requestRoom:'Dieses Zimmer anfragen', interested:'Interesse an diesem Hotel?', requestOffer:'Angebot anfragen',
+      viewHotel:'Ansehen', description:'Beschreibung', location:'Lage',
+      rooms:'Zimmer', reviews:'Bewertungen', policies:'Richtlinien', map:'Karte',
+      requestRoom:'Dieses Zimmer anfragen', interested:'Interesse an dieser Unterkunft?', requestOffer:'Angebot anfragen',
       nonBinding:'Unverbindlich',
       step:'Schritt', of:'von', next:'Weiter', back:'Zurück',
       s1:'Reisedaten', s2:'Reisende', s3:'Zimmer', s4:'Wünsche', s5:'Kontaktdaten', s6:'Übersicht',
@@ -675,25 +727,51 @@
       copyLink:'Link kopieren', sendWa:'Per WhatsApp senden',
       guestData:'Kundendaten', period:'Zeitraum', roomReq:'Zimmerwunsch', custWishes:'Kundenwünsche',
       staffOnly:'Preise sind nur für Mitarbeiter sichtbar', backToCust:'Zurück zum Kundenbereich',
-      confirmHotel:'Hotelbestätigung eintragen', tripConfirmed:'Reise bestätigt',
+      confirmHotel:'Bestätigung eintragen', tripConfirmed:'Reise bestätigt',
       offerSentWait:'Angebot gesendet. Wir warten auf den Kunden.',
       demoPay:'Demo-Zahlung', payDemoNote:'Demonstration. Es wird keine echte Zahlung ausgeführt.', payNowBtn:'Bezahlen (Demo)',
       cardNo:'Kartennummer', login:'Anmelden', staffLogin:'Mitarbeiter Login', loginNote:'Demo-Zugang — beliebigen Namen eingeben.',
       yourName:'Dein Name', addFav:'Zu Favoriten hinzugefügt', remFav:'Aus Favoriten entfernt',
       offerSent:'Angebot an Kunden gesendet', offerAccepted:'Angebot angenommen',
-      linkCopied:'Link kopiert', paidOk:'Zahlung eingegangen', hotelConfirmed:'Hotel hat bestätigt',
+      linkCopied:'Link kopiert', paidOk:'Zahlung eingegangen', hotelConfirmed:'Unterkunft hat bestätigt',
       questionSent:'Rückfrage an das Team gesendet', shared:'Link kopiert',
       adultsShort:'Erw.', childrenShort:'Ki.', sqm:'m²', persons:'Pers.', yrs:'Jahre',
       exceptional:'Außergewöhnlich', wonderful:'Hervorragend', veryGood:'Sehr gut',
       selectRegion:'Region wählen', done:'Fertig', required:'Bitte Pflichtfelder ausfüllen',
       contactUs:'Kontakt', contactTxt:'Unser Team in Antalya meldet sich noch am selben Tag.',
-      hotelsIn:'Hotels in', selHotels:'ausgewählte Hotels', noResults:'Keine Treffer',
+      hotelsIn:'Stays in', selHotels:'ausgewählte Unterkünfte', noResults:'Keine Treffer',
       tryReset:'Passe die Filter an', freeCancel:'Kostenlose Stornierung', onRequest:'auf Anfrage',
       onBeach:'direkt am Strand', noPricesNote:'Keine Preise — du erhältst ein individuelles Angebot.',
       noInternalPrices:'Es werden keine internen Einkaufspreise gespeichert — ein Preis entsteht erst beim Erstellen eines Angebots.',
       transferIncl:'Transfer inklusive...',
     },
     en:{
+      kind:'Type of stay',
+      yourContact:'Your contact',
+      noThreadYet:'Your direct line to the person handling your trip appears here once you send a request.',
+      startRequest:'Discover stays',
+      writeMsg:'Write a message',
+      send:'Send',
+      msgSent:'Message sent',
+      replyTo:'Reply to the customer',
+      threadFor:'Request',
+      you:'You',
+      team:'ONLYONE team',
+      noMessages:'No messages yet',
+      newMsg:'New message',
+      navConcierge:'Concierge',
+      navVip:'VIP excursions',
+      conciergeTitle:'Your personal concierge',
+      conciergeRole:'ONLYONE Concierge · Antalya',
+      conciergeLead:'One person accompanies your journey — from the first question to your way home.',
+      cDo1:'Stays chosen around your wishes',
+      cDo2:'An individual offer, without obligation',
+      cDo3:'Transfers, tables, excursions',
+      cDo4:'Reachable while you travel',
+      callNow:'Call',
+      writeWa:'Message on WhatsApp',
+      writeMail:'Write an email',
+      hours:'Daily 08:00 – 22:00 local time',
       excursions:'Excursions',
       excSub:'Beyond the hotel',
       excAll:'All excursions',
@@ -704,18 +782,18 @@
       duration:'Duration',
       heroEyebrow:'Antalya · Mediterranean',
       heroTitle:'Your journey starts here.',
-      heroSub:'Handpicked hotels, remarkable places and personal advice.',
-      discover:'Discover hotels', trust1:'Handpicked hotels', trust2:'Personal advice', trust3:'Individual offers',
+      heroSub:'Handpicked stays, remarkable places and personal advice.',
+      discover:'Discover stays', trust1:'Handpicked stays', trust2:'Personal advice', trust3:'Individual offers',
       navHome:'Home', navSearch:'Search', navMap:'Map', navFav:'Saved', navTrips:'My trip',
       where:'Where to?', wherePh:'Choose a region', dates:'Travel dates', datesPh:'Select dates',
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
-      regions:'Regions', allRegions:'All regions', hotels:'hotels', hotel:'Hotel',
+      regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
       filters:'Filters', apply:'Apply', reset:'Reset', results:'results',
-      category:'Hotel category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
+      category:'Category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
       beachDist:'Beach distance', board:'Board', anyRating:'Any', from9:'from 9.0', from85:'from 8.5', from8:'from 8.0',
-      viewHotel:'View hotel', description:'Description', location:'Location',
-      rooms:'Rooms', reviews:'reviews', policies:'Hotel policies', map:'Map',
-      requestRoom:'Request this room', interested:'Interested in this hotel?', requestOffer:'Request an offer',
+      viewHotel:'View', description:'Description', location:'Location',
+      rooms:'Rooms', reviews:'reviews', policies:'House rules', map:'Map',
+      requestRoom:'Request this room', interested:'Interested in this stay?', requestOffer:'Request an offer',
       nonBinding:'Non-binding',
       step:'Step', of:'of', next:'Next', back:'Back',
       s1:'Travel dates', s2:'Guests', s3:'Room', s4:'Wishes', s5:'Contact details', s6:'Summary',
@@ -743,19 +821,19 @@
       copyLink:'Copy link', sendWa:'Send via WhatsApp',
       guestData:'Customer details', period:'Period', roomReq:'Room preference', custWishes:'Customer wishes',
       staffOnly:'Prices are visible to staff only', backToCust:'Back to guest area',
-      confirmHotel:'Record hotel confirmation', tripConfirmed:'Trip confirmed',
+      confirmHotel:'Record confirmation', tripConfirmed:'Trip confirmed',
       offerSentWait:'Offer sent. Awaiting the customer.',
       demoPay:'Demo payment', payDemoNote:'Demonstration only. No real payment is processed.', payNowBtn:'Pay (demo)',
       cardNo:'Card number', login:'Sign in', staffLogin:'Staff login', loginNote:'Demo access — enter any name.',
       yourName:'Your name', addFav:'Added to saved', remFav:'Removed from saved',
       offerSent:'Offer sent to the customer', offerAccepted:'Offer accepted',
-      linkCopied:'Link copied', paidOk:'Payment received', hotelConfirmed:'Hotel confirmed the booking',
+      linkCopied:'Link copied', paidOk:'Payment received', hotelConfirmed:'The stay confirmed the booking',
       questionSent:'Question sent to the team', shared:'Link copied',
       adultsShort:'ad.', childrenShort:'ch.', sqm:'m²', persons:'guests', yrs:'yrs',
       exceptional:'Exceptional', wonderful:'Wonderful', veryGood:'Very good',
       selectRegion:'Select region', done:'Done', required:'Please fill in the required fields',
       contactUs:'Contact', contactTxt:'Our team in Antalya replies the same day.',
-      hotelsIn:'Hotels in', selHotels:'selected hotels', noResults:'No matches',
+      hotelsIn:'Stays in', selHotels:'selected stays', noResults:'No matches',
       tryReset:'Try adjusting the filters', freeCancel:'Free cancellation', onRequest:'on request',
       onBeach:'on the beach', noPricesNote:'No prices — you will receive an individual offer.',
       noInternalPrices:'No internal purchase prices are stored — a price only comes into existence when an offer is created.',
@@ -803,6 +881,18 @@
     {id:'fitness',  l:{ru:'Фитнес',de:'Fitness',en:'Fitness'}},
     {id:'aqua',     l:{ru:'Аквапарк',de:'Aquapark',en:'Aquapark'}},
   ];
+  /* Accommodation kind. The offering is not hotels only — apartments,
+     residences and villas are part of it, so the kind is a field of its own
+     rather than something inferred from the name. */
+  const KINDS=[
+    {id:'resort',    l:{ru:'Курорт',de:'Resort',en:'Resort'}},
+    {id:'hotel',     l:{ru:'Отель',de:'Hotel',en:'Hotel'}},
+    {id:'boutique',  l:{ru:'Бутик-отель',de:'Boutiquehotel',en:'Boutique hotel'}},
+    {id:'apartment', l:{ru:'Апартаменты',de:'Apartment',en:'Apartment'}},
+    {id:'residence', l:{ru:'Резиденция',de:'Residenz',en:'Residence'}},
+    {id:'villa',     l:{ru:'Вилла',de:'Villa',en:'Villa'}},
+  ];
+
   const BOARDS=[
     {id:'bb', l:{ru:'Завтрак',de:'Frühstück',en:'Breakfast'}},
     {id:'hb', l:{ru:'Полупансион',de:'Halbpension',en:'Half board'}},
@@ -867,9 +957,10 @@
   ];
   const excursion=id=>EXCURSIONS.find(e=>e.id===id);
 
-  const H=(id,name,region,st,rt,rv,ty,am,bd,be,im,rs,de)=>
+  const H=(id,name,region,st,rt,rv,ty,am,bd,be,im,rs,de,kind)=>
     ({id,name,region,stars:st,rating:rt,reviews:rv,types:ty,amen:am,board:bd,beach:be,
-      imgs:im.map(x=>IMG+x),rooms:ROOMSETS[rs],desc:de});
+      imgs:im.map(x=>IMG+x),rooms:ROOMSETS[rs],desc:de,
+      kind:kind||(rs==='villa'?'villa':rs==='boutique'?'boutique':'resort')});
 
   const PUBLIC_HOTELS=[
     H('h1','Maxx Royal Kemer Resort','kemer',5,9.6,1847,['luxury','beach','wellness'],['privbeach','pool','spa','seaview','rest','fitness'],'uai',0,['h01.webp','h11.webp','h03.webp'],'resort',
@@ -881,23 +972,23 @@
     H('h4','Lara Barut Collection','lara',5,9.4,3120,['luxury','family','allin','wellness'],['privbeach','pool','spa','kids','aqua','rest','fitness'],'uai',0,['h05.webp','h08.webp','h02.webp'],'resort',
       {ru:'Курорт на песчаном пляже Лары с большим спа-центром.',de:'Resort am Sandstrand von Lara mit großem Spa.',en:'Resort on the Lara sand beach with a large spa.'}),
     H('h5','Kaleiçi Marina House','antalya',4,9.1,845,['boutique','city'],['pool','seaview','rest'],'bb',400,['h09.webp','h14.webp'],'boutique',
-      {ru:'Исторический особняк в старом городе у яхтенной гавани.',de:'Historisches Haus in der Altstadt an der Yachthafen-Bucht.',en:'A historic house in the old town by the yacht harbour.'}),
+      {ru:'Исторический особняк в старом городе у яхтенной гавани.',de:'Historisches Haus in der Altstadt an der Yachthafen-Bucht.',en:'A historic house in the old town by the yacht harbour.'},'residence'),
     H('h6','Side Antique Bay Resort','side',5,9.0,1560,['family','beach','allin'],['privbeach','pool','kids','aqua','rest'],'ai',80,['h13.webp','h12.webp'],'resort',
       {ru:'Курорт рядом с античным театром Сиде.',de:'Resort in Laufweite zum antiken Theater von Side.',en:'Resort within walking distance of the ancient theatre of Side.'}),
     H('h7','Alanya Castle View Suites','alanya',4,8.7,930,['boutique','city','beach'],['pool','seaview','rest'],'bb',250,['h10.webp','h04.webp'],'boutique',
-      {ru:'Номера с террасами и видом на крепость Аланьи.',de:'Zimmer mit Terrassen und Blick auf die Burg von Alanya.',en:'Rooms with terraces facing the Alanya castle.'}),
+      {ru:'Номера с террасами и видом на крепость Аланьи.',de:'Zimmer mit Terrassen und Blick auf die Burg von Alanya.',en:'Rooms with terraces facing the Alanya castle.'},'residence'),
     H('h8','Regnum Carya Golf & Spa','belek',5,9.5,1980,['luxury','golf','wellness','adults'],['privbeach','pool','spa','golf','rest','fitness'],'uai',300,['h02.webp','h07.webp','h06.webp'],'resort',
       {ru:'Гольф-курорт высокого класса с большим спа.',de:'Golfresort der Spitzenklasse mit weitläufigem Spa.',en:'Top-tier golf resort with an extensive spa.'}),
     H('h9','Kemer Pine Bay Villas','kemer',5,9.2,540,['luxury','boutique','adults'],['pool','seaview','spa','rest'],'bb',120,['h11.webp','h01.webp'],'villa',
       {ru:'Отдельные виллы с бассейнами над бухтой.',de:'Einzelne Villen mit eigenen Pools über der Bucht.',en:'Individual villas with private pools above the bay.'}),
     H('h10','Konyaaltı Beach Residence','konyaalti',4,8.6,1120,['family','beach','city'],['pool','kids','rest','transfer'],'hb',100,['h06.webp','h03.webp'],'resort',
-      {ru:'Семейный отель напротив пляжа Коньяалты.',de:'Familienhotel gegenüber dem Konyaaltı-Strand.',en:'Family hotel opposite Konyaaltı beach.'}),
+      {ru:'Семейный отель напротив пляжа Коньяалты.',de:'Familienhotel gegenüber dem Konyaaltı-Strand.',en:'Family hotel opposite Konyaaltı beach.'},'apartment'),
     H('h11','Titanic Deluxe Lara','lara',5,9.1,2760,['family','allin','beach'],['privbeach','pool','kids','aqua','spa','rest'],'uai',0,['h08.webp','h05.webp'],'resort',
       {ru:'Большой курорт с аквапарком прямо на пляже.',de:'Großes Resort mit Aquapark direkt am Strand.',en:'Large resort with an aquapark right on the beach.'}),
     H('h12','Side Star Elegance','side',5,8.8,1340,['family','allin','beach'],['privbeach','pool','kids','rest','fitness'],'ai',50,['h12.webp','h13.webp'],'resort',
       {ru:'Классический курорт «всё включено» у моря.',de:'Klassisches All-Inclusive-Resort am Meer.',en:'A classic all-inclusive resort by the sea.'}),
     H('h13','Antalya Old Town Suites','antalya',4,8.9,470,['boutique','city'],['rest','seaview'],'bb',600,['h14.webp','h09.webp'],'boutique',
-      {ru:'Тихие сьюты в переулках Калеичи.',de:'Ruhige Suiten in den Gassen von Kaleiçi.',en:'Quiet suites in the lanes of Kaleiçi.'}),
+      {ru:'Тихие сьюты в переулках Калеичи.',de:'Ruhige Suiten in den Gassen von Kaleiçi.',en:'Quiet suites in the lanes of Kaleiçi.'},'apartment'),
     H('h14','Belek Golf Lodge','belek',4,8.8,690,['golf','adults','wellness'],['pool','golf','spa','rest'],'hb',900,['h04.webp','h07.webp'],'boutique',
       {ru:'Небольшой отель для гольфистов среди сосен.',de:'Kleines Haus für Golfer zwischen Pinien.',en:'A small hotel for golfers among the pines.'}),
     H('h15','Alanya Cleopatra Bay','alanya',4,8.5,1450,['family','beach','allin'],['privbeach','pool','kids','rest'],'ai',30,['h10.webp','h12.webp'],'resort',
@@ -907,7 +998,7 @@
     H('h17','Lara Sea Palace','lara',5,9.2,1890,['luxury','allin','wellness'],['privbeach','pool','spa','rest','fitness'],'uai',0,['h02.webp','h08.webp'],'resort',
       {ru:'Курорт с большими террасами над морем.',de:'Resort mit großen Terrassen über dem Meer.',en:'Resort with wide terraces above the sea.'}),
     H('h18','Konyaaltı Marina Boutique','konyaalti',4,8.7,520,['boutique','city'],['pool','rest','transfer'],'bb',350,['h09.webp','h06.webp'],'boutique',
-      {ru:'Современный бутик-отель у новой марины.',de:'Modernes Boutiquehotel an der neuen Marina.',en:'A modern boutique hotel by the new marina.'}),
+      {ru:'Современный бутик-отель у новой марины.',de:'Modernes Boutiquehotel an der neuen Marina.',en:'A modern boutique hotel by the new marina.'},'apartment'),
     H('h19','Side Garden Villas','side',5,9.3,410,['luxury','boutique','adults'],['pool','spa','seaview'],'bb',400,['h13.webp','h04.webp'],'villa',
       {ru:'Виллы в апельсиновых садах рядом с Сиде.',de:'Villen in Orangengärten bei Side.',en:'Villas in orange groves near Side.'}),
     H('h20','Antalya Bay Hillside','antalya',5,9.0,760,['luxury','city','wellness'],['pool','spa','seaview','rest'],'bb',500,['h14.webp','h01.webp'],'resort',
@@ -1021,6 +1112,7 @@
     phone:'<path d="M5.2 4.8h3.1l1.6 3.9-2 1.3a11.4 11.4 0 0 0 5.1 5.1l1.3-2 3.9 1.6v3.1a1.6 1.6 0 0 1-1.8 1.6A15.4 15.4 0 0 1 3.6 6.6a1.6 1.6 0 0 1 1.6-1.8z"/>',
     lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V7.8a3.6 3.6 0 0 1 7.2 0v2.7"/>',
     play:'<path d="m8 5.5 11 6.5-11 6.5z"/>',
+    star:'<path d="m12 4.2 2.35 4.9 5.35.72-3.9 3.76.96 5.32L12 16.4l-4.76 2.5.96-5.32-3.9-3.76 5.35-.72z"/>',
     globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
   };
   const icon=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
@@ -1072,14 +1164,21 @@
     </header>`;
   }
   function tabbar(active){
-    const items=[['home','home','navHome'],['search','search','navSearch'],['map','map','navMap'],['favorites','heart','navFav'],['trips','trip','navTrips']];
+    // Map and favourites moved into the menu; the two slots go to the parts
+    // of the offering that carry the brand — a named person and the VIP trips.
+    const items=[['home','home','navHome'],['search','search','navSearch'],
+                 ['concierge','user','navConcierge'],['excursions','star','navVip'],
+                 ['trips','trip','navTrips']];
     const open=S.requests.filter(r=>r.status==='offer'||r.status==='payopen').length;
-    return `<nav class="tabbar">${items.map(([v,ic,k])=>
-      `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v==='trips'&&open?'<i class="tab__dot"></i>':''}</button>`).join('')}</nav>`;
+    const unread=unreadForGuest();
+    return `<nav class="tabbar">${items.map(([v,ic,k])=>{
+      const dot = (v==='trips'&&open) || (v==='concierge'&&unread);
+      return `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${dot?'<i class="tab__dot"></i>':''}</button>`;}).join('')}</nav>`;
   }
   function staffTabbar(active){
     const items=[['s-dash','grid','dashboard'],['s-req','inbox','requests'],['s-book','book','bookings'],['s-cust','user','customers'],['s-more','dots','more']];
-    const nw=S.requests.filter(r=>r.status==='new').length;
+    const nw=S.requests.filter(r=>r.status==='new').length
+      + S.requests.filter(r=>(r.messages||[]).some(m=>m.from==='guest'&&!m.read)).length;
     return `<nav class="tabbar tabbar--staff">${items.map(([v,ic,k])=>
       `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v==='s-req'&&nw?'<i class="tab__dot"></i>':''}</button>`).join('')}</nav>`;
   }
@@ -1100,7 +1199,7 @@
       <div class="card__body">
         <div class="stars">${stars(h.stars)}</div>
         <h3 class="card__name">${esc(h.name)}</h3>
-        <div class="card__loc">${esc(regionName(h.region))}${h.beach===0?' · '+esc(t('onBeach')):''}</div>
+        <div class="card__loc">${esc(label(KINDS,h.kind))} · ${esc(regionName(h.region))}${h.beach===0?' · '+esc(t('onBeach')):''}</div>
         <div class="score"><b>${fmtNum(h.rating)}</b><span>${rateWord(h.rating)}</span></div>
         <div class="traits">${traits.join('<i>·</i>')}</div>
         <p class="card__desc">${esc(h.desc[LANG]||h.desc.en)}</p>
@@ -1121,12 +1220,21 @@
     </article>`;
   }
   function vExcursions(){
-    return `${appbar({back:true,title:t('excursions'),menu:false})}
-    <div class="wrap" style="padding-top:24px">
-      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 28px">${t('excNote')}</p>
+    return `<section class="bandHero">
+      ${bgVideo('./video/onlyone-excursions-v1.mp4','./images/onlyone-excursions-poster.webp')}
+      <div class="bandHero__scrim"></div>
+      <div class="gal__bar"><span></span>
+        <button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button></div>
+      <div class="bandHero__txt">
+        <div class="eyebrow">${t('excSub')}</div>
+        <h1 class="h-xl" style="margin-top:8px">${t('excursions')}</h1>
+      </div>
+    </section>
+    <div class="wrap" style="padding-top:26px">
+      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 30px">${t('excNote')}</p>
       <div class="cardList">${EXCURSIONS.map(excCard).join('')}</div>
     </div>
-    <div class="pageBottom"></div>`;
+    <div class="pageBottom"></div>${tabbar('excursions')}`;
   }
 
   /* ====================================================================
@@ -1136,10 +1244,10 @@
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({over:true})}
     <section class="pHero">
-      <video id="marinaVideo" class="pHero__img" muted loop playsinline webkit-playsinline
-             preload="none" poster="./images/onlyone-marina-poster.webp"
+      <video id="platformHeroVideo" class="pHero__img" muted loop playsinline webkit-playsinline
+             preload="none" poster="./images/onlyone-hero-coast-poster.webp"
              disablepictureinpicture disableremoteplayback aria-hidden="true">
-        <source src="./video/onlyone-marina-v1.mp4" type="video/mp4">
+        <source src="./video/onlyone-hero-coast-v1.mp4" type="video/mp4">
       </video>
       <div class="pHero__scrim"></div>
       <div class="pHero__body">
@@ -1191,10 +1299,11 @@
     ${tabbar('home')}`;
   }
 
-  let FILTER={region:null,stars:[],types:[],amen:[],rating:0,board:[],beach:null};
+  let FILTER={region:null,kinds:[],stars:[],types:[],amen:[],rating:0,board:[],beach:null};
   function filtered(){
     return PUBLIC_HOTELS.filter(h=>{
       if(FILTER.region&&h.region!==FILTER.region)return false;
+      if(FILTER.kinds.length&&FILTER.kinds.indexOf(h.kind)<0)return false;
       if(FILTER.stars.length&&FILTER.stars.indexOf(h.stars)<0)return false;
       if(FILTER.types.length&&!FILTER.types.every(x=>h.types.indexOf(x)>-1))return false;
       if(FILTER.amen.length&&!FILTER.amen.every(x=>h.amen.indexOf(x)>-1))return false;
@@ -1204,7 +1313,7 @@
       return true;
     }).sort((a,b)=>b.rating-a.rating);
   }
-  const activeFilters=()=>FILTER.stars.length+FILTER.types.length+FILTER.amen.length+FILTER.board.length+(FILTER.rating?1:0)+(FILTER.beach!=null?1:0);
+  const activeFilters=()=>FILTER.kinds.length+FILTER.stars.length+FILTER.types.length+FILTER.amen.length+FILTER.board.length+(FILTER.rating?1:0)+(FILTER.beach!=null?1:0);
 
   function vSearch(){
     const list=filtered(),s=S.search;
@@ -1260,7 +1369,7 @@
     <div class="wrap" style="padding-top:16px">
       <div class="stars">${stars(h.stars)}</div>
       <h1 class="h-xl" style="margin-top:6px;font-family:var(--serif);font-weight:400">${esc(h.name)}</h1>
-      <div class="card__loc" style="font-size:13px">${esc(regionName(h.region))} · Antalya</div>
+      <div class="card__loc" style="font-size:11px">${esc(label(KINDS,h.kind))} · ${esc(regionName(h.region))}</div>
       <div class="score" style="font-size:12.5px;margin-top:14px">
         <b>${fmtNum(h.rating)}</b><span>${rateWord(h.rating)}</span>
         <span style="text-transform:none;letter-spacing:.04em">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span>
@@ -1408,7 +1517,7 @@
       from:W.from,to:W.to,adults:W.adults,children:W.children,childAges:W.childAges.slice(0,W.children),
       wishes:W.wishes.slice(),excursions:W.excursions.slice(),note:W.note,
       contact:{first:W.first,last:W.last,phone:W.phone,email:W.email,wa:W.wa},
-      status:'new',createdAt:Date.now(),offer:null,payment:null,staffNote:'',
+      status:'new',createdAt:Date.now(),offer:null,payment:null,staffNote:'',messages:[],
       history:[{s:'new',at:Date.now()}]
     });
     save();
@@ -1417,6 +1526,40 @@
     STACK.length=0;
     go('sent',id,true);
   }
+  /* The concierge is the line to the person handling the trip, so the thread
+     lives on the request itself — both sides read and write the same array. */
+  function addMessage(r,from,text){
+    if(!text || !text.trim()) return false;
+    if(!r.messages) r.messages=[];
+    r.messages.push({from,text:text.trim(),at:Date.now(),read:false});
+    save();
+    return true;
+  }
+  function activeRequest(){
+    // the most recent request that is still going somewhere
+    return S.requests.find(r=>r.status!=='confirmed') || S.requests[0] || null;
+  }
+  function unreadForGuest(){
+    return S.requests.reduce((n,r)=>n+((r.messages||[]).filter(m=>m.from==='staff'&&!m.read).length),0);
+  }
+  function markRead(r,side){
+    if(!r.messages) return;
+    let ch=false;
+    r.messages.forEach(m=>{ if(m.from!==side && !m.read){ m.read=true; ch=true; } });
+    if(ch) save();
+  }
+  function thread(r,side){
+    const ms=r.messages||[];
+    if(!ms.length) return `<p class="muted tiny" style="text-align:center;padding:26px 0">${t('noMessages')}</p>`;
+    return `<div class="thread">${ms.map(m=>{
+      const mine = m.from===side;
+      const who = m.from==='guest' ? t('you') : t('team');
+      return `<div class="msg ${mine?'is-mine':''}">
+        <div class="msg__b">${esc(m.text)}</div>
+        <div class="msg__m">${mine?'':esc(who)+' · '}${new Date(m.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`;}).join('')}</div>`;
+  }
+
   function setStatus(r,s){
     if(r.status===s)return;
     r.status=s;r.history.push({s,at:Date.now()});save();
@@ -1436,10 +1579,14 @@
   function vSent(id){
     const r=request(id);if(!r)return vHome();
     const h=hotel(r.hotelId);
-    return `<div class="wrap" style="padding-top:calc(var(--sat) + 40px);text-align:center">
-      <div class="pop" style="width:76px;height:76px;border-radius:50%;margin:0 auto;background:linear-gradient(135deg,var(--turq),var(--turq-600));display:grid;place-items:center;color:#fff;box-shadow:0 12px 30px rgba(18,145,159,.34)">
-        <svg viewBox="0 0 24 24" style="width:34px;height:34px;stroke-width:2.4"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
-      <h1 class="h-xl" style="margin-top:20px;font-family:var(--serif);font-weight:400">${t('reqSent')}</h1>
+    return `<section class="confirmBg">
+      ${bgVideo('./video/onlyone-confirm-v1.mp4','./images/onlyone-confirm-poster.webp')}
+      <div class="confirmBg__scrim"></div>
+    </section>
+    <div class="wrap" style="position:relative;z-index:2;padding-top:calc(var(--sat) + 52px);text-align:center">
+      <div class="pop" style="width:74px;height:74px;border-radius:50%;margin:0 auto;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold-light)">
+        <svg viewBox="0 0 24 24" style="width:30px;height:30px;stroke-width:1.8"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+      <h1 class="h-xl" style="margin-top:22px">${t('reqSent')}</h1>
       <p class="muted" style="font-size:13.5px;margin-top:10px">${t('reqTeamText')}</p>
       <div class="listCard" style="margin-top:20px;text-align:left">
         <div class="muted mini" style="letter-spacing:.14em;text-transform:uppercase">${t('reqNo')}</div>
@@ -1534,6 +1681,48 @@
         `<div class="empty">${icon('heart')}<b>${t('noFav')}</b></div>`}
     </div>
     <div class="pageBottom"></div>${tabbar('favorites')}`;
+  }
+
+  function vConcierge(){
+    const r = activeRequest();
+    const DO=[t('cDo1'),t('cDo2'),t('cDo3'),t('cDo4')];
+    if (r) markRead(r,'guest');
+    return `${appbar({})}
+    <div class="wrap" style="padding-top:24px">
+      <div class="eyebrow">${t('navConcierge')}</div>
+      <h1 class="h-xl" style="margin-top:10px">${t('conciergeTitle')}</h1>
+
+      <div class="person">
+        <span class="person__mark">AD</span>
+        <div>
+          <b>Ayşe Demir</b>
+          <span>${t('conciergeRole')}</span>
+        </div>
+      </div>
+
+      ${r ? `
+      <div class="threadHead">
+        <span class="muted mini">${t('threadFor')} ${r.code}</span>
+        <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
+      </div>
+      ${thread(r,'guest')}
+      <div class="composer">
+        <textarea class="input" id="cMsg" rows="2" placeholder="${t('writeMsg')}"></textarea>
+        <button class="btn btn--primary" style="margin-top:10px" data-act="c-send" data-id="${r.id}">${t('send')}</button>
+      </div>
+      ` : `
+      <p class="muted" style="font-size:13.5px;line-height:1.65;margin:18px 0 0">${t('noThreadYet')}</p>
+      <ul class="doList">${DO.map(x=>`<li>${icon('check')}<span>${esc(x)}</span></li>`).join('')}</ul>
+      <div style="margin-top:22px"><button class="btn btn--primary" data-go="search">${t('startRequest')}</button></div>
+      `}
+
+      <div style="margin-top:26px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn--ghost" data-act="c-call">${icon('phone')}${t('callNow')}</button>
+        <button class="btn btn--ghost" data-act="c-wa">${t('writeWa')}</button>
+      </div>
+      <p class="muted mini" style="margin-top:16px;letter-spacing:.10em">${t('hours')}</p>
+    </div>
+    <div class="pageBottom"></div>${tabbar('concierge')}`;
   }
 
   function vMap(){
@@ -1637,6 +1826,7 @@
   }
   function vStaffReq(id){
     const r=request(id);if(!r)return vStaffReqs();
+    markRead(r,'staff');
     const h=hotel(r.hotelId);
     const room=r.roomId?h.rooms.find(x=>x.id===r.roomId):null;
     return `${appbar({back:true,title:r.code,menu:false})}
@@ -1666,6 +1856,12 @@
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('custWishes')}</div>
         <div class="badges" style="margin-top:9px">${r.wishes.map(k=>`<span class="badge">${t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])}</span>`).join('')}</div>
         ${r.note?`<p class="muted tiny" style="margin-top:10px;line-height:1.55">${esc(r.note)}</p>`:''}</div>`:''}
+      <div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('navConcierge')}</div>
+        ${thread(r,'staff')}
+        <textarea class="input" id="sMsg" rows="2" placeholder="${t('replyTo')}" style="margin-top:10px"></textarea>
+        <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:10px" data-act="s-send" data-id="${r.id}">${t('send')}</button>
+      </div>
       <div class="listCard">
         <label class="label">${t('internalNote')}</label>
         <textarea class="input" id="sNote" style="min-height:72px">${esc(r.staffNote||'')}</textarea>
@@ -1731,6 +1927,45 @@
     </div><div class="pageBottom"></div>${staffTabbar('s-more')}`;
   }
 
+  /* --------------------------------------------------------------------
+     Background video that costs nothing until it is on screen.
+
+     Every one of these is encoded without an audio track, so §13 — no sound
+     after the intro — holds by construction rather than by attribute.
+     -------------------------------------------------------------------- */
+  function bgVideo(src, poster, cls){
+    return `<video class="bgVideo ${cls||''}" muted loop playsinline webkit-playsinline
+      preload="none" poster="${poster}" data-bg="${src}"
+      disablepictureinpicture disableremoteplayback aria-hidden="true"></video>`;
+  }
+  let bgObserver = null;
+  function armBgVideos(){
+    if (bgObserver) { bgObserver.disconnect(); bgObserver = null; }
+    const vids = $$('[data-bg]');
+    if (!vids.length) return;
+    if (!('IntersectionObserver' in window)) return;
+    bgObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const v = e.target;
+        if (e.isIntersecting) {
+          if (!v.dataset.loaded) {
+            const s = document.createElement('source');
+            s.src = v.dataset.bg; s.type = 'video/mp4';
+            v.appendChild(s);
+            v.preload = 'auto';
+            v.dataset.loaded = '1';
+            try { v.load(); } catch (err) {}
+          }
+          const pr = v.play();
+          if (pr && pr.catch) pr.catch(() => {});
+        } else {
+          try { v.pause(); } catch (err) {}
+        }
+      });
+    }, { root: $('#app'), threshold: 0.15 });
+    vids.forEach(v => bgObserver.observe(v));
+  }
+
   /* ====================================================================
      10 · Render
      ==================================================================== */
@@ -1748,6 +1983,7 @@
       case 'favorites': html=vFavorites();break;
       case 'map':       html=vMap();break;
       case 'excursions':html=vExcursions();break;
+      case 'concierge': html=vConcierge();break;
       case 'staff':     html=vStaffLogin();break;
       case 's-dash':    html=S.staff?vStaffDash():vStaffLogin();break;
       case 's-req':     html=S.staff?vStaffReqs():vStaffLogin();break;
@@ -1761,7 +1997,8 @@
     a.scrollTop=0;
     document.documentElement.lang=LANG;
     if(VIEW.name==='hotel')bindGallery();
-    if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startMarina)window.ONLYONE.startMarina();
+    armBgVideos();
+    if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startPlatformHero)window.ONLYONE.startPlatformHero();
   }
   function bindGallery(){
     const tr=$('#galTrack'),dots=$('#galDots');
@@ -1825,7 +2062,8 @@
       <div style="display:flex;flex-wrap:wrap;gap:8px">${items.map(i=>
         `<button class="chip${sel.indexOf(i.id)>-1?' is-on':''}" data-${attr}="${i.id}">${esc(i.l[LANG]||i.l.en)}</button>`).join('')}</div></div>`;
     const body=()=>`
-      <div class="field" style="margin-top:0"><label class="label">${t('category')}</label>
+      ${grp(t('kind'),KINDS,FILTER.kinds,'fkind')}
+      <div class="field"><label class="label">${t('category')}</label>
         <div style="display:flex;gap:8px">
           <button class="chip${FILTER.stars.indexOf(5)>-1?' is-on':''}" data-fstar="5">★★★★★</button>
           <button class="chip${FILTER.stars.indexOf(4)>-1?' is-on':''}" data-fstar="4">★★★★</button></div></div>
@@ -1851,10 +2089,11 @@
     $('#sheetInner').addEventListener('click',e=>{
       const tgl=(arr,v)=>{const i=arr.indexOf(v);i>-1?arr.splice(i,1):arr.push(v);};
       let hit=false;
-      const b=e.target.closest('[data-fstar],[data-ftype],[data-famen],[data-fboard],[data-frate],[data-fbeach]');
+      const b=e.target.closest('[data-fkind],[data-fstar],[data-ftype],[data-famen],[data-fboard],[data-frate],[data-fbeach]');
       if(b){
         hit=true;
-        if(b.hasAttribute('data-fstar'))tgl(FILTER.stars,+b.dataset.fstar);
+        if(b.hasAttribute('data-fkind'))tgl(FILTER.kinds,b.dataset.fkind);
+        else if(b.hasAttribute('data-fstar'))tgl(FILTER.stars,+b.dataset.fstar);
         else if(b.hasAttribute('data-ftype'))tgl(FILTER.types,b.dataset.ftype);
         else if(b.hasAttribute('data-famen'))tgl(FILTER.amen,b.dataset.famen);
         else if(b.hasAttribute('data-fboard'))tgl(FILTER.board,b.dataset.fboard);
@@ -1862,7 +2101,7 @@
         else if(b.hasAttribute('data-fbeach'))FILTER.beach=b.dataset.fbeach===''?null:+b.dataset.fbeach;
       }
       if(e.target.closest('[data-act="freset"]')){
-        FILTER={region:FILTER.region,stars:[],types:[],amen:[],rating:0,board:[],beach:null};hit=true;
+        FILTER={region:FILTER.region,kinds:[],stars:[],types:[],amen:[],rating:0,board:[],beach:null};hit=true;
       }
       if(hit){
         const fb=$('#fBody');if(fb)fb.innerHTML=body();
@@ -1872,7 +2111,7 @@
   }
   function sheetMenu(){
     const items=[['discover','search','search'],['regions','pin','search'],['map','map','map'],
-                 ['excursions','map','excursions'],
+                 ['navVip','star','excursions'],['map','map','map'],
                  ['myFav','heart','favorites'],['myTrips','trip','trips'],['mContact','phone','contact']];
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('menu')}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
@@ -2148,6 +2387,19 @@
         toast(t('linkCopied'));break;
       }
       case 'notify': toast(t('sendWa'));break;
+      case 'c-send': {
+        const el=$('#cMsg');
+        if(addMessage(request(id),'guest',el?el.value:'')){render();toast(t('msgSent'));}
+        break;
+      }
+      case 's-send': {
+        const el=$('#sMsg');
+        if(addMessage(request(id),'staff',el?el.value:'')){render();toast(t('msgSent'));}
+        break;
+      }
+      case 'c-call': toast('+90 242 000 00 00');break;
+      case 'c-wa':   toast('WhatsApp +90 500 000 00 00');break;
+      case 'c-mail': toast('hello@onlyone.travel');break;
       case 'confirm-hotel': setStatus(request(id),'confirmed');render();toast(t('hotelConfirmed'));break;
     }
   });
