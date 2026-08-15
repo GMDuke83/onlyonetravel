@@ -10,7 +10,11 @@ zeigen: `h03 h04 h05 h06 h12 h13 h14` sowie die Regionen
 Kundenaugen nicht.
 
 Diese Datei listet jeden Bildplatz mit Dateiname, Format und einem
-fertigen Prompt.
+fertigen Prompt — als Referenz für den ganzen Bildbestand.
+
+> **Zum Weitergeben an ChatGPT:** `docs/chatgpt-bildauftrag.md`. Dort stehen
+> nur die 12 noch fehlenden Bilder, jeder Prompt vollständig und einzeln
+> einfügbar (Stil und Verbote sind schon eingebaut).
 
 ---
 
