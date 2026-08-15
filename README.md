@@ -5,6 +5,9 @@ Mobile-first cinematic luxury travel experience.
 Luxury editorial · cinematic travel experience · personal concierge.
 Deliberately not a booking-portal look.
 
+The cinematic intro is the entrance; behind it sits the booking platform —
+hotel discovery, requests, individual offers, payment and a staff back office.
+
 The current development phase targets **smartphones only**. Desktop comes later —
 on a large screen the app is framed as a device rather than stretched.
 
@@ -14,15 +17,16 @@ on a large screen the app is framed as a device rather than stretched.
 
 | | |
 |---|---|
-| Repository | `GMDuke83/onlyonetravel` (private) |
-| Branches | `main` (stable) · `develop` (test/development) |
+| Repository | `GMDuke83/onlyonetravel` (public) |
+| Branches | `main` (stable, deploys) · `develop` (development) |
 | Stack | HTML · CSS · Vanilla JS — no framework, no build step |
-| Public test URL | **not live yet** — see [Hosting](#hosting) |
+| Public test URL | `https://gmduke83.github.io/onlyonetravel/` |
 | Custom domain | intentionally **not** configured |
 
-> The public test URL is still missing because no hosting project could be
-> created from this environment. Everything needed to connect one is already in
-> the repository — see [Hosting](#hosting) for the exact remaining step.
+> The test site is published by GitHub Pages from `main`. If a deployment is
+> rejected with *"not allowed to deploy to github-pages"*, check
+> *Settings → Pages → Source* is set to **GitHub Actions** — see
+> [Hosting](#hosting).
 
 ---
 
@@ -32,31 +36,24 @@ on a large screen the app is framed as a device rather than stretched.
 onlyonetravel/
 │
 ├── public/                        ← this folder IS the website (publish root)
-│   ├── index.html
-│   ├── css/
-│   │   └── app.css
-│   ├── js/
-│   │   └── app.js
+│   ├── index.html                 intro markup + platform mount point
+│   ├── css/app.css                intro styles + platform styles
+│   ├── js/app.js                  intro controller + platform application
 │   ├── video/
 │   │   ├── onlyone-hero-ocean-v1.mp4   intro hero — with ocean audio
-│   │   └── onlyone-marina-v1.mp4       page-two banner — silent by design
-│   ├── images/                     posters + card imagery (WebP)
-│   ├── icons/                      favicon.svg, apple-touch-icon.png
-│   ├── _headers                    Cloudflare Pages cache/mime rules
+│   │   └── onlyone-marina-v1.mp4       platform banner — silent by design
+│   ├── images/
+│   │   ├── hotels/                     hotel & region imagery
+│   │   └── *.webp                      video posters
+│   ├── icons/
+│   ├── _headers                   Cloudflare Pages cache/mime rules
 │   └── manifest.webmanifest
 │
-├── scripts/
-│   └── dev-server.js               zero-dependency local server (Range support)
-│
-├── docs/
-│   └── project-notes.md            decisions, open points, asset provenance
-│
-├── .github/workflows/
-│   └── deploy-cloudflare-pages.yml automatic deployment (needs 2 secrets)
-│
-├── vercel.json                     config if Vercel is chosen instead
+├── scripts/dev-server.js          zero-dependency local server (Range support)
+├── docs/project-notes.md          decisions, open points, asset provenance
+├── .github/workflows/             GitHub Pages + Cloudflare Pages deployment
+├── vercel.json
 ├── package.json
-├── .gitignore
 └── README.md
 ```
 
@@ -114,18 +111,14 @@ production domain yet.
 
 ## Hosting
 
-**Current state: no hosting project exists yet.**
+The test site runs on **GitHub Pages**, published from `main` — see Option B.
 
-It could not be created from the environment this repository was set up in:
+Cloudflare and Vercel remain configured as alternatives; neither could be set up
+from the environment this repository was built in, because
+`api.cloudflare.com` and `api.vercel.com` are blocked by its network policy (the
+proxy answers `403` to `CONNECT`).
 
-* `api.cloudflare.com` and `api.vercel.com` are blocked by the network policy
-  (the proxy answers `403` to `CONNECT`), so no Pages/Vercel project could be
-  created via API.
-* GitHub Pages could not be enabled either — the available token has no `admin`
-  permission on the repository (and Pages on a *private* repo additionally
-  requires a paid GitHub plan).
-
-### Option A — Cloudflare Pages (recommended, gives `*.pages.dev`)
+### Option A — Cloudflare Pages (gives `*.pages.dev`)
 
 Fastest path, entirely in the dashboard, no CLI needed:
 
@@ -156,7 +149,7 @@ Add them under *Settings → Secrets and variables → Actions*, then push to
 `develop`.
 </details>
 
-### Option B — GitHub Pages (no third-party account needed)
+### Option B — GitHub Pages *(in use)*
 
 `.github/workflows/deploy-github-pages.yml` publishes `public/` directly.
 GitHub Pages can otherwise only serve the repository root or `/docs`; the
@@ -195,6 +188,43 @@ Add the real URL to the [Status](#status) table above so the team always has one
 place to look.
 
 ---
+
+## The price rule
+
+**A guest never sees a price before a member of staff has written an individual
+offer for them.** This is the platform's central business rule, and it is
+enforced structurally rather than cosmetically.
+
+There are no prices in the hotel data at all. Not hidden with CSS, not sitting
+in a field the interface skips — simply absent. Look at `PUBLIC_HOTELS` in
+`public/js/app.js`: no hotel and no room carries a price key. A price only comes
+into existence when staff types one into the offer form, and it is then attached
+to that one request.
+
+Opening DevTools reveals nothing, because there is nothing to reveal.
+
+```
+discover → request → staff writes an offer → guest sees the price
+          └── no price anywhere in this stretch ──┘
+```
+
+The guest journey runs: discover a hotel → choose it → enter travel dates →
+pick a room preference → send a non-binding request → staff prepares an
+individual offer → guest accepts → staff creates a payment link (Ziraat Bank
+*Linkle Ödeme*, simulated for now) → payment → booking confirmed.
+
+A real backend mirrors the same split: `/api/public/hotels` returns no prices,
+and `/api/staff/*` requires authentication and a role check. Only the payment
+service layer has to be swapped to go live.
+
+### Trying it
+
+The staff area is reachable from the menu (☰ → *Staff login*); any name works.
+Open a request, create an offer with a price, then switch back to the guest
+side — the price appears only there, under *My trips*.
+
+State lives in `localStorage`, so a reload keeps favourites, requests, offers
+and payment status.
 
 ## Hero video
 

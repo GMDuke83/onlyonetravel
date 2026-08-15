@@ -53,6 +53,10 @@ and page two must be silent anyway.
 
 ## 3. Placeholder assets — needs real photography
 
+> **Superseded by §7/§8** — the destination/stay cards below were replaced by the
+> booking platform. The point still stands: all imagery comes from the videos.
+> Current filenames are `public/images/hotels/h01…h14.webp` + `hero.webp`.
+
 Every image in `public/images/` is a **frame from the hero video**, cropped and
 lightly graded to differentiate the cards. The camera pushes in over the 8 s, so
 the compositions genuinely differ — but it is all one villa.
@@ -79,6 +83,9 @@ feature-concierge.webp       640×400
 ---
 
 ## 4. Content status per section
+
+> **Superseded by §7** — these sections were replaced by the booking platform
+> (hotel discovery, requests, offers, staff back office).
 
 | Section | State |
 |---|---|
@@ -134,9 +141,10 @@ Safari and Android Chrome.
 
 ## 6. Open points
 
-1. **Public test URL** — no hosting project could be created from this
-   environment (Cloudflare/Vercel APIs network-blocked; no `admin` permission
-   for GitHub Pages). See README → Hosting for the exact remaining step.
+> **See §8 for the current list.**
+
+1. **Public test URL** — resolved: GitHub Pages publishes from `main`.
+   Cloudflare/Vercel stayed unreachable from this environment.
 2. **Real photography** — see §3.
 3. **Script webfont for Android** — "Journey" falls back to Georgia there.
    A subsetted script font (only the glyphs in "Journey" / "Begins Now" /
@@ -147,3 +155,76 @@ Safari and Android Chrome.
    desktop design is a later phase.
 6. **`main` is currently identical to `develop`.** Once the test environment is
    live, `main` should only receive reviewed merges.
+
+---
+
+## 7. The booking platform
+
+The intro is now the entrance to a booking platform rather than a static
+showcase. Both live in the same app: `#intro` gates, `#main` holds the platform,
+and `js/app.js` contains the intro controller followed by the platform.
+
+The brand stays **ONLYONE LUXURY TRAVEL** throughout — an earlier working name
+was dropped.
+
+### The price rule is structural, not cosmetic
+
+The requirement is that a guest sees no price until staff has written them an
+individual offer. Hiding prices in the UI would not satisfy that: anyone can
+open DevTools and read the data behind the page.
+
+So the data has no prices. `PUBLIC_HOTELS` carries name, region, stars, rating,
+reviews, amenities, board, beach distance, description, images and room types —
+and no price key on any hotel or room. Nothing needs to be filtered out on the
+way to the customer, because nothing is there.
+
+A price is created only when staff fills in the offer form, and it is stored on
+that one request. Verified at the source: a scan of the hotel and room data
+blocks finds no price-like identifier at all.
+
+Consequence for the real backend: `/api/public/hotels` returns exactly this
+shape, `/api/staff/*` sits behind authentication and a role check. Only the
+payment service layer has to change to go live with Ziraat *Linkle Ödeme*.
+
+### Verified end to end
+
+Driven in a real browser at 393×852, one continuous run:
+
+* 24 hotels across 7 regions listed; the golf filter narrows to 3
+* favourite stored and still present after a reload
+* hotel detail shows 3 room types, no price
+* 6-step request wizard completes; request `OO-2026-00128` created with
+  status `new`, wishes saved, `offer === null`
+* staff login → dashboard → open request → offer created at 2450 EUR
+* status moves `offer` → `accepted` → `payopen` → `paid` → `confirmed`
+* the Ziraat payment link is generated
+* price appears **only** in the individual offer on the guest side
+* a text scan of the whole guest area — home, search, hotel detail, wizard
+  summary, trips before the offer — finds no price anywhere
+* `localStorage` survives a reload with requests, status and favourites intact
+* all three languages switch; the map renders 7 region pins
+* no horizontal scroll, no failed requests, no console errors
+
+### Two bugs found and fixed while testing
+
+1. **Bottom sheets could push their action button off screen.** The sheet is a
+   flex column with `max-height:90svh`, but the content is injected into a
+   wrapper (`#sheetInner`) that was a plain block. The flex rules therefore
+   never applied, the body could not shrink, and a long sheet — the filters —
+   pushed *Apply* below the viewport. Measured: 917 px of content inside a
+   767 px sheet. Fixed by making the wrapper the flex column.
+2. **The intro could strand a visitor** if the video never decoded — see §5.
+
+## 8. Still open
+
+* **Real photography.** Hotel and region imagery is still derived from the two
+  supplied videos, so different hotels share a location. Five real Antalya
+  photos were shown in conversation but arrived as inline images rather than
+  files, so they could not be committed. Filenames to drop them into:
+  `public/images/hotels/h01…h14.webp` (640×400) and `hero.webp`.
+* **Hotel administration for staff** (§22 of the brief) is not built; staff can
+  work requests, offers, payments and customers, and see hotel counts per
+  region, but not edit hotel records.
+* **Real payment.** Ziraat *Linkle Ödeme* is simulated; the architecture keeps
+  it behind a single service seam.
+* **Desktop.** Still the phone layout in a centred device frame.

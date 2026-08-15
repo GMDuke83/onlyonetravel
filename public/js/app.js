@@ -45,10 +45,7 @@
   var soundToggle  = document.getElementById('soundToggle');
   var skipIntro    = document.getElementById('skipIntro');
   var main         = document.getElementById('main');
-  var mainScroll   = document.getElementById('mainScroll');
-  var marinaVideo  = document.getElementById('marinaVideo');
-  var replayIntro  = document.getElementById('replayIntro');
-  var toast        = document.getElementById('toast');
+  var marinaVideo  = null;   // the platform home renders it; looked up on demand
 
   if (!intro || !video || !main) return;
 
@@ -67,16 +64,6 @@
   /* ======================================================================
      Helpers
      ====================================================================== */
-
-  function showToast(message) {
-    if (!toast || !message) return;
-    toast.textContent = message;
-    toast.classList.add('is-in');
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(function () {
-      toast.classList.remove('is-in');
-    }, 1700);
-  }
 
   // restart a CSS animation reliably
   function retrigger(el, className) {
@@ -227,6 +214,7 @@
      stripped when it was encoded, so it cannot carry sound into the main
      experience no matter what the element's muted flag says. */
   function startMarina() {
+    marinaVideo = document.getElementById('marinaVideo');
     if (!marinaVideo) return;
     marinaVideo.muted = true;
     if (marinaVideo.preload === 'none') {
@@ -238,6 +226,7 @@
   }
 
   function stopMarina() {
+    marinaVideo = document.getElementById('marinaVideo');
     if (!marinaVideo) return;
     try { marinaVideo.pause(); } catch (e) {}
   }
@@ -265,7 +254,7 @@
         if (introFlash) introFlash.classList.remove('is-in');
       }, 700);
 
-      if (mainScroll) mainScroll.scrollTop = 0;
+      if (window.ONLYONE && window.ONLYONE.boot) window.ONLYONE.boot();
       startMarina();
     }, FLASH_MS);
   }
@@ -374,7 +363,6 @@
       enableSound();
       resetSequence();
       playFromStart();          // §12: from 0:00, ocean audible
-      showToast('Ocean sound on');
     }
   });
 
@@ -387,11 +375,9 @@
       if (video.muted) {
         enableSound();
         if (video.paused) playFromStart();
-        showToast('Ocean sound on');
-      } else {
+        } else {
         wantSound = false;
         muteSound();
-        showToast('Sound off');
       }
     });
   }
@@ -416,46 +402,6 @@
     });
   }
 
-  /* --- back to the intro from the main experience ------------------------ */
-  if (replayIntro) {
-    replayIntro.addEventListener('click', function (event) {
-      event.preventDefault();
-      backToIntro();
-    });
-  }
-
-  /* --- placeholder taps -------------------------------------------------- */
-  document.addEventListener('click', function (event) {
-    var el = event.target.closest('[data-toast]');
-    if (el) showToast(el.getAttribute('data-toast'));
-  });
-
-  /* --- tabbar ------------------------------------------------------------ */
-  var tabItems = Array.prototype.slice.call(document.querySelectorAll('.tabbar__item'));
-  tabItems.forEach(function (item) {
-    item.addEventListener('click', function () {
-      var target = document.getElementById(item.getAttribute('data-target'));
-      if (target && mainScroll) {
-        mainScroll.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
-      }
-    });
-  });
-
-  // reflect the section currently in view
-  if (mainScroll && 'IntersectionObserver' in window) {
-    var sections = Array.prototype.slice.call(mainScroll.querySelectorAll('.section'));
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var id = entry.target.id;
-        tabItems.forEach(function (item) {
-          item.classList.toggle('is-active', item.getAttribute('data-target') === id);
-        });
-      });
-    }, { root: mainScroll, threshold: 0.45 });
-    sections.forEach(function (s) { spy.observe(s); });
-  }
-
   /* --- never let the ocean play in a background tab ---------------------- */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -477,6 +423,15 @@
     }
   });
 
+
+  /* ======================================================================
+     Public API — the platform starts the marina banner and can replay the
+     intro from its menu.
+     ====================================================================== */
+  window.ONLYONE = window.ONLYONE || {};
+  window.ONLYONE.replayIntro = backToIntro;
+  window.ONLYONE.startMarina = startMarina;
+
   /* ======================================================================
      Boot
      ====================================================================== */
@@ -493,4 +448,1487 @@
     if (video.paused && video.currentTime < 0.15) showTapStart();
   }, AUTOPLAY_PROBE_MS);
 
+})();
+
+/* ==========================================================================
+   ONLYONE LUXURY TRAVEL — platform
+   The booking experience the intro opens into.
+
+   THE CENTRAL BUSINESS RULE
+   -------------------------
+   A guest must never see a price before a member of staff has written an
+   individual offer for them.
+
+   This is enforced structurally, not cosmetically: there are NO prices in the
+   hotel data at all. Not hidden with CSS, not sitting in a field the UI skips
+   — simply absent. A price only comes into existence when staff types one into
+   the offer form, and it is then attached to that single request. Opening
+   DevTools reveals nothing, because there is nothing to reveal.
+
+   Look at PUBLIC_HOTELS below: no price key exists on any hotel or room.
+   A real backend mirrors this split — /api/public/hotels returns no prices,
+   /api/staff/* requires authentication and a role check.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  /* ====================================================================
+     1 · i18n — RU is the default
+     ==================================================================== */
+  const I18N = {
+    ru:{
+      heroEyebrow:'Анталья · Средиземное море',
+      heroTitle:'Твоё путешествие начинается здесь.',
+      heroSub:'Отобранные вручную отели, особенные места и персональная консультация.',
+      discover:'Подобрать отели', trust1:'Отели, отобранные вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
+      navHome:'Главная', navSearch:'Поиск', navMap:'Карта', navFav:'Избранное', navTrips:'Мои поездки',
+      where:'Куда?', wherePh:'Выберите регион', dates:'Даты поездки', datesPh:'Выберите даты',
+      guests:'Гости', searchBtn:'Найти отели', recommended:'Рекомендуем', all:'Все',
+      regions:'Регионы', allRegions:'Все регионы', hotels:'отелей', hotel:'Отель',
+      filters:'Фильтры', apply:'Применить', reset:'Сбросить', results:'найдено',
+      category:'Категория', holidayType:'Тип отдыха', amenities:'Удобства', rating:'Оценка',
+      beachDist:'До пляжа', board:'Питание', anyRating:'Любая', from9:'от 9,0', from85:'от 8,5', from8:'от 8,0',
+      viewHotel:'Смотреть отель', description:'Описание', location:'Расположение',
+      rooms:'Номера', reviews:'отзывов', policies:'Правила отеля', map:'Карта',
+      requestRoom:'Запросить этот номер', interested:'Интересует этот отель?', requestOffer:'Запросить предложение',
+      nonBinding:'Без обязательств',
+      step:'Шаг', of:'из', next:'Далее', back:'Назад',
+      s1:'Даты поездки', s2:'Гости', s3:'Номер', s4:'Пожелания', s5:'Контактные данные', s6:'Обзор',
+      arrival:'Заезд', departure:'Выезд', adults:'Взрослые', children:'Дети', childAge:'Возраст ребёнка',
+      roomWish:'Желаемая категория номера', notSure:'Ещё не уверен(а)',
+      wSea:'Вид на море', wQuiet:'Тихий номер', wTransfer:'Трансфер из аэропорта', wCot:'Детская кроватка',
+      wHoney:'Медовый месяц', wBirthday:'День рождения', wAccess:'Доступная среда',
+      otherWishes:'Другие пожелания', firstName:'Имя', lastName:'Фамилия', phone:'Телефон', email:'E-Mail', whatsapp:'WhatsApp (необязательно)',
+      sendRequest:'Отправить запрос', reqSent:'Запрос успешно отправлен', reqNo:'Номер запроса',
+      reqTeamText:'Наша команда изучит ваш запрос и составит для вас индивидуальное предложение.',
+      myTrips:'Мои поездки', myFav:'Избранное', noTrips:'У вас пока нет запросов', noFav:'Вы ещё не добавили отели в избранное',
+      details:'Подробнее', viewOffer:'Посмотреть предложение', yourOffer:'Ваше персональное предложение',
+      total:'Общая стоимость', nights:'ночей', acceptOffer:'Принять предложение', askBack:'Задать вопрос',
+      payNow:'Оплатить сейчас', paid:'Оплачено', validUntil:'Действительно до',
+      stNew:'Запрос получен', stCheck:'На рассмотрении', stOffer:'Предложение составлено', stAccepted:'Клиент подтвердил',
+      stPay:'Ожидает оплаты', stPaid:'Оплачено', stConfirmed:'Бронирование подтверждено',
+      menu:'Меню', mContact:'Контакты', mLang:'Язык', mStaff:'Вход для сотрудников', mIntro:'Смотреть заставку',
+      compare:'Сравнить', staffArea:'Рабочая область', dashboard:'Обзор', requests:'Запросы',
+      bookings:'Брони', customers:'Клиенты', more:'Ещё', today:'Сегодня', total_:'всего',
+      newReq:'Новые запросы', openOffers:'Открытые предложения', waitCust:'Ждём клиента',
+      payOpen:'Ожидает оплаты', newBook:'Новые брони', openReq:'Открыть запрос',
+      createOffer:'Создать предложение', sellPrice:'Цена продажи', currency:'Валюта',
+      internalNote:'Внутренняя заметка', custInfo:'Информация для клиента', sendOffer:'Отправить предложение',
+      createPayLink:'Создать ссылку на оплату', payLinkDone:'Ссылка на оплату создана',
+      copyLink:'Копировать ссылку', sendWa:'Отправить в WhatsApp',
+      guestData:'Данные клиента', period:'Период', roomReq:'Пожелание по номеру', custWishes:'Пожелания клиента',
+      staffOnly:'Цены видны только сотрудникам', backToCust:'Вернуться в клиентскую часть',
+      confirmHotel:'Подтвердить бронь в отеле', tripConfirmed:'Поездка подтверждена',
+      offerSentWait:'Предложение отправлено. Ожидаем ответ клиента.',
+      demoPay:'Демо-оплата', payDemoNote:'Демонстрация. Реальный платёж не выполняется.', payNowBtn:'Оплатить (демо)',
+      cardNo:'Номер карты', login:'Войти', staffLogin:'Вход для сотрудников', loginNote:'Демо-доступ — введите любое имя.',
+      yourName:'Ваше имя', addFav:'Добавлено в избранное', remFav:'Удалено из избранного',
+      offerSent:'Предложение отправлено клиенту', offerAccepted:'Предложение принято',
+      linkCopied:'Ссылка скопирована', paidOk:'Оплата получена', hotelConfirmed:'Отель подтвердил бронь',
+      questionSent:'Вопрос отправлен команде', shared:'Ссылка скопирована',
+      adultsShort:'взр.', childrenShort:'дет.', sqm:'м²', persons:'чел.', yrs:'лет',
+      exceptional:'Превосходно', wonderful:'Великолепно', veryGood:'Очень хорошо',
+      selectRegion:'Выберите регион', done:'Готово', required:'Заполните обязательные поля',
+      contactUs:'Свяжитесь с нами', contactTxt:'Наша команда в Анталье ответит вам в течение дня.',
+      hotelsIn:'Отели —', selHotels:'отобранных отелей', noResults:'Ничего не найдено',
+      tryReset:'Попробуйте изменить фильтры', freeCancel:'Бесплатная отмена', onRequest:'по запросу',
+      onBeach:'на пляже', noPricesNote:'Цены не показываются — вы получите индивидуальное предложение.',
+      noInternalPrices:'Внутренние закупочные цены не хранятся: цена возникает только при создании предложения.',
+      transferIncl:'Трансфер включён...',
+    },
+    de:{
+      heroEyebrow:'Antalya · Mittelmeer',
+      heroTitle:'Deine Reise beginnt hier.',
+      heroSub:'Handverlesene Hotels, besondere Orte und persönliche Beratung.',
+      discover:'Hotels entdecken', trust1:'Handverlesene Hotels', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
+      navHome:'Home', navSearch:'Suche', navMap:'Karte', navFav:'Favoriten', navTrips:'Meine Reise',
+      where:'Wohin?', wherePh:'Region auswählen', dates:'Reisezeitraum', datesPh:'Zeitraum wählen',
+      guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
+      regions:'Regionen', allRegions:'Alle Regionen', hotels:'Hotels', hotel:'Hotel',
+      filters:'Filter', apply:'Anwenden', reset:'Zurücksetzen', results:'Ergebnisse',
+      category:'Hotelkategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
+      beachDist:'Entfernung Strand', board:'Verpflegung', anyRating:'Alle', from9:'ab 9,0', from85:'ab 8,5', from8:'ab 8,0',
+      viewHotel:'Hotel ansehen', description:'Beschreibung', location:'Lage',
+      rooms:'Zimmer', reviews:'Bewertungen', policies:'Hotelrichtlinien', map:'Karte',
+      requestRoom:'Dieses Zimmer anfragen', interested:'Interesse an diesem Hotel?', requestOffer:'Angebot anfragen',
+      nonBinding:'Unverbindlich',
+      step:'Schritt', of:'von', next:'Weiter', back:'Zurück',
+      s1:'Reisedaten', s2:'Reisende', s3:'Zimmer', s4:'Wünsche', s5:'Kontaktdaten', s6:'Übersicht',
+      arrival:'Anreise', departure:'Abreise', adults:'Erwachsene', children:'Kinder', childAge:'Alter Kind',
+      roomWish:'Gewünschte Zimmerkategorie', notSure:'Noch nicht sicher',
+      wSea:'Meerblick', wQuiet:'Ruhiges Zimmer', wTransfer:'Flughafentransfer', wCot:'Kinderbett',
+      wHoney:'Honeymoon', wBirthday:'Geburtstag', wAccess:'Barrierearm',
+      otherWishes:'Sonstige Wünsche', firstName:'Vorname', lastName:'Nachname', phone:'Telefon', email:'E-Mail', whatsapp:'WhatsApp (optional)',
+      sendRequest:'Unverbindliche Anfrage senden', reqSent:'Anfrage erfolgreich gesendet', reqNo:'Anfragenummer',
+      reqTeamText:'Unser Reiseteam prüft deine Anfrage und erstellt ein individuelles Angebot.',
+      myTrips:'Meine Reisen', myFav:'Meine Favoriten', noTrips:'Du hast noch keine Anfragen', noFav:'Du hast noch keine Favoriten gespeichert',
+      details:'Details', viewOffer:'Angebot ansehen', yourOffer:'Ihr persönliches Angebot',
+      total:'Gesamtpreis', nights:'Nächte', acceptOffer:'Angebot annehmen', askBack:'Rückfrage senden',
+      payNow:'Jetzt sicher bezahlen', paid:'Bezahlt', validUntil:'Gültig bis',
+      stNew:'Anfrage eingegangen', stCheck:'Wird geprüft', stOffer:'Angebot erstellt', stAccepted:'Kunde bestätigt',
+      stPay:'Zahlung offen', stPaid:'Bezahlt', stConfirmed:'Buchung bestätigt',
+      menu:'Menü', mContact:'Kontakt', mLang:'Sprache', mStaff:'Mitarbeiter Login', mIntro:'Intro ansehen',
+      compare:'Vergleichen', staffArea:'Mitarbeiterbereich', dashboard:'Dashboard', requests:'Anfragen',
+      bookings:'Buchungen', customers:'Kunden', more:'Mehr', today:'Heute', total_:'gesamt',
+      newReq:'Neue Anfragen', openOffers:'Offene Angebote', waitCust:'Warten auf Kunde',
+      payOpen:'Zahlung offen', newBook:'Neue Buchungen', openReq:'Anfrage öffnen',
+      createOffer:'Angebot erstellen', sellPrice:'Verkaufspreis', currency:'Währung',
+      internalNote:'Interne Notiz', custInfo:'Kundeninformation', sendOffer:'Angebot senden',
+      createPayLink:'Zahlungslink erstellen', payLinkDone:'Zahlungslink erstellt',
+      copyLink:'Link kopieren', sendWa:'Per WhatsApp senden',
+      guestData:'Kundendaten', period:'Zeitraum', roomReq:'Zimmerwunsch', custWishes:'Kundenwünsche',
+      staffOnly:'Preise sind nur für Mitarbeiter sichtbar', backToCust:'Zurück zum Kundenbereich',
+      confirmHotel:'Hotelbestätigung eintragen', tripConfirmed:'Reise bestätigt',
+      offerSentWait:'Angebot gesendet. Wir warten auf den Kunden.',
+      demoPay:'Demo-Zahlung', payDemoNote:'Demonstration. Es wird keine echte Zahlung ausgeführt.', payNowBtn:'Bezahlen (Demo)',
+      cardNo:'Kartennummer', login:'Anmelden', staffLogin:'Mitarbeiter Login', loginNote:'Demo-Zugang — beliebigen Namen eingeben.',
+      yourName:'Dein Name', addFav:'Zu Favoriten hinzugefügt', remFav:'Aus Favoriten entfernt',
+      offerSent:'Angebot an Kunden gesendet', offerAccepted:'Angebot angenommen',
+      linkCopied:'Link kopiert', paidOk:'Zahlung eingegangen', hotelConfirmed:'Hotel hat bestätigt',
+      questionSent:'Rückfrage an das Team gesendet', shared:'Link kopiert',
+      adultsShort:'Erw.', childrenShort:'Ki.', sqm:'m²', persons:'Pers.', yrs:'Jahre',
+      exceptional:'Außergewöhnlich', wonderful:'Hervorragend', veryGood:'Sehr gut',
+      selectRegion:'Region wählen', done:'Fertig', required:'Bitte Pflichtfelder ausfüllen',
+      contactUs:'Kontakt', contactTxt:'Unser Team in Antalya meldet sich noch am selben Tag.',
+      hotelsIn:'Hotels in', selHotels:'ausgewählte Hotels', noResults:'Keine Treffer',
+      tryReset:'Passe die Filter an', freeCancel:'Kostenlose Stornierung', onRequest:'auf Anfrage',
+      onBeach:'direkt am Strand', noPricesNote:'Keine Preise — du erhältst ein individuelles Angebot.',
+      noInternalPrices:'Es werden keine internen Einkaufspreise gespeichert — ein Preis entsteht erst beim Erstellen eines Angebots.',
+      transferIncl:'Transfer inklusive...',
+    },
+    en:{
+      heroEyebrow:'Antalya · Mediterranean',
+      heroTitle:'Your journey starts here.',
+      heroSub:'Handpicked hotels, remarkable places and personal advice.',
+      discover:'Discover hotels', trust1:'Handpicked hotels', trust2:'Personal advice', trust3:'Individual offers',
+      navHome:'Home', navSearch:'Search', navMap:'Map', navFav:'Saved', navTrips:'My trip',
+      where:'Where to?', wherePh:'Choose a region', dates:'Travel dates', datesPh:'Select dates',
+      guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
+      regions:'Regions', allRegions:'All regions', hotels:'hotels', hotel:'Hotel',
+      filters:'Filters', apply:'Apply', reset:'Reset', results:'results',
+      category:'Hotel category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
+      beachDist:'Beach distance', board:'Board', anyRating:'Any', from9:'from 9.0', from85:'from 8.5', from8:'from 8.0',
+      viewHotel:'View hotel', description:'Description', location:'Location',
+      rooms:'Rooms', reviews:'reviews', policies:'Hotel policies', map:'Map',
+      requestRoom:'Request this room', interested:'Interested in this hotel?', requestOffer:'Request an offer',
+      nonBinding:'Non-binding',
+      step:'Step', of:'of', next:'Next', back:'Back',
+      s1:'Travel dates', s2:'Guests', s3:'Room', s4:'Wishes', s5:'Contact details', s6:'Summary',
+      arrival:'Check-in', departure:'Check-out', adults:'Adults', children:'Children', childAge:'Child age',
+      roomWish:'Preferred room category', notSure:'Not sure yet',
+      wSea:'Sea view', wQuiet:'Quiet room', wTransfer:'Airport transfer', wCot:'Baby cot',
+      wHoney:'Honeymoon', wBirthday:'Birthday', wAccess:'Step-free access',
+      otherWishes:'Other wishes', firstName:'First name', lastName:'Last name', phone:'Phone', email:'Email', whatsapp:'WhatsApp (optional)',
+      sendRequest:'Send non-binding request', reqSent:'Request sent successfully', reqNo:'Request number',
+      reqTeamText:'Our travel team is reviewing your request and will prepare an individual offer.',
+      myTrips:'My trips', myFav:'Saved hotels', noTrips:'You have no requests yet', noFav:'You have not saved any hotels yet',
+      details:'Details', viewOffer:'View offer', yourOffer:'Your personal offer',
+      total:'Total price', nights:'nights', acceptOffer:'Accept offer', askBack:'Ask a question',
+      payNow:'Pay securely now', paid:'Paid', validUntil:'Valid until',
+      stNew:'Request received', stCheck:'Under review', stOffer:'Offer prepared', stAccepted:'Customer confirmed',
+      stPay:'Payment pending', stPaid:'Paid', stConfirmed:'Booking confirmed',
+      menu:'Menu', mContact:'Contact', mLang:'Language', mStaff:'Staff login', mIntro:'Watch intro',
+      compare:'Compare', staffArea:'Staff area', dashboard:'Dashboard', requests:'Requests',
+      bookings:'Bookings', customers:'Customers', more:'More', today:'Today', total_:'total',
+      newReq:'New requests', openOffers:'Open offers', waitCust:'Awaiting customer',
+      payOpen:'Payment pending', newBook:'New bookings', openReq:'Open request',
+      createOffer:'Create offer', sellPrice:'Selling price', currency:'Currency',
+      internalNote:'Internal note', custInfo:'Customer information', sendOffer:'Send offer',
+      createPayLink:'Create payment link', payLinkDone:'Payment link created',
+      copyLink:'Copy link', sendWa:'Send via WhatsApp',
+      guestData:'Customer details', period:'Period', roomReq:'Room preference', custWishes:'Customer wishes',
+      staffOnly:'Prices are visible to staff only', backToCust:'Back to guest area',
+      confirmHotel:'Record hotel confirmation', tripConfirmed:'Trip confirmed',
+      offerSentWait:'Offer sent. Awaiting the customer.',
+      demoPay:'Demo payment', payDemoNote:'Demonstration only. No real payment is processed.', payNowBtn:'Pay (demo)',
+      cardNo:'Card number', login:'Sign in', staffLogin:'Staff login', loginNote:'Demo access — enter any name.',
+      yourName:'Your name', addFav:'Added to saved', remFav:'Removed from saved',
+      offerSent:'Offer sent to the customer', offerAccepted:'Offer accepted',
+      linkCopied:'Link copied', paidOk:'Payment received', hotelConfirmed:'Hotel confirmed the booking',
+      questionSent:'Question sent to the team', shared:'Link copied',
+      adultsShort:'ad.', childrenShort:'ch.', sqm:'m²', persons:'guests', yrs:'yrs',
+      exceptional:'Exceptional', wonderful:'Wonderful', veryGood:'Very good',
+      selectRegion:'Select region', done:'Done', required:'Please fill in the required fields',
+      contactUs:'Contact', contactTxt:'Our team in Antalya replies the same day.',
+      hotelsIn:'Hotels in', selHotels:'selected hotels', noResults:'No matches',
+      tryReset:'Try adjusting the filters', freeCancel:'Free cancellation', onRequest:'on request',
+      onBeach:'on the beach', noPricesNote:'No prices — you will receive an individual offer.',
+      noInternalPrices:'No internal purchase prices are stored — a price only comes into existence when an offer is created.',
+      transferIncl:'Transfer included...',
+    }
+  };
+  let LANG = 'ru';
+  const t = k => (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k;
+
+  /* ====================================================================
+     2 · Regions & hotels — PUBLIC data, no prices anywhere
+     ==================================================================== */
+  const IMG = './images/hotels/';
+  const REGIONS = [
+    {id:'antalya',  name:{ru:'Анталья',   de:'Antalya Stadt',en:'Antalya City'}, tag:{ru:'Старый город и гавань',de:'Altstadt & Hafen',en:'Old town & harbour'}, img:IMG+'h09.webp', x:44,y:46},
+    {id:'konyaalti',name:{ru:'Коньяалты', de:'Konyaaltı',    en:'Konyaaltı'},    tag:{ru:'Галечный пляж у гор',de:'Kiesstrand am Berg',en:'Pebble beach below the mountains'}, img:IMG+'h03.webp', x:33,y:53},
+    {id:'lara',     name:{ru:'Лара',      de:'Lara',         en:'Lara'},         tag:{ru:'Песчаный пляж и курорты',de:'Sandstrand & Resorts',en:'Sand beach & resorts'}, img:IMG+'h05.webp', x:56,y:41},
+    {id:'belek',    name:{ru:'Белек',     de:'Belek',        en:'Belek'},        tag:{ru:'Гольф и сосновые леса',de:'Golf & Pinienwälder',en:'Golf & pine forest'}, img:IMG+'h07.webp', x:68,y:35},
+    {id:'kemer',    name:{ru:'Кемер',     de:'Kemer',        en:'Kemer'},        tag:{ru:'Горы Тавр у моря',de:'Taurus trifft Meer',en:'Taurus meets the sea'}, img:IMG+'h11.webp', x:20,y:66},
+    {id:'side',     name:{ru:'Сиде',      de:'Side',         en:'Side'},         tag:{ru:'Античность и пляж',de:'Antike & Strand',en:'Antiquity & beach'}, img:IMG+'h13.webp', x:79,y:30},
+    {id:'alanya',   name:{ru:'Аланья',    de:'Alanya',       en:'Alanya'},       tag:{ru:'Крепость над бухтой',de:'Burg über der Bucht',en:'Castle above the bay'}, img:IMG+'h10.webp', x:90,y:22},
+  ];
+  const regionName = id => { const r=REGIONS.find(x=>x.id===id); return r ? (r.name[LANG]||r.name.en) : id; };
+
+  const TYPES=[
+    {id:'luxury',  l:{ru:'Люкс',de:'Luxus',en:'Luxury'}},
+    {id:'family',  l:{ru:'Семейный',de:'Familie',en:'Family'}},
+    {id:'adults',  l:{ru:'Только взрослые',de:'Adults Only',en:'Adults only'}},
+    {id:'golf',    l:{ru:'Гольф',de:'Golf',en:'Golf'}},
+    {id:'beach',   l:{ru:'Пляж',de:'Strand',en:'Beach'}},
+    {id:'wellness',l:{ru:'Велнес',de:'Wellness',en:'Wellness'}},
+    {id:'boutique',l:{ru:'Бутик',de:'Boutique',en:'Boutique'}},
+    {id:'city',    l:{ru:'Город',de:'Stadt',en:'City'}},
+    {id:'allin',   l:{ru:'Всё включено',de:'All Inclusive',en:'All inclusive'}},
+  ];
+  const AMEN=[
+    {id:'privbeach',l:{ru:'Свой пляж',de:'Privatstrand',en:'Private beach'}},
+    {id:'pool',     l:{ru:'Бассейн',de:'Pool',en:'Pool'}},
+    {id:'spa',      l:{ru:'Спа',de:'Spa',en:'Spa'}},
+    {id:'kids',     l:{ru:'Детский клуб',de:'Kinderclub',en:'Kids club'}},
+    {id:'golf',     l:{ru:'Гольф',de:'Golf',en:'Golf'}},
+    {id:'seaview',  l:{ru:'Вид на море',de:'Meerblick',en:'Sea view'}},
+    {id:'transfer', l:{ru:'Трансфер',de:'Transfer',en:'Transfer'}},
+    {id:'rest',     l:{ru:'Рестораны',de:'Restaurant',en:'Restaurant'}},
+    {id:'fitness',  l:{ru:'Фитнес',de:'Fitness',en:'Fitness'}},
+    {id:'aqua',     l:{ru:'Аквапарк',de:'Aquapark',en:'Aquapark'}},
+  ];
+  const BOARDS=[
+    {id:'bb', l:{ru:'Завтрак',de:'Frühstück',en:'Breakfast'}},
+    {id:'hb', l:{ru:'Полупансион',de:'Halbpension',en:'Half board'}},
+    {id:'ai', l:{ru:'Всё включено',de:'All Inclusive',en:'All inclusive'}},
+    {id:'uai',l:{ru:'Ультра всё включено',de:'Ultra All Inclusive',en:'Ultra all inclusive'}},
+  ];
+  const label=(arr,id)=>{const x=arr.find(a=>a.id===id);return x?(x.l[LANG]||x.l.en):id;};
+
+  const ROOMSETS={
+    resort:[
+      {id:'dlx-sea',  n:{ru:'Делюкс с видом на море',de:'Deluxe Sea View',en:'Deluxe Sea View'}, sz:45, ad:2, bed:{ru:'1 кровать King',de:'1 Kingsize-Bett',en:'1 king bed'}, f:['bb','balcony','seaview']},
+      {id:'fam-suite',n:{ru:'Семейный люкс',de:'Family Suite',en:'Family Suite'}, sz:75, ad:4, bed:{ru:'2 спальни',de:'2 Schlafzimmer',en:'2 bedrooms'}, f:['bb','balcony','kids']},
+      {id:'swim-up',  n:{ru:'Свим-ап номер',de:'Swim-up Zimmer',en:'Swim-up Room'}, sz:52, ad:2, bed:{ru:'1 кровать King',de:'1 Kingsize-Bett',en:'1 king bed'}, f:['pool','terrace']},
+    ],
+    villa:[
+      {id:'gard-villa',n:{ru:'Вилла с садом',de:'Garden Villa',en:'Garden Villa'}, sz:110, ad:4, bed:{ru:'2 спальни',de:'2 Schlafzimmer',en:'2 bedrooms'}, f:['pool','terrace','bb']},
+      {id:'sea-villa', n:{ru:'Вилла с видом на море',de:'Sea View Villa',en:'Sea View Villa'}, sz:140, ad:6, bed:{ru:'3 спальни',de:'3 Schlafzimmer',en:'3 bedrooms'}, f:['pool','seaview','terrace']},
+    ],
+    boutique:[
+      {id:'classic',n:{ru:'Классический номер',de:'Classic Zimmer',en:'Classic Room'}, sz:26, ad:2, bed:{ru:'1 двуспальная',de:'1 Doppelbett',en:'1 double bed'}, f:['bb']},
+      {id:'terrace',n:{ru:'Номер с террасой',de:'Terrassenzimmer',en:'Terrace Room'}, sz:34, ad:2, bed:{ru:'1 кровать King',de:'1 Kingsize-Bett',en:'1 king bed'}, f:['bb','terrace','seaview']},
+    ],
+  };
+  const ROOMFEAT={
+    bb:{ru:'Завтрак',de:'Frühstück',en:'Breakfast'},
+    balcony:{ru:'Балкон',de:'Balkon',en:'Balcony'},
+    seaview:{ru:'Вид на море',de:'Meerblick',en:'Sea view'},
+    kids:{ru:'Детская зона',de:'Kinderbereich',en:'Kids area'},
+    pool:{ru:'Свой бассейн',de:'Eigener Pool',en:'Private pool'},
+    terrace:{ru:'Терраса',de:'Terrasse',en:'Terrace'},
+  };
+
+  const H=(id,name,region,st,rt,rv,ty,am,bd,be,im,rs,de)=>
+    ({id,name,region,stars:st,rating:rt,reviews:rv,types:ty,amen:am,board:bd,beach:be,
+      imgs:im.map(x=>IMG+x),rooms:ROOMSETS[rs],desc:de});
+
+  const PUBLIC_HOTELS=[
+    H('h1','Maxx Royal Kemer Resort','kemer',5,9.6,1847,['luxury','beach','wellness'],['privbeach','pool','spa','seaview','rest','fitness'],'uai',0,['h01.webp','h11.webp','h03.webp'],'resort',
+      {ru:'Роскошный курорт между горами Тавр и Средиземным морем.',de:'Luxuriöses Resort zwischen Taurusgebirge und Mittelmeer.',en:'Luxurious resort between the Taurus mountains and the Mediterranean.'}),
+    H('h2','Rixos Premium Belek','belek',5,9.3,2410,['luxury','family','golf','allin'],['privbeach','pool','spa','kids','golf','aqua','rest'],'uai',150,['h07.webp','h05.webp','h02.webp'],'resort',
+      {ru:'Просторный курорт в сосновом лесу с полями для гольфа.',de:'Weitläufiges Resort im Pinienwald mit Golfplätzen.',en:'Expansive resort in the pine forest with golf courses.'}),
+    H('h3','Çalış Boutique Konyaaltı','konyaalti',4,8.9,612,['boutique','city','beach'],['pool','seaview','rest','transfer'],'bb',200,['h03.webp','h06.webp'],'boutique',
+      {ru:'Небольшой отель у галечного пляжа Коньяалты.',de:'Kleines Haus am Kiesstrand von Konyaaltı.',en:'A small house by the pebble beach of Konyaaltı.'}),
+    H('h4','Lara Barut Collection','lara',5,9.4,3120,['luxury','family','allin','wellness'],['privbeach','pool','spa','kids','aqua','rest','fitness'],'uai',0,['h05.webp','h08.webp','h02.webp'],'resort',
+      {ru:'Курорт на песчаном пляже Лары с большим спа-центром.',de:'Resort am Sandstrand von Lara mit großem Spa.',en:'Resort on the Lara sand beach with a large spa.'}),
+    H('h5','Kaleiçi Marina House','antalya',4,9.1,845,['boutique','city'],['pool','seaview','rest'],'bb',400,['h09.webp','h14.webp'],'boutique',
+      {ru:'Исторический особняк в старом городе у яхтенной гавани.',de:'Historisches Haus in der Altstadt an der Yachthafen-Bucht.',en:'A historic house in the old town by the yacht harbour.'}),
+    H('h6','Side Antique Bay Resort','side',5,9.0,1560,['family','beach','allin'],['privbeach','pool','kids','aqua','rest'],'ai',80,['h13.webp','h12.webp'],'resort',
+      {ru:'Курорт рядом с античным театром Сиде.',de:'Resort in Laufweite zum antiken Theater von Side.',en:'Resort within walking distance of the ancient theatre of Side.'}),
+    H('h7','Alanya Castle View Suites','alanya',4,8.7,930,['boutique','city','beach'],['pool','seaview','rest'],'bb',250,['h10.webp','h04.webp'],'boutique',
+      {ru:'Номера с террасами и видом на крепость Аланьи.',de:'Zimmer mit Terrassen und Blick auf die Burg von Alanya.',en:'Rooms with terraces facing the Alanya castle.'}),
+    H('h8','Regnum Carya Golf & Spa','belek',5,9.5,1980,['luxury','golf','wellness','adults'],['privbeach','pool','spa','golf','rest','fitness'],'uai',300,['h02.webp','h07.webp','h06.webp'],'resort',
+      {ru:'Гольф-курорт высокого класса с большим спа.',de:'Golfresort der Spitzenklasse mit weitläufigem Spa.',en:'Top-tier golf resort with an extensive spa.'}),
+    H('h9','Kemer Pine Bay Villas','kemer',5,9.2,540,['luxury','boutique','adults'],['pool','seaview','spa','rest'],'bb',120,['h11.webp','h01.webp'],'villa',
+      {ru:'Отдельные виллы с бассейнами над бухтой.',de:'Einzelne Villen mit eigenen Pools über der Bucht.',en:'Individual villas with private pools above the bay.'}),
+    H('h10','Konyaaltı Beach Residence','konyaalti',4,8.6,1120,['family','beach','city'],['pool','kids','rest','transfer'],'hb',100,['h06.webp','h03.webp'],'resort',
+      {ru:'Семейный отель напротив пляжа Коньяалты.',de:'Familienhotel gegenüber dem Konyaaltı-Strand.',en:'Family hotel opposite Konyaaltı beach.'}),
+    H('h11','Titanic Deluxe Lara','lara',5,9.1,2760,['family','allin','beach'],['privbeach','pool','kids','aqua','spa','rest'],'uai',0,['h08.webp','h05.webp'],'resort',
+      {ru:'Большой курорт с аквапарком прямо на пляже.',de:'Großes Resort mit Aquapark direkt am Strand.',en:'Large resort with an aquapark right on the beach.'}),
+    H('h12','Side Star Elegance','side',5,8.8,1340,['family','allin','beach'],['privbeach','pool','kids','rest','fitness'],'ai',50,['h12.webp','h13.webp'],'resort',
+      {ru:'Классический курорт «всё включено» у моря.',de:'Klassisches All-Inclusive-Resort am Meer.',en:'A classic all-inclusive resort by the sea.'}),
+    H('h13','Antalya Old Town Suites','antalya',4,8.9,470,['boutique','city'],['rest','seaview'],'bb',600,['h14.webp','h09.webp'],'boutique',
+      {ru:'Тихие сьюты в переулках Калеичи.',de:'Ruhige Suiten in den Gassen von Kaleiçi.',en:'Quiet suites in the lanes of Kaleiçi.'}),
+    H('h14','Belek Golf Lodge','belek',4,8.8,690,['golf','adults','wellness'],['pool','golf','spa','rest'],'hb',900,['h04.webp','h07.webp'],'boutique',
+      {ru:'Небольшой отель для гольфистов среди сосен.',de:'Kleines Haus für Golfer zwischen Pinien.',en:'A small hotel for golfers among the pines.'}),
+    H('h15','Alanya Cleopatra Bay','alanya',4,8.5,1450,['family','beach','allin'],['privbeach','pool','kids','rest'],'ai',30,['h10.webp','h12.webp'],'resort',
+      {ru:'На знаменитом пляже Клеопатры.',de:'Direkt am bekannten Kleopatra-Strand.',en:'Right on the famous Cleopatra beach.'}),
+    H('h16','Kemer Adrasan Retreat','kemer',4,9.0,380,['boutique','wellness','adults'],['pool','seaview','spa'],'bb',150,['h01.webp','h11.webp'],'boutique',
+      {ru:'Уединённый отель в бухте Адрасан.',de:'Zurückgezogenes Haus in der Bucht von Adrasan.',en:'A secluded house in the Adrasan bay.'}),
+    H('h17','Lara Sea Palace','lara',5,9.2,1890,['luxury','allin','wellness'],['privbeach','pool','spa','rest','fitness'],'uai',0,['h02.webp','h08.webp'],'resort',
+      {ru:'Курорт с большими террасами над морем.',de:'Resort mit großen Terrassen über dem Meer.',en:'Resort with wide terraces above the sea.'}),
+    H('h18','Konyaaltı Marina Boutique','konyaalti',4,8.7,520,['boutique','city'],['pool','rest','transfer'],'bb',350,['h09.webp','h06.webp'],'boutique',
+      {ru:'Современный бутик-отель у новой марины.',de:'Modernes Boutiquehotel an der neuen Marina.',en:'A modern boutique hotel by the new marina.'}),
+    H('h19','Side Garden Villas','side',5,9.3,410,['luxury','boutique','adults'],['pool','spa','seaview'],'bb',400,['h13.webp','h04.webp'],'villa',
+      {ru:'Виллы в апельсиновых садах рядом с Сиде.',de:'Villen in Orangengärten bei Side.',en:'Villas in orange groves near Side.'}),
+    H('h20','Antalya Bay Hillside','antalya',5,9.0,760,['luxury','city','wellness'],['pool','spa','seaview','rest'],'bb',500,['h14.webp','h01.webp'],'resort',
+      {ru:'Отель на скале с панорамой залива.',de:'Haus auf der Klippe mit Panorama über die Bucht.',en:'A hotel on the cliff with a panorama of the bay.'}),
+    H('h21','Belek Family Aquapark Resort','belek',5,8.9,2210,['family','allin','beach'],['privbeach','pool','kids','aqua','rest'],'ai',120,['h07.webp','h12.webp'],'resort',
+      {ru:'Курорт с большим аквапарком для семей.',de:'Resort mit großem Aquapark für Familien.',en:'Resort with a large aquapark for families.'}),
+    H('h22','Kemer Olympos Boutique','kemer',4,8.8,340,['boutique','beach'],['pool','seaview','rest'],'bb',80,['h11.webp','h03.webp'],'boutique',
+      {ru:'Рядом с античным Олимпосом и пляжем.',de:'Nahe dem antiken Olympos und dem Strand.',en:'Close to ancient Olympos and the beach.'}),
+    H('h23','Alanya Hillside Villas','alanya',5,9.1,290,['luxury','boutique','adults'],['pool','seaview','spa'],'bb',600,['h10.webp','h01.webp'],'villa',
+      {ru:'Виллы на склоне с видом на бухту.',de:'Villen am Hang mit Blick über die Bucht.',en:'Hillside villas overlooking the bay.'}),
+    H('h24','Lara Wellness Sanctuary','lara',5,9.4,880,['wellness','adults','luxury'],['pool','spa','seaview','fitness','rest'],'hb',200,['h08.webp','h02.webp'],'resort',
+      {ru:'Спа-отель только для взрослых.',de:'Spa-Haus ausschließlich für Erwachsene.',en:'An adults-only spa retreat.'}),
+  ];
+
+  /* ====================================================================
+     3 · State
+     ==================================================================== */
+  const KEY='onlyone.state.v1';
+  const DEF={lang:'ru',favorites:[],requests:[],seq:127,staff:null,
+             search:{from:'',to:'',adults:2,children:0}};
+  let S=load();
+  function load(){
+    try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&typeof r==='object')return Object.assign({},DEF,r);}catch(e){}
+    return JSON.parse(JSON.stringify(DEF));
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+  LANG=S.lang||'ru';
+
+  const FLOW=['new','review','offer','accepted','payopen','paid','confirmed'];
+  const STATUS_LABEL={new:'stNew',review:'stCheck',offer:'stOffer',accepted:'stAccepted',payopen:'stPay',paid:'stPaid',confirmed:'stConfirmed'};
+  const STATUS_PILL={new:'pill--new',review:'pill--work',offer:'pill--offer',accepted:'pill--ok',payopen:'pill--pay',paid:'pill--done',confirmed:'pill--done'};
+
+  /* ====================================================================
+     4 · Utilities
+     ==================================================================== */
+  const $=(s,r)=>(r||document).querySelector(s);
+  const $$=(s,r)=>Array.prototype.slice.call((r||document).querySelectorAll(s));
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const hotel=id=>PUBLIC_HOTELS.find(h=>h.id===id);
+  const request=id=>S.requests.find(r=>r.id===id);
+  const stars=n=>'★'.repeat(n);
+  const rateWord=r=>r>=9.3?t('exceptional'):r>=8.8?t('wonderful'):t('veryGood');
+  const fmtNum=n=>String(n).replace('.',LANG==='en'?'.':',');
+  function fmtDate(s){
+    if(!s)return '—';
+    const d=new Date(s+'T00:00:00');
+    if(isNaN(d))return s;
+    const dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0');
+    return LANG==='en'?`${dd}/${mm}/${d.getFullYear()}`:`${dd}.${mm}.${d.getFullYear()}`;
+  }
+  function nights(a,b){if(!a||!b)return 0;const d=(new Date(b)-new Date(a))/86400000;return d>0?Math.round(d):0;}
+  function today(o){const d=new Date();d.setDate(d.getDate()+(o||0));return d.toISOString().slice(0,10);}
+  function money(v,c){
+    const n=Number(v)||0;
+    const loc=LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB';
+    return `${n.toLocaleString(loc,{minimumFractionDigits:0,maximumFractionDigits:2})} ${c||'EUR'}`;
+  }
+  let toastTimer;
+  function toast(msg){
+    const el=$('#toast');if(!el)return;
+    el.textContent=msg;el.classList.add('is-in');
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('is-in'),2100);
+  }
+  const ICONS={
+    heart:'<path d="M12 20s-7-4.6-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.4 12 20 12 20z"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    home:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M9.5 20v-5.5h5V20"/>',
+    search:'<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>',
+    map:'<path d="m3 6.5 6-2.5 6 2.5 6-2.5v13l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v14M15 6.5v14"/>',
+    trip:'<path d="M6.5 3.8h11v16.4l-5.5-3.2-5.5 3.2z"/>',
+    back:'<path d="m14.5 5-6.5 7 6.5 7"/>',
+    chev:'<path d="m9.5 5 6.5 7-6.5 7"/>',
+    check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    pin:'<path d="M12 21s6.5-5.6 6.5-10.2A6.5 6.5 0 0 0 5.5 10.8C5.5 15.4 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.3"/>',
+    cal:'<rect x="3.8" y="5.2" width="16.4" height="15" rx="2.4"/><path d="M3.8 9.8h16.4M8.5 3.5v3.4M15.5 3.5v3.4"/>',
+    users:'<circle cx="9" cy="8.4" r="3.3"/><path d="M3.4 19.4a5.6 5.6 0 0 1 11.2 0"/><path d="M16.5 6.2a3.2 3.2 0 0 1 0 6"/><path d="M17.8 14.2a5.6 5.6 0 0 1 3 5.2"/>',
+    filter:'<path d="M4 6.5h16M7 12h10M10 17.5h4"/>',
+    close:'<path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/>',
+    plus:'<path d="M12 6v12M6 12h12"/>',
+    minus:'<path d="M6 12h12"/>',
+    share:'<circle cx="17.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="m8.8 10.8 6.4-3.1M8.8 13.2l6.4 3.1"/>',
+    grid:'<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>',
+    inbox:'<path d="M4 13.5 6 5h12l2 8.5V19H4z"/><path d="M4 13.5h4l1 2.5h6l1-2.5h4"/>',
+    book:'<path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5h14"/>',
+    user:'<circle cx="12" cy="8.2" r="3.6"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/>',
+    dots:'<circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/>',
+    card:'<rect x="3.5" y="6" width="17" height="12" rx="2.5"/><path d="M3.5 10h17"/>',
+    phone:'<path d="M5.2 4.8h3.1l1.6 3.9-2 1.3a11.4 11.4 0 0 0 5.1 5.1l1.3-2 3.9 1.6v3.1a1.6 1.6 0 0 1-1.8 1.6A15.4 15.4 0 0 1 3.6 6.6a1.6 1.6 0 0 1 1.6-1.8z"/>',
+    lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V7.8a3.6 3.6 0 0 1 7.2 0v2.7"/>',
+    play:'<path d="m8 5.5 11 6.5-11 6.5z"/>',
+    globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
+  };
+  const icon=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
+
+  /* ====================================================================
+     5 · Bottom sheet
+     ==================================================================== */
+  function openSheet(html){
+    $('#sheetInner').innerHTML=html;
+    const w=$('#sheetWrap');
+    w.classList.add('is-open');
+    requestAnimationFrame(()=>w.classList.add('is-in'));
+  }
+  function closeSheet(){
+    const w=$('#sheetWrap');
+    w.classList.remove('is-in');
+    setTimeout(()=>{w.classList.remove('is-open');$('#sheetInner').innerHTML='';},320);
+  }
+
+  /* ====================================================================
+     6 · Router
+     ==================================================================== */
+  let VIEW={name:'home',param:null};
+  const STACK=[];
+  function go(name,param,noPush){
+    if(!noPush&&VIEW.name)STACK.push({name:VIEW.name,param:VIEW.param});
+    VIEW={name,param:param==null?null:param};
+    render();
+  }
+  function back(){
+    const p=STACK.pop();
+    VIEW=p||{name:'home',param:null};
+    render();
+  }
+
+  /* ====================================================================
+     7 · Shared fragments
+     ==================================================================== */
+  function appbar(o){
+    o=o||{};
+    return `<header class="appbar${o.over?' appbar--over':''}">
+      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:
+        `<span class="appbar__mark"></span>`}
+      <div class="appbar__brand">${o.title?
+        `<span class="appbar__name" style="letter-spacing:.02em;font-size:15px">${esc(o.title)}</span>`:
+        `<span class="appbar__name">ONLYONE<small>LUXURY TRAVEL</small></span>`}</div>
+      ${o.fav?`<button class="iconBtn${isFav(o.fav)?' is-fav':''}" data-act="fav" data-id="${o.fav}">${icon('heart')}</button>`:''}
+      ${o.menu===false?'':`<button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button>`}
+    </header>`;
+  }
+  function tabbar(active){
+    const items=[['home','home','navHome'],['search','search','navSearch'],['map','map','navMap'],['favorites','heart','navFav'],['trips','trip','navTrips']];
+    const open=S.requests.filter(r=>r.status==='offer'||r.status==='payopen').length;
+    return `<nav class="tabbar">${items.map(([v,ic,k])=>
+      `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v==='trips'&&open?'<i class="tab__dot"></i>':''}</button>`).join('')}</nav>`;
+  }
+  function staffTabbar(active){
+    const items=[['s-dash','grid','dashboard'],['s-req','inbox','requests'],['s-book','book','bookings'],['s-cust','user','customers'],['s-more','dots','more']];
+    const nw=S.requests.filter(r=>r.status==='new').length;
+    return `<nav class="tabbar tabbar--staff">${items.map(([v,ic,k])=>
+      `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v==='s-req'&&nw?'<i class="tab__dot"></i>':''}</button>`).join('')}</nav>`;
+  }
+  const isFav=id=>S.favorites.indexOf(id)>-1;
+
+  function hotelCard(h){
+    return `<article class="card fade-up" data-hotel="${h.id}">
+      <div class="card__media">
+        <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="lazy" decoding="async">
+        <button class="card__fav${isFav(h.id)?' is-on':''}" data-act="fav" data-id="${h.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
+      </div>
+      <div class="card__body">
+        <div class="stars">${stars(h.stars)}</div>
+        <h3 class="card__name">${esc(h.name)}</h3>
+        <div class="card__loc">${esc(regionName(h.region))}${h.beach===0?' · '+t('onBeach'):''}</div>
+        <div class="rateRow">
+          <span class="rateBadge">${fmtNum(h.rating)}</span>
+          <span><span class="rateTxt">${rateWord(h.rating)}</span><br>
+          <span class="rateCnt">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span></span>
+        </div>
+        <div class="badges">
+          ${h.amen.slice(0,3).map(a=>`<span class="badge">${esc(label(AMEN,a))}</span>`).join('')}
+          <span class="badge badge--gold">${esc(label(BOARDS,h.board))}</span>
+        </div>
+        <p class="card__desc">${esc(h.desc[LANG]||h.desc.en)}</p>
+        <div class="card__foot"><button class="btn btn--ghost btn--sm" style="flex:1 1 auto" data-hotel="${h.id}">${t('viewHotel')}</button></div>
+      </div>
+    </article>`;
+  }
+
+  /* ====================================================================
+     8 · Guest views
+     ==================================================================== */
+  function vHome(){
+    const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
+    return `${appbar({over:true})}
+    <section class="pHero">
+      <video id="marinaVideo" class="pHero__img" muted loop playsinline webkit-playsinline
+             preload="none" poster="./images/onlyone-marina-poster.webp"
+             disablepictureinpicture disableremoteplayback aria-hidden="true">
+        <source src="./video/onlyone-marina-v1.mp4" type="video/mp4">
+      </video>
+      <div class="pHero__scrim"></div>
+      <div class="pHero__body">
+        <div class="eyebrow" style="color:var(--gold-light)">${t('heroEyebrow')}</div>
+        <h1 class="pHero__title" style="margin-top:12px">${t('heroTitle')}</h1>
+        <p class="pHero__sub">${t('heroSub')}</p>
+        <div class="pHero__glass">
+          <ul class="trust">
+            <li>${icon('check')}${t('trust1')}</li>
+            <li>${icon('check')}${t('trust2')}</li>
+            <li>${icon('check')}${t('trust3')}</li>
+          </ul>
+        </div>
+        <div style="margin-top:14px"><button class="btn btn--primary" data-go="search">${t('discover')}</button></div>
+      </div>
+    </section>
+    <div class="wrap">
+      <div class="section">
+        <div class="section__head"><h2 class="h-lg">${t('regions')}</h2></div>
+        <div class="rail">
+          ${REGIONS.map(r=>`<button class="regionCard" data-region="${r.id}">
+            <img src="${r.img}" alt="${esc(r.name[LANG]||r.name.en)}" loading="lazy">
+            <span class="regionCard__ov"></span>
+            <span class="regionCard__txt"><b>${esc(r.name[LANG]||r.name.en)}</b>
+            <span>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length} ${t('hotels')}</span></span>
+          </button>`).join('')}
+        </div>
+      </div>
+      <div class="section">
+        <div class="section__head"><h2 class="h-lg">${t('recommended')}</h2>
+          <button class="tiny muted" data-go="search" style="font-weight:600">${t('all')}</button></div>
+        <div style="display:flex;flex-direction:column;gap:15px">${top.map(hotelCard).join('')}</div>
+      </div>
+    </div>
+    <div class="pageBottom"></div>
+    ${tabbar('home')}`;
+  }
+
+  let FILTER={region:null,stars:[],types:[],amen:[],rating:0,board:[],beach:null};
+  function filtered(){
+    return PUBLIC_HOTELS.filter(h=>{
+      if(FILTER.region&&h.region!==FILTER.region)return false;
+      if(FILTER.stars.length&&FILTER.stars.indexOf(h.stars)<0)return false;
+      if(FILTER.types.length&&!FILTER.types.every(x=>h.types.indexOf(x)>-1))return false;
+      if(FILTER.amen.length&&!FILTER.amen.every(x=>h.amen.indexOf(x)>-1))return false;
+      if(FILTER.board.length&&FILTER.board.indexOf(h.board)<0)return false;
+      if(FILTER.rating&&h.rating<FILTER.rating)return false;
+      if(FILTER.beach!=null&&h.beach>FILTER.beach)return false;
+      return true;
+    }).sort((a,b)=>b.rating-a.rating);
+  }
+  const activeFilters=()=>FILTER.stars.length+FILTER.types.length+FILTER.amen.length+FILTER.board.length+(FILTER.rating?1:0)+(FILTER.beach!=null?1:0);
+
+  function vSearch(){
+    const list=filtered(),s=S.search;
+    const gl=`${s.adults} ${t('adultsShort')}${s.children?` · ${s.children} ${t('childrenShort')}`:''}`;
+    const dl=(s.from&&s.to)?`${fmtDate(s.from)} – ${fmtDate(s.to)}`:t('datesPh');
+    const n=activeFilters();
+    return `${appbar({})}
+    <div class="wrap" style="padding-top:16px">
+      <div class="searchCard">
+        <button class="searchRow" data-act="pick-region">${icon('pin')}
+          <span class="searchRow__l"><span class="searchRow__k">${t('where')}</span>
+          <span class="searchRow__v">${FILTER.region?esc(regionName(FILTER.region)):t('wherePh')}</span></span>${icon('chev')}</button>
+        <button class="searchRow" data-act="pick-dates">${icon('cal')}
+          <span class="searchRow__l"><span class="searchRow__k">${t('dates')}</span>
+          <span class="searchRow__v">${esc(dl)}</span></span>${icon('chev')}</button>
+        <button class="searchRow" data-act="pick-guests">${icon('users')}
+          <span class="searchRow__l"><span class="searchRow__k">${t('guests')}</span>
+          <span class="searchRow__v">${esc(gl)}</span></span>${icon('chev')}</button>
+      </div>
+      <div style="margin-top:12px"><button class="btn btn--primary" data-act="do-search">${icon('search')}${t('searchBtn')}</button></div>
+
+      <div class="section" style="margin-top:20px">
+        <div class="chips">
+          <button class="chip${!FILTER.region?' is-on':''}" data-fregion="">${t('allRegions')}</button>
+          ${REGIONS.map(r=>`<button class="chip${FILTER.region===r.id?' is-on':''}" data-fregion="${r.id}">${esc(r.name[LANG]||r.name.en)}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="section__head" style="margin-top:18px">
+        <div><b>${list.length}</b> <span class="muted tiny">${t('results')}</span></div>
+        <button class="btn btn--ghost btn--sm" data-act="filters">${icon('filter')}${t('filters')}${n?` · ${n}`:''}</button>
+      </div>
+      ${list.length?`<div style="display:flex;flex-direction:column;gap:15px">${list.map(hotelCard).join('')}</div>`:
+        `<div class="empty">${icon('search')}<b>${t('noResults')}</b><p>${t('tryReset')}</p></div>`}
+    </div>
+    <div class="pageBottom"></div>
+    ${tabbar('search')}`;
+  }
+
+  function vHotel(id){
+    const h=hotel(id);if(!h)return vHome();
+    return `<div class="gal">
+      <div class="gal__bar">
+        <button class="iconBtn" data-act="back">${icon('back')}</button>
+        <div style="display:flex;gap:8px">
+          <button class="iconBtn${isFav(h.id)?' is-fav':''}" data-act="fav" data-id="${h.id}">${icon('heart')}</button>
+          <button class="iconBtn" data-act="share">${icon('share')}</button>
+        </div>
+      </div>
+      <div class="gal__track" id="galTrack">${h.imgs.map(s=>`<img src="${s}" alt="${esc(h.name)}">`).join('')}</div>
+      <div class="gal__dots" id="galDots">${h.imgs.map((_,i)=>`<i class="${i===0?'is-on':''}"></i>`).join('')}</div>
+    </div>
+    <div class="wrap" style="padding-top:16px">
+      <div class="stars">${stars(h.stars)}</div>
+      <h1 class="h-xl" style="margin-top:6px;font-family:var(--serif);font-weight:400">${esc(h.name)}</h1>
+      <div class="card__loc" style="font-size:13px">${esc(regionName(h.region))} · Antalya</div>
+      <div class="rateRow">
+        <span class="rateBadge" style="font-size:15px;padding:7px 11px">${fmtNum(h.rating)}</span>
+        <span><span class="rateTxt">${rateWord(h.rating)}</span><br>
+        <span class="rateCnt">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span></span>
+      </div>
+      <div class="badges" style="margin-top:13px">${h.types.map(x=>`<span class="badge">${esc(label(TYPES,x))}</span>`).join('')}</div>
+    </div>
+
+    <section class="detailSec"><h3 class="h-md">${t('description')}</h3>
+      <p class="muted" style="font-size:13.5px;line-height:1.6;margin:9px 0 0">${esc(h.desc[LANG]||h.desc.en)}</p></section>
+
+    <section class="detailSec"><h3 class="h-md" style="margin-bottom:13px">${t('amenities')}</h3>
+      <div class="amen">${h.amen.map(a=>`<div>${icon('check')}<span>${esc(label(AMEN,a))}</span></div>`).join('')}</div>
+      <div class="kv" style="margin-top:16px"><span class="muted">${t('board')}</span><b>${esc(label(BOARDS,h.board))}</b></div>
+      <div class="kv"><span class="muted">${t('beachDist')}</span><b>${h.beach===0?t('onBeach'):h.beach+' m'}</b></div>
+    </section>
+
+    <section class="detailSec"><h3 class="h-md">${t('rooms')}</h3>
+      ${h.rooms.map(r=>`<div class="roomCard">
+        <h4>${esc(r.n[LANG]||r.n.en)}</h4>
+        <div class="muted tiny" style="margin-top:5px">${r.ad} ${t('persons')} · ${esc(r.bed[LANG]||r.bed.en)} · ${r.sz} ${t('sqm')}</div>
+        <div class="amen" style="margin-top:11px">${r.f.map(f=>`<div>${icon('check')}<span>${esc((ROOMFEAT[f]||{})[LANG]||f)}</span></div>`).join('')}</div>
+        <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:13px" data-act="req" data-id="${h.id}" data-room="${r.id}">${t('requestRoom')}</button>
+      </div>`).join('')}
+    </section>
+
+    <section class="detailSec"><h3 class="h-md">${t('location')}</h3>
+      <div class="muted" style="font-size:13.5px;margin-top:8px">${esc(regionName(h.region))} · ${t('beachDist')}: ${h.beach===0?'0':h.beach} m</div>
+      <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:12px" data-go="map">${icon('map')}${t('map')}</button>
+    </section>
+
+    <section class="detailSec"><h3 class="h-md">${t('policies')}</h3>
+      <div class="kv" style="margin-top:8px"><span class="muted">Check-in</span><b>14:00</b></div>
+      <div class="kv"><span class="muted">Check-out</span><b>12:00</b></div>
+      <div class="kv"><span class="muted">${t('freeCancel')}</span><b>${t('onRequest')}</b></div>
+    </section>
+    <div class="pageBottom--cta"></div>
+
+    <div class="stickyCta">
+      <div class="stickyCta__t"><b>${t('interested')}</b><span>${t('nonBinding')}</span></div>
+      <button class="btn btn--primary" data-act="req" data-id="${h.id}">${t('requestOffer')}</button>
+    </div>`;
+  }
+
+  /* --- request wizard --- */
+  let W=null;
+  const WISHKEYS=[['sea','wSea'],['quiet','wQuiet'],['transfer','wTransfer'],['cot','wCot'],['honey','wHoney'],['bday','wBirthday'],['access','wAccess']];
+  function startRequest(hotelId,roomId){
+    W={step:1,hotelId,roomId:roomId||'',from:S.search.from||today(14),to:S.search.to||today(21),
+       adults:S.search.adults||2,children:S.search.children||0,childAges:[],wishes:[],note:'',
+       first:'',last:'',phone:'',email:'',wa:''};
+    go('wizard');
+  }
+  function vWizard(){
+    if(!W)return vHome();
+    const h=hotel(W.hotelId);
+    const titles=['s1','s2','s3','s4','s5','s6'];
+    let body='';
+    if(W.step===1){
+      body=`<div class="field"><label class="label">${t('arrival')}</label>
+        <input class="input" type="date" id="wFrom" value="${W.from}" min="${today()}"></div>
+        <div class="field"><label class="label">${t('departure')}</label>
+        <input class="input" type="date" id="wTo" value="${W.to}" min="${today(1)}"></div>
+        <div class="muted tiny" style="margin-top:12px">${nights(W.from,W.to)} ${t('nights')}</div>`;
+    }else if(W.step===2){
+      body=`<div class="stepper"><span>${t('adults')}</span><div class="stepper__c">
+          <button class="rnd" data-w="ad-"${W.adults<=1?' disabled':''}>${icon('minus')}</button>
+          <span class="stepper__n">${W.adults}</span>
+          <button class="rnd" data-w="ad+">${icon('plus')}</button></div></div>
+        <div class="stepper" style="border-top:1px solid var(--line)"><span>${t('children')}</span><div class="stepper__c">
+          <button class="rnd" data-w="ch-"${W.children<=0?' disabled':''}>${icon('minus')}</button>
+          <span class="stepper__n">${W.children}</span>
+          <button class="rnd" data-w="ch+">${icon('plus')}</button></div></div>
+        ${W.children?`<div class="field"><label class="label">${t('childAge')}</label>
+          <div class="grid2">${Array.from({length:W.children},(_,i)=>
+            `<select class="input" data-age="${i}">${Array.from({length:18},(_,a)=>
+              `<option value="${a}"${(W.childAges[i]||6)===a?' selected':''}>${a} ${t('yrs')}</option>`).join('')}</select>`).join('')}</div></div>`:''}`;
+    }else if(W.step===3){
+      body=`<div class="field"><label class="label">${t('roomWish')}</label>
+        ${h.rooms.map(r=>`<button class="check${W.roomId===r.id?' is-on':''}" data-wroom="${r.id}">
+          <span class="check__box">${icon('check')}</span>
+          <span><b style="font-weight:600">${esc(r.n[LANG]||r.n.en)}</b><br>
+          <span class="muted tiny">${r.ad} ${t('persons')} · ${r.sz} ${t('sqm')}</span></span></button>`).join('')}
+        <button class="check${W.roomId===''?' is-on':''}" data-wroom="">
+          <span class="check__box">${icon('check')}</span><span>${t('notSure')}</span></button></div>`;
+    }else if(W.step===4){
+      body=`<div class="field"><label class="label">${t('s4')}</label>
+        ${WISHKEYS.map(([k,tk])=>`<button class="check${W.wishes.indexOf(k)>-1?' is-on':''}" data-wish="${k}">
+          <span class="check__box">${icon('check')}</span><span>${t(tk)}</span></button>`).join('')}</div>
+        <div class="field"><label class="label">${t('otherWishes')}</label>
+        <textarea class="input" id="wNote">${esc(W.note)}</textarea></div>`;
+    }else if(W.step===5){
+      body=`<div class="grid2">
+          <div class="field" style="margin-top:0"><label class="label">${t('firstName')} *</label><input class="input" id="wFirst" value="${esc(W.first)}"></div>
+          <div class="field" style="margin-top:0"><label class="label">${t('lastName')} *</label><input class="input" id="wLast" value="${esc(W.last)}"></div></div>
+        <div class="field"><label class="label">${t('phone')} *</label><input class="input" id="wPhone" type="tel" value="${esc(W.phone)}" placeholder="+90 ..."></div>
+        <div class="field"><label class="label">${t('email')} *</label><input class="input" id="wEmail" type="email" value="${esc(W.email)}" placeholder="mail@..."></div>
+        <div class="field"><label class="label">${t('whatsapp')}</label><input class="input" id="wWa" type="tel" value="${esc(W.wa)}"></div>`;
+    }else{
+      const room=W.roomId?h.rooms.find(r=>r.id===W.roomId):null;
+      body=`<div class="listCard" style="margin-top:4px">
+        <div class="kv"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
+        <div class="kv"><span class="muted">${t('regions')}</span><b>${esc(regionName(h.region))}</b></div>
+        <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(W.from)} – ${fmtDate(W.to)}<br>
+          <span class="muted tiny">${nights(W.from,W.to)} ${t('nights')}</span></b></div>
+        <div class="kv"><span class="muted">${t('guests')}</span><b>${W.adults} ${t('adultsShort')}${W.children?` · ${W.children} ${t('childrenShort')}`:''}</b></div>
+        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+        ${W.wishes.length?`<div class="kv"><span class="muted">${t('custWishes')}</span><b>${W.wishes.map(k=>t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])).join('<br>')}</b></div>`:''}
+        ${W.note?`<div class="kv"><span class="muted">${t('otherWishes')}</span><b>${esc(W.note)}</b></div>`:''}
+        <div class="kv"><span class="muted">${t('email')}</span><b>${esc(W.email)}</b></div>
+      </div>
+      <div class="noteBox">${t('noPricesNote')}</div>`;
+    }
+    return `${appbar({back:true,title:t(titles[W.step-1]),menu:false})}
+    <div class="wrap" style="padding-top:8px">
+      <div class="steps">${[1,2,3,4,5,6].map(i=>`<i class="${i<=W.step?'is-on':''}"></i>`).join('')}</div>
+      <div class="muted tiny">${t('step')} ${W.step} ${t('of')} 6 · ${esc(h.name)}</div>
+      <div style="margin-top:6px">${body}</div>
+    </div>
+    <div class="pageBottom--cta"></div>
+    <div class="stickyCta">
+      ${W.step>1?`<button class="btn btn--ghost" style="flex:0 0 auto;width:auto;padding:0 20px" data-w="prev">${t('back')}</button>`:''}
+      <button class="btn btn--primary" style="flex:1 1 auto" data-w="${W.step===6?'send':'next'}">${W.step===6?t('sendRequest'):t('next')}</button>
+    </div>`;
+  }
+  function wizardCollect(){
+    if(!W)return;
+    const g=id=>{const e=$(id);return e?e.value.trim():'';};
+    if(W.step===1){const a=$('#wFrom'),b=$('#wTo');if(a)W.from=a.value;if(b)W.to=b.value;}
+    if(W.step===2){$$('[data-age]').forEach(s=>{W.childAges[+s.dataset.age]=+s.value;});}
+    if(W.step===4){const n=$('#wNote');if(n)W.note=n.value;}
+    if(W.step===5){W.first=g('#wFirst');W.last=g('#wLast');W.phone=g('#wPhone');W.email=g('#wEmail');W.wa=g('#wWa');}
+  }
+  function submitRequest(){
+    S.seq+=1;
+    const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
+    S.requests.unshift({
+      id:'r'+Date.now(),code,hotelId:W.hotelId,roomId:W.roomId,
+      from:W.from,to:W.to,adults:W.adults,children:W.children,childAges:W.childAges.slice(0,W.children),
+      wishes:W.wishes.slice(),note:W.note,
+      contact:{first:W.first,last:W.last,phone:W.phone,email:W.email,wa:W.wa},
+      status:'new',createdAt:Date.now(),offer:null,payment:null,staffNote:'',
+      history:[{s:'new',at:Date.now()}]
+    });
+    save();
+    const id=S.requests[0].id;
+    W=null;
+    STACK.length=0;
+    go('sent',id,true);
+  }
+  function setStatus(r,s){
+    if(r.status===s)return;
+    r.status=s;r.history.push({s,at:Date.now()});save();
+  }
+  function statusTimeline(r){
+    const i=FLOW.indexOf(r.status);
+    return `<div class="timeline">${FLOW.map((s,n)=>{
+      const done=n<i,now=n===i;
+      const h=r.history.filter(x=>x.s===s).pop();
+      return `<div class="tl ${done?'is-done':now?'is-now':'is-pending'}">
+        <span class="tl__dot"></span>
+        <div><div class="tl__t">${t(STATUS_LABEL[s])}</div>
+        ${h?`<div class="tl__d">${new Date(h.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB')}</div>`:''}</div></div>`;
+    }).join('')}</div>`;
+  }
+
+  function vSent(id){
+    const r=request(id);if(!r)return vHome();
+    const h=hotel(r.hotelId);
+    return `<div class="wrap" style="padding-top:calc(var(--sat) + 40px);text-align:center">
+      <div class="pop" style="width:76px;height:76px;border-radius:50%;margin:0 auto;background:linear-gradient(135deg,var(--turq),var(--turq-600));display:grid;place-items:center;color:#fff;box-shadow:0 12px 30px rgba(18,145,159,.34)">
+        <svg viewBox="0 0 24 24" style="width:34px;height:34px;stroke-width:2.4"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+      <h1 class="h-xl" style="margin-top:20px;font-family:var(--serif);font-weight:400">${t('reqSent')}</h1>
+      <p class="muted" style="font-size:13.5px;margin-top:10px">${t('reqTeamText')}</p>
+      <div class="listCard" style="margin-top:20px;text-align:left">
+        <div class="muted mini" style="letter-spacing:.14em;text-transform:uppercase">${t('reqNo')}</div>
+        <div style="font-size:22px;font-weight:700;margin-top:5px">${r.code}</div>
+        <div class="kv" style="margin-top:12px"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
+        <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(r.from)} – ${fmtDate(r.to)}</b></div>
+      </div>
+      <div class="listCard" style="text-align:left">${statusTimeline(r)}</div>
+      <div style="margin-top:14px"><button class="btn btn--primary" data-go="trips">${t('myTrips')}</button></div>
+    </div>
+    <div class="pageBottom"></div>${tabbar('trips')}`;
+  }
+
+  function vTrips(){
+    return `${appbar({})}
+    <div class="wrap" style="padding-top:18px">
+      <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myTrips')}</h1>
+      ${S.requests.length?S.requests.map(r=>{
+        const h=hotel(r.hotelId);
+        return `<div class="listCard fade-up">
+          <div class="listCard__h">
+            <div style="min-width:0">
+              <b style="font-size:15.5px">${esc(h.name)}</b>
+              <div class="muted tiny" style="margin-top:4px">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}</div>
+              <div class="muted mini" style="margin-top:3px">${r.code}</div>
+            </div>
+            <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn ${(r.status==='offer'||r.status==='payopen')?'btn--primary':'btn--ghost'} btn--sm" style="width:100%" data-trip="${r.id}">
+              ${r.status==='offer'?t('viewOffer'):r.status==='payopen'?t('payNow'):t('details')}</button>
+          </div>
+        </div>`;}).join(''):
+        `<div class="empty">${icon('trip')}<b>${t('noTrips')}</b></div>`}
+    </div>
+    <div class="pageBottom"></div>${tabbar('trips')}`;
+  }
+
+  function vTrip(id){
+    const r=request(id);if(!r)return vTrips();
+    const h=hotel(r.hotelId);
+    const roomId=(r.offer&&r.offer.roomId)||r.roomId;
+    const room=roomId?h.rooms.find(x=>x.id===roomId):null;
+    const showOffer=r.offer&&['offer','accepted','payopen','paid','confirmed'].indexOf(r.status)>-1;
+    return `${appbar({back:true,title:r.code,menu:false})}
+    <div class="wrap" style="padding-top:16px">
+      <div class="card">
+        <div class="card__media" style="aspect-ratio:16/9"><img src="${h.imgs[0]}" alt=""></div>
+        <div class="card__body">
+          <div class="stars">${stars(h.stars)}</div>
+          <h2 class="card__name">${esc(h.name)}</h2>
+          <div class="card__loc">${esc(regionName(h.region))}</div>
+          <div class="kv" style="margin-top:12px"><span class="muted">${t('period')}</span>
+            <b>${fmtDate(r.from)} – ${fmtDate(r.to)}<br><span class="muted tiny">${nights(r.from,r.to)} ${t('nights')}</span></b></div>
+          <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}`:''}</b></div>
+          <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+        </div>
+      </div>
+
+      ${showOffer?`
+      <div class="priceBox fade-up">
+        <div class="lbl">${t('yourOffer')}</div>
+        <div style="margin-top:12px;font-size:14px;opacity:.9">${esc(h.name)}${room?` · ${esc(room.n[LANG]||room.n.en)}`:''}</div>
+        <div style="font-size:12.5px;opacity:.75;margin-top:4px">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${nights(r.from,r.to)} ${t('nights')}</div>
+        <div style="margin-top:16px" class="lbl">${t('total')}</div>
+        <div class="amt">${money(r.offer.price,r.offer.currency)}</div>
+        ${r.offer.validUntil?`<div style="font-size:11.5px;opacity:.72;margin-top:8px">${t('validUntil')} ${fmtDate(r.offer.validUntil)}</div>`:''}
+        ${r.offer.custInfo?`<div style="font-size:12.5px;opacity:.86;margin-top:12px;line-height:1.5">${esc(r.offer.custInfo)}</div>`:''}
+      </div>
+      ${r.status==='offer'?`<div class="btnRow" style="margin-top:12px">
+        <button class="btn btn--ghost" data-act="ask">${t('askBack')}</button>
+        <button class="btn btn--primary" data-act="accept" data-id="${r.id}">${t('acceptOffer')}</button></div>`:''}
+      ${r.status==='payopen'?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
+      ${(r.status==='paid'||r.status==='confirmed')?`<div class="listCard" style="display:flex;align-items:center;gap:11px;background:rgba(40,168,121,.10)">
+        <span style="color:var(--ok);display:grid;place-items:center">${icon('check')}</span>
+        <b style="font-size:14px;color:var(--ok)">${r.status==='confirmed'?t('tripConfirmed'):t('paid')}</b></div>`:''}
+      `:`<div class="noteBox" style="margin-top:14px">${t('reqTeamText')}</div>`}
+
+      <div class="listCard">${statusTimeline(r)}</div>
+    </div>
+    <div class="pageBottom"></div>`;
+  }
+
+  function vFavorites(){
+    const list=S.favorites.map(hotel).filter(Boolean);
+    return `${appbar({})}
+    <div class="wrap" style="padding-top:18px">
+      <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myFav')}</h1>
+      ${list.length?`
+        ${list.length>1?`<button class="btn btn--ghost btn--sm" style="width:100%;margin-top:12px" data-act="compare">${icon('grid')}${t('compare')}</button>`:''}
+        <div style="display:flex;flex-direction:column;gap:15px;margin-top:14px">${list.map(hotelCard).join('')}</div>`:
+        `<div class="empty">${icon('heart')}<b>${t('noFav')}</b></div>`}
+    </div>
+    <div class="pageBottom"></div>${tabbar('favorites')}`;
+  }
+
+  function vMap(){
+    return `${appbar({})}
+    <div class="mapWrap">
+      <svg class="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0B3248"/><stop offset="100%" stop-color="#041B29"/></linearGradient></defs>
+        <rect width="100" height="100" fill="url(#sea)"/>
+        <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11 L100 0 L0 0 Z"
+              fill="#0E3A4E" stroke="rgba(240,215,135,.30)" stroke-width=".5" vector-effect="non-scaling-stroke"/>
+        <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11"
+              fill="none" stroke="rgba(240,215,135,.58)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        ${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${4+i*11} ${74+((i%3)*5)} q 5 -3 10 0" fill="none" stroke="rgba(87,198,212,.20)" stroke-width=".6" vector-effect="non-scaling-stroke"/>`).join('')}
+      </svg>
+      ${REGIONS.map(r=>`<button class="pin" style="left:${r.x}%;top:${r.y}%" data-mregion="${r.id}">
+        <span class="pin__b">${esc(r.name[LANG]||r.name.en)}<b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></span>
+        <span class="pin__n"></span></button>`).join('')}
+    </div>
+    ${tabbar('map')}`;
+  }
+
+  /* ====================================================================
+     9 · Staff views — the only place a price exists
+     ==================================================================== */
+  function vStaffLogin(){
+    return `${appbar({back:true,title:t('staffLogin'),menu:false})}
+    <div class="wrap" style="padding-top:30px">
+      <div style="width:60px;height:60px;border-radius:18px;background:var(--navy);display:grid;place-items:center;color:var(--gold-light)">${icon('lock')}</div>
+      <h1 class="h-xl" style="margin-top:16px;font-family:var(--serif);font-weight:400">${t('staffArea')}</h1>
+      <p class="muted tiny" style="margin-top:8px">${t('loginNote')}</p>
+      <div class="field"><label class="label">${t('yourName')}</label><input class="input" id="stName" value="Ayşe"></div>
+      <div style="margin-top:16px"><button class="btn btn--primary" data-act="do-login">${t('login')}</button></div>
+    </div>`;
+  }
+  function staffReqCard(r){
+    const h=hotel(r.hotelId);
+    return `<div class="listCard fade-up">
+      <div class="listCard__h">
+        <div style="min-width:0">
+          <div class="muted mini">${r.code}</div>
+          <b style="font-size:15px;display:block;margin-top:3px">${esc(r.contact.first||'—')} ${esc(r.contact.last||'')}</b>
+          <div class="muted tiny" style="margin-top:3px">${esc(h.name)}</div>
+          <div class="muted tiny">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}</div>
+        </div>
+        <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:12px" data-sreq="${r.id}">${t('openReq')}</button>
+    </div>`;
+  }
+  function vStaffDash(){
+    const c=s=>S.requests.filter(r=>r.status===s).length;
+    const feed=S.requests.slice(0,6);
+    return `<div class="staffTop">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><div class="mini" style="opacity:.62;letter-spacing:.16em;text-transform:uppercase">${t('staffArea')}</div>
+        <h1 class="h-xl" style="margin-top:5px">${esc(S.staff||'Staff')}</h1></div>
+        <button class="iconBtn" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:#fff" data-act="logout">${icon('close')}</button>
+      </div></div>
+    <div class="wrap" style="padding-top:18px">
+      <div class="muted mini" style="letter-spacing:.14em;text-transform:uppercase">${t('today')}</div>
+      <div class="grid2s" style="margin-top:11px">
+        <div class="statBox"><b>${c('new')}</b><span>${t('newReq')}</span></div>
+        <div class="statBox"><b>${c('offer')}</b><span>${t('openOffers')}</span></div>
+        <div class="statBox"><b>${c('accepted')}</b><span>${t('waitCust')}</span></div>
+        <div class="statBox"><b>${c('payopen')}</b><span>${t('payOpen')}</span></div>
+      </div>
+      <div class="statBox" style="margin-top:11px"><b>${c('paid')+c('confirmed')}</b><span>${t('newBook')}</span></div>
+      <div class="noteBox" style="display:flex;gap:9px;align-items:flex-start">${icon('lock')}<span>${t('staffOnly')}</span></div>
+      <div class="section__head" style="margin-top:22px"><h2 class="h-lg">${t('requests')}</h2>
+        <button class="tiny muted" data-go="s-req" style="font-weight:600">${t('all')}</button></div>
+      ${feed.length?feed.map(staffReqCard).join(''):`<div class="empty">${icon('inbox')}<b>${t('noTrips')}</b></div>`}
+    </div>
+    <div class="pageBottom"></div>${staffTabbar('s-dash')}`;
+  }
+  function vStaffReqs(){
+    return `<div class="staffTop"><h1 class="h-xl">${t('requests')}</h1>
+      <div class="tiny" style="color:rgba(255,255,255,.6);margin-top:4px">${S.requests.length} ${t('total_')}</div></div>
+    <div class="wrap" style="padding-top:14px">
+      ${S.requests.length?S.requests.map(staffReqCard).join(''):`<div class="empty">${icon('inbox')}<b>${t('noTrips')}</b></div>`}
+    </div><div class="pageBottom"></div>${staffTabbar('s-req')}`;
+  }
+  function staffActions(r){
+    if(r.status==='new'||r.status==='review')
+      return `<button class="btn btn--primary" data-act="offer-form" data-id="${r.id}">${t('createOffer')}</button>`;
+    if(r.status==='offer')
+      return `<div class="noteBox" style="margin-top:0">${t('offerSentWait')}</div>`;
+    if(r.status==='accepted')
+      return `<button class="btn btn--primary" data-act="paylink" data-id="${r.id}">${icon('card')}${t('createPayLink')}</button>`;
+    if(r.status==='payopen')
+      return `<div class="listCard" style="margin-top:0">
+        <div style="display:flex;align-items:center;gap:9px;color:var(--ok)">${icon('check')}<b style="font-size:13.5px">${t('payLinkDone')}</b></div>
+        <div class="muted mini" style="margin-top:8px;word-break:break-all">${esc(r.payment.link)}</div>
+        <div class="btnRow" style="margin-top:11px">
+          <button class="btn btn--ghost btn--sm" data-act="copy" data-id="${r.id}">${t('copyLink')}</button>
+          <button class="btn btn--ghost btn--sm" data-act="notify">${t('sendWa')}</button></div></div>`;
+    if(r.status==='paid')
+      return `<button class="btn btn--primary" data-act="confirm-hotel" data-id="${r.id}">${t('confirmHotel')}</button>`;
+    return `<div class="listCard" style="margin-top:0;display:flex;gap:10px;align-items:center;background:rgba(40,168,121,.10)">
+      <span style="color:var(--ok)">${icon('check')}</span><b style="font-size:13.5px;color:var(--ok)">${t('tripConfirmed')}</b></div>`;
+  }
+  function vStaffReq(id){
+    const r=request(id);if(!r)return vStaffReqs();
+    const h=hotel(r.hotelId);
+    const room=r.roomId?h.rooms.find(x=>x.id===r.roomId):null;
+    return `${appbar({back:true,title:r.code,menu:false})}
+    <div class="wrap" style="padding-top:16px">
+      <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
+      <h1 class="h-lg" style="margin-top:12px">${esc(r.contact.first)} ${esc(r.contact.last)}</h1>
+      <div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('guestData')}</div>
+        <div class="kv" style="margin-top:8px"><span class="muted">${t('phone')}</span><b>${esc(r.contact.phone||'—')}</b></div>
+        <div class="kv"><span class="muted">${t('email')}</span><b>${esc(r.contact.email||'—')}</b></div>
+        ${r.contact.wa?`<div class="kv"><span class="muted">WhatsApp</span><b>${esc(r.contact.wa)}</b></div>`:''}
+      </div>
+      <div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotel')}</div>
+        <div class="kv" style="margin-top:8px"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
+        <div class="kv"><span class="muted">${t('regions')}</span><b>${esc(regionName(h.region))}</b></div>
+        <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(r.from)} – ${fmtDate(r.to)}<br>
+          <span class="muted tiny">${nights(r.from,r.to)} ${t('nights')}</span></b></div>
+        <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}${r.childAges.length?' ('+r.childAges.join(', ')+')':''}`:''}</b></div>
+        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+      </div>
+      ${(r.wishes.length||r.note)?`<div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('custWishes')}</div>
+        <div class="badges" style="margin-top:9px">${r.wishes.map(k=>`<span class="badge">${t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])}</span>`).join('')}</div>
+        ${r.note?`<p class="muted tiny" style="margin-top:10px;line-height:1.55">${esc(r.note)}</p>`:''}</div>`:''}
+      <div class="listCard">
+        <label class="label">${t('internalNote')}</label>
+        <textarea class="input" id="sNote" style="min-height:72px">${esc(r.staffNote||'')}</textarea>
+        <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:10px" data-act="save-note" data-id="${r.id}">${t('done')}</button>
+      </div>
+      ${r.offer?`<div class="listCard" style="border:1.5px solid var(--turq)">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('createOffer')}</div>
+        <div class="kv" style="margin-top:8px"><span class="muted">${t('sellPrice')}</span><b>${money(r.offer.price,r.offer.currency)}</b></div>
+        ${r.offer.internalNote?`<div class="kv"><span class="muted">${t('internalNote')}</span><b>${esc(r.offer.internalNote)}</b></div>`:''}
+      </div>`:''}
+      <div style="margin-top:14px">${staffActions(r)}</div>
+      <div class="listCard">${statusTimeline(r)}</div>
+    </div>
+    <div class="pageBottom"></div>`;
+  }
+  function vStaffBookings(){
+    const list=S.requests.filter(r=>['payopen','paid','confirmed'].indexOf(r.status)>-1);
+    return `<div class="staffTop"><h1 class="h-xl">${t('bookings')}</h1>
+      <div class="tiny" style="color:rgba(255,255,255,.6);margin-top:4px">${list.length}</div></div>
+    <div class="wrap" style="padding-top:14px">
+      ${list.length?list.map(staffReqCard).join(''):`<div class="empty">${icon('book')}<b>${t('noTrips')}</b></div>`}
+    </div><div class="pageBottom"></div>${staffTabbar('s-book')}`;
+  }
+  function vStaffCustomers(){
+    const map={};
+    S.requests.forEach(r=>{
+      const k=(r.contact.email||r.contact.phone||r.code).toLowerCase();
+      if(!map[k])map[k]={c:r.contact,reqs:0,books:0,last:null};
+      map[k].reqs++;
+      if(['paid','confirmed'].indexOf(r.status)>-1)map[k].books++;
+      map[k].last=hotel(r.hotelId);
+    });
+    const list=Object.keys(map).map(k=>map[k]);
+    return `<div class="staffTop"><h1 class="h-xl">${t('customers')}</h1>
+      <div class="tiny" style="color:rgba(255,255,255,.6);margin-top:4px">${list.length}</div></div>
+    <div class="wrap" style="padding-top:14px">
+      ${list.length?list.map(x=>`<div class="listCard">
+        <b style="font-size:15.5px">${esc(x.c.first)} ${esc(x.c.last)}</b>
+        <div class="muted tiny" style="margin-top:4px">${esc(x.c.phone||'')}</div>
+        <div class="muted tiny">${esc(x.c.email||'')}</div>
+        <div class="grid3s" style="margin-top:12px">
+          <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:20px">${x.reqs}</b><span>${t('requests')}</span></div>
+          <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:20px">${x.books}</b><span>${t('bookings')}</span></div>
+          <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:20px">${x.last?x.last.stars:'—'}</b><span>${t('category')}</span></div>
+        </div>
+        <div class="badges" style="margin-top:11px">
+          ${x.books?'<span class="badge badge--gold">VIP</span>':''}
+          ${x.c.wa?'<span class="badge badge--soft">WhatsApp</span>':''}
+          ${x.last?`<span class="badge badge--soft">${esc(regionName(x.last.region))}</span>`:''}
+        </div>
+      </div>`).join(''):`<div class="empty">${icon('user')}<b>${t('noTrips')}</b></div>`}
+    </div><div class="pageBottom"></div>${staffTabbar('s-cust')}`;
+  }
+  function vStaffMore(){
+    return `<div class="staffTop"><h1 class="h-xl">${t('more')}</h1></div>
+    <div class="wrap" style="padding-top:14px">
+      <div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotels')}</div>
+        ${REGIONS.map(r=>`<div class="kv"><span>${esc(r.name[LANG]||r.name.en)}</span><b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></div>`).join('')}
+      </div>
+      <div class="noteBox">${t('noInternalPrices')}</div>
+      <div style="margin-top:14px"><button class="btn btn--ghost" data-act="logout">${t('backToCust')}</button></div>
+    </div><div class="pageBottom"></div>${staffTabbar('s-more')}`;
+  }
+
+  /* ====================================================================
+     10 · Render
+     ==================================================================== */
+  function render(){
+    const a=$('#app');if(!a)return;
+    let html='';
+    switch(VIEW.name){
+      case 'home':      html=vHome();break;
+      case 'search':    html=vSearch();break;
+      case 'hotel':     html=vHotel(VIEW.param);break;
+      case 'wizard':    html=vWizard();break;
+      case 'sent':      html=vSent(VIEW.param);break;
+      case 'trips':     html=vTrips();break;
+      case 'trip':      html=vTrip(VIEW.param);break;
+      case 'favorites': html=vFavorites();break;
+      case 'map':       html=vMap();break;
+      case 'staff':     html=vStaffLogin();break;
+      case 's-dash':    html=S.staff?vStaffDash():vStaffLogin();break;
+      case 's-req':     html=S.staff?vStaffReqs():vStaffLogin();break;
+      case 's-reqd':    html=S.staff?vStaffReq(VIEW.param):vStaffLogin();break;
+      case 's-book':    html=S.staff?vStaffBookings():vStaffLogin();break;
+      case 's-cust':    html=S.staff?vStaffCustomers():vStaffLogin();break;
+      case 's-more':    html=S.staff?vStaffMore():vStaffLogin();break;
+      default:          html=vHome();
+    }
+    a.innerHTML=`<div class="view">${html}</div>`;
+    a.scrollTop=0;
+    document.documentElement.lang=LANG;
+    if(VIEW.name==='hotel')bindGallery();
+    if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startMarina)window.ONLYONE.startMarina();
+  }
+  function bindGallery(){
+    const tr=$('#galTrack'),dots=$('#galDots');
+    if(!tr||!dots)return;
+    tr.addEventListener('scroll',()=>{
+      const i=Math.round(tr.scrollLeft/tr.clientWidth);
+      $$('i',dots).forEach((d,n)=>d.classList.toggle('is-on',n===i));
+    },{passive:true});
+  }
+
+  /* ====================================================================
+     11 · Sheets
+     ==================================================================== */
+  function sheetRegion(){
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('selectRegion')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <button class="check${!FILTER.region?' is-on':''}" data-pregion=""><span class="check__box">${icon('check')}</span><span>${t('allRegions')}</span></button>
+      ${REGIONS.map(r=>`<button class="check${FILTER.region===r.id?' is-on':''}" data-pregion="${r.id}">
+        <span class="check__box">${icon('check')}</span><span><b style="font-weight:600">${esc(r.name[LANG]||r.name.en)}</b><br>
+        <span class="muted tiny">${esc(r.tag[LANG]||r.tag.en)} · ${PUBLIC_HOTELS.filter(h=>h.region===r.id).length} ${t('hotels')}</span></span></button>`).join('')}
+    </div>`);
+  }
+  function sheetDates(){
+    const s=S.search;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('dates')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div class="field" style="margin-top:0"><label class="label">${t('arrival')}</label>
+        <input class="input" type="date" id="sdFrom" value="${s.from||today(14)}" min="${today()}"></div>
+      <div class="field"><label class="label">${t('departure')}</label>
+        <input class="input" type="date" id="sdTo" value="${s.to||today(21)}" min="${today(1)}"></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="dates-ok">${t('done')}</button></div>`);
+  }
+  function sheetGuests(){
+    const s=S.search;
+    const body=()=>`<div class="stepper"><span>${t('adults')}</span><div class="stepper__c">
+        <button class="rnd" data-g="ad-"${s.adults<=1?' disabled':''}>${icon('minus')}</button>
+        <span class="stepper__n">${s.adults}</span><button class="rnd" data-g="ad+">${icon('plus')}</button></div></div>
+      <div class="stepper" style="border-top:1px solid var(--line)"><span>${t('children')}</span><div class="stepper__c">
+        <button class="rnd" data-g="ch-"${s.children<=0?' disabled':''}>${icon('minus')}</button>
+        <span class="stepper__n">${s.children}</span><button class="rnd" data-g="ch+">${icon('plus')}</button></div></div>`;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('guests')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body" id="gBody">${body()}</div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="guests-ok">${t('done')}</button></div>`);
+    $('#sheetInner').addEventListener('click',e=>{
+      const b=e.target.closest('[data-g]');if(!b)return;
+      const k=b.dataset.g;
+      if(k==='ad+')s.adults=Math.min(12,s.adults+1);
+      if(k==='ad-')s.adults=Math.max(1,s.adults-1);
+      if(k==='ch+')s.children=Math.min(6,s.children+1);
+      if(k==='ch-')s.children=Math.max(0,s.children-1);
+      save();
+      const gb=$('#gBody');if(gb)gb.innerHTML=body();
+    });
+  }
+  function sheetFilters(){
+    const grp=(title,items,sel,attr)=>`<div class="field"><label class="label">${title}</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${items.map(i=>
+        `<button class="chip${sel.indexOf(i.id)>-1?' is-on':''}" data-${attr}="${i.id}">${esc(i.l[LANG]||i.l.en)}</button>`).join('')}</div></div>`;
+    const body=()=>`
+      <div class="field" style="margin-top:0"><label class="label">${t('category')}</label>
+        <div style="display:flex;gap:8px">
+          <button class="chip${FILTER.stars.indexOf(5)>-1?' is-on':''}" data-fstar="5">★★★★★</button>
+          <button class="chip${FILTER.stars.indexOf(4)>-1?' is-on':''}" data-fstar="4">★★★★</button></div></div>
+      ${grp(t('holidayType'),TYPES,FILTER.types,'ftype')}
+      ${grp(t('amenities'),AMEN,FILTER.amen,'famen')}
+      ${grp(t('board'),BOARDS,FILTER.board,'fboard')}
+      <div class="field"><label class="label">${t('rating')}</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="chip${!FILTER.rating?' is-on':''}" data-frate="0">${t('anyRating')}</button>
+          <button class="chip${FILTER.rating===9?' is-on':''}" data-frate="9">${t('from9')}</button>
+          <button class="chip${FILTER.rating===8.5?' is-on':''}" data-frate="8.5">${t('from85')}</button>
+          <button class="chip${FILTER.rating===8?' is-on':''}" data-frate="8">${t('from8')}</button></div></div>
+      <div class="field"><label class="label">${t('beachDist')}</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="chip${FILTER.beach==null?' is-on':''}" data-fbeach="">${t('anyRating')}</button>
+          <button class="chip${FILTER.beach===0?' is-on':''}" data-fbeach="0">0 m</button>
+          <button class="chip${FILTER.beach===150?' is-on':''}" data-fbeach="150">≤ 150 m</button>
+          <button class="chip${FILTER.beach===400?' is-on':''}" data-fbeach="400">≤ 400 m</button></div></div>`;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('filters')}</h3>
+        <button class="tiny muted" data-act="freset" style="font-weight:600">${t('reset')}</button></div>
+      <div class="sheet__body" id="fBody">${body()}</div>
+      <div class="sheet__foot"><button class="btn btn--primary" data-act="fapply">${t('apply')} · ${filtered().length}</button></div>`);
+    $('#sheetInner').addEventListener('click',e=>{
+      const tgl=(arr,v)=>{const i=arr.indexOf(v);i>-1?arr.splice(i,1):arr.push(v);};
+      let hit=false;
+      const b=e.target.closest('[data-fstar],[data-ftype],[data-famen],[data-fboard],[data-frate],[data-fbeach]');
+      if(b){
+        hit=true;
+        if(b.hasAttribute('data-fstar'))tgl(FILTER.stars,+b.dataset.fstar);
+        else if(b.hasAttribute('data-ftype'))tgl(FILTER.types,b.dataset.ftype);
+        else if(b.hasAttribute('data-famen'))tgl(FILTER.amen,b.dataset.famen);
+        else if(b.hasAttribute('data-fboard'))tgl(FILTER.board,b.dataset.fboard);
+        else if(b.hasAttribute('data-frate'))FILTER.rating=+b.dataset.frate;
+        else if(b.hasAttribute('data-fbeach'))FILTER.beach=b.dataset.fbeach===''?null:+b.dataset.fbeach;
+      }
+      if(e.target.closest('[data-act="freset"]')){
+        FILTER={region:FILTER.region,stars:[],types:[],amen:[],rating:0,board:[],beach:null};hit=true;
+      }
+      if(hit){
+        const fb=$('#fBody');if(fb)fb.innerHTML=body();
+        const f=$('.sheet__foot .btn');if(f)f.textContent=`${t('apply')} · ${filtered().length}`;
+      }
+    });
+  }
+  function sheetMenu(){
+    const items=[['discover','search','search'],['regions','pin','search'],['map','map','map'],
+                 ['myFav','heart','favorites'],['myTrips','trip','trips'],['mContact','phone','contact']];
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('menu')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div>${items.map(([k,ic,v])=>
+        `<button class="menuItem" data-mgo="${v}">${icon(ic)}<span>${t(k)}</span><span class="chev">${icon('chev')}</span></button>`).join('')}
+        <button class="menuItem" data-mgo="intro">${icon('play')}<span>${t('mIntro')}</span><span class="chev">${icon('chev')}</span></button></div>
+      <div class="field"><label class="label">${t('mLang')}</label>
+        <div class="langRow">${['ru','de','en'].map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
+      <div style="margin-top:18px"><button class="btn btn--dark" data-mgo="staff">${icon('lock')}${t('mStaff')}</button></div>
+    </div>`);
+  }
+  function sheetContact(){
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('contactUs')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body"><p class="muted" style="font-size:13.5px">${t('contactTxt')}</p>
+      <div class="listCard" style="margin-top:12px">
+        <div class="kv"><span class="muted">${t('phone')}</span><b>+90 242 000 00 00</b></div>
+        <div class="kv"><span class="muted">${t('email')}</span><b>hello@onlyone.travel</b></div>
+        <div class="kv"><span class="muted">WhatsApp</span><b>+90 500 000 00 00</b></div>
+      </div></div>`);
+  }
+  function sheetCompare(){
+    const list=S.favorites.map(hotel).filter(Boolean);
+    const rows=[
+      [t('regions'),h=>regionName(h.region)],
+      [t('rating'),h=>fmtNum(h.rating)],
+      [t('category'),h=>stars(h.stars)],
+      [t('beachDist'),h=>h.beach===0?'0 m':h.beach+' m'],
+      [t('board'),h=>label(BOARDS,h.board)],
+      ['Spa',h=>h.amen.indexOf('spa')>-1?'✓':'—'],
+      ['Golf',h=>h.amen.indexOf('golf')>-1?'✓':'—'],
+      [t('rooms'),h=>h.rooms.length],
+    ];
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('compare')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body"><div class="cmpScroll"><table class="cmp"><thead><tr><th></th>
+      ${list.map(h=>`<th>${esc(h.name)}</th>`).join('')}</tr></thead><tbody>
+      ${rows.map(([lbl,fn])=>`<tr><th>${lbl}</th>${list.map(h=>`<td>${esc(String(fn(h)))}</td>`).join('')}</tr>`).join('')}
+      </tbody></table></div>
+      <div class="noteBox">${t('noPricesNote')}</div></div>`);
+  }
+  function sheetRegionInfo(id){
+    const r=REGIONS.find(x=>x.id===id);
+    const n=PUBLIC_HOTELS.filter(h=>h.region===id).length;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(r.name[LANG]||r.name.en)}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/9"><img src="${r.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <p class="muted" style="font-size:13.5px;margin-top:12px">${esc(r.tag[LANG]||r.tag.en)}</p>
+      <p style="font-size:14px;font-weight:600;margin:8px 0 0">${n} ${t('selHotels')}</p>
+      <div style="margin-top:14px"><button class="btn btn--primary" data-act="region-go" data-id="${id}">${t('hotelsIn')} ${esc(r.name[LANG]||r.name.en)}</button></div>
+    </div>`);
+  }
+  function sheetOffer(id){
+    const r=request(id),h=hotel(r.hotelId);
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('createOffer')}</h3>
+        <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+      <div class="sheet__body">
+        <div class="noteBox" style="margin-top:0;display:flex;gap:9px;align-items:flex-start">${icon('lock')}<span>${t('staffOnly')}</span></div>
+        <div class="kv" style="margin-top:12px"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
+        <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(r.from)} – ${fmtDate(r.to)}</b></div>
+        <div class="field"><label class="label">${t('rooms')}</label>
+          <select class="input" id="oRoom">${h.rooms.map(x=>`<option value="${x.id}"${r.roomId===x.id?' selected':''}>${esc(x.n[LANG]||x.n.en)}</option>`).join('')}</select></div>
+        <div class="grid2">
+          <div class="field"><label class="label">${t('sellPrice')} *</label>
+            <input class="input" id="oPrice" type="number" inputmode="decimal" min="0" step="1" placeholder="2450"></div>
+          <div class="field"><label class="label">${t('currency')}</label>
+            <select class="input" id="oCur"><option>EUR</option><option>TRY</option><option>USD</option><option>GBP</option></select></div>
+        </div>
+        <div class="field"><label class="label">${t('validUntil')}</label><input class="input" id="oValid" type="date" value="${today(7)}"></div>
+        <div class="field"><label class="label">${t('custInfo')}</label><textarea class="input" id="oInfo" placeholder="${t('transferIncl')}"></textarea></div>
+        <div class="field"><label class="label">${t('internalNote')}</label><input class="input" id="oNote"></div>
+      </div>
+      <div class="sheet__foot"><button class="btn btn--primary" data-act="offer-save" data-id="${id}">${t('sendOffer')}</button></div>`);
+  }
+  function sheetPay(id){
+    const r=request(id);
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('demoPay')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div class="priceBox" style="margin-top:0"><div class="lbl">${t('total')}</div>
+        <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+      <div class="listCard" style="display:flex;align-items:center;gap:11px">
+        <span style="color:var(--turq-600)">${icon('lock')}</span>
+        <div><b style="font-size:13.5px;display:block">Ziraat Bank · Linkle Ödeme</b>
+        <span class="muted mini">${t('payDemoNote')}</span></div></div>
+      <div class="field"><label class="label">${t('cardNo')}</label>
+        <input class="input" inputmode="numeric" value="4111 1111 1111 1111"></div>
+      <div class="grid2"><div class="field"><label class="label">MM/YY</label><input class="input" value="12/29"></div>
+        <div class="field"><label class="label">CVV</label><input class="input" value="123"></div></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-do" data-id="${id}">${t('payNowBtn')}</button></div>`);
+  }
+
+  /* ====================================================================
+     12 · Events
+     ==================================================================== */
+  document.addEventListener('click',e=>{
+    const T=e.target;
+    if(T.closest('[data-sheet-close]')){closeSheet();return;}
+
+    const g=T.closest('[data-go]');
+    if(g){const v=g.dataset.go;go(v==='staff'&&S.staff?'s-dash':v);return;}
+
+    const mg=T.closest('[data-mgo]');
+    if(mg){
+      const v=mg.dataset.mgo;closeSheet();
+      setTimeout(()=>{
+        if(v==='contact')sheetContact();
+        else if(v==='intro'){if(window.ONLYONE&&window.ONLYONE.replayIntro)window.ONLYONE.replayIntro();}
+        else if(v==='staff')go(S.staff?'s-dash':'staff');
+        else go(v);
+      },260);
+      return;
+    }
+
+    const fav=T.closest('[data-act="fav"]');
+    if(fav){
+      e.stopPropagation();
+      const id=fav.dataset.id,i=S.favorites.indexOf(id);
+      if(i>-1){S.favorites.splice(i,1);toast(t('remFav'));}else{S.favorites.push(id);toast(t('addFav'));}
+      save();
+      fav.classList.toggle('is-on');fav.classList.toggle('is-fav');
+      fav.classList.remove('pop');void fav.offsetWidth;fav.classList.add('pop');
+      if(VIEW.name==='favorites')render();
+      return;
+    }
+
+    const hc=T.closest('[data-hotel]');
+    if(hc&&!T.closest('[data-act]')){go('hotel',hc.dataset.hotel);return;}
+    const rg=T.closest('[data-region]');
+    if(rg){FILTER.region=rg.dataset.region;go('search');return;}
+    const fr=T.closest('[data-fregion]');
+    if(fr){FILTER.region=fr.dataset.fregion||null;render();return;}
+    const pr=T.closest('[data-pregion]');
+    if(pr){FILTER.region=pr.dataset.pregion||null;closeSheet();setTimeout(render,260);return;}
+    const mr=T.closest('[data-mregion]');
+    if(mr){sheetRegionInfo(mr.dataset.mregion);return;}
+    const tp=T.closest('[data-trip]');
+    if(tp){go('trip',tp.dataset.trip);return;}
+    const sq=T.closest('[data-sreq]');
+    if(sq){go('s-reqd',sq.dataset.sreq);return;}
+    const lg=T.closest('[data-lang]');
+    if(lg){LANG=lg.dataset.lang;S.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
+
+    /* wizard */
+    const w=T.closest('[data-w]');
+    if(w&&W){
+      const k=w.dataset.w;
+      if(k==='ad+'){wizardCollect();W.adults=Math.min(12,W.adults+1);render();return;}
+      if(k==='ad-'){wizardCollect();W.adults=Math.max(1,W.adults-1);render();return;}
+      if(k==='ch+'){wizardCollect();W.children=Math.min(6,W.children+1);render();return;}
+      if(k==='ch-'){wizardCollect();W.children=Math.max(0,W.children-1);render();return;}
+      if(k==='prev'){wizardCollect();W.step--;render();return;}
+      if(k==='next'){
+        wizardCollect();
+        if(W.step===1&&nights(W.from,W.to)<1){toast(t('required'));return;}
+        W.step++;render();return;
+      }
+      if(k==='send'){
+        wizardCollect();
+        if(!W.first||!W.last||!W.phone||!W.email){toast(t('required'));W.step=5;render();return;}
+        submitRequest();return;
+      }
+    }
+    const wr=T.closest('[data-wroom]');
+    if(wr&&W){W.roomId=wr.dataset.wroom;render();return;}
+    const ww=T.closest('[data-wish]');
+    if(ww&&W){
+      const k=ww.dataset.wish,i=W.wishes.indexOf(k);
+      wizardCollect();
+      i>-1?W.wishes.splice(i,1):W.wishes.push(k);
+      render();return;
+    }
+
+    const a=T.closest('[data-act]');
+    if(!a)return;
+    const act=a.dataset.act,id=a.dataset.id;
+    switch(act){
+      case 'back': back();break;
+      case 'menu': sheetMenu();break;
+      case 'share': toast(t('shared'));break;
+      case 'pick-region': sheetRegion();break;
+      case 'pick-dates': sheetDates();break;
+      case 'pick-guests': sheetGuests();break;
+      case 'dates-ok': {
+        const f=$('#sdFrom'),tt=$('#sdTo');
+        if(f)S.search.from=f.value;
+        if(tt)S.search.to=tt.value;
+        save();closeSheet();setTimeout(render,260);break;
+      }
+      case 'guests-ok': closeSheet();setTimeout(render,260);break;
+      case 'filters': sheetFilters();break;
+      case 'fapply': closeSheet();setTimeout(render,260);break;
+      case 'do-search': render();toast(`${filtered().length} ${t('results')}`);break;
+      case 'compare': sheetCompare();break;
+      case 'region-go': FILTER.region=id;closeSheet();setTimeout(()=>go('search'),260);break;
+      case 'req': startRequest(id,a.dataset.room);break;
+      case 'accept': setStatus(request(id),'accepted');render();toast(t('offerAccepted'));break;
+      case 'ask': toast(t('questionSent'));break;
+      case 'pay': sheetPay(id);break;
+      case 'pay-do': {
+        const r=request(id);
+        r.payment.status='paid';r.payment.paidAt=Date.now();
+        setStatus(r,'paid');
+        closeSheet();setTimeout(()=>{render();toast(t('paidOk'));},280);break;
+      }
+      case 'do-login': {
+        const n=$('#stName');
+        S.staff=(n&&n.value.trim())||'Staff';save();go('s-dash',null,true);break;
+      }
+      case 'logout': S.staff=null;save();STACK.length=0;go('home',null,true);break;
+      case 'save-note': {
+        const r=request(id),n=$('#sNote');
+        if(n){r.staffNote=n.value;}
+        if(r.status==='new')setStatus(r,'review');
+        save();render();toast(t('done'));break;
+      }
+      case 'offer-form': sheetOffer(id);break;
+      case 'offer-save': {
+        const r=request(id);
+        const price=parseFloat(($('#oPrice')||{}).value);
+        if(!price||price<=0){toast(t('required'));break;}
+        r.offer={
+          price,
+          currency:($('#oCur')||{}).value||'EUR',
+          roomId:($('#oRoom')||{}).value||r.roomId,
+          validUntil:($('#oValid')||{}).value||'',
+          custInfo:($('#oInfo')||{}).value||'',
+          internalNote:($('#oNote')||{}).value||'',
+          createdAt:Date.now()
+        };
+        setStatus(r,'offer');
+        closeSheet();setTimeout(()=>{render();toast(t('offerSent'));},280);break;
+      }
+      case 'paylink': {
+        const r=request(id);
+        r.payment={link:`https://odeme.ziraatbank.demo/pay/${r.code}`,status:'open',createdAt:Date.now()};
+        setStatus(r,'payopen');render();toast(t('payLinkDone'));break;
+      }
+      case 'copy': {
+        const r=request(id);
+        if(navigator.clipboard)navigator.clipboard.writeText(r.payment.link).catch(()=>{});
+        toast(t('linkCopied'));break;
+      }
+      case 'notify': toast(t('sendWa'));break;
+      case 'confirm-hotel': setStatus(request(id),'confirmed');render();toast(t('hotelConfirmed'));break;
+    }
+  });
+
+  /* ====================================================================
+     13 · Public API for the intro
+     ==================================================================== */
+  window.ONLYONE = window.ONLYONE || {};
+  window.ONLYONE.boot = function(){
+    if(!VIEW.name)VIEW={name:'home',param:null};
+    render();
+  };
+  window.ONLYONE.resetToHome = function(){
+    STACK.length=0;VIEW={name:'home',param:null};render();
+  };
 })();
