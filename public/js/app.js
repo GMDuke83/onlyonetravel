@@ -29,6 +29,8 @@
   var END_TITLE_HOLD_MS  = 1800;  // pause on "Your Journey Begins Now"
   var FLASH_MS           = 380;
   var AUTOPLAY_PROBE_MS  = 1800;
+  var STALL_OFFER_HELP_S = 4;     // no progress this long → offer a start button
+  var STALL_GIVE_UP_S    = 8;     // still nothing → run the sequence anyway
 
   /* ---- elements --------------------------------------------------------- */
   var intro        = document.getElementById('intro');
@@ -59,6 +61,8 @@
   var countTimer   = null;
   var holdTimer    = null;
   var probeTimer   = null;
+  var stallTimer   = null;
+  var stallSeconds = 0;
 
   /* ======================================================================
      Helpers
@@ -86,6 +90,43 @@
     if (countTimer) { clearInterval(countTimer); countTimer = null; }
     if (holdTimer)  { clearTimeout(holdTimer);   holdTimer  = null; }
     if (probeTimer) { clearTimeout(probeTimer);  probeTimer = null; }
+    stopStallWatchdog();
+  }
+
+  /* --------------------------------------------------------------------
+     Watchdog
+
+     A browser that cannot decode the file still reports `paused === false`
+     after play() — nothing throws, `currentTime` simply never advances and
+     `timeupdate` never fires. Without this the visitor would sit on the
+     poster frame forever, because the countdown is driven by playback
+     position. So: watch real progress, offer a manual start, and if the
+     video truly never runs, play the sequence anyway rather than strand
+     anyone on the intro.
+     -------------------------------------------------------------------- */
+  function stopStallWatchdog() {
+    if (stallTimer) { clearInterval(stallTimer); stallTimer = null; }
+  }
+
+  function startStallWatchdog() {
+    stopStallWatchdog();
+    stallSeconds = 0;
+
+    stallTimer = setInterval(function () {
+      if (leaving || onMain || seqStarted) { stopStallWatchdog(); return; }
+
+      // real progress — the video is fine, stand down
+      if (video.currentTime > 0.3) { stopStallWatchdog(); return; }
+
+      stallSeconds += 1;
+
+      if (stallSeconds === STALL_OFFER_HELP_S) showTapStart();
+
+      if (stallSeconds >= STALL_GIVE_UP_S) {
+        stopStallWatchdog();
+        startSequence();
+      }
+    }, 1000);
   }
 
   /* ======================================================================
@@ -270,6 +311,8 @@
   function playFromStart() {
     try { video.currentTime = 0; } catch (e) {}
 
+    startStallWatchdog();
+
     var p = video.play();
     if (p && typeof p.then === 'function') {
       p.then(function () {
@@ -316,6 +359,10 @@
   });
 
   video.addEventListener('error', showTapStart);
+
+  // A failing <source> fires its error on the source element, not the video.
+  var heroSource = video.querySelector('source');
+  if (heroSource) heroSource.addEventListener('error', showTapStart);
 
   /* --- first tap on the hero: unlock sound, replay with the ocean -------- */
   intro.addEventListener('click', function (event) {
