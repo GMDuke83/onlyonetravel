@@ -738,10 +738,10 @@ svg{
   position:relative;z-index:2;
   margin:0 calc(14px + var(--sal)) 20px calc(14px + var(--sar));
   padding:22px 20px 24px;
-  background:rgba(24,18,12,.38);
-  -webkit-backdrop-filter:blur(16px) saturate(118%);
-  backdrop-filter:blur(16px) saturate(118%);
-  border:1px solid rgba(255,255,255,.13);
+  background:rgba(24,18,12,.20);
+  -webkit-backdrop-filter:blur(10px) saturate(112%);
+  backdrop-filter:blur(10px) saturate(112%);
+  border:1px solid rgba(255,255,255,.11);
   border-radius:3px;
 }
 .pHero__title{
@@ -1267,17 +1267,67 @@ select.input option{background:#fff;color:var(--txt)}
   font-size:clamp(33px,10vw,44px);line-height:1.03;letter-spacing:-.042em;
   margin:10px 0 0;color:var(--txt);
 }
+/* Two nested transforms, because they answer to different clocks: the wrapper
+   follows the scroll (--p), the image inside flies on its own — a slow figure
+   of drift, sway and breathing scale that runs whether or not the finger
+   moves. One element cannot carry both without them overwriting each other. */
 .flyBand__plane{
   position:absolute;z-index:2;
-  left:50%;top:9%;
-  width:min(63%,290px);height:auto;
+  left:50%;top:6%;
+  width:min(63%,290px);
   transform:
     translate3d(-50%, calc(var(--p,0) * -15svh + 7svh), 0)
     rotate(calc((var(--p,0) - .5) * 5deg))
     scale(calc(1 + var(--p,0) * .12));
-  filter:drop-shadow(0 24px 38px rgba(42,33,25,.26));
   will-change:transform;
   pointer-events:none;
+}
+.flyBand__plane img{
+  display:block;width:100%;height:auto;
+  filter:drop-shadow(0 26px 40px rgba(42,33,25,.28));
+  animation:planeFly 7s ease-in-out infinite;
+  transform-origin:50% 42%;
+}
+@keyframes planeFly{
+  0%   { transform:translate3d(0,0,0)          rotate(0deg)    }
+  22%  { transform:translate3d(-7px,-9px,0)    rotate(-1.7deg) }
+  50%  { transform:translate3d(5px,-15px,0)    rotate(1.2deg)  }
+  74%  { transform:translate3d(8px,-5px,0)     rotate(1.9deg)  }
+  100% { transform:translate3d(0,0,0)          rotate(0deg)    }
+}
+
+/* The running line under the flight — destinations pass beneath the aircraft.
+   The row holds its content twice and travels exactly half its own width, so
+   the wrap point lands on an identical pixel and the loop has no seam (same
+   trick as the video crossfade, done in layout). */
+.flyTicker{
+  position:relative;z-index:1;
+  overflow:hidden;
+  margin:0 -20px;
+  padding:13px 0;
+  border-top:1px solid var(--hair-soft);
+  border-bottom:1px solid var(--hair-soft);
+  background:rgba(255,255,255,.42);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+}
+.flyTicker__row{
+  display:flex;
+  width:max-content;
+  animation:tickMove 34s linear infinite;
+}
+/* Two identical halves and a shift of exactly -50%: the wrap lands on the
+   same pixel. A single row with flex gaps was off by half a gap and jumped. */
+.flyTicker__half{display:flex;align-items:center;gap:18px;padding-right:18px}
+.flyTicker__half span{
+  font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--txt-2);white-space:nowrap;
+}
+.flyTicker__half i{font-style:normal;font-size:9px;color:var(--gold);flex:0 0 auto}
+@keyframes tickMove{to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){
+  .flyBand__plane img{animation:none}
+  .flyTicker__row{animation:none}
 }
 .flyBand__card{
   position:relative;z-index:3;

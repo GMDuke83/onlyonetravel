@@ -71,6 +71,19 @@ npm i three playwright          # nur für das Rendern
 node scripts/render-plane/shoot.js
 ```
 
+## Cockpit
+
+Die Verglasung des Spendermodells sass in der Textur, nicht in der Geometrie —
+mit der Lackierung verschwand also auch das Cockpit, und die Nase wurde eine
+leere Kapsel. Zwei Reparaturversuche als 3D-Kuppeln wirkten wie aufgesetzte
+Tropfen. Die Lösung nutzt aus, dass die Ansicht fest orthografisch von oben
+ist: Die Frontscheibe wird als flaches SVG-Dekal mit derselben Kameraprojektion
+gezeichnet — pixelidentisch mit echter Geometrie, aber mit voller Kontrolle
+über den Umriss (die gepfeilte Zweiflächen-Form, die ein moderner Jet von oben
+zeigt). Auch hier ist nichts von Hand platziert: Abtast-Strahlen messen die
+Silhouettenbreite des Rumpfs an jeder Station, `camera.project` liefert die
+Pixelkoordinaten.
+
 ## Bewegung
 
 Der Fortschritt `--p` läuft von 0 (Band betritt den unteren Bildrand) bis 1.
@@ -82,3 +95,14 @@ nicht mehr am Ende, ist dieser Faktor automatisch 1 und ändert nichts.
 
 Bei `prefers-reduced-motion: reduce` wird `--p` fest auf `0.5` gesetzt und gar
 kein Scroll-Listener registriert.
+
+Zusätzlich fliegt das Flugzeug unabhängig vom Scrollen: der Wrapper trägt die
+scrollgekoppelte Transformation, das Bild darin eine eigene 7-Sekunden-Schleife
+aus Drift, leichter Schräglage und Atmen der Grösse. Zwei verschachtelte
+Elemente, weil zwei Uhren: eine Transformation pro Element, sonst überschreiben
+sie sich.
+
+Unter dem Flugzeug läuft ein Laufband aus Zielen (Regionen + Ausflüge, in der
+Sprache der Oberfläche). Die Zeile enthält ihren Inhalt exakt zweimal und
+wandert um genau −50 % — der Umbruchpunkt landet auf demselben Pixel, die
+Schleife hat keine Naht. Beides steht bei `prefers-reduced-motion` still.

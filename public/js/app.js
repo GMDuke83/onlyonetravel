@@ -948,6 +948,22 @@
   ];
   const excursion=id=>EXCURSIONS.find(e=>e.id===id);
 
+  /* --- Concierge bands. Three full-bleed statements on the concierge page —
+     the same visual language as the experience bands, but they assert the
+     service instead of opening a filter. Interim crops again; the ChatGPT
+     brief for the real frames is in docs/chatgpt-bildauftrag.md. --- */
+  const CONC_BANDS=[
+    {img:'./images/concierge/conc-reach.webp',
+     n:{ru:'Всегда на связи',de:'Immer erreichbar',en:'Always reachable'},
+     s:{ru:'Одна линия, один человек — 24/7',de:'Eine Leitung, ein Mensch — 24/7',en:'One line, one person — 24/7'}},
+    {img:'./images/concierge/conc-tailor.webp',
+     n:{ru:'Индивидуально',de:'Massgeschneidert',en:'Tailor-made'},
+     s:{ru:'Предложения без форм бронирования',de:'Angebote ohne Buchungsmaske',en:'Offers without a booking form'}},
+    {img:'./images/concierge/conc-there.webp',
+     n:{ru:'Рядом в поездке',de:'Vor Ort für dich',en:'With you there'},
+     s:{ru:'Трансферы, столики, экскурсии',de:'Transfers, Tische, Ausflüge',en:'Transfers, tables, excursions'}},
+  ];
+
   /* --- Experiences. Four full-bleed bands on the home screen, each one a way
      into the catalogue that is not a search field: you pick the kind of trip
      first and the houses follow. `go` is the filter the band opens with —
@@ -1258,7 +1274,7 @@
      ==================================================================== */
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
-    return `${appbar({over:true})}
+    return `${appbar({})}
     <section class="pHero">
       <video id="platformHeroVideo" class="pHero__img" muted loop playsinline webkit-playsinline
              preload="none" poster="./images/onlyone-hero-coast-poster.webp"
@@ -1329,8 +1345,15 @@
         <div class="eyebrow">${t('flyEyebrow')}</div>
         <h2 class="flyBand__title">${t('flyTitle')}</h2>
       </div>
-      <img class="flyBand__plane" src="./images/3d/plane-top.webp" alt="" aria-hidden="true"
-           loading="lazy" decoding="async" width="900" height="1543">
+      <div class="flyBand__plane" aria-hidden="true">
+        <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1543">
+      </div>
+      <div class="flyTicker" aria-hidden="true">
+        ${(()=>{ const half=[...REGIONS.map(r=>r.name[LANG]||r.name.en),
+                             ...EXCURSIONS.map(e=>e.n[LANG]||e.n.en)]
+                   .map(n=>`<span>${esc(n)}</span><i>✦</i>`).join('');
+                 return `<div class="flyTicker__row"><div class="flyTicker__half">${half}</div><div class="flyTicker__half">${half}</div></div>`; })()}
+      </div>
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
         <p>${t('flyBody')}</p>
@@ -1765,6 +1788,18 @@
       </div>
       <p class="muted mini" style="margin-top:16px;letter-spacing:.10em">${t('hours')}</p>
     </div>
+
+    <section class="expBands" style="margin-top:34px">
+      ${CONC_BANDS.map(x=>`<div class="expBand">
+        <img src="${x.img}" alt="" loading="lazy" decoding="async">
+        <span class="expBand__scrim"></span>
+        <span class="expBand__txt">
+          <b>${esc(x.n[LANG]||x.n.en)}</b>
+          <i>${esc(x.s[LANG]||x.s.en)}</i>
+        </span>
+      </div>`).join('')}
+    </section>
+
     <div class="pageBottom"></div>${tabbar('concierge')}`;
   }
 
@@ -1773,10 +1808,10 @@
     <div class="mapWrap">
       <svg class="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#0B3248"/><stop offset="100%" stop-color="#041B29"/></linearGradient></defs>
+          <stop offset="0%" stop-color="#123F47"/><stop offset="100%" stop-color="#0A2328"/></linearGradient></defs>
         <rect width="100" height="100" fill="url(#sea)"/>
         <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11 L100 0 L0 0 Z"
-              fill="#0E3A4E" stroke="rgba(240,215,135,.30)" stroke-width=".5" vector-effect="non-scaling-stroke"/>
+              fill="#3A2E1E" stroke="rgba(240,215,135,.30)" stroke-width=".5" vector-effect="non-scaling-stroke"/>
         <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11"
               fill="none" stroke="rgba(240,215,135,.58)" stroke-width="1" vector-effect="non-scaling-stroke"/>
         ${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${4+i*11} ${74+((i%3)*5)} q 5 -3 10 0" fill="none" stroke="rgba(87,198,212,.20)" stroke-width=".6" vector-effect="non-scaling-stroke"/>`).join('')}
