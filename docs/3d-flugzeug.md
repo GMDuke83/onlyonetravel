@@ -1,4 +1,4 @@
-# Das Flugzeug im „Anreise"-Band
+# Die 3D-Objekte: Jet und Maybach
 
 Auf der Startseite, unter den vier Erlebnis-Bannern, liegt ein Abschnitt, in dem
 ein Flugzeug beim Scrollen durch die Ebenen wandert: die Überschrift liegt
@@ -61,3 +61,46 @@ Schleife hat keine Naht.
 
 Bei `prefers-reduced-motion: reduce` wird `--p` fest auf `0.5` gesetzt, es wird
 gar kein Scroll-Listener registriert, und Flug wie Laufband stehen still.
+
+
+---
+
+# Der Maybach im „Transfer"-Band
+
+Direkt hinter dem Flug folgt derselbe Dreischicht-Aufbau noch einmal, jetzt mit
+dem Wagen: der Jet landet, das Auto übernimmt. Weil eine Limousine ein breites
+Objekt ist und der Jet ein hohes, quert sie die Überschrift seitlich, statt
+durch sie hindurchzusteigen.
+
+## Warum auch hier ein Bild und kein Live-3D
+
+Das gelieferte Modell (`scenecompressed1fastnormal.glb`, meshopt-komprimiert)
+wiegt **24 MB** und besteht aus **2 336 874 Dreiecken** in 18 Materialien —
+gemessen, nicht geschätzt. Zum Vergleich: das ausgelieferte Standbild ist
+**64 KB**. Selbst ein aktuelles Telefon würde an 2,3 Mio. Dreiecken in einer
+Dauerschleife hörbar arbeiten, und 24 MB Download wären für eine mobil-zuerst
+gebaute Seite ohnehin ausgeschlossen.
+
+Das GLB liegt deshalb **nicht** im Repository. Es gehört in eure eigene
+Ablage; für die Seite wird es nicht gebraucht. Soll es doch versioniert werden,
+dann über Git LFS — eine 24-MB-Datei bleibt sonst für immer in der Historie und
+jeder Klon lädt sie mit.
+
+## Wie das Bild entstanden ist
+
+Gerendert wie der Jet: three.js in einem headless Chromium mit SwiftShader,
+Beleuchtung über `RoomEnvironment` + `PMREMGenerator`, orthografisch bzw.
+perspektivisch, Hintergrund transparent.
+
+- Kamera: perspektivisch, 26°, Front-Dreiviertel leicht von oben. Die Nase des
+  Modells zeigt nach **−X**; ein erster Versuch stand auf +X und fotografierte
+  den Kofferraum.
+- Auflösung 3000 × 2000, danach auf die Alpha-Bounding-Box beschnitten
+  (`crop=1318:724:772:573`) und auf 1000 px Breite skaliert.
+- Achtung: Playwrights `elementHandle.screenshot({clip})` hat den Zuschnitt hier
+  **ignoriert** — die Datei kam in voller Leinwandgrösse heraus. Deshalb wird
+  die gemessene Box anschliessend mit ffmpeg geschnitten, nicht im Browser.
+
+Ergebnis: `public/images/3d/car-maybach.webp`, 1000 × 549, 64 KB, mit Alpha und
+den Reflexionen aus dem Render. Auch hier trägt das CSS keinen zusätzlichen
+Schatten.

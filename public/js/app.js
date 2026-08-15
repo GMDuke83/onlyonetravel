@@ -628,6 +628,9 @@
       flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
       flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
       flyCta:'Спросить консьержа',
+      carEyebrow:'Трансфер', carTitle:'Последний<br>километр',
+      carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
+      carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
       filters:'Фильтры', apply:'Применить', reset:'Сбросить', results:'найдено',
       category:'Категория', holidayType:'Тип отдыха', amenities:'Удобства', rating:'Оценка',
@@ -727,6 +730,9 @@
       flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
       flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
       flyCta:'Concierge fragen',
+      carEyebrow:'Transfer', carTitle:'Der letzte<br>Kilometer',
+      carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
+      carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
       filters:'Filter', apply:'Anwenden', reset:'Zurücksetzen', results:'Ergebnisse',
       category:'Kategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
@@ -826,6 +832,9 @@
       flySpecA:'Flight & transfer', flySpecB:'Around the clock',
       flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
       flyCta:'Ask the concierge',
+      carEyebrow:'Transfer', carTitle:'The last<br>mile',
+      carSpecA:'Private & discreet', carSpecB:'Door to door',
+      carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
       filters:'Filters', apply:'Apply', reset:'Reset', results:'results',
       category:'Category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
@@ -1401,6 +1410,16 @@
         <h2 class="flyBand__title">${t('flyTitle')}</h2>
       </div>
       <div class="flyBand__plane" aria-hidden="true">
+        ${/* Slipstream. The aircraft itself stays level and still, so the sense
+              of speed has to come from what it leaves behind. Each line starts
+              at the trailing edge of the wing at its own x — further out is
+              further back, because the wing is swept — and streams away
+              downwards. Staggered lengths and delays keep it from pulsing in
+              unison. */''}
+        <span class="flyTrail">
+          ${[[15,63],[24,59],[33,55],[42,52],[58,52],[67,55],[76,59],[85,63]]
+            .map(([x,y],i)=>`<i style="left:${x}%;top:${y}%;--d:${(i%4)*0.55+(i>3?0.28:0)}s;--t:${2.4+(i%3)*0.35}s;--h:${16+(i%3)*7}%"></i>`).join('')}
+        </span>
         <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1111">
       </div>
       <div class="flyTicker" aria-hidden="true">
@@ -1412,6 +1431,21 @@
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
         <p>${t('flyBody')}</p>
+        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+      </div>
+    </section>
+
+    <section class="flyBand carBand">
+      <div class="flyBand__head">
+        <div class="eyebrow">${t('carEyebrow')}</div>
+        <h2 class="flyBand__title">${t('carTitle')}</h2>
+      </div>
+      <div class="carBand__car" aria-hidden="true">
+        <img src="./images/3d/car-maybach.webp" alt="" loading="lazy" decoding="async" width="1000" height="549">
+      </div>
+      <div class="flyBand__card">
+        <div class="flyBand__spec"><span>${t('carSpecA')}</span><span>${t('carSpecB')}</span></div>
+        <p>${t('carBody')}</p>
         <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
       </div>
     </section>
@@ -2140,13 +2174,14 @@
       window.removeEventListener('resize', flyHandler);
       flyScroller = flyHandler = null;
     }
-    const band=$('.flyBand'); if(!band) return;
+    const bands=$$('.flyBand'); if(!bands.length) return;
     const scroller=$('#app'); if(!scroller) return;
     let raf=0;
     const update=()=>{
       raf=0;
-      const r=band.getBoundingClientRect();
       const vh=window.innerHeight||1;
+      bands.forEach(band=>{
+      const r=band.getBoundingClientRect();
       /* 0 as the band's top reaches the bottom of the screen, 1 once its
          bottom has left the top. */
       const span=vh+r.height;
@@ -2161,9 +2196,10 @@
       const pMax=Math.min(1,Math.max(0.001,(vh-topAtEnd)/span));
       p=Math.min(1,Math.max(0,p/pMax));
       band.style.setProperty('--p',p.toFixed(4));
+      });
     };
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
-      band.style.setProperty('--p','0.5');   /* park it mid-flight, no motion */
+      bands.forEach(b=>b.style.setProperty('--p','0.5'));   /* parked, no motion */
       return;
     }
     flyHandler=()=>{ if(!raf) raf=requestAnimationFrame(update); };
