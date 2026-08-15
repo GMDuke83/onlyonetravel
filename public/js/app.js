@@ -150,11 +150,21 @@
     en:'Tap for sound'
   };
   function currentLang(){
+    // An explicit choice wins; otherwise follow the device, same as the platform.
     try {
       var st = JSON.parse(localStorage.getItem('onlyone.state.v1'));
       if (st && st.lang && HINT[st.lang]) return st.lang;
     } catch (e) {}
-    return 'ru';
+    try {
+      var list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages : [navigator.language || ''];
+      for (var i = 0; i < list.length; i++) {
+        var base = String(list[i] || '').toLowerCase().split('-')[0];
+        if (HINT[base]) return base;
+        if (['uk','be','kk','ky','uz','az','hy','ka'].indexOf(base) > -1) return 'ru';
+      }
+    } catch (e) {}
+    return 'en';
   }
   function showSoundHint(){
     var el = document.getElementById('soundHint');
@@ -916,7 +926,30 @@
      3 · State
      ==================================================================== */
   const KEY='onlyone.state.v1';
-  const DEF={lang:'ru',favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
+
+  /* The language follows the device unless the visitor picks one. `lang` stays
+     null until they do, so an explicit choice always wins and a guess never
+     hardens into a setting. */
+  const SUPPORTED = ['ru','de','en'];
+  function detectLang(){
+    var list = [];
+    try {
+      if (navigator.languages && navigator.languages.length) list = navigator.languages.slice();
+      else if (navigator.language) list = [navigator.language];
+    } catch (e) {}
+    for (var i = 0; i < list.length; i++) {
+      var tag = String(list[i] || '').toLowerCase();
+      var base = tag.split('-')[0];
+      if (SUPPORTED.indexOf(base) > -1) return base;
+      // Russian is the working language across much of the post-Soviet region,
+      // so those locales get it rather than falling through to English.
+      if (['uk','be','kk','ky','uz','az','hy','ka','mo'].indexOf(base) > -1) return 'ru';
+      if (['at','ch'].indexOf(base) > -1) return 'de';
+    }
+    return 'en';
+  }
+
+  const DEF={lang:null,favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
              search:{from:'',to:'',adults:2,children:0}};
   let S=load();
   function load(){
@@ -924,7 +957,7 @@
     return JSON.parse(JSON.stringify(DEF));
   }
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
-  LANG=S.lang||'ru';
+  LANG = S.lang || detectLang();
 
   const FLOW=['new','review','offer','accepted','payopen','paid','confirmed'];
   const STATUS_LABEL={new:'stNew',review:'stCheck',offer:'stOffer',accepted:'stAccepted',payopen:'stPay',paid:'stPaid',confirmed:'stConfirmed'};
@@ -1053,7 +1086,13 @@
   const isFav=id=>S.favorites.indexOf(id)>-1;
 
   function hotelCard(h){
-    return `<article class="card fade-up" data-hotel="${h.id}">
+    // No score badge, no coloured pills, no per-card button. The photograph
+    // carries the entry; the whole thing is the tap target.
+    // Two amenities plus the board — more than three items wraps badly in
+    // Russian, where uppercase words are markedly wider than in German.
+    const traits = h.amen.slice(0,2).map(a=>esc(label(AMEN,a)));
+    traits.push(esc(label(BOARDS,h.board)));
+    return `<article class="card fade-up" data-hotel="${h.id}" role="button" tabindex="0">
       <div class="card__media">
         <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="lazy" decoding="async">
         <button class="card__fav${isFav(h.id)?' is-on':''}" data-act="fav" data-id="${h.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
@@ -1061,29 +1100,21 @@
       <div class="card__body">
         <div class="stars">${stars(h.stars)}</div>
         <h3 class="card__name">${esc(h.name)}</h3>
-        <div class="card__loc">${esc(regionName(h.region))}${h.beach===0?' · '+t('onBeach'):''}</div>
-        <div class="rateRow">
-          <span class="rateBadge">${fmtNum(h.rating)}</span>
-          <span><span class="rateTxt">${rateWord(h.rating)}</span><br>
-          <span class="rateCnt">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span></span>
-        </div>
-        <div class="badges">
-          ${h.amen.slice(0,3).map(a=>`<span class="badge">${esc(label(AMEN,a))}</span>`).join('')}
-          <span class="badge badge--gold">${esc(label(BOARDS,h.board))}</span>
-        </div>
+        <div class="card__loc">${esc(regionName(h.region))}${h.beach===0?' · '+esc(t('onBeach')):''}</div>
+        <div class="score"><b>${fmtNum(h.rating)}</b><span>${rateWord(h.rating)}</span></div>
+        <div class="traits">${traits.join('<i>·</i>')}</div>
         <p class="card__desc">${esc(h.desc[LANG]||h.desc.en)}</p>
-        <div class="card__foot"><button class="btn btn--ghost btn--sm" style="flex:1 1 auto" data-hotel="${h.id}">${t('viewHotel')}</button></div>
       </div>
     </article>`;
   }
 
   function excCard(e){
-    return `<article class="card fade-up" data-exc="${e.id}">
+    return `<article class="card fade-up" data-exc="${e.id}" role="button" tabindex="0">
       <div class="card__media" style="aspect-ratio:16/10">
         <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="lazy" decoding="async">
       </div>
       <div class="card__body">
-        <div class="eyebrow">${esc(e.dur[LANG]||e.dur.en)}</div>
+        <div class="card__loc" style="color:var(--gold)">${esc(e.dur[LANG]||e.dur.en)}</div>
         <h3 class="card__name">${esc(e.n[LANG]||e.n.en)}</h3>
         <p class="card__desc">${esc(e.d[LANG]||e.d.en)}</p>
       </div>
@@ -1091,9 +1122,9 @@
   }
   function vExcursions(){
     return `${appbar({back:true,title:t('excursions'),menu:false})}
-    <div class="wrap" style="padding-top:18px">
-      <p class="muted" style="font-size:13.5px;margin:0 0 16px">${t('excNote')}</p>
-      <div style="display:flex;flex-direction:column;gap:15px">${EXCURSIONS.map(excCard).join('')}</div>
+    <div class="wrap" style="padding-top:24px">
+      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 28px">${t('excNote')}</p>
+      <div class="cardList">${EXCURSIONS.map(excCard).join('')}</div>
     </div>
     <div class="pageBottom"></div>`;
   }
@@ -1153,7 +1184,7 @@
       <div class="section">
         <div class="section__head"><h2 class="h-lg">${t('recommended')}</h2>
           <button class="tiny muted" data-go="search" style="font-weight:600">${t('all')}</button></div>
-        <div style="display:flex;flex-direction:column;gap:15px">${top.map(hotelCard).join('')}</div>
+        <div class="cardList">${top.map(hotelCard).join('')}</div>
       </div>
     </div>
     <div class="pageBottom"></div>
@@ -1206,7 +1237,7 @@
         <div><b>${list.length}</b> <span class="muted tiny">${t('results')}</span></div>
         <button class="btn btn--ghost btn--sm" data-act="filters">${icon('filter')}${t('filters')}${n?` · ${n}`:''}</button>
       </div>
-      ${list.length?`<div style="display:flex;flex-direction:column;gap:15px">${list.map(hotelCard).join('')}</div>`:
+      ${list.length?`<div class="cardList">${list.map(hotelCard).join('')}</div>`:
         `<div class="empty">${icon('search')}<b>${t('noResults')}</b><p>${t('tryReset')}</p></div>`}
     </div>
     <div class="pageBottom"></div>
@@ -1230,12 +1261,11 @@
       <div class="stars">${stars(h.stars)}</div>
       <h1 class="h-xl" style="margin-top:6px;font-family:var(--serif);font-weight:400">${esc(h.name)}</h1>
       <div class="card__loc" style="font-size:13px">${esc(regionName(h.region))} · Antalya</div>
-      <div class="rateRow">
-        <span class="rateBadge" style="font-size:15px;padding:7px 11px">${fmtNum(h.rating)}</span>
-        <span><span class="rateTxt">${rateWord(h.rating)}</span><br>
-        <span class="rateCnt">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span></span>
+      <div class="score" style="font-size:12.5px;margin-top:14px">
+        <b>${fmtNum(h.rating)}</b><span>${rateWord(h.rating)}</span>
+        <span style="text-transform:none;letter-spacing:.04em">${h.reviews.toLocaleString('de-DE')} ${t('reviews')}</span>
       </div>
-      <div class="badges" style="margin-top:13px">${h.types.map(x=>`<span class="badge">${esc(label(TYPES,x))}</span>`).join('')}</div>
+      <div class="traits" style="margin-top:14px">${h.types.map(x=>esc(label(TYPES,x))).join('<i>·</i>')}</div>
     </div>
 
     <section class="detailSec"><h3 class="h-md">${t('description')}</h3>
@@ -1456,7 +1486,7 @@
     const showOffer=r.offer&&['offer','accepted','payopen','paid','confirmed'].indexOf(r.status)>-1;
     return `${appbar({back:true,title:r.code,menu:false})}
     <div class="wrap" style="padding-top:16px">
-      <div class="card">
+      <div class="card" style="pointer-events:none">
         <div class="card__media" style="aspect-ratio:16/9"><img src="${h.imgs[0]}" alt=""></div>
         <div class="card__body">
           <div class="stars">${stars(h.stars)}</div>
@@ -1500,7 +1530,7 @@
       <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myFav')}</h1>
       ${list.length?`
         ${list.length>1?`<button class="btn btn--ghost btn--sm" style="width:100%;margin-top:12px" data-act="compare">${icon('grid')}${t('compare')}</button>`:''}
-        <div style="display:flex;flex-direction:column;gap:15px;margin-top:14px">${list.map(hotelCard).join('')}</div>`:
+        <div class="cardList" style="margin-top:24px">${list.map(hotelCard).join('')}</div>`:
         `<div class="empty">${icon('heart')}<b>${t('noFav')}</b></div>`}
     </div>
     <div class="pageBottom"></div>${tabbar('favorites')}`;
