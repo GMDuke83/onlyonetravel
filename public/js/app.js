@@ -1583,7 +1583,7 @@
       ${bgVideo('./video/onlyone-confirm-v1.mp4','./images/onlyone-confirm-poster.webp')}
       <div class="confirmBg__scrim"></div>
     </section>
-    <div class="wrap" style="position:relative;z-index:2;padding-top:calc(var(--sat) + 52px);text-align:center">
+    <div class="wrap confirmOver" style="position:relative;z-index:2;padding-top:calc(var(--sat) + 52px);text-align:center">
       <div class="pop" style="width:74px;height:74px;border-radius:50%;margin:0 auto;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold-light)">
         <svg viewBox="0 0 24 24" style="width:30px;height:30px;stroke-width:1.8"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
       <h1 class="h-xl" style="margin-top:22px">${t('reqSent')}</h1>
@@ -2110,9 +2110,10 @@
     });
   }
   function sheetMenu(){
-    const items=[['discover','search','search'],['regions','pin','search'],['map','map','map'],
+    const items=[['discover','search','search'],['regions','pin','search'],
                  ['navVip','star','excursions'],['map','map','map'],
-                 ['myFav','heart','favorites'],['myTrips','trip','trips'],['mContact','phone','contact']];
+                 ['myFav','heart','favorites'],['myTrips','trip','trips'],
+                 ['mContact','phone','contact']];
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('menu')}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">

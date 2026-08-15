@@ -946,8 +946,12 @@ select.input option{background:#fff;color:var(--txt)}
 .langRow .chip{flex:1 1 0;justify-content:center}
 .menuItem{display:flex;align-items:center;gap:15px;padding:18px 2px;border-bottom:1px solid var(--hair-soft);width:100%;text-align:left;min-height:58px;background:none;border-left:none;border-right:none;border-top:none}
 .menuItem>svg{width:17px;height:17px;color:var(--gold-ink);flex:0 0 17px}
-.menuItem span{flex:1 1 auto;font-size:13px;letter-spacing:.10em;text-transform:uppercase;color:var(--txt)}
-.menuItem .chev{width:15px;height:15px;color:var(--txt-3)}
+/* the label only — .chev is a span too, and a bare `.menuItem span` gave it
+   flex:1 1 auto while the icon inside had no size of its own, so the chevrons
+   stretched into one long zigzag down the sheet */
+.menuItem > span{flex:1 1 auto;font-size:13px;letter-spacing:.10em;text-transform:uppercase;color:var(--txt)}
+.menuItem .chev{flex:0 0 15px;width:15px;height:15px;color:var(--txt-3);display:block}
+.menuItem .chev svg{width:15px;height:15px;display:block}
 
 .cmp{width:100%;border-collapse:collapse;font-size:12.5px;color:var(--txt-2)}
 .cmp th,.cmp td{padding:11px 9px;text-align:left;border-bottom:1px solid var(--hair-soft);vertical-align:top}
@@ -1043,3 +1047,50 @@ select.input option{background:#fff;color:var(--txt)}
 .msg.is-mine .msg__b{background:var(--navy);border-color:var(--navy);color:#fff}
 .msg__m{font-size:9.5px;letter-spacing:.10em;color:var(--txt-3);margin-top:6px}
 .composer{margin-top:20px}
+
+/* ==========================================================================
+   TEXT OVER IMAGERY
+
+   The platform ground is light, so the default type colour is navy. Anything
+   sitting on a photograph or a dark scrim has to opt out of that explicitly —
+   otherwise a theme change quietly turns a headline into navy-on-daylight,
+   which is what happened to the platform hero.
+   ========================================================================== */
+.pHero__body,
+.bandHero__txt,
+.confirmOver{
+  color:#fff;
+}
+.pHero__title,
+.bandHero__txt .h-xl,
+.bandHero__txt .h-lg,
+.confirmOver .h-xl{
+  color:#fff;
+}
+.pHero__sub,
+.confirmOver .muted{
+  color:rgba(255,255,255,.86);
+}
+.trust li{color:#fff}
+.pHero__body .eyebrow,
+.bandHero__txt .eyebrow,
+.confirmOver .eyebrow{
+  color:var(--gold-light);
+}
+.confirmOver .listCard{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.18);
+  color:#fff;
+}
+.confirmOver .listCard b,
+.confirmOver .kv b{color:#fff}
+.confirmOver .kv{color:rgba(255,255,255,.78);border-bottom-color:rgba(255,255,255,.14)}
+.confirmOver .muted,
+.confirmOver .tl__t,
+.confirmOver .tl__d{color:rgba(255,255,255,.72)}
+.confirmOver .tl.is-pending .tl__t{color:rgba(255,255,255,.45)}
+.confirmOver .tl__dot{background:transparent;border-color:rgba(255,255,255,.35)}
+.confirmOver .tl.is-done .tl__dot{background:var(--gold);border-color:var(--gold)}
+.confirmOver .tl.is-done .tl__dot::after{background:var(--navy-deep)}
+.confirmOver .tl.is-now .tl__dot{border-color:var(--gold);box-shadow:0 0 0 4px rgba(216,180,92,.22)}
+.confirmOver .tl::before{background:rgba(255,255,255,.18)}
