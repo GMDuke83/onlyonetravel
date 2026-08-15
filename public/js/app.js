@@ -477,6 +477,14 @@
      ==================================================================== */
   const I18N = {
     ru:{
+      excursions:'Экскурсии',
+      excSub:'Больше, чем отель',
+      excAll:'Все экскурсии',
+      excInterest:'Интересующие экскурсии',
+      excNote:'Экскурсии подбираются вместе с предложением по отелю.',
+      addToReq:'Добавить к запросу',
+      excAdded:'Добавлено к запросу',
+      duration:'Длительность',
       heroEyebrow:'Анталья · Средиземное море',
       heroTitle:'Твоё путешествие начинается здесь.',
       heroSub:'Отобранные вручную отели, особенные места и персональная консультация.',
@@ -537,6 +545,14 @@
       transferIncl:'Трансфер включён...',
     },
     de:{
+      excursions:'Ausflüge',
+      excSub:'Mehr als das Hotel',
+      excAll:'Alle Ausflüge',
+      excInterest:'Ausflüge, die dich interessieren',
+      excNote:'Ausflüge werden gemeinsam mit dem Hotelangebot abgestimmt.',
+      addToReq:'Zur Anfrage hinzufügen',
+      excAdded:'Zur Anfrage hinzugefügt',
+      duration:'Dauer',
       heroEyebrow:'Antalya · Mittelmeer',
       heroTitle:'Deine Reise beginnt hier.',
       heroSub:'Handverlesene Hotels, besondere Orte und persönliche Beratung.',
@@ -597,6 +613,14 @@
       transferIncl:'Transfer inklusive...',
     },
     en:{
+      excursions:'Excursions',
+      excSub:'Beyond the hotel',
+      excAll:'All excursions',
+      excInterest:'Excursions you are interested in',
+      excNote:'Excursions are arranged together with the hotel offer.',
+      addToReq:'Add to my request',
+      excAdded:'Added to your request',
+      duration:'Duration',
       heroEyebrow:'Antalya · Mediterranean',
       heroTitle:'Your journey starts here.',
       heroSub:'Handpicked hotels, remarkable places and personal advice.',
@@ -665,13 +689,13 @@
      ==================================================================== */
   const IMG = './images/hotels/';
   const REGIONS = [
-    {id:'antalya',  name:{ru:'Анталья',   de:'Antalya Stadt',en:'Antalya City'}, tag:{ru:'Старый город и гавань',de:'Altstadt & Hafen',en:'Old town & harbour'}, img:IMG+'h09.webp', x:44,y:46},
-    {id:'konyaalti',name:{ru:'Коньяалты', de:'Konyaaltı',    en:'Konyaaltı'},    tag:{ru:'Галечный пляж у гор',de:'Kiesstrand am Berg',en:'Pebble beach below the mountains'}, img:IMG+'h03.webp', x:33,y:53},
-    {id:'lara',     name:{ru:'Лара',      de:'Lara',         en:'Lara'},         tag:{ru:'Песчаный пляж и курорты',de:'Sandstrand & Resorts',en:'Sand beach & resorts'}, img:IMG+'h05.webp', x:56,y:41},
-    {id:'belek',    name:{ru:'Белек',     de:'Belek',        en:'Belek'},        tag:{ru:'Гольф и сосновые леса',de:'Golf & Pinienwälder',en:'Golf & pine forest'}, img:IMG+'h07.webp', x:68,y:35},
-    {id:'kemer',    name:{ru:'Кемер',     de:'Kemer',        en:'Kemer'},        tag:{ru:'Горы Тавр у моря',de:'Taurus trifft Meer',en:'Taurus meets the sea'}, img:IMG+'h11.webp', x:20,y:66},
-    {id:'side',     name:{ru:'Сиде',      de:'Side',         en:'Side'},         tag:{ru:'Античность и пляж',de:'Antike & Strand',en:'Antiquity & beach'}, img:IMG+'h13.webp', x:79,y:30},
-    {id:'alanya',   name:{ru:'Аланья',    de:'Alanya',       en:'Alanya'},       tag:{ru:'Крепость над бухтой',de:'Burg über der Bucht',en:'Castle above the bay'}, img:IMG+'h10.webp', x:90,y:22},
+    {id:'antalya',  name:{ru:'Анталья',   de:'Antalya Stadt',en:'Antalya City'}, tag:{ru:'Старый город и гавань',de:'Altstadt & Hafen',en:'Old town & harbour'}, img:IMG+'region-antalya.webp', x:44,y:46},
+    {id:'konyaalti',name:{ru:'Коньяалты', de:'Konyaaltı',    en:'Konyaaltı'},    tag:{ru:'Галечный пляж у гор',de:'Kiesstrand am Berg',en:'Pebble beach below the mountains'}, img:IMG+'region-konyaalti.webp', x:33,y:53},
+    {id:'lara',     name:{ru:'Лара',      de:'Lara',         en:'Lara'},         tag:{ru:'Песчаный пляж и курорты',de:'Sandstrand & Resorts',en:'Sand beach & resorts'}, img:IMG+'region-lara.webp', x:56,y:41},
+    {id:'belek',    name:{ru:'Белек',     de:'Belek',        en:'Belek'},        tag:{ru:'Гольф и сосновые леса',de:'Golf & Pinienwälder',en:'Golf & pine forest'}, img:IMG+'region-belek.webp', x:68,y:35},
+    {id:'kemer',    name:{ru:'Кемер',     de:'Kemer',        en:'Kemer'},        tag:{ru:'Горы Тавр у моря',de:'Taurus trifft Meer',en:'Taurus meets the sea'}, img:IMG+'region-kemer.webp', x:20,y:66},
+    {id:'side',     name:{ru:'Сиде',      de:'Side',         en:'Side'},         tag:{ru:'Античность и пляж',de:'Antike & Strand',en:'Antiquity & beach'}, img:IMG+'region-side.webp', x:79,y:30},
+    {id:'alanya',   name:{ru:'Аланья',    de:'Alanya',       en:'Alanya'},       tag:{ru:'Крепость над бухтой',de:'Burg über der Bucht',en:'Castle above the bay'}, img:IMG+'region-alanya.webp', x:90,y:22},
   ];
   const regionName = id => { const r=REGIONS.find(x=>x.id===id); return r ? (r.name[LANG]||r.name.en) : id; };
 
@@ -729,6 +753,38 @@
     pool:{ru:'Свой бассейн',de:'Eigener Pool',en:'Private pool'},
     terrace:{ru:'Терраса',de:'Terrasse',en:'Terrace'},
   };
+
+  /* --- Excursions. Day trips beyond the resort, requestable like anything
+     else and — same rule as hotels — carrying no price. --- */
+  const EXC_IMG='./images/excursions/';
+  const EXCURSIONS=[
+    {id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+     n:{ru:'Памуккале и Хиераполис',de:'Pamukkale & Hierapolis',en:'Pamukkale & Hierapolis'},
+     d:{ru:'Белоснежные травертиновые террасы с термальной водой и античный город над ними.',
+        de:'Schneeweiße Kalksinterterrassen mit Thermalwasser und die antike Stadt darüber.',
+        en:'Snow-white travertine terraces of thermal water and the ancient city above them.'}},
+    {id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+     n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
+     d:{ru:'Долины сказочных дымоходов, пещерные церкви и полёт на воздушном шаре на рассвете.',
+        de:'Täler voller Feenkamine, Höhlenkirchen und eine Ballonfahrt bei Sonnenaufgang.',
+        en:'Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.'}},
+    {id:'ephesus', img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+     n:{ru:'Эфес',de:'Ephesos',en:'Ephesus'},
+     d:{ru:'Мраморные улицы, библиотека Цельса и один из крупнейших античных театров.',
+        de:'Marmorstraßen, die Celsus-Bibliothek und eines der größten antiken Theater.',
+        en:'Marble streets, the Library of Celsus and one of the largest ancient theatres.'}},
+    {id:'oludeniz', img:EXC_IMG+'exc-oludeniz.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+     n:{ru:'Олюдениз — Голубая лагуна',de:'Ölüdeniz — Blaue Lagune',en:'Ölüdeniz — Blue Lagoon'},
+     d:{ru:'Лагуна бирюзового цвета, пляж Бельджекиз и параглайдинг с горы Бабадаг.',
+        de:'Türkisfarbene Lagune, der Belcekiz-Strand und Gleitschirmflug vom Babadag.',
+        en:'A turquoise lagoon, Belcekiz beach and paragliding from Mount Babadag.'}},
+    {id:'istanbul', img:EXC_IMG+'exc-istanbul.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+     n:{ru:'Стамбул',de:'Istanbul',en:'Istanbul'},
+     d:{ru:'Босфор, Айя-София и Гранд-базар — короткий перелёт от Антальи.',
+        de:'Bosporus, Hagia Sophia und Großer Basar — ein kurzer Flug ab Antalya.',
+        en:'The Bosphorus, Hagia Sophia and the Grand Bazaar — a short flight from Antalya.'}},
+  ];
+  const excursion=id=>EXCURSIONS.find(e=>e.id===id);
 
   const H=(id,name,region,st,rt,rv,ty,am,bd,be,im,rs,de)=>
     ({id,name,region,stars:st,rating:rt,reviews:rv,types:ty,amen:am,board:bd,beach:be,
@@ -789,7 +845,7 @@
      3 · State
      ==================================================================== */
   const KEY='onlyone.state.v1';
-  const DEF={lang:'ru',favorites:[],requests:[],seq:127,staff:null,
+  const DEF={lang:'ru',favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
              search:{from:'',to:'',adults:2,children:0}};
   let S=load();
   function load(){
@@ -950,6 +1006,27 @@
     </article>`;
   }
 
+  function excCard(e){
+    return `<article class="card fade-up" data-exc="${e.id}">
+      <div class="card__media" style="aspect-ratio:16/10">
+        <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="lazy" decoding="async">
+      </div>
+      <div class="card__body">
+        <div class="eyebrow">${esc(e.dur[LANG]||e.dur.en)}</div>
+        <h3 class="card__name">${esc(e.n[LANG]||e.n.en)}</h3>
+        <p class="card__desc">${esc(e.d[LANG]||e.d.en)}</p>
+      </div>
+    </article>`;
+  }
+  function vExcursions(){
+    return `${appbar({back:true,title:t('excursions'),menu:false})}
+    <div class="wrap" style="padding-top:18px">
+      <p class="muted" style="font-size:13.5px;margin:0 0 16px">${t('excNote')}</p>
+      <div style="display:flex;flex-direction:column;gap:15px">${EXCURSIONS.map(excCard).join('')}</div>
+    </div>
+    <div class="pageBottom"></div>`;
+  }
+
   /* ====================================================================
      8 · Guest views
      ==================================================================== */
@@ -986,6 +1063,19 @@
             <span class="regionCard__ov"></span>
             <span class="regionCard__txt"><b>${esc(r.name[LANG]||r.name.en)}</b>
             <span>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length} ${t('hotels')}</span></span>
+          </button>`).join('')}
+        </div>
+      </div>
+      <div class="section">
+        <div class="section__head"><div><div class="eyebrow">${t('excSub')}</div>
+          <h2 class="h-lg" style="margin-top:4px">${t('excursions')}</h2></div>
+          <button class="tiny muted" data-go="excursions" style="font-weight:600">${t('all')}</button></div>
+        <div class="rail">
+          ${EXCURSIONS.map(e=>`<button class="regionCard" style="width:190px;aspect-ratio:16/11" data-exc="${e.id}">
+            <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="lazy">
+            <span class="regionCard__ov"></span>
+            <span class="regionCard__txt"><b>${esc(e.n[LANG]||e.n.en)}</b>
+            <span>${esc(e.dur[LANG]||e.dur.en)}</span></span>
           </button>`).join('')}
         </div>
       </div>
@@ -1118,7 +1208,8 @@
   const WISHKEYS=[['sea','wSea'],['quiet','wQuiet'],['transfer','wTransfer'],['cot','wCot'],['honey','wHoney'],['bday','wBirthday'],['access','wAccess']];
   function startRequest(hotelId,roomId){
     W={step:1,hotelId,roomId:roomId||'',from:S.search.from||today(14),to:S.search.to||today(21),
-       adults:S.search.adults||2,children:S.search.children||0,childAges:[],wishes:[],note:'',
+       adults:S.search.adults||2,children:S.search.children||0,childAges:[],wishes:[],
+       excursions:(S.pendingExc||[]).slice(),note:'',
        first:'',last:'',phone:'',email:'',wa:''};
     go('wizard');
   }
@@ -1158,6 +1249,11 @@
       body=`<div class="field"><label class="label">${t('s4')}</label>
         ${WISHKEYS.map(([k,tk])=>`<button class="check${W.wishes.indexOf(k)>-1?' is-on':''}" data-wish="${k}">
           <span class="check__box">${icon('check')}</span><span>${t(tk)}</span></button>`).join('')}</div>
+        <div class="field"><label class="label">${t('excInterest')}</label>
+        ${EXCURSIONS.map(e=>`<button class="check${W.excursions.indexOf(e.id)>-1?' is-on':''}" data-wexc="${e.id}">
+          <span class="check__box">${icon('check')}</span>
+          <span>${esc(e.n[LANG]||e.n.en)}<span class="muted tiny"> · ${esc(e.dur[LANG]||e.dur.en)}</span></span></button>`).join('')}
+        <p class="muted mini" style="margin-top:8px">${t('excNote')}</p></div>
         <div class="field"><label class="label">${t('otherWishes')}</label>
         <textarea class="input" id="wNote">${esc(W.note)}</textarea></div>`;
     }else if(W.step===5){
@@ -1177,6 +1273,7 @@
         <div class="kv"><span class="muted">${t('guests')}</span><b>${W.adults} ${t('adultsShort')}${W.children?` · ${W.children} ${t('childrenShort')}`:''}</b></div>
         <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
         ${W.wishes.length?`<div class="kv"><span class="muted">${t('custWishes')}</span><b>${W.wishes.map(k=>t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])).join('<br>')}</b></div>`:''}
+        ${W.excursions.length?`<div class="kv"><span class="muted">${t('excursions')}</span><b>${W.excursions.map(id=>{const e=excursion(id);return esc(e?(e.n[LANG]||e.n.en):id);}).join('<br>')}</b></div>`:''}
         ${W.note?`<div class="kv"><span class="muted">${t('otherWishes')}</span><b>${esc(W.note)}</b></div>`:''}
         <div class="kv"><span class="muted">${t('email')}</span><b>${esc(W.email)}</b></div>
       </div>
@@ -1208,7 +1305,7 @@
     S.requests.unshift({
       id:'r'+Date.now(),code,hotelId:W.hotelId,roomId:W.roomId,
       from:W.from,to:W.to,adults:W.adults,children:W.children,childAges:W.childAges.slice(0,W.children),
-      wishes:W.wishes.slice(),note:W.note,
+      wishes:W.wishes.slice(),excursions:W.excursions.slice(),note:W.note,
       contact:{first:W.first,last:W.last,phone:W.phone,email:W.email,wa:W.wa},
       status:'new',createdAt:Date.now(),offer:null,payment:null,staffNote:'',
       history:[{s:'new',at:Date.now()}]
@@ -1460,6 +1557,10 @@
         <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}${r.childAges.length?' ('+r.childAges.join(', ')+')':''}`:''}</b></div>
         <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
       </div>
+      ${(r.excursions&&r.excursions.length)?`<div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('excursions')}</div>
+        <div class="badges" style="margin-top:9px">${r.excursions.map(id=>{const e=excursion(id);
+          return `<span class="badge badge--gold">${esc(e?(e.n[LANG]||e.n.en):id)}</span>`;}).join('')}</div></div>`:''}
       ${(r.wishes.length||r.note)?`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('custWishes')}</div>
         <div class="badges" style="margin-top:9px">${r.wishes.map(k=>`<span class="badge">${t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])}</span>`).join('')}</div>
@@ -1545,6 +1646,7 @@
       case 'trip':      html=vTrip(VIEW.param);break;
       case 'favorites': html=vFavorites();break;
       case 'map':       html=vMap();break;
+      case 'excursions':html=vExcursions();break;
       case 'staff':     html=vStaffLogin();break;
       case 's-dash':    html=S.staff?vStaffDash():vStaffLogin();break;
       case 's-req':     html=S.staff?vStaffReqs():vStaffLogin();break;
@@ -1669,6 +1771,7 @@
   }
   function sheetMenu(){
     const items=[['discover','search','search'],['regions','pin','search'],['map','map','map'],
+                 ['excursions','map','excursions'],
                  ['myFav','heart','favorites'],['myTrips','trip','trips'],['mContact','phone','contact']];
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('menu')}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
@@ -1744,6 +1847,19 @@
         <div class="field"><label class="label">${t('internalNote')}</label><input class="input" id="oNote"></div>
       </div>
       <div class="sheet__foot"><button class="btn btn--primary" data-act="offer-save" data-id="${id}">${t('sendOffer')}</button></div>`);
+  }
+  function sheetExcursion(id){
+    const e=excursion(id);if(!e)return;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(e.n[LANG]||e.n.en)}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/10">
+        <img src="${e.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="kv" style="margin-top:12px"><span class="muted">${t('duration')}</span><b>${esc(e.dur[LANG]||e.dur.en)}</b></div>
+      <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(e.d[LANG]||e.d.en)}</p>
+      <div class="noteBox">${t('excNote')}</div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-add" data-id="${id}">${t('addToReq')}</button></div>`);
   }
   function sheetPay(id){
     const r=request(id);
@@ -1837,6 +1953,15 @@
     }
     const wr=T.closest('[data-wroom]');
     if(wr&&W){W.roomId=wr.dataset.wroom;render();return;}
+    const we=T.closest('[data-wexc]');
+    if(we&&W){
+      const k=we.dataset.wexc,i=W.excursions.indexOf(k);
+      wizardCollect();
+      i>-1?W.excursions.splice(i,1):W.excursions.push(k);
+      render();return;
+    }
+    const ex=T.closest('[data-exc]');
+    if(ex){sheetExcursion(ex.dataset.exc);return;}
     const ww=T.closest('[data-wish]');
     if(ww&&W){
       const k=ww.dataset.wish,i=W.wishes.indexOf(k);
@@ -1866,6 +1991,12 @@
       case 'fapply': closeSheet();setTimeout(render,260);break;
       case 'do-search': render();toast(`${filtered().length} ${t('results')}`);break;
       case 'compare': sheetCompare();break;
+      case 'exc-add': {
+        // Vor der Anfrage vormerken; der Wizard übernimmt die Auswahl in Schritt 4.
+        S.pendingExc = S.pendingExc || [];
+        if(S.pendingExc.indexOf(id)<0)S.pendingExc.push(id);
+        save();closeSheet();setTimeout(()=>toast(t('excAdded')),300);break;
+      }
       case 'region-go': FILTER.region=id;closeSheet();setTimeout(()=>go('search'),260);break;
       case 'req': startRequest(id,a.dataset.room);break;
       case 'accept': setStatus(request(id),'accepted');render();toast(t('offerAccepted'));break;

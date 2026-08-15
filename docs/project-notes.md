@@ -228,3 +228,55 @@ Driven in a real browser at 393×852, one continuous run:
 * **Real payment.** Ziraat *Linkle Ödeme* is simulated; the architecture keeps
   it behind a single service seam.
 * **Desktop.** Still the phone layout in a centred device frame.
+
+---
+
+## 9. Ausflüge
+
+Auf Wunsch ergänzt: Tagesausflüge über die Hotelregion hinaus, mit dem vom
+Kunden gelieferten Bildmaterial.
+
+| Ziel | Dauer |
+|---|---|
+| Pamukkale & Hierapolis | 1 Tag |
+| Kappadokien | 2 Tage |
+| Ephesos | 1 Tag |
+| Ölüdeniz — Blaue Lagune | 1 Tag |
+| Istanbul | 2 Tage |
+
+Ölüdeniz, Ephesos und Kappadokien liegen bewusst außerhalb der Region Antalya —
+es sind Ausflugsziele, keine Hotelregionen, und stehen deshalb in einem eigenen
+Bereich statt in der Regionsliste.
+
+**Einbindung in den Geschäftsprozess.** Ausflüge haben — wie Hotels — keinen
+Preis. Sie sind kein zweiter Bestellweg, sondern hängen sich an die
+Hotelanfrage:
+
+* eigener Bereich zum Stöbern (Startseiten-Rail, Übersicht, Detail-Sheet)
+* *Zur Anfrage hinzufügen* merkt ein Ziel vor (`pendingExc`)
+* Schritt 4 des Anfrage-Wizards zeigt alle Ausflüge als Auswahl, Vorgemerktes
+  ist bereits aktiv
+* die Auswahl steht in der Zusammenfassung, wird an der Anfrage gespeichert und
+  erscheint im Mitarbeiterbereich als eigener Block
+
+Der Mitarbeiter stimmt sie beim Angebot mit ab — dort entsteht ohnehin der
+einzige Preis.
+
+Verifiziert: stöbern → vormerken → Wizard zeigt es vorausgewählt → zweites Ziel
+ergänzt → beide in der Zusammenfassung → beide an der Anfrage gespeichert →
+Mitarbeiter sieht beide. Kein Preis im gesamten Ausflugsbereich.
+
+## 10. Echtes Bildmaterial (Upload 15.08.)
+
+13 Fotos eingebaut, PNG → WebP, mittig auf Zielformat beschnitten:
+
+* **5 Ausflugsbilder** — alle Ziele abgedeckt
+* **7 Hotelbilder** — `h01 h02 h07 h08 h09 h10 h11`
+* **2 Regionsbilder** — Antalya, Kemer
+
+Die Rohdateien lagen als 33 MB PNG im Repo-Wurzelverzeichnis (`1.png`…`13.png`)
+und wurden nach der Umwandlung entfernt; die ausgelieferten WebP wiegen zusammen
+1,4 MB.
+
+Noch Platzhalter aus den Videos: `h03 h04 h05 h06 h12 h13 h14` und die Regionen
+`konyaalti lara belek side alanya`. Prompts dafür in `docs/image-prompts.md`.
