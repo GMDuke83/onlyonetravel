@@ -687,6 +687,11 @@ svg{
    edge of the bar rather than sitting centred under an icon. */
 .appbar__brand .logo{--logo-size:23px;text-align:left}
 .appbar__brand .logo__sub{letter-spacing:.28em;text-indent:.28em;margin-top:.3em}
+/* On ivory the decorative gold measures 1.8:1 and the subline all but
+   disappeared. Over a photograph it stays light; on the solid bar it takes the
+   darker gold that is legible as text. */
+.appbar:not(.appbar--over) .logo__sub,
+.appbar--over.is-solid .logo__sub{color:var(--gold-ink)}
 .appbar__mark{
   width:30px;height:30px;flex:0 0 30px;border-radius:50%;
   border:1.5px solid var(--gold);position:relative;
