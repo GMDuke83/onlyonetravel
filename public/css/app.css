@@ -488,8 +488,13 @@ svg{
   --nav-h:calc(60px + var(--sab));
 }
 
-.view{animation:viewIn .32s var(--ease) both}
-@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* Opacity only — deliberately no transform.
+   An element carrying a transform animation (even a filled one that ends at
+   `none`) becomes the containing block for its position:fixed descendants. The
+   tab bar and sticky CTAs live inside .view, so a transform here would anchor
+   them to the full page height and they would scroll away instead of sticking. */
+.view{animation:viewIn .3s var(--ease) both}
+@keyframes viewIn{from{opacity:0}to{opacity:1}}
 .pageBottom{height:calc(var(--nav-h) + 14px)}
 .pageBottom--cta{height:calc(var(--nav-h) + 92px)}
 
