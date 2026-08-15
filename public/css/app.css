@@ -1023,8 +1023,10 @@ select.input option{background:#fff;color:var(--txt)}
   display:grid;place-items:center;
   font-family:var(--serif);font-size:17px;letter-spacing:.06em;
 }
-.person b{display:block;font-family:var(--serif);font-size:19px;font-weight:400;color:var(--txt)}
-.person span{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3);margin-top:5px}
+.person > div b{display:block;font-family:var(--serif);font-size:19px;font-weight:400;color:var(--txt)}
+/* scoped to the text column on purpose — the monogram is a span too, and a
+   bare `.person span` outranked .person__mark and knocked it out of its circle */
+.person > div span{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3);margin-top:5px}
 
 .doList{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:13px}
 .doList li{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:var(--txt-2);line-height:1.5}
