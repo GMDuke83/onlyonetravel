@@ -165,9 +165,19 @@ workflow uploads `public/` as the Pages artifact, so nothing has to move.
 1. The repository must be **public** — Pages on a private repo requires a paid
    GitHub plan.
 2. *Settings → Pages → Build and deployment → Source:* **GitHub Actions**.
-3. Push to `develop` (or run the workflow manually).
+3. Push to `main` (or run the workflow manually from the Actions tab).
 
 Result: `https://gmduke83.github.io/onlyonetravel/`
+
+**It deploys from `main`, not `develop`.** GitHub creates the `github-pages`
+environment itself and by default only allows the repository's *default*
+branch to deploy into it; a run on `develop` is rejected with
+*"Branch `develop` is not allowed to deploy to github-pages due to environment
+protection rules."*
+
+To publish from `develop` instead — which matches the branch model above —
+allow it once under *Settings → Environments → github-pages → Deployment
+branches*, then change the trigger in the workflow to `develop`.
 
 The app uses **document-relative paths**, so it works under that sub-path just
 as well as at a domain root later — verified in-browser under `/onlyonetravel/`

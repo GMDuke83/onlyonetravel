@@ -15,10 +15,23 @@ name: Deploy to GitHub Pages
 #
 # The app uses document-relative paths, so it works under that sub-path as
 # well as at a domain root later.
+#
+# Why this deploys from `main` and not `develop`
+# ----------------------------------------------
+# GitHub creates the `github-pages` environment on its own and, by default,
+# only lets the repository's DEFAULT branch deploy into it. Running this on
+# `develop` fails with:
+#
+#   Branch "develop" is not allowed to deploy to github-pages
+#   due to environment protection rules.
+#
+# To publish from `develop` instead, allow it once under
+#   Settings → Environments → github-pages → Deployment branches
+# and then add `develop` to the branch list below.
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
