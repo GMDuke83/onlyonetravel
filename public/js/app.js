@@ -2131,6 +2131,59 @@
     vids.forEach(v => bgObserver.observe(v));
   }
 
+  /* Reveal on scroll. One observer for the whole view, each element released
+     once and then forgotten — an element that has arrived never needs watching
+     again, and unobserving keeps the callback cheap on long pages.
+
+     The stagger is per group, not per page: cards in one list follow each
+     other, but a list further down does not inherit a two-second delay from
+     everything above it. */
+  const REVEAL_SEL = [
+    '.section__head', '.cardList > .card', '.rail > *', '.expBand',
+    '.expBands__head', '.flyBand__head', '.flyBand__card', '.listCard',
+    '.statRow', '.doList', '.person', '.searchCard', '.tl',
+  ].join(',');
+  let revealObserver=null;
+  function armReveals(){
+    if (revealObserver){ revealObserver.disconnect(); revealObserver=null; }
+    const root=$('#app'); if(!root) return;
+    const els=$$(REVEAL_SEL, root);
+    if(!els.length) return;
+    if (!('IntersectionObserver' in window) ||
+        (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+
+    const seen=new Map();
+    els.forEach(el=>{
+      /* Never reveal something that contains the fixed tab bar: a transform on
+         an ancestor would make it the containing block and the bar would
+         scroll away with the content. */
+      if (el.querySelector('.tabbar')) return;
+      const key=el.parentNode;
+      const i=(seen.get(key)||0); seen.set(key,i+1);
+      el.style.setProperty('--rd', Math.min(i,4)*0.07 + 's');
+      el.classList.add('reveal');
+    });
+
+    /* What gets watched is not always what gets revealed. A rail scrolls
+       sideways, so the cards past its right edge never cross the vertical
+       viewport at all — measured, seven of them stayed invisible for the whole
+       page. Watching the rail and releasing its cards together fixes that, and
+       the stagger still gives the visible ones their cascade. */
+    revealObserver=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting) return;
+        const t=e.target;
+        if(t.classList.contains('reveal')) t.classList.add('is-in');
+        $$('.reveal', t).forEach(c=>c.classList.add('is-in'));
+        revealObserver.unobserve(t);
+      });
+    }, { root, rootMargin:'0px 0px -8% 0px', threshold:0.06 });
+
+    const triggers=new Set();
+    $$('.reveal', root).forEach(el=>triggers.add(el.closest('.rail') || el));
+    triggers.forEach(t=>revealObserver.observe(t));
+  }
+
   /* Scroll-linked arrival band. The airframe sits between the headline and the
      card, so scrolling pushes it through the layers instead of past them —
      that sandwich is the whole effect, and it is why the plane is three
@@ -2172,7 +2225,9 @@
       window.removeEventListener('resize', flyHandler);
       flyScroller = flyHandler = null;
     }
-    const bands=$$('.flyBand'); if(!bands.length) return;
+    const bands=$$('.flyBand');
+    const strips=$$('.expBand');
+    if(!bands.length && !strips.length) return;
     const scroller=$('#app'); if(!scroller) return;
     let raf=0;
     const update=()=>{
@@ -2195,9 +2250,19 @@
       p=Math.min(1,Math.max(0,p/pMax));
       band.style.setProperty('--p',p.toFixed(4));
       });
+      /* Same pass, same frame: the banner photographs drift against their
+         frames. -1 as a band enters at the bottom, +1 as it leaves at the top.
+         Off-screen bands are skipped so the cost stays with what is visible. */
+      strips.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(r.bottom<-40||r.top>vh+40) return;
+        const c=(r.top+r.height/2-vh/2)/((vh+r.height)/2);
+        el.style.setProperty('--s',Math.max(-1,Math.min(1,c)).toFixed(3));
+      });
     };
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
       bands.forEach(b=>b.style.setProperty('--p','0.5'));   /* parked, no motion */
+      strips.forEach(el=>el.style.setProperty('--s','0'));
       return;
     }
     flyHandler=()=>{ if(!raf) raf=requestAnimationFrame(update); };
@@ -2256,6 +2321,7 @@
     armBgVideos();
     armFlyBand();
     armAppbar();
+    armReveals();
     if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startPlatformHero)window.ONLYONE.startPlatformHero();
   }
   function bindGallery(){

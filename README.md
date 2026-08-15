@@ -466,6 +466,37 @@ main experience. Text sitting on a photograph must set its colour explicitly
 (see the `TEXT OVER IMAGERY` block in `app.css`) — inheriting the ground's ink
 is what once turned the platform headline navy-on-daylight.
 
+### Scroll animation
+
+Two effects, both driven by position rather than by a timer, so they follow the
+finger instead of running past it.
+
+**Reveal.** Content rises 18px into place as it enters the screen
+(`.reveal` / `armReveals()`). It replaced a `.fade-up` that animated every card
+the moment a view rendered — most of which played to nobody, below the fold.
+One `IntersectionObserver` per view; each element is released once and then
+unobserved, so the callback stays cheap on a long page. The stagger is per
+group, not per page, or a list near the bottom would inherit a two-second delay
+from everything above it.
+
+What is watched is not always what is revealed: a rail scrolls sideways, so
+cards past its right edge never cross the vertical viewport — measured, seven
+stayed invisible for the entire page. Rails are therefore watched as a unit and
+release their cards together.
+
+**Parallax.** Banner photographs drift 13px against their frames
+(`--s`, -1 entering to +1 leaving), computed in the same rAF pass as the
+aircraft and the car rather than in a second scroll listener. The `scale(1.09)`
+is what buys the travel — without it the drift would expose the edges of the
+crop.
+
+Both are opacity and transform only, so the compositor carries them. Every
+revealed element ends at `transform:none`, not a zero translate: a lingering
+transform would make it a containing block and capture the fixed tab bar, which
+is a bug this project has already had once. Under
+`prefers-reduced-motion: reduce` nothing is hidden, nothing drifts, and no
+scroll listener is registered at all.
+
 ### Background video loops
 
 The three background clips are crossfade-looped: the last 1.6 s is dissolved

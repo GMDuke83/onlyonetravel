@@ -1067,8 +1067,33 @@ select.input option{background:#fff;color:var(--txt)}
 .cmp th{font-weight:500;color:var(--txt-3);font-size:9.5px;text-transform:uppercase;letter-spacing:.14em}
 .cmpScroll{overflow-x:auto;margin-inline:-20px;padding-inline:20px}
 
-.fade-up{animation:fadeUp .5s var(--ease) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* --------------------------------------------------------------------------
+   Scroll reveal
+
+   Content rises into place as it enters the screen instead of every card on
+   the page animating at once the moment a view renders — which is what the old
+   .fade-up did, so most of it played to nobody.
+
+   Only opacity and transform, both of which the compositor can carry on its
+   own thread; nothing here touches layout. The end state is `transform:none`,
+   not a zero translate, so a revealed element stops being a containing block
+   and cannot capture the fixed tab bar the way an earlier animation did.
+   -------------------------------------------------------------------------- */
+.reveal{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  transition:opacity .62s var(--ease), transform .62s var(--ease);
+  transition-delay:var(--rd,0s);
+  will-change:opacity,transform;
+}
+.reveal.is-in{opacity:1;transform:none;will-change:auto}
+/* Rails scroll sideways, so their cards arrive from the side instead. */
+.rail > .reveal{transform:translate3d(22px,0,0)}
+.rail > .reveal.is-in{transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal,.rail > .reveal{opacity:1;transform:none;transition:none}
+}
+.fade-up{}
 @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.26)}100%{transform:scale(1)}}
 .pop{animation:pop .42s var(--ease)}
 
@@ -1218,9 +1243,17 @@ select.input option{background:#fff;color:var(--txt)}
   color:rgba(255,255,255,.90);
   text-shadow:0 1px 14px rgba(0,0,0,.5);
 }
-.expBand:active img{transform:scale(1.02)}
-.expBand img{transition:transform .5s var(--ease)}
-@media (prefers-reduced-motion:reduce){.expBand img{transition:none}}
+/* Parallax. The photograph drifts a little slower than the band it sits in, so
+   the image reads as sitting behind the frame rather than glued to it. The
+   1.09 scale is what buys the travel: without it the drift would expose the
+   edges of the crop. No transition here — the value is refreshed per frame from
+   the scroll position, and a transition would fight it into a lag. */
+.expBand img{
+  transform:translate3d(0, calc(var(--s,0) * 13px), 0) scale(1.09);
+}
+@media (prefers-reduced-motion:reduce){
+  .expBand img{transform:none}
+}
 
 /* ==========================================================================
    ARRIVAL BAND — the scroll-linked aircraft
