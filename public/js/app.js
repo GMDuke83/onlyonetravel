@@ -1215,15 +1215,23 @@
      ==================================================================== */
   let VIEW={name:'home',param:null};
   const STACK=[];
+  /* Going back should return you to where you were reading, not to the top of
+     a list you already scrolled through. The scroll offset is captured on the
+     way out and travels on the stack with the view it belongs to, so coming
+     back from accommodation 14 lands on accommodation 14 — not on number 1.
+
+     Forward navigation deliberately starts at the top: a new view is new
+     material. Only `back` restores. */
+  function scrollNow(){ const a=$('#app'); return a?a.scrollTop:0; }
   function go(name,param,noPush){
-    if(!noPush&&VIEW.name)STACK.push({name:VIEW.name,param:VIEW.param});
+    if(!noPush&&VIEW.name)STACK.push({name:VIEW.name,param:VIEW.param,scroll:scrollNow()});
     VIEW={name,param:param==null?null:param};
     render();
   }
   function back(){
     const p=STACK.pop();
     VIEW=p||{name:'home',param:null};
-    render();
+    render(p?p.scroll:0);
   }
 
   /* ====================================================================
@@ -1331,8 +1339,7 @@
       </video>
       <div class="pHero__scrim"></div>
       <div class="pHero__body">
-        <div class="eyebrow" style="color:var(--gold-light)">${t('heroEyebrow')}</div>
-        <h1 class="pHero__title" style="margin-top:12px">${t('heroTitle')}</h1>
+        <h1 class="pHero__title">${t('heroTitle')}</h1>
         <p class="pHero__sub">${t('heroSub')}</p>
         <div class="pHero__glass">
           <ul class="trust">
@@ -1394,7 +1401,7 @@
         <h2 class="flyBand__title">${t('flyTitle')}</h2>
       </div>
       <div class="flyBand__plane" aria-hidden="true">
-        <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1543">
+        <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1111">
       </div>
       <div class="flyTicker" aria-hidden="true">
         ${(()=>{ const half=[...REGIONS.map(r=>r.name[LANG]||r.name.en),
@@ -1802,7 +1809,7 @@
     const DO=[t('cDo1'),t('cDo2'),t('cDo3'),t('cDo4')];
     if (r) markRead(r,'guest');
     return `${appbar({})}
-    <div class="wrap" style="padding-top:24px">
+    <div class="wrap concScreen" style="padding-top:24px">
       <div class="eyebrow">${t('navConcierge')}</div>
       <h1 class="h-xl" style="margin-top:10px">${t('conciergeTitle')}</h1>
 
@@ -2169,8 +2176,9 @@
   /* ====================================================================
      10 · Render
      ==================================================================== */
-  function render(){
+  function render(restore){
     const a=$('#app');if(!a)return;
+    restore=restore||0;
     let html='';
     switch(VIEW.name){
       case 'home':      html=vHome();break;
@@ -2194,7 +2202,21 @@
       default:          html=vHome();
     }
     a.innerHTML=`<div class="view">${html}</div>`;
-    a.scrollTop=0;
+    /* The view animation moves, and an element with a transform becomes the
+       containing block for every position:fixed inside it — which is how the
+       tab bar once scrolled away with the page. So the fixed furniture is
+       lifted out of .view and parked next to it before the animation runs.
+       The full-bleed backdrop goes in front of .view in document order so it
+       keeps painting behind the content; the bottom bars go after it. */
+    const v=a.firstElementChild;
+    v.querySelectorAll('.confirmBg').forEach(el=>a.insertBefore(el,v));
+    v.querySelectorAll('.tabbar,.stickyCta').forEach(el=>a.appendChild(el));
+    /* Restoring has to happen after layout, or the container is still the
+       height of the old view and the assignment is clamped away. One frame is
+       enough; images below the fold do not affect the offset because every
+       card reserves its space through aspect-ratio. */
+    if(restore>0){ a.scrollTop=restore; requestAnimationFrame(()=>{a.scrollTop=restore;}); }
+    else a.scrollTop=0;
     document.documentElement.lang=LANG;
     if(VIEW.name==='hotel')bindGallery();
     armBgVideos();
@@ -2325,9 +2347,6 @@
       <div class="field"><label class="label">${t('mLang')}</label>
         <div class="langRow">${['ru','de','en'].map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
       <div style="margin-top:18px"><button class="btn btn--dark" data-mgo="staff">${icon('lock')}${t('mStaff')}</button></div>
-      <p class="credit">3D-Modell „Airplane CRJ-900 Cityjet“ von CityJet Training
-        (sketchfab.com/artoud), <a href="https://creativecommons.org/licenses/by/4.0/"
-        target="_blank" rel="noopener">CC BY 4.0</a> — umlackiert, Rendering von ONLYONE.</p>
     </div>`);
   }
   function sheetContact(){

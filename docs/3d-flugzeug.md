@@ -2,87 +2,42 @@
 
 Auf der Startseite, unter den vier Erlebnis-Bannern, liegt ein Abschnitt, in dem
 ein Flugzeug beim Scrollen durch die Ebenen wandert: die Überschrift liegt
-**dahinter**, die Infokarte **davor**. Genau dieser Sandwich-Effekt ist die
-ganze Wirkung — deshalb sind es drei getrennte Elemente und kein Hintergrundbild.
+**dahinter**, das Laufband und die Infokarte **davor**. Genau dieser
+Sandwich-Effekt ist die ganze Wirkung — deshalb sind es getrennte Elemente und
+kein Hintergrundbild.
+
+## Das Bild
+
+`public/images/3d/plane-top.webp` — vom Auftraggeber geliefert (`jet.png`),
+PNG mit echtem Alphakanal inklusive eigenem Schlagschatten. Aufbereitung:
+
+```bash
+# auf die Alpha-Bounding-Box zuschneiden, auf 900 px Breite, WebP mit Alpha
+ffmpeg -i jet.png -vf "crop=1574:1943:130:63,scale=900:-1" \
+       -c:v libwebp -quality 90 -compression_level 6 \
+       public/images/3d/plane-top.webp
+```
+
+Ergebnis: 900 × 1111, 120 KB. Weil das Bild seinen Schatten mitbringt, trägt
+das CSS **keinen** zweiten `drop-shadow` — zwei Schatten übereinander sehen
+schmutzig aus.
+
+Wird das Bild ersetzt, unbedingt `width`/`height` am `<img>` in `vHome()`
+mitziehen: die Werte reservieren den Platz vor dem Laden. Und die Geometrie im
+`.flyBand__plane` ist auf dieses Seitenverhältnis abgestimmt — ein deutlich
+höheres oder breiteres Bild braucht andere Werte für `top`, `width` und die
+Flugstrecke.
 
 ## Warum kein echtes 3D im Browser
 
-Naheliegend wäre gewesen, das glTF-Modell mit three.js direkt auf dem Handy zu
-rendern. Dagegen sprachen drei gemessene Punkte:
+Ein früherer Stand rechnete ein glTF-Modell live mit three.js. Dagegen sprach:
+4,2 MB Modell plus ~150 KB Bibliothek gegen **120 KB** Standbild, dazu
+GPU-Dauerlast und ein spürbar warmes Gerät. Die Ansicht ist fest von oben und
+dreht sich nicht — für einen festen Blickwinkel liefert ein Bild dasselbe
+Ergebnis. Bewegt wird per CSS-`transform`, also auf dem Compositor: kein
+Layout, kein Neuzeichnen, kein Ruckeln beim Scrollen.
 
-| | echtes WebGL | vorgerendertes Bild |
-|---|---|---|
-| Übertragung | 4,2 MB Modell + ~150 KB Bibliothek | **37 KB** |
-| Rechenlast | GPU-Dauerlast, spürbar warmes Gerät | keine |
-| Ausfallrisiko | WebGL kann fehlen oder gedrosselt sein | keins |
-
-Die Ansicht ist von oben und fest — sie dreht sich nicht. Für einen festen
-Blickwinkel liefert ein einzelnes Bild exakt dasselbe Ergebnis wie eine
-Echtzeit-Szene, nur eben für ein Hundertstel der Daten. Bewegt wird per
-CSS-`transform`, also auf dem Compositor: kein Layout, kein Neuzeichnen, kein
-Ruckeln beim Scrollen.
-
-Sollte später eine frei drehbare Ansicht gewünscht sein, ändert sich die
-Rechnung — dann wird three.js nötig, und das Modell sollte vorher mit Draco
-oder meshopt komprimiert und die Textur auf 1024 px verkleinert werden.
-
-## Herkunft und Lizenz
-
-Das Modell stammt von Sketchfab:
-
-> This work is based on "Airplane CRJ-900 Cityjet"
-> (https://sketchfab.com/3d-models/airplane-crj-900-cityjet-02c4fa44604243c2bb48db64506a39af)
-> by CityJet Training (https://sketchfab.com/artoud) licensed under CC-BY-4.0
-> (http://creativecommons.org/licenses/by/4.0/)
-
-CC BY 4.0 erlaubt kommerzielle Nutzung und Bearbeitung, **verlangt aber die
-Nennung**. Die Nennung steht deshalb im Menü der App (unterster Absatz) und
-hier — nicht nur in einer Codezeile, die niemand sieht.
-
-**Die Originallackierung wurde entfernt.** Das Modell trug die Livery einer
-echten Fluggesellschaft samt Schriftzug; die gehört nicht auf die Seite eines
-anderen Unternehmens, weil sie eine Partnerschaft suggeriert, die es nicht gibt.
-Verwendet wird ausschliesslich die Geometrie, neu lackiert in Champagner-Gold
-aus der Markenpalette.
-
-## Wie das Bild entstanden ist
-
-Gerendert wurde offline mit three.js in einem headless Chromium (SwiftShader),
-nicht in einem 3D-Programm — dadurch ist der Vorgang reproduzierbar und braucht
-keine Extra-Software:
-
-1. glTF laden, Material durch `MeshPhysicalMaterial` in `#C9A96B` ersetzen
-   (`metalness .92`, `roughness .30`, `clearcoat .85`)
-2. Beleuchtung über `RoomEnvironment` + `PMREMGenerator` — eine reine
-   Richtlicht-Beleuchtung liess den Rumpf wie graues Plastik aussehen; erst die
-   Umgebungsspiegelung erzeugt den langen Glanz entlang der Mittellinie
-3. Orthografische Kamera senkrecht von oben, `up = (0,0,1)`, damit die Nase nach
-   oben zeigt
-4. Auf die Alpha-Bounding-Box zuschneiden, auf 900 px Breite skalieren, als
-   WebP mit Alphakanal speichern
-
-Ergebnis: `public/images/3d/plane-top.webp`, 900 × 1543, **37 KB**.
-
-Das Renderskript liegt unter `scripts/render-plane/`. Es wird nicht im Betrieb
-gebraucht, sondern nur, wenn Lackierung oder Blickwinkel geändert werden sollen:
-
-```bash
-npm i three playwright          # nur für das Rendern
-node scripts/render-plane/shoot.js
-```
-
-## Cockpit
-
-Die Verglasung des Spendermodells sass in der Textur, nicht in der Geometrie —
-mit der Lackierung verschwand also auch das Cockpit, und die Nase wurde eine
-leere Kapsel. Zwei Reparaturversuche als 3D-Kuppeln wirkten wie aufgesetzte
-Tropfen. Die Lösung nutzt aus, dass die Ansicht fest orthografisch von oben
-ist: Die Frontscheibe wird als flaches SVG-Dekal mit derselben Kameraprojektion
-gezeichnet — pixelidentisch mit echter Geometrie, aber mit voller Kontrolle
-über den Umriss (die gepfeilte Zweiflächen-Form, die ein moderner Jet von oben
-zeigt). Auch hier ist nichts von Hand platziert: Abtast-Strahlen messen die
-Silhouettenbreite des Rumpfs an jeder Station, `camera.project` liefert die
-Pixelkoordinaten.
+Erst wenn eine frei drehbare Ansicht gewünscht wäre, kippt diese Rechnung.
 
 ## Bewegung
 
@@ -93,9 +48,6 @@ halbe Strecke. `armFlyBand()` normiert deshalb auf den Fortschritt, der bei
 maximalem Scrollstand tatsächlich erreichbar ist. Steht das Band später einmal
 nicht mehr am Ende, ist dieser Faktor automatisch 1 und ändert nichts.
 
-Bei `prefers-reduced-motion: reduce` wird `--p` fest auf `0.5` gesetzt und gar
-kein Scroll-Listener registriert.
-
 Zusätzlich fliegt das Flugzeug unabhängig vom Scrollen: der Wrapper trägt die
 scrollgekoppelte Transformation, das Bild darin eine eigene 7-Sekunden-Schleife
 aus Drift, leichter Schräglage und Atmen der Grösse. Zwei verschachtelte
@@ -105,4 +57,7 @@ sie sich.
 Unter dem Flugzeug läuft ein Laufband aus Zielen (Regionen + Ausflüge, in der
 Sprache der Oberfläche). Die Zeile enthält ihren Inhalt exakt zweimal und
 wandert um genau −50 % — der Umbruchpunkt landet auf demselben Pixel, die
-Schleife hat keine Naht. Beides steht bei `prefers-reduced-motion` still.
+Schleife hat keine Naht.
+
+Bei `prefers-reduced-motion: reduce` wird `--p` fest auf `0.5` gesetzt, es wird
+gar kein Scroll-Listener registriert, und Flug wie Laufband stehen still.

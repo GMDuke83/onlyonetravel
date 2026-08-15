@@ -388,21 +388,27 @@ svg{
   text-transform:uppercase;
   color:var(--gold-light);
 }
+/* The closing moment of the intro. The first line stays a quiet setup in the
+   serif; the second is the one the wordmark's script carries — since the mark
+   became a signature, this is the line that should echo it. Bigger and with
+   the tall line box the swashes need. */
 .intro__endTitle{
   margin:0;
   font-family:var(--serif);
   font-weight:400;
-  font-size:clamp(38px, 11.6vw, 50px);
-  line-height:.98;
+  font-size:clamp(30px, 8.8vw, 39px);
+  line-height:1.04;
+  letter-spacing:.005em;
   text-shadow:0 3px 26px rgba(0,0,0,.34);
 }
 .intro__endTitle em{
   display:block;
   font-style:normal;
   font-family:var(--script);
-  font-size:clamp(40px, 12.2vw, 52px);
-  margin-top:8px;
-  padding-bottom:.08em;
+  font-size:clamp(50px, 15.5vw, 66px);
+  line-height:1.18;
+  margin-top:2px;
+  padding-bottom:.10em;
   color:var(--gold);
   background:linear-gradient(102deg, var(--gold) 0%, var(--gold-light) 46%, var(--gold) 100%);
   -webkit-background-clip:text;
@@ -623,8 +629,20 @@ svg{
   --nav-h:       calc(68px + var(--sab));
 }
 
-.view{animation:viewIn .3s var(--ease) both}
-@keyframes viewIn{from{opacity:0}to{opacity:1}}
+/* A short rise with the fade. It was opacity-only for a long time because a
+   transform here turns .view into the containing block for its fixed children
+   and the tab bar rode along; render() now lifts that furniture out first, so
+   the movement is safe. fill-mode is `backwards`, not `both` — the transform
+   must not survive the animation, or .view stays a containing block forever. */
+.view{animation:viewIn .34s var(--ease) backwards}
+@keyframes viewIn{
+  from{opacity:0;transform:translate3d(0,10px,0)}
+  to  {opacity:1;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .view{animation:viewFade .2s var(--ease) backwards}
+  @keyframes viewFade{from{opacity:0}to{opacity:1}}
+}
 .pageBottom{height:calc(var(--nav-h) + 20px)}
 .pageBottom--cta{height:calc(var(--nav-h) + 96px)}
 
@@ -736,12 +754,15 @@ svg{
    the photograph and the text still reads. */
 .pHero__body{
   position:relative;z-index:2;
-  margin:0 calc(14px + var(--sal)) 20px calc(14px + var(--sar));
-  padding:22px 20px 24px;
-  background:rgba(24,18,12,.20);
-  -webkit-backdrop-filter:blur(10px) saturate(112%);
-  backdrop-filter:blur(10px) saturate(112%);
-  border:1px solid rgba(255,255,255,.11);
+  /* Sits higher than the very bottom so the photograph keeps a foot of its own,
+     and the frost is only a whisper now — enough to lift the type off busy
+     water, not enough to read as a grey box over the picture. */
+  margin:0 calc(14px + var(--sal)) 13svh calc(14px + var(--sar));
+  padding:20px 20px 22px;
+  background:rgba(24,18,12,.11);
+  -webkit-backdrop-filter:blur(5px) saturate(106%);
+  backdrop-filter:blur(5px) saturate(106%);
+  border:1px solid rgba(255,255,255,.09);
   border-radius:3px;
 }
 .pHero__title{
@@ -1185,6 +1206,15 @@ select.input option{background:#fff;color:var(--txt)}
 .msg__m{font-size:9.5px;letter-spacing:.10em;color:var(--txt-3);margin-top:6px}
 .composer{margin-top:20px}
 
+/* The concierge page reads as two screens: the person and the options fill the
+   first one completely, the bands begin on the next. Without this the bands
+   peeked over the fold and the page looked like it had been cut off. */
+.concScreen{
+  min-height:calc(100svh - var(--nav-h) - 64px - var(--sat));
+  display:flex;flex-direction:column;
+  padding-bottom:28px;
+}
+
 /* ==========================================================================
    EXPERIENCE BANDS
 
@@ -1255,8 +1285,8 @@ select.input option{background:#fff;color:var(--txt)}
    ========================================================================== */
 .flyBand{
   position:relative;overflow:hidden;
-  min-height:82svh;
-  padding:46px 20px 34px;
+  min-height:72svh;
+  padding:44px 20px 30px;
   display:flex;flex-direction:column;justify-content:space-between;gap:20px;
   background:linear-gradient(180deg,var(--ground-2) 0%,var(--ground) 52%,var(--ground-3) 100%);
   border-top:1px solid var(--hair-soft);
@@ -1273,18 +1303,21 @@ select.input option{background:#fff;color:var(--txt)}
    moves. One element cannot carry both without them overwriting each other. */
 .flyBand__plane{
   position:absolute;z-index:2;
-  left:50%;top:6%;
-  width:min(63%,290px);
+  /* The supplied artwork is far wider than the earlier render (900x1111 vs
+     900x1543), so the same width and drift ran its nose off the top of the
+     band. Travel and start point are matched to the real aspect. */
+  left:50%;top:13%;
+  width:min(56%,252px);
   transform:
-    translate3d(-50%, calc(var(--p,0) * -15svh + 7svh), 0)
-    rotate(calc((var(--p,0) - .5) * 5deg))
-    scale(calc(1 + var(--p,0) * .12));
+    translate3d(-50%, calc(var(--p,0) * -9svh + 4svh), 0)
+    rotate(calc((var(--p,0) - .5) * 4deg))
+    scale(calc(1 + var(--p,0) * .10));
   will-change:transform;
   pointer-events:none;
 }
 .flyBand__plane img{
   display:block;width:100%;height:auto;
-  filter:drop-shadow(0 26px 40px rgba(42,33,25,.28));
+  /* the supplied artwork carries its own shadow — a second one muddies it */
   animation:planeFly 7s ease-in-out infinite;
   transform-origin:50% 42%;
 }

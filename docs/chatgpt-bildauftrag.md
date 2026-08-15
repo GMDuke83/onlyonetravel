@@ -468,11 +468,14 @@ erkennbaren Gesichter — Personen nur von hinten oder unscharf.
 
 Ablage: `public/images/concierge/`
 
-| # | Datei | Banner |
-|---|---|---|
-| 1 | `conc-reach.webp` | Immer erreichbar |
-| 2 | `conc-tailor.webp` | Massgeschneidert |
-| 3 | `conc-there.webp` | Vor Ort für dich |
+| # | Datei | Banner | Status |
+|---|---|---|---|
+| 1 | `conc-reach.webp` | Immer erreichbar | ✅ geliefert |
+| 2 | `conc-tailor.webp` | Massgeschneidert | ✅ geliefert |
+| 3 | `conc-there.webp` | Vor Ort für dich | ✅ geliefert |
+
+**Erledigt.** Die drei Bilder sind eingebaut. Die Prompts bleiben hier stehen,
+falls nachproduziert werden soll.
 
 ### 1 · `conc-reach.webp` — Immer erreichbar
 

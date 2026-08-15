@@ -488,14 +488,3 @@ ffmpeg -y -i in.mp4 -filter_complex "\
 
 The intro video is deliberately left alone — it plays once and the countdown is
 keyed to 3 s of playback, so retiming it would move the countdown.
-
----
-
-## Third-party credits
-
-The aircraft in the arrival band is based on "Airplane CRJ-900 Cityjet"
-(<https://sketchfab.com/3d-models/airplane-crj-900-cityjet-02c4fa44604243c2bb48db64506a39af>)
-by CityJet Training (<https://sketchfab.com/artoud>), licensed under
-[CC BY 4.0](http://creativecommons.org/licenses/by/4.0/). Only the geometry is
-used — the donor airline's livery was removed and replaced with the brand's own
-finish. See `docs/3d-flugzeug.md`.
