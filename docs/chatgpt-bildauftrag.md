@@ -4,7 +4,9 @@ Diese Datei ist so gebaut, dass du sie **direkt an ChatGPT geben kannst**.
 Jeder Prompt ist vollständig: Stil, Motiv und Verbote stecken bereits drin.
 Du musst nichts anhängen und nichts zusammensetzen.
 
-Es fehlen **12 Bilder**: 5 Regionen und 7 Hotelmotive.
+> **Stand:** 10 der ursprünglich 12 Bilder sind erzeugt und eingebaut.
+> **Es fehlen nur noch zwei: `h13` und `h14`** — beide unter „TEIL 2".
+> Alles andere in dieser Datei ist erledigt und dient als Referenz.
 
 ---
 
@@ -347,16 +349,16 @@ Richtwert je Datei: 25–60 KB. Deutlich darüber → `-quality 70`.
 
 | # | Datei | Format | erledigt |
 |---|---|---|---|
-| 1 | `region-konyaalti.webp` | 480 × 640 | ⬜ |
-| 2 | `region-lara.webp` | 480 × 640 | ⬜ |
-| 3 | `region-belek.webp` | 480 × 640 | ⬜ |
-| 4 | `region-side.webp` | 480 × 640 | ⬜ |
-| 5 | `region-alanya.webp` | 480 × 640 | ⬜ |
-| 6 | `h03.webp` | 640 × 400 | ⬜ |
-| 7 | `h04.webp` | 640 × 400 | ⬜ |
-| 8 | `h05.webp` | 640 × 400 | ⬜ |
-| 9 | `h06.webp` | 640 × 400 | ⬜ |
-| 10 | `h12.webp` | 640 × 400 | ⬜ |
+| 1 | `region-konyaalti.webp` | 480 × 640 | ✅ |
+| 2 | `region-lara.webp` | 480 × 640 | ✅ |
+| 3 | `region-belek.webp` | 480 × 640 | ✅ |
+| 4 | `region-side.webp` | 480 × 640 | ✅ |
+| 5 | `region-alanya.webp` | 480 × 640 | ✅ |
+| 6 | `h03.webp` | 640 × 400 | ✅ |
+| 7 | `h04.webp` | 640 × 400 | ✅ |
+| 8 | `h05.webp` | 640 × 400 | ✅ |
+| 9 | `h06.webp` | 640 × 400 | ✅ |
+| 10 | `h12.webp` | 640 × 400 | ✅ |
 | 11 | `h13.webp` | 640 × 400 | ⬜ |
 | 12 | `h14.webp` | 640 × 400 | ⬜ |
 

@@ -280,3 +280,52 @@ und wurden nach der Umwandlung entfernt; die ausgelieferten WebP wiegen zusammen
 
 Noch Platzhalter aus den Videos: `h03 h04 h05 h06 h12 h13 h14` und die Regionen
 `konyaalti lara belek side alanya`. Prompts dafür in `docs/image-prompts.md`.
+
+---
+
+## 11. Ton beim Einstiegsvideo
+
+Auf die Frage, ob sich der Ton automatisch abspielen lässt: **nein, nicht
+zuverlässig.** iOS Safari und Android Chrome starten Video mit Ton erst nach
+einer Nutzerinteraktion. Das ist Browser-Politik, nicht Umsetzungssache — genau
+die Regel, die verhindert, dass Seiten ungefragt losschallen.
+
+Was tatsächlich möglich ist, wird jetzt ausgeschöpft:
+
+| Situation | Verhalten |
+|---|---|
+| Erster Besuch, egal welches System | stumm — ohne Ausnahme |
+| Erste Berührung des Hero | Ton an, Video ab 0:00 |
+| Rückkehr, iOS Safari | bleibt stumm; Wunsch bleibt gespeichert, Hinweis erscheint |
+| Rückkehr, Android Chrome | **kann von selbst mit Ton starten** |
+
+Der Unterschied bei Android: Chrome führt pro Website einen *Media Engagement
+Index*. Wer die Seite wiederholt besucht und dort Ton abgespielt hat,
+überschreitet irgendwann die Schwelle, und unmuted Autoplay ist erlaubt. Deshalb
+wird bei gespeichertem Tonwunsch beim Start **unmuted versucht**; scheitert es,
+greift stumm der bestehende Rückfall. Apple kennt keine solche Ausnahme.
+
+Zwei Ergänzungen dazu:
+
+* Der Tonwunsch liegt in `localStorage` (`onlyone.sound`) und überlebt Besuche.
+* Ein kleiner, lokalisierter Hinweis erscheint nach 1,4 s unter dem Ton-Symbol
+  und verschwindet bei der ersten Berührung. Ohne ihn wüsste niemand, dass ein
+  Tippen den Ton bringt.
+
+Beim Testen fiel ein Zustandsfehler auf: bei gespeichertem Wunsch wurde
+`defaultMuted = true` und `muted = false` gesetzt — Attribut und Property
+widersprachen sich, und jede Neuinitialisierung des Medienelements fiel still
+auf stumm zurück. Beide werden jetzt in beide Richtungen gleich gehalten.
+
+Geprüft unter beiden Autoplay-Regimes des Browsers, alle vier Fälle der Tabelle.
+
+## 12. Bildbestand vollständig bis auf zwei
+
+Zweiter Upload: zehn erzeugte Bilder, exakt richtig benannt und in exakt den
+vorgegebenen Maßen (640 × 400 bzw. 480 × 640) — sie mussten nur aus dem
+Repo-Wurzelverzeichnis in `public/images/hotels/` einsortiert werden.
+
+Damit sind **alle sieben Regionen**, **alle fünf Ausflüge** und **zwölf von
+vierzehn Hotelmotiven** echte Fotografie. Offen: `h13` (antike Ruine am Strand)
+und `h14` (Boutique-Dachterrasse); Prompts stehen in
+`docs/chatgpt-bildauftrag.md`.

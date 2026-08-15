@@ -1,13 +1,9 @@
 # Bildmaterial — Spezifikation und Generierungs-Prompts
 
-**Stand:** 13 echte Fotos sind eingebaut (Upload vom 15.08.). Damit sind alle
-fünf Ausflugsbilder, sieben von vierzehn Hotelbildern und zwei von sieben
-Regionsbildern erledigt.
+**Stand:** 23 echte Bilder sind eingebaut. Alle sieben Regionen, alle fünf
+Ausflüge und zwölf von vierzehn Hotelmotiven sind erledigt.
 
-**Noch Platzhalter** — Standbilder aus den beiden Videos, die alle denselben Ort
-zeigen: `h03 h04 h05 h06 h12 h13 h14` sowie die Regionen
-`konyaalti lara belek side alanya`. Für einen Layout-Test reicht das, für
-Kundenaugen nicht.
+**Noch Platzhalter:** nur `h13` und `h14` — Standbilder aus den Videos.
 
 Diese Datei listet jeden Bildplatz mit Dateiname, Format und einem
 fertigen Prompt — als Referenz für den ganzen Bildbestand.
@@ -68,12 +64,12 @@ lohnt ein echtes Wahrzeichen statt eines beliebigen Strandes.
 | Datei | Region | Status |
 |---|---|---|
 | `region-antalya.webp` | Antalya Stadt | ✅ echtes Foto |
-| `region-konyaalti.webp` | Konyaaltı | ⬜ Platzhalter |
-| `region-lara.webp` | Lara | ⬜ Platzhalter |
-| `region-belek.webp` | Belek | ⬜ Platzhalter |
+| `region-konyaalti.webp` | Konyaaltı | ✅ echtes Foto |
+| `region-lara.webp` | Lara | ✅ echtes Foto |
+| `region-belek.webp` | Belek | ✅ echtes Foto |
 | `region-kemer.webp` | Kemer | ✅ echtes Foto |
-| `region-side.webp` | Side | ⬜ Platzhalter |
-| `region-alanya.webp` | Alanya | ⬜ Platzhalter |
+| `region-side.webp` | Side | ✅ echtes Foto |
+| `region-alanya.webp` | Alanya | ✅ echtes Foto |
 
 ### region-antalya.webp
 ```text
@@ -150,16 +146,16 @@ umstellen. Bis dahin trägt der Pool.
 |---|---|---|
 | `h01.webp` | Luxusvilla am Meer, Infinity-Pool | ✅ echtes Foto |
 | `h02.webp` | Moderne Villa am Pool, Abendlicht | ✅ echtes Foto |
-| `h03.webp` | Küste mit Kieselstrand und Bergen | ⬜ Platzhalter |
-| `h04.webp` | Golfplatz und Clubhaus | ⬜ Platzhalter |
-| `h05.webp` | Sandstrand mit Sonnenschirmen | ⬜ Platzhalter |
-| `h06.webp` | Familienpool mit Kinderbereich | ⬜ Platzhalter |
+| `h03.webp` | Küste mit Kieselstrand und Bergen | ✅ echtes Foto |
+| `h04.webp` | Golfplatz und Clubhaus | ✅ echtes Foto |
+| `h05.webp` | Sandstrand mit Sonnenschirmen | ✅ echtes Foto |
+| `h06.webp` | Familienpool mit Kinderbereich | ✅ echtes Foto |
 | `h07.webp` | Küste aus der Luft, Resort am Hang | ✅ echtes Foto |
 | `h08.webp` | Lounge-Interieur mit Meerblick | ✅ echtes Foto |
 | `h09.webp` | Yachthafen, weißes Dorf | ✅ echtes Foto |
 | `h10.webp` | Marina vor Bergen | ✅ echtes Foto |
 | `h11.webp` | Villa mit Pool über der Bucht | ✅ echtes Foto |
-| `h12.webp` | Aquapark mit Rutschen | ⬜ Platzhalter |
+| `h12.webp` | Aquapark mit Rutschen | ✅ echtes Foto |
 | `h13.webp` | Antike Ruine am Strand | ⬜ Platzhalter |
 | `h14.webp` | Boutique-Terrasse über der Bucht | ⬜ Platzhalter |
 
