@@ -1,0 +1,24 @@
+{
+  "name": "ONLYONE LUXURY TRAVEL",
+  "short_name": "ONLYONE",
+  "description": "Mobile-first cinematic luxury travel experience.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#041B29",
+  "theme_color": "#041B29",
+  "icons": [
+    {
+      "src": "/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
