@@ -53,8 +53,21 @@
   var seqStarted   = false;   // countdown running or finished
   var leaving      = false;   // transition to main in flight
   var onMain       = false;   // main experience is showing
-  var audioUnlocked= false;   // a gesture has allowed unmuted playback
-  var wantSound    = false;   // user's preference — survives page switches
+  var audioUnlocked= false;   // a gesture has allowed unmuted playback this visit
+  var wantSound    = false;   // the visitor's preference — remembered across visits
+  var hintTimer    = null;
+
+  /* The visitor's sound choice is remembered. It cannot make the browser
+     autoplay with sound — that needs a gesture — but on a return visit we can
+     at least *attempt* unmuted playback, which Android Chrome grants once the
+     site has enough media engagement. iOS refuses, and we fall back silently. */
+  var SOUND_KEY = 'onlyone.sound';
+  function loadSoundPref(){
+    try { return localStorage.getItem(SOUND_KEY) === 'on'; } catch (e) { return false; }
+  }
+  function saveSoundPref(on){
+    try { localStorage.setItem(SOUND_KEY, on ? 'on' : 'off'); } catch (e) {}
+  }
   var countTimer   = null;
   var holdTimer    = null;
   var probeTimer   = null;
@@ -128,18 +141,52 @@
     soundToggle.setAttribute('aria-label', on ? 'Mute ocean sound' : 'Enable ocean sound');
   }
 
+  /* A discreet, localised nudge so the tap is discoverable. Browsers will not
+     start the sound on their own, so the visitor has to know a tap is what
+     does it. Disappears on the first interaction. */
+  var HINT = {
+    ru:'Нажмите для звука',
+    de:'Für Ton tippen',
+    en:'Tap for sound'
+  };
+  function currentLang(){
+    try {
+      var st = JSON.parse(localStorage.getItem('onlyone.state.v1'));
+      if (st && st.lang && HINT[st.lang]) return st.lang;
+    } catch (e) {}
+    return 'ru';
+  }
+  function showSoundHint(){
+    var el = document.getElementById('soundHint');
+    if (!el || audioUnlocked || !video.muted) return;
+    el.textContent = HINT[currentLang()];
+    el.classList.add('is-in');
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(hideSoundHint, 6000);
+  }
+  function hideSoundHint(){
+    var el = document.getElementById('soundHint');
+    if (el) el.classList.remove('is-in');
+    clearTimeout(hintTimer);
+  }
+
   // Must run synchronously inside a user gesture on iOS.
   function enableSound() {
     wantSound = true;
     audioUnlocked = true;
     video.muted = false;
+    video.defaultMuted = false;
     video.removeAttribute('muted');
     video.volume = 1;
+    saveSoundPref(true);
+    hideSoundHint();
     reflectSoundUi();
   }
 
   function muteSound() {
+    // Attribute and property are kept in step deliberately — see boot.
     video.muted = true;
+    video.defaultMuted = true;
     video.setAttribute('muted', '');
     reflectSoundUi();
   }
@@ -307,10 +354,12 @@
       p.then(function () {
         if (tapStart) tapStart.classList.remove('is-in');
       }).catch(function () {
-        // Unmuted playback was refused — fall back to muted autoplay.
+        // Unmuted playback was refused — as iOS always will without a gesture.
+        // Fall back to muted autoplay and keep the stored preference, so the
+        // first tap can honour it.
         if (!video.muted) {
           muteSound();
-          wantSound = false;
+          showSoundHint();
           var retry = video.play();
           if (retry && typeof retry.catch === 'function') {
             retry.catch(function () { showTapStart(); });
@@ -377,6 +426,7 @@
         if (video.paused) playFromStart();
         } else {
         wantSound = false;
+        saveSoundPref(false);
         muteSound();
       }
     });
@@ -436,12 +486,33 @@
      Boot
      ====================================================================== */
 
-  video.muted = true;
-  video.defaultMuted = true;
   video.playsInline = true;
+
+  wantSound = loadSoundPref();
+  if (wantSound) {
+    // Worth a try: Android Chrome may allow it on a return visit once the site
+    // has media engagement. iOS refuses and playFromStart() falls back to muted.
+    // The content attribute has to go too — leaving `muted` on the element
+    // while the property says otherwise means any re-initialisation of the
+    // media element silently reverts to muted.
+    video.removeAttribute('muted');
+    video.defaultMuted = false;
+    video.muted = false;
+    video.volume = 1;
+  } else {
+    video.setAttribute('muted', '');
+    video.defaultMuted = true;
+    video.muted = true;
+  }
   reflectSoundUi();
 
   playFromStart();
+
+  // Give the video a moment to settle, then nudge — only if still silent.
+  setTimeout(showSoundHint, 1400);
+  ['click','touchend'].forEach(function (ev) {
+    intro.addEventListener(ev, hideSoundHint, { once: true, capture: true });
+  });
 
   // If autoplay never got going, offer the explicit start button.
   probeTimer = setTimeout(function () {
