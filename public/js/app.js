@@ -599,6 +599,7 @@
       navHome:'Главная', navSearch:'Поиск', navMap:'Карта', navFav:'Избранное', navTrips:'Мои поездки',
       where:'Куда?', wherePh:'Выберите регион', dates:'Даты поездки', datesPh:'Выберите даты',
       guests:'Гости', searchBtn:'Найти жильё', recommended:'Рекомендуем', all:'Все',
+      experiences:'Впечатления', conciergeName:'Мария Грычко', conciergeMark:'МГ',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
       filters:'Фильтры', apply:'Применить', reset:'Сбросить', results:'найдено',
       category:'Категория', holidayType:'Тип отдыха', amenities:'Удобства', rating:'Оценка',
@@ -693,6 +694,7 @@
       navHome:'Home', navSearch:'Suche', navMap:'Karte', navFav:'Favoriten', navTrips:'Meine Reise',
       where:'Wohin?', wherePh:'Region auswählen', dates:'Reisezeitraum', datesPh:'Zeitraum wählen',
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
+      experiences:'Erlebnisse', conciergeName:'Maria Grychko', conciergeMark:'MG',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
       filters:'Filter', apply:'Anwenden', reset:'Zurücksetzen', results:'Ergebnisse',
       category:'Kategorie', holidayType:'Urlaubsart', amenities:'Ausstattung', rating:'Bewertung',
@@ -787,6 +789,7 @@
       navHome:'Home', navSearch:'Search', navMap:'Map', navFav:'Saved', navTrips:'My trip',
       where:'Where to?', wherePh:'Choose a region', dates:'Travel dates', datesPh:'Select dates',
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
+      experiences:'Experiences', conciergeName:'Maria Grychko', conciergeMark:'MG',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
       filters:'Filters', apply:'Apply', reset:'Reset', results:'results',
       category:'Category', holidayType:'Holiday type', amenities:'Amenities', rating:'Rating',
@@ -956,6 +959,29 @@
         en:'The Bosphorus, Hagia Sophia and the Grand Bazaar — a short flight from Antalya.'}},
   ];
   const excursion=id=>EXCURSIONS.find(e=>e.id===id);
+
+  /* --- Experiences. Four full-bleed bands on the home screen, each one a way
+     into the catalogue that is not a search field: you pick the kind of trip
+     first and the houses follow. `go` is the filter the band opens with —
+     `type`/`kind` land in the accommodation search, `exc` opens an excursion.
+     Photography is briefed in docs/chatgpt-bildauftrag.md; the files below are
+     interim crops of images already in the repo so the layout is real before
+     the final frames arrive. --- */
+  const EXP_IMG='./images/experiences/';
+  const EXPERIENCES=[
+    {id:'beach', img:EXP_IMG+'exp-beach.webp', go:{type:'beach'},
+     n:{ru:'Пляжные курорты',de:'Strandresorts',en:'Beach resorts'},
+     s:{ru:'Лара · Белек · Сиде',de:'Lara · Belek · Side',en:'Lara · Belek · Side'}},
+    {id:'honeymoon', img:EXP_IMG+'exp-honeymoon.webp', go:{type:'adults'},
+     n:{ru:'Медовый месяц',de:'Flitterwochen',en:'Honeymoon'},
+     s:{ru:'Только для взрослых, с приватным бассейном',de:'Adults Only, mit privatem Pool',en:'Adults only, with a private pool'}},
+    {id:'ancient', img:EXP_IMG+'exp-ancient.webp', go:{exc:'pamukkale'},
+     n:{ru:'Античные миры',de:'Antike Welten',en:'Ancient worlds'},
+     s:{ru:'Памуккале · Эфес · Сиде',de:'Pamukkale · Ephesos · Side',en:'Pamukkale · Ephesus · Side'}},
+    {id:'cappadocia', img:EXP_IMG+'exp-cappadocia.webp', go:{exc:'cappadocia'},
+     n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
+     s:{ru:'Полёт на шаре над Гёреме',de:'Ballonfahrt über Göreme',en:'Balloon flight over Göreme'}},
+  ];
 
   const H=(id,name,region,st,rt,rv,ty,am,bd,be,im,rs,de,kind)=>
     ({id,name,region,stars:st,rating:rt,reviews:rv,types:ty,amen:am,board:bd,beach:be,
@@ -1295,6 +1321,19 @@
         <div class="cardList">${top.map(hotelCard).join('')}</div>
       </div>
     </div>
+
+    <section class="expBands">
+      <h2 class="expBands__head">${t('experiences')}</h2>
+      ${EXPERIENCES.map(x=>`<button class="expBand" data-exp="${x.id}">
+        <img src="${x.img}" alt="" loading="lazy" decoding="async">
+        <span class="expBand__scrim"></span>
+        <span class="expBand__txt">
+          <b>${esc(x.n[LANG]||x.n.en)}</b>
+          <i>${esc(x.s[LANG]||x.s.en)}</i>
+        </span>
+      </button>`).join('')}
+    </section>
+
     <div class="pageBottom"></div>
     ${tabbar('home')}`;
   }
@@ -1693,9 +1732,9 @@
       <h1 class="h-xl" style="margin-top:10px">${t('conciergeTitle')}</h1>
 
       <div class="person">
-        <span class="person__mark">AD</span>
+        <span class="person__mark">${t('conciergeMark')}</span>
         <div>
-          <b>Ayşe Demir</b>
+          <b>${esc(t('conciergeName'))}</b>
           <span>${t('conciergeRole')}</span>
         </div>
       </div>
@@ -1754,7 +1793,7 @@
       <div style="width:60px;height:60px;border-radius:18px;background:var(--navy);display:grid;place-items:center;color:var(--gold-light)">${icon('lock')}</div>
       <h1 class="h-xl" style="margin-top:16px;font-family:var(--serif);font-weight:400">${t('staffArea')}</h1>
       <p class="muted tiny" style="margin-top:8px">${t('loginNote')}</p>
-      <div class="field"><label class="label">${t('yourName')}</label><input class="input" id="stName" value="Ayşe"></div>
+      <div class="field"><label class="label">${t('yourName')}</label><input class="input" id="stName" value="Maria"></div>
       <div style="margin-top:16px"><button class="btn btn--primary" data-act="do-login">${t('login')}</button></div>
     </div>`;
   }
@@ -2259,6 +2298,20 @@
     if(hc&&!T.closest('[data-act]')){go('hotel',hc.dataset.hotel);return;}
     const rg=T.closest('[data-region]');
     if(rg){FILTER.region=rg.dataset.region;go('search');return;}
+    const xp=T.closest('[data-exp]');
+    if(xp){
+      const x=EXPERIENCES.find(e=>e.id===xp.dataset.exp);
+      if(x&&x.go.exc){sheetExcursion(x.go.exc);return;}
+      if(x){
+        /* An experience is an entry point, not an extra filter on top of
+           whatever was left from the last search — so it resets first. */
+        FILTER={region:null,kinds:[],stars:[],types:[],amen:[],rating:0,board:[],beach:null};
+        if(x.go.type)FILTER.types=[x.go.type];
+        if(x.go.kind)FILTER.kinds=[x.go.kind];
+        go('search');
+      }
+      return;
+    }
     const fr=T.closest('[data-fregion]');
     if(fr){FILTER.region=fr.dataset.fregion||null;render();return;}
     const pr=T.closest('[data-pregion]');
