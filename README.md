@@ -434,9 +434,23 @@ self-hosted rather than linked from Google's CDN: a hotlink sends every
 visitor's IP to a third party before the first headline paints, which is a
 real problem for a German operator.
 
-The intro is the one screen that keeps the old type — Georgia for the display
-line, the system script face for *Journey*, the system UI stack for the small
-tracked labels.
+**Great Vibes**, also self-hosted, carries the wordmark and the intro's
+*Journey*. It replaced a stack that began with "Snell Roundhand" — an Apple-only
+system font, which meant the brand silently rendered as Georgia on Android, i.e.
+not a script at all. One 43 KB latin file makes the mark identical on every
+phone.
+
+The rest of the intro keeps its old type: Georgia for the display line, the
+system UI stack for the small tracked labels.
+
+### Wordmark
+
+The logo is drawn in type, not shipped as an image (`.logo` in `app.css`): the
+script wordmark over a tracked subline, with the gold as a gradient clipped to
+the glyphs. It stays sharp at any pixel density, costs nothing extra to
+download, recolours with the theme and is readable to screen readers. To swap in
+supplied artwork instead, replace the two spans inside `.logo` with an `<img>`
+or inline SVG — nothing else references it.
 
 Headings need the opposite treatment to the serif they replaced: more weight
 (600) and negative tracking that grows with size, or a grotesk reads loose and
@@ -449,6 +463,31 @@ icon. The intro carries no bottom navigation; the tab bar exists only on the
 main experience. Text sitting on a photograph must set its colour explicitly
 (see the `TEXT OVER IMAGERY` block in `app.css`) — inheriting the ground's ink
 is what once turned the platform headline navy-on-daylight.
+
+### Background video loops
+
+The three background clips are crossfade-looped: the last 1.6 s is dissolved
+over the first, so the wrap point is a dissolve rather than a cut. Measured at
+the seam, PSNR between the last and first frame went from **13.2 dB** (a hard,
+visible jump) to **32.4 dB**. They are also slowed to 0.8×, which is as far as
+24 fps source goes before duplicated frames start to judder.
+
+Rebuild one with:
+
+```bash
+ffmpeg -y -i in.mp4 -filter_complex "\
+[0:v]setpts=1.25*PTS,fps=24[s];[s]split=3[a][b][c];\
+[a]trim=0:1.6,setpts=PTS-STARTPTS[head];\
+[b]trim=1.6:8.4,setpts=PTS-STARTPTS[body];\
+[c]trim=8.4:10,setpts=PTS-STARTPTS[tail];\
+[tail][head]blend=all_expr='A*(1-T/1.6)+B*(T/1.6)'[mix];\
+[mix][body]concat=n=2:v=1[v]" -map "[v]" -an \
+  -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 24 -preset slow \
+  -movflags +faststart out.mp4
+```
+
+The intro video is deliberately left alone — it plays once and the countdown is
+keyed to 3 s of playback, so retiming it would move the countdown.
 
 ---
 

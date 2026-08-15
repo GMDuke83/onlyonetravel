@@ -141,42 +141,18 @@
     soundToggle.setAttribute('aria-label', on ? 'Mute ocean sound' : 'Enable ocean sound');
   }
 
-  /* A discreet, localised nudge so the tap is discoverable. Browsers will not
-     start the sound on their own, so the visitor has to know a tap is what
-     does it. Disappears on the first interaction. */
-  var HINT = {
-    ru:'Нажмите для звука',
-    de:'Für Ton tippen',
-    en:'Tap for sound'
-  };
-  function currentLang(){
-    // An explicit choice wins; otherwise follow the device, same as the platform.
-    try {
-      var st = JSON.parse(localStorage.getItem('onlyone.state.v1'));
-      if (st && st.lang && HINT[st.lang]) return st.lang;
-    } catch (e) {}
-    try {
-      var list = (navigator.languages && navigator.languages.length)
-        ? navigator.languages : [navigator.language || ''];
-      for (var i = 0; i < list.length; i++) {
-        var base = String(list[i] || '').toLowerCase().split('-')[0];
-        if (HINT[base]) return base;
-        if (['uk','be','kk','ky','uz','az','hy','ka'].indexOf(base) > -1) return 'ru';
-      }
-    } catch (e) {}
-    return 'en';
-  }
+  /* The tap still has to be discoverable — no browser starts audio on its own —
+     but the wording is gone: a labelled pill competed with the headline on the
+     one screen that is meant to be a single image. The sound button pulses
+     instead, which says "press me" without putting words on the picture. */
   function showSoundHint(){
-    var el = document.getElementById('soundHint');
-    if (!el || audioUnlocked || !video.muted) return;
-    el.textContent = HINT[currentLang()];
-    el.classList.add('is-in');
+    if (!soundToggle || audioUnlocked || !video.muted) return;
+    soundToggle.classList.add('is-hinting');
     clearTimeout(hintTimer);
-    hintTimer = setTimeout(hideSoundHint, 6000);
+    hintTimer = setTimeout(hideSoundHint, 9000);
   }
   function hideSoundHint(){
-    var el = document.getElementById('soundHint');
-    if (el) el.classList.remove('is-in');
+    if (soundToggle) soundToggle.classList.remove('is-hinting');
     clearTimeout(hintTimer);
   }
 
@@ -1192,11 +1168,13 @@
   function appbar(o){
     o=o||{};
     return `<header class="appbar${o.over?' appbar--over':''}">
-      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:
-        `<span class="appbar__mark"></span>`}
+      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:''}
       <div class="appbar__brand">${o.title?
         `<span class="appbar__name" style="letter-spacing:.02em;font-size:15px">${esc(o.title)}</span>`:
-        `<span class="appbar__name">ONLYONE<small>LUXURY TRAVEL</small></span>`}</div>
+        `<span class="logo${o.over?' logo--over':''}" role="img" aria-label="Only One Luxury Travel">
+           <span class="logo__script" aria-hidden="true">Only One</span>
+           <span class="logo__sub" aria-hidden="true">LUXURY TRAVEL</span>
+         </span>`}</div>
       ${o.fav?`<button class="iconBtn${isFav(o.fav)?' is-fav':''}" data-act="fav" data-id="${o.fav}">${icon('heart')}</button>`:''}
       ${o.menu===false?'':`<button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button>`}
     </header>`;
@@ -2040,6 +2018,31 @@
      transform, so the work stays on the compositor: no layout, no paint, no
      scroll jank on a phone. The listener is passive and rAF-coalesced because
      iOS fires scroll far faster than it paints. */
+  /* The transparent hero bar has to gain its backdrop the moment the hero has
+     scrolled past, or the brand mark and menu button end up sitting on plain
+     content. The switch point is the hero's own height, read from the element
+     rather than hardcoded, so it follows whatever the hero is. */
+  let barScroller=null, barHandler=null;
+  function armAppbar(){
+    if (barScroller && barHandler){
+      barScroller.removeEventListener('scroll', barHandler);
+      barScroller = barHandler = null;
+    }
+    const bar=$('.appbar--over'), scroller=$('#app');
+    if(!bar||!scroller) return;
+    const hero=$('.pHero');
+    let raf=0;
+    const update=()=>{
+      raf=0;
+      const trip=(hero?hero.offsetHeight:320)-bar.offsetHeight;
+      bar.classList.toggle('is-solid', scroller.scrollTop>Math.max(0,trip));
+    };
+    barHandler=()=>{ if(!raf) raf=requestAnimationFrame(update); };
+    barScroller=scroller;
+    scroller.addEventListener('scroll',barHandler,{passive:true});
+    update();
+  }
+
   let flyScroller=null, flyHandler=null;
   function armFlyBand(){
     if (flyScroller && flyHandler) {
@@ -2113,6 +2116,7 @@
     if(VIEW.name==='hotel')bindGallery();
     armBgVideos();
     armFlyBand();
+    armAppbar();
     if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startPlatformHero)window.ONLYONE.startPlatformHero();
   }
   function bindGallery(){

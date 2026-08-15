@@ -35,12 +35,27 @@
   src:url(../fonts/inter-cyrillic-ext-wght-normal.woff2) format('woff2-variations');
   unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
 }
+/* The script face carries the wordmark and the intro's "Journey". It used to
+   rely on "Snell Roundhand", which exists only on Apple devices — on Android
+   the brand silently became Georgia, i.e. not a script at all. Self-hosting
+   one file makes the mark identical on every phone. Latin only: the wordmark
+   never changes with the interface language. */
+@font-face{
+  font-family:'Great Vibes';font-style:normal;font-display:swap;font-weight:400;
+  src:url(../fonts/great-vibes-latin-400-normal.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 :root{
-  /* brand */
-  --navy:          #08293C;
-  --navy-deep:     #041B29;
-  --navy-soft:     #0B3248;
+  /* brand
+     There is no navy anywhere any more, in the intro either. Every dark tone
+     in the product is warm — brown-black, not blue-black — so the ivory
+     platform and the cinematic intro belong to one colour world instead of
+     two. These three keep their names so nothing downstream had to be renamed
+     in the same change. */
+  --navy:          #241C14;
+  --navy-deep:     #15100B;
+  --navy-soft:     #33291D;
   --gold:          #D8B45C;
   --gold-light:    #F0D787;
   --white:         #FFFFFF;
@@ -60,11 +75,8 @@
      A second display face was tried and dropped: the reference look is a
      single neo-grotesk carrying everything, and one file loads faster. */
   --display: var(--sans);
-  /* "Snell Roundhand" / "Apple Chancery" are iOS system fonts and give the
-     true script look on the primary target. Android has no script face, so it
-     lands on Georgia — still editorial, carried by the gold gradient. */
-  --script: "Snell Roundhand", "Apple Chancery", "Segoe Script",
-            "Brush Script MT", Georgia, serif;
+  --script: "Great Vibes", "Snell Roundhand", "Apple Chancery",
+            "Segoe Script", "Brush Script MT", Georgia, serif;
 
   /* safe areas */
   --sat: env(safe-area-inset-top, 0px);
@@ -115,6 +127,47 @@ svg{
   stroke-linecap:round;
   stroke-linejoin:round;
 }
+
+/* --------------------------------------------------------------------------
+   Brand lockup — the script wordmark over a tracked subline.
+
+   Drawn in type rather than shipped as an image: it stays sharp at any density,
+   costs nothing to download, recolours with the theme, and is readable to
+   search engines and screen readers. `Only One` uses the same script face as
+   the intro's "Journey", so the two agree.
+
+   The gold is a gradient clipped to the glyphs, which is what gives the
+   wordmark its metallic sheen rather than a flat fill.
+   -------------------------------------------------------------------------- */
+.logo{display:block;line-height:1;text-align:center}
+.logo__script{
+  display:block;
+  font-family:var(--script);
+  font-weight:400;
+  font-size:var(--logo-size,30px);
+  /* A signature script needs a far taller line box than a text face: the
+     swashes on the O and the tail of the y run well outside the em, and at
+     1.05 they were being clipped top and bottom. */
+  line-height:1.34;
+  letter-spacing:.005em;
+  background:linear-gradient(168deg,#F4DFA4 4%,#D8B45C 34%,#B98F35 58%,#F0D787 82%,#C9A24A 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  padding-bottom:.06em;   /* the script descends below the baseline box */
+}
+.logo__sub{
+  display:block;
+  font-family:var(--display);
+  font-size:calc(var(--logo-size,30px) * .225);
+  font-weight:600;
+  letter-spacing:.34em;
+  text-indent:.34em;      /* tracking pads the right edge only — recentre it */
+  color:var(--gold);
+  margin-top:.34em;
+}
+/* On a photograph the thin script needs a little separation. */
+.logo--over .logo__script{filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
+.logo--over .logo__sub{color:var(--gold-light);text-shadow:0 1px 10px rgba(0,0,0,.5)}
 
 /* brand mark — concentric gold rings, pure CSS, no image */
 .brandMark{
@@ -175,10 +228,10 @@ svg{
   pointer-events:none;
   background:
     linear-gradient(180deg,
-      rgba(4,27,41,.42) 0%,
-      rgba(4,27,41,.10) 26%,
-      rgba(4,27,41,.10) 52%,
-      rgba(4,27,41,.62) 100%);
+      rgba(21,16,11,.42) 0%,
+      rgba(21,16,11,.10) 26%,
+      rgba(21,16,11,.10) 52%,
+      rgba(21,16,11,.62) 100%);
 }
 
 /* --- brand ---------------------------------------------------------------- */
@@ -216,7 +269,7 @@ svg{
   width:40px; height:40px;
   border-radius:50%;
   border:1px solid rgba(255,255,255,.24);
-  background:rgba(4,27,41,.34);
+  background:rgba(21,16,11,.34);
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   display:grid;
@@ -239,38 +292,18 @@ svg{
 .soundToggle.is-on .soundToggle__off{ display:none; }
 
 /* --- sound hint ----------------------------------------------------------
-   Browsers will not start audio on their own, so the tap has to be
-   discoverable. Sits under the sound button, fades away on first contact. */
-.soundHint{
-  position:absolute;
-  z-index:18;
-  right:calc(16px + var(--sar));
-  top:calc(70px + var(--sat));
-  margin:0;
-  padding:7px 12px;
-  border-radius:999px;
-  background:rgba(4,27,41,.52);
-  border:1px solid rgba(240,215,135,.34);
-  -webkit-backdrop-filter:blur(12px);
-  backdrop-filter:blur(12px);
-  color:var(--gold-light);
-  font-size:10.5px;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  white-space:nowrap;
-  opacity:0;
-  transform:translateY(-6px);
-  pointer-events:none;
-  transition:opacity .5s var(--ease), transform .5s var(--ease);
-}
-.soundHint.is-in{
-  opacity:1;
-  transform:none;
-  animation:hintBreathe 2.6s ease-in-out 1s infinite;
+   The wording was removed: a text pill on the intro competed with the
+   headline on the one screen that has to read as a single image. The button
+   pulses instead — same job, no words on the picture. */
+.soundToggle.is-hinting{
+  animation:hintBreathe 2.4s ease-in-out .8s infinite;
 }
 @keyframes hintBreathe{
-  0%,100%{ box-shadow:0 0 0 0 rgba(216,180,92,.24); }
-  50%    { box-shadow:0 0 0 7px rgba(216,180,92,0); }
+  0%, 100% { box-shadow:0 0 0 0 rgba(216,180,92,.55); }
+  50%      { box-shadow:0 0 0 9px rgba(216,180,92,0); }
+}
+@media (prefers-reduced-motion:reduce){
+  .soundToggle.is-hinting{animation:none;border-color:rgba(240,215,135,.8)}
 }
 
 /* --- skip ----------------------------------------------------------------- */
@@ -464,9 +497,9 @@ svg{
   inset:-14px;
   border-radius:50%;
   background:radial-gradient(circle,
-    rgba(4,27,41,.46) 0%,
-    rgba(4,27,41,.26) 52%,
-    rgba(4,27,41,0) 74%);
+    rgba(21,16,11,.46) 0%,
+    rgba(21,16,11,.26) 52%,
+    rgba(21,16,11,0) 74%);
   box-shadow:0 0 34px rgba(216,180,92,.20);
   pointer-events:none;
 }
@@ -497,7 +530,7 @@ svg{
   align-items:center;
   gap:9px;
   border:1px solid rgba(240,215,135,.82);
-  background:rgba(4,27,41,.72);
+  background:rgba(21,16,11,.72);
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   color:var(--white);
@@ -623,8 +656,37 @@ svg{
   border-bottom:1px solid var(--hair-soft);
   color:var(--txt);
 }
-.appbar--over{position:absolute;left:0;right:0;top:0;background:transparent;border-bottom:none}
+/* Over the hero the bar is transparent, but it stays sticky: an absolutely
+   positioned bar inside the scroll container resolves against the initial
+   containing block, so it neither scrolled away nor gained a backdrop — the
+   brand mark and the menu button sat on top of whatever scrolled beneath.
+   Sticky plus a class swap at the end of the hero fixes both halves. */
+.appbar--over{
+  /* Sticky keeps it in flow, which pushed the hero down by its own height —
+     measured 64px of ivory above a hero that has to start at the very top.
+     A negative bottom margin of exactly that height gives the space back
+     without giving up the sticking. */
+  margin-bottom:calc(-64px - var(--sat));
+  background:transparent;border-bottom:none;
+  color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.42);
+  transition:background .28s var(--ease),border-color .28s var(--ease),color .28s var(--ease);
+}
+.appbar--over .appbar__name small{color:var(--gold-light)}
+.appbar--over.is-solid{
+  background:rgba(247,243,237,.88);
+  border-bottom:1px solid var(--hair-soft);
+  color:var(--txt);text-shadow:none;
+}
+.appbar--over.is-solid .appbar__name small{color:var(--gold-ink)}
+.appbar--over.is-solid .iconBtn{
+  background:var(--ground-2);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
 .appbar__brand{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+/* The lockup replaces the ring mark plus wordmark, so it starts at the left
+   edge of the bar rather than sitting centred under an icon. */
+.appbar__brand .logo{--logo-size:23px;text-align:left}
+.appbar__brand .logo__sub{letter-spacing:.28em;text-indent:.28em;margin-top:.3em}
 .appbar__mark{
   width:30px;height:30px;flex:0 0 30px;border-radius:50%;
   border:1.5px solid var(--gold);position:relative;
@@ -659,21 +721,41 @@ svg{
     rgba(20,15,10,.56) 0%, rgba(20,15,10,.08) 28%,
     rgba(20,15,10,.40) 62%, rgba(20,15,10,.96) 100%);
 }
-.pHero__body{position:relative;z-index:2;padding:0 calc(20px + var(--sal)) 34px calc(20px + var(--sar))}
+/* The copy sits on a frosted slab. Over a bright, busy photograph a text
+   shadow alone was not enough — the eyebrow and the sub-line disappeared into
+   the water. Blurring what is behind the words separates them from the image
+   without hiding it, which a flat overlay would.
+
+   backdrop-filter is not universal, so the slab also carries a translucent
+   background of its own: where the blur is unsupported the panel still darkens
+   the photograph and the text still reads. */
+.pHero__body{
+  position:relative;z-index:2;
+  margin:0 calc(14px + var(--sal)) 20px calc(14px + var(--sar));
+  padding:22px 20px 24px;
+  background:rgba(24,18,12,.38);
+  -webkit-backdrop-filter:blur(16px) saturate(118%);
+  backdrop-filter:blur(16px) saturate(118%);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:3px;
+}
 .pHero__title{
-  font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-size:clamp(30px,9vw,39px);
-  line-height:1.1;font-weight:400;letter-spacing:-.01em;
+  font-family:var(--display);
+  font-weight:600;
+  letter-spacing:-.032em;
+  font-size:clamp(33px,9.8vw,43px);
+  line-height:1.06;
   text-shadow:0 2px 24px rgba(0,0,0,.4);
 }
-.pHero__sub{margin:14px 0 0;font-size:14px;line-height:1.55;color:var(--txt-2);max-width:32ch}
+.pHero__sub{margin:15px 0 0;font-size:15.5px;line-height:1.55;max-width:32ch}
 .pHero__glass{
-  margin-top:22px;padding:16px 18px;border-radius:2px;
-  border-left:1px solid var(--gold);
-  background:linear-gradient(90deg, rgba(216,180,92,.10), transparent 90%);
+  margin-top:22px;padding:15px 0 0;
+  border-top:1px solid rgba(255,255,255,.16);
 }
-.trust{margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.trust li{display:flex;align-items:center;gap:11px;font-size:12.5px;color:var(--txt);list-style:none}
-.trust svg{width:14px;height:14px;flex:0 0 14px;color:var(--gold);stroke-width:2.4}
+.trust{margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.trust li{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--txt);list-style:none}
+.trust svg{width:15px;height:15px;flex:0 0 15px;color:var(--gold);stroke-width:2.4}
+.pHero__body .eyebrow{font-size:11px;letter-spacing:.26em}
 
 /* --- buttons -------------------------------------------------------------- */
 .btn{
