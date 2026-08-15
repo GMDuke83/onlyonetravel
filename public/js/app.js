@@ -1402,6 +1402,21 @@
       </button>`).join('')}
     </section>
 
+    <section class="flyBand carBand">
+      <div class="flyBand__head">
+        <div class="eyebrow">${t('carEyebrow')}</div>
+        <h2 class="flyBand__title">${t('carTitle')}</h2>
+      </div>
+      <div class="carBand__car" aria-hidden="true">
+        <img src="./images/3d/car-maybach.webp" alt="" loading="lazy" decoding="async" width="1000" height="552">
+      </div>
+      <div class="flyBand__card">
+        <div class="flyBand__spec"><span>${t('carSpecA')}</span><span>${t('carSpecB')}</span></div>
+        <p>${t('carBody')}</p>
+        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+      </div>
+    </section>
+
     <section class="flyBand">
       <div class="flyBand__head">
         <div class="eyebrow">${t('flyEyebrow')}</div>
@@ -1429,21 +1444,6 @@
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
         <p>${t('flyBody')}</p>
-        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
-      </div>
-    </section>
-
-    <section class="flyBand carBand">
-      <div class="flyBand__head">
-        <div class="eyebrow">${t('carEyebrow')}</div>
-        <h2 class="flyBand__title">${t('carTitle')}</h2>
-      </div>
-      <div class="carBand__car" aria-hidden="true">
-        <img src="./images/3d/car-maybach.webp" alt="" loading="lazy" decoding="async" width="1000" height="549">
-      </div>
-      <div class="flyBand__card">
-        <div class="flyBand__spec"><span>${t('carSpecA')}</span><span>${t('carSpecB')}</span></div>
-        <p>${t('carBody')}</p>
         <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
       </div>
     </section>

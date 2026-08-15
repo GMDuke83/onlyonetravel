@@ -1269,9 +1269,13 @@ select.input option{background:#fff;color:var(--txt)}
      now, so a percentage moved the aircraft whenever the copy changed. */
   left:50%;top:128px;
   width:min(43%,190px);
+  /* The band is the last section again, so the full arc is now reachable and
+     the aircraft climbs its whole travel. At -7svh that put it into the
+     headline at the end of the page — the earlier figure was only safe because
+     the band sat mid-page and never reached --p=1. */
   transform:
-    translate3d(-50%, calc(var(--p,0) * -7svh + 3svh), 0)
-    scale(calc(1 + var(--p,0) * .06));
+    translate3d(-50%, calc(var(--p,0) * -3.5svh + 1.5svh), 0)
+    scale(calc(1 + var(--p,0) * .05));
   will-change:transform;
   pointer-events:none;
 }
@@ -1312,15 +1316,17 @@ select.input option{background:#fff;color:var(--txt)}
    object where the jet was a tall one, so it crosses the headline sideways
    instead of rising through it. The car keeps its own reflections and shadow
    from the render; nothing is added on top. */
-/* The saloon is a wide, low object, so it needs less vertical reserve than
-   the jet — and it has no ticker to clear. */
-.carBand{--gapObj:150px}
-.carBand .flyBand__card{margin-top:var(--gapObj,150px)}
+/* The saloon is wide and low where the jet is tall, and it has no ticker to
+   clear — but the card was sitting on its wheels, which read as the car being
+   cut off rather than as a layer. More reserve, so the whole car is visible
+   and the card only overlaps its rocker. */
+.carBand{--gapObj:206px}
+.carBand .flyBand__card{margin-top:var(--gapObj,206px)}
 .carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
 .carBand__car{
   position:absolute;z-index:2;
-  left:50%;top:150px;
-  width:min(90%,400px);
+  left:50%;top:146px;
+  width:min(92%,410px);
   transform:
     translate3d(calc(-50% + (var(--p,0) - .5) * 7vw), 0, 0)
     scale(calc(1 + var(--p,0) * .05));

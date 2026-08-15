@@ -1,7 +1,9 @@
 # Die 3D-Objekte: Jet und Maybach
 
-Auf der Startseite, unter den vier Erlebnis-Bannern, liegt ein Abschnitt, in dem
-ein Flugzeug beim Scrollen durch die Ebenen wandert: die Überschrift liegt
+Auf der Startseite folgen hinter den vier Erlebnis-Bannern zwei Bänder in der
+Reihenfolge **Transfer (Wagen), dann Anreise (Flugzeug)** — das Flugband
+schliesst die Seite ab. In beiden wandert ein Objekt beim Scrollen durch die
+Ebenen: die Überschrift liegt
 **dahinter**, das Laufband und die Infokarte **davor**. Genau dieser
 Sandwich-Effekt ist die ganze Wirkung — deshalb sind es getrennte Elemente und
 kein Hintergrundbild.
@@ -42,11 +44,19 @@ Erst wenn eine frei drehbare Ansicht gewünscht wäre, kippt diese Rechnung.
 ## Bewegung
 
 Der Fortschritt `--p` läuft von 0 (Band betritt den unteren Bildrand) bis 1.
-Weil das Band der letzte Abschnitt der Seite ist, ist der volle Durchlauf gar
-nicht erreichbar — gemessen war bei `0.507` Schluss, das Flugzeug flog nur die
-halbe Strecke. `armFlyBand()` normiert deshalb auf den Fortschritt, der bei
-maximalem Scrollstand tatsächlich erreichbar ist. Steht das Band später einmal
-nicht mehr am Ende, ist dieser Faktor automatisch 1 und ändert nichts.
+Weil das Flugband der letzte Abschnitt der Seite ist, wäre der volle Durchlauf
+sonst gar nicht erreichbar — gemessen war einmal bei `0.507` Schluss, das
+Flugzeug flog nur die halbe Strecke. `armFlyBand()` normiert deshalb auf den
+Fortschritt, der bei maximalem Scrollstand tatsächlich erreichbar ist, und
+treibt **alle** Bänder, nicht nur das erste.
+
+Das hat eine Kehrseite, die beim Vertauschen der Bänder zugebissen hat: sobald
+das Flugband wieder am Seitenende steht, fährt es seinen Steigweg voll aus. Bei
+den vorherigen −7svh landete es damit in der Überschrift — der Wert war nur
+sicher, solange das Band mittig lag und `--p=1` nie erreichte. Deshalb misst
+`overlap.js` jetzt den **gesamten Durchlauf** und nicht mehr nur den mittigen
+Moment, und der Weg steht auf −3,5svh. Gemessen: maximal 23–27 % der
+Überschrift verdeckt (die gewollte Kreuzung), 0–14 % des Laufbands.
 
 Zusätzlich fliegt das Flugzeug unabhängig vom Scrollen: der Wrapper trägt die
 scrollgekoppelte Transformation, das Bild darin eine eigene 7-Sekunden-Schleife
@@ -95,12 +105,14 @@ perspektivisch, Hintergrund transparent.
 - Kamera: perspektivisch, 26°, Front-Dreiviertel leicht von oben. Die Nase des
   Modells zeigt nach **−X**; ein erster Versuch stand auf +X und fotografierte
   den Kofferraum.
-- Auflösung 3000 × 2000, danach auf die Alpha-Bounding-Box beschnitten
-  (`crop=1318:724:772:573`) und auf 1000 px Breite skaliert.
+- Auflösung 3000 × 2000. Der Zuschnitt liegt bewusst **nicht** auf der
+  Alpha-Bounding-Box: randlos beschnitten endete der Kofferraum exakt auf der
+  Bildkante, was am Bildschirmrand wie abgeschnitten aussah. Jetzt mit rund 5 %
+  Luft ringsum (`crop=1450:800:706:535`), dann auf 1000 px Breite skaliert.
 - Achtung: Playwrights `elementHandle.screenshot({clip})` hat den Zuschnitt hier
   **ignoriert** — die Datei kam in voller Leinwandgrösse heraus. Deshalb wird
   die gemessene Box anschliessend mit ffmpeg geschnitten, nicht im Browser.
 
-Ergebnis: `public/images/3d/car-maybach.webp`, 1000 × 549, 64 KB, mit Alpha und
+Ergebnis: `public/images/3d/car-maybach.webp`, 1000 × 552, 55 KB, mit Alpha und
 den Reflexionen aus dem Render. Auch hier trägt das CSS keinen zusätzlichen
 Schatten.
