@@ -1249,13 +1249,11 @@
   function appbar(o){
     o=o||{};
     return `<header class="appbar${o.over?' appbar--over':''}">
-      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:''}
+      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:
+        `<span class="appbar__mark"></span>`}
       <div class="appbar__brand">${o.title?
         `<span class="appbar__name" style="letter-spacing:.02em;font-size:15px">${esc(o.title)}</span>`:
-        `<span class="logo${o.over?' logo--over':''}" role="img" aria-label="Only One Luxury Travel">
-           <span class="logo__script" aria-hidden="true">Only One</span>
-           <span class="logo__sub" aria-hidden="true">LUXURY TRAVEL</span>
-         </span>`}</div>
+        `<span class="appbar__name">ONLYONE<small>LUXURY TRAVEL</small></span>`}</div>
       ${o.fav?`<button class="iconBtn${isFav(o.fav)?' is-fav':''}" data-act="fav" data-id="${o.fav}">${icon('heart')}</button>`:''}
       ${o.menu===false?'':`<button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button>`}
     </header>`;

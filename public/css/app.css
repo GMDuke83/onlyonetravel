@@ -128,47 +128,6 @@ svg{
   stroke-linejoin:round;
 }
 
-/* --------------------------------------------------------------------------
-   Brand lockup — the script wordmark over a tracked subline.
-
-   Drawn in type rather than shipped as an image: it stays sharp at any density,
-   costs nothing to download, recolours with the theme, and is readable to
-   search engines and screen readers. `Only One` uses the same script face as
-   the intro's "Journey", so the two agree.
-
-   The gold is a gradient clipped to the glyphs, which is what gives the
-   wordmark its metallic sheen rather than a flat fill.
-   -------------------------------------------------------------------------- */
-.logo{display:block;line-height:1;text-align:center}
-.logo__script{
-  display:block;
-  font-family:var(--script);
-  font-weight:400;
-  font-size:var(--logo-size,30px);
-  /* A signature script needs a far taller line box than a text face: the
-     swashes on the O and the tail of the y run well outside the em, and at
-     1.05 they were being clipped top and bottom. */
-  line-height:1.34;
-  letter-spacing:.005em;
-  background:linear-gradient(168deg,#F4DFA4 4%,#D8B45C 34%,#B98F35 58%,#F0D787 82%,#C9A24A 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent;
-  padding-bottom:.06em;   /* the script descends below the baseline box */
-}
-.logo__sub{
-  display:block;
-  font-family:var(--display);
-  font-size:calc(var(--logo-size,30px) * .225);
-  font-weight:600;
-  letter-spacing:.34em;
-  text-indent:.34em;      /* tracking pads the right edge only — recentre it */
-  color:var(--gold);
-  margin-top:.34em;
-}
-/* On a photograph the thin script needs a little separation. */
-.logo--over .logo__script{filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
-.logo--over .logo__sub{color:var(--gold-light);text-shadow:0 1px 10px rgba(0,0,0,.5)}
-
 /* brand mark — concentric gold rings, pure CSS, no image */
 .brandMark{
   display:block;
@@ -689,27 +648,16 @@ svg{
   color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.42);
   transition:background .28s var(--ease),border-color .28s var(--ease),color .28s var(--ease);
 }
-.appbar--over .appbar__name small{color:var(--gold-light)}
 .appbar--over.is-solid{
   background:rgba(247,243,237,.88);
   border-bottom:1px solid var(--hair-soft);
   color:var(--txt);text-shadow:none;
 }
-.appbar--over.is-solid .appbar__name small{color:var(--gold-ink)}
 .appbar--over.is-solid .iconBtn{
   background:var(--ground-2);
   -webkit-backdrop-filter:none;backdrop-filter:none;
 }
 .appbar__brand{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
-/* The lockup replaces the ring mark plus wordmark, so it starts at the left
-   edge of the bar rather than sitting centred under an icon. */
-.appbar__brand .logo{--logo-size:23px;text-align:left}
-.appbar__brand .logo__sub{letter-spacing:.28em;text-indent:.28em;margin-top:.3em}
-/* On ivory the decorative gold measures 1.8:1 and the subline all but
-   disappeared. Over a photograph it stays light; on the solid bar it takes the
-   darker gold that is legible as text. */
-.appbar:not(.appbar--over) .logo__sub,
-.appbar--over.is-solid .logo__sub{color:var(--gold-ink)}
 .appbar__mark{
   width:30px;height:30px;flex:0 0 30px;border-radius:50%;
   border:1.5px solid var(--gold);position:relative;
@@ -718,7 +666,10 @@ svg{
 .appbar__name{font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.22em}
 .appbar__name small{
   display:block;font-family:var(--sans);font-size:7.5px;
-  letter-spacing:.26em;color:var(--gold);margin-top:3px;
+  /* The decorative gold measures 1.8:1 on ivory — unreadable at 7.5px. This is
+     the tone that carries words; the intro keeps the light gold over its
+     photograph, where it belongs. */
+  letter-spacing:.26em;color:var(--gold-ink);margin-top:3px;
 }
 .iconBtn{
   width:42px;height:42px;flex:0 0 42px;border-radius:50%;
@@ -1285,9 +1236,13 @@ select.input option{background:#fff;color:var(--txt)}
    ========================================================================== */
 .flyBand{
   position:relative;overflow:hidden;
-  min-height:72svh;
+  /* Height comes from the content plus one reserved gap, not from a fixed svh
+     with space-between: that spread the three blocks to the far corners and
+     left a dead field under the aircraft. The gap below the headline is sized
+     to the object that crosses it, so the aircraft clears the ticker while
+     still cutting through the second line of the title. */
   padding:44px 20px 30px;
-  display:flex;flex-direction:column;justify-content:space-between;gap:20px;
+  display:flex;flex-direction:column;justify-content:flex-start;
   background:linear-gradient(180deg,var(--ground-2) 0%,var(--ground) 52%,var(--ground-3) 100%);
   border-top:1px solid var(--hair-soft);
 }
@@ -1310,8 +1265,10 @@ select.input option{background:#fff;color:var(--txt)}
      whole point of the section, with no rotation and no second clock.
 
      Sized so the wingspan clears the headline instead of burying it. */
-  left:50%;top:15%;
-  width:min(47%,206px);
+  /* A fixed offset, not a percentage: the band's height is content-driven
+     now, so a percentage moved the aircraft whenever the copy changed. */
+  left:50%;top:128px;
+  width:min(43%,190px);
   transform:
     translate3d(-50%, calc(var(--p,0) * -7svh + 3svh), 0)
     scale(calc(1 + var(--p,0) * .06));
@@ -1355,12 +1312,15 @@ select.input option{background:#fff;color:var(--txt)}
    object where the jet was a tall one, so it crosses the headline sideways
    instead of rising through it. The car keeps its own reflections and shadow
    from the render; nothing is added on top. */
-.carBand{min-height:64svh}
+/* The saloon is a wide, low object, so it needs less vertical reserve than
+   the jet — and it has no ticker to clear. */
+.carBand{--gapObj:150px}
+.carBand .flyBand__card{margin-top:var(--gapObj,150px)}
 .carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
 .carBand__car{
   position:absolute;z-index:2;
-  left:50%;top:29%;
-  width:min(94%,420px);
+  left:50%;top:150px;
+  width:min(90%,400px);
   transform:
     translate3d(calc(-50% + (var(--p,0) - .5) * 7vw), 0, 0)
     scale(calc(1 + var(--p,0) * .05));
@@ -1376,7 +1336,9 @@ select.input option{background:#fff;color:var(--txt)}
 .flyTicker{
   position:relative;z-index:1;
   overflow:hidden;
-  margin:0 -20px;
+  /* The reserved gap belongs in the shorthand: as a separate margin-top it was
+     silently wiped by the `margin:0 -20px` that followed it. */
+  margin:var(--gapObj,196px) -20px 0;
   padding:13px 0;
   border-top:1px solid var(--hair-soft);
   border-bottom:1px solid var(--hair-soft);
@@ -1403,6 +1365,7 @@ select.input option{background:#fff;color:var(--txt)}
 }
 .flyBand__card{
   position:relative;z-index:3;
+  margin-top:26px;
   background:rgba(255,255,255,.90);
   -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border:1px solid var(--hair-soft);

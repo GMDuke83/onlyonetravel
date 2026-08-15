@@ -434,23 +434,25 @@ self-hosted rather than linked from Google's CDN: a hotlink sends every
 visitor's IP to a third party before the first headline paints, which is a
 real problem for a German operator.
 
-**Great Vibes**, also self-hosted, carries the wordmark and the intro's
-*Journey*. It replaced a stack that began with "Snell Roundhand" — an Apple-only
-system font, which meant the brand silently rendered as Georgia on Android, i.e.
-not a script at all. One 43 KB latin file makes the mark identical on every
-phone.
+**Great Vibes**, also self-hosted, is the script face — the intro's *Journey*
+and its closing line. It replaced a stack that began with "Snell Roundhand", an
+Apple-only system font, which meant those words silently rendered as Georgia on
+Android, i.e. not a script at all. One 43 KB latin file makes them identical on
+every phone.
 
 The rest of the intro keeps its old type: Georgia for the display line, the
 system UI stack for the small tracked labels.
 
 ### Wordmark
 
-The logo is drawn in type, not shipped as an image (`.logo` in `app.css`): the
-script wordmark over a tracked subline, with the gold as a gradient clipped to
-the glyphs. It stays sharp at any pixel density, costs nothing extra to
-download, recolours with the theme and is readable to screen readers. To swap in
-supplied artwork instead, replace the two spans inside `.logo` with an `<img>`
-or inline SVG — nothing else references it.
+The mark is the original one: concentric gold rings drawn in CSS
+(`.brandMark` / `.appbar__mark`, no image at any size) with the ONLYONE
+wordmark beside it. A script lockup was tried and reverted; it is one `git
+revert` away in the history if it is ever wanted back.
+
+The `LUXURY TRAVEL` subline takes `--gold-ink` on the ivory bar and the light
+gold only inside the intro, over its photograph — the decorative gold measures
+1.8:1 on ivory and is unreadable at 7.5px.
 
 Headings need the opposite treatment to the serif they replaced: more weight
 (600) and negative tracking that grows with size, or a grotesk reads loose and
