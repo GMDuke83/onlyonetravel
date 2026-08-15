@@ -49,6 +49,54 @@
 
   if (!intro || !video || !main) return;
 
+  /* ---- language --------------------------------------------------------
+     The intro speaks the visitor's language too. Brand words stay Latin in
+     every version — the wordmark and the script "Journey" are the mark, not
+     copy — while everything around them translates. Same rule as the
+     platform: an explicit choice in the app beats device detection. */
+  var INTRO_I18N = {
+    en: { kicker:'This is not just a trip',
+          h:'This is your<br>Only One<em class="headline__script">Journey</em>',
+          endT:'Your Journey<em>Begins Now</em>',
+          skip:'Skip', start:'Start Journey' },
+    de: { kicker:'Das ist nicht nur eine Reise',
+          h:'Das ist deine<br>Only One<em class="headline__script">Journey</em>',
+          endT:'Deine Reise<em>beginnt jetzt</em>',
+          skip:'Überspringen', start:'Reise starten' },
+    ru: { kicker:'Это не просто поездка',
+          h:'Это твоё<br>Only One<em class="headline__script">Journey</em>',
+          endT:'Твоё путешествие<em>начинается сейчас</em>',
+          skip:'Пропустить', start:'Начать путешествие' }
+  };
+  function introLang(){
+    try {
+      var st = JSON.parse(localStorage.getItem('onlyone.state.v1'));
+      if (st && st.lang && INTRO_I18N[st.lang]) return st.lang;
+    } catch (e) {}
+    try {
+      var list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages : [navigator.language || ''];
+      for (var i = 0; i < list.length; i++) {
+        var base = String(list[i] || '').toLowerCase().split('-')[0];
+        if (INTRO_I18N[base]) return base;
+        if (['uk','be','kk','ky','uz','az','hy','ka'].indexOf(base) > -1) return 'ru';
+      }
+    } catch (e) {}
+    return 'en';
+  }
+  (function applyIntroLang(){
+    var L = INTRO_I18N[introLang()];
+    var k = introCopy && introCopy.querySelector('.kicker');
+    var h = introCopy && introCopy.querySelector('.headline');
+    var e = introEnd && introEnd.querySelector('.intro__endTitle');
+    if (k) k.textContent = L.kicker;
+    if (h) h.innerHTML = L.h;
+    if (e) e.innerHTML = L.endT;
+    if (skipIntro) skipIntro.textContent = L.skip;
+    if (tapStartBtn) tapStartBtn.lastChild.textContent = ' ' + L.start;
+    document.documentElement.lang = introLang();
+  })();
+
   /* ---- state ------------------------------------------------------------ */
   var seqStarted   = false;   // countdown running or finished
   var leaving      = false;   // transition to main in flight
