@@ -156,7 +156,24 @@ Add them under *Settings → Secrets and variables → Actions*, then push to
 `develop`.
 </details>
 
-### Option B — Vercel
+### Option B — GitHub Pages (no third-party account needed)
+
+`.github/workflows/deploy-github-pages.yml` publishes `public/` directly.
+GitHub Pages can otherwise only serve the repository root or `/docs`; the
+workflow uploads `public/` as the Pages artifact, so nothing has to move.
+
+1. The repository must be **public** — Pages on a private repo requires a paid
+   GitHub plan.
+2. *Settings → Pages → Build and deployment → Source:* **GitHub Actions**.
+3. Push to `develop` (or run the workflow manually).
+
+Result: `https://gmduke83.github.io/onlyonetravel/`
+
+The app uses **document-relative paths**, so it works under that sub-path just
+as well as at a domain root later — verified in-browser under `/onlyonetravel/`
+with all assets loading and no console errors.
+
+### Option C — Vercel
 
 `vercel.json` is already configured (`outputDirectory: public`, cache headers).
 Import the repository at <https://vercel.com/new>, set the production branch to
