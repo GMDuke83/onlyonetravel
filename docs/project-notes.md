@@ -471,7 +471,7 @@ gequetscht zu werden.
 
 | Abschnitt | steht hinter | Datei | Grösse | PSNR |
 |---|---|---|---|---|
-| VIP-Empfang | den vier VIP-Punkten | `onlyone-vip-welcome-v1.mp4` | 1,4 MB | 43,4 dB |
+| VIP-Empfang | den vier VIP-Punkten | `onlyone-vip-welcome-v2.mp4` | 1,4 MB | 43,4 dB |
 | Yacht-Tour | dem Ausflüge-Laufband | `onlyone-yacht-tour-v1.mp4` | 2,7 MB | 40,4 dB |
 
 Beide bei CRF 24 aus dem Original (3,0 bzw. 5,8 MB). Gemessen statt geraten: für
@@ -533,3 +533,16 @@ Anfrage durch den Wizard existiert. Alle vier Elemente stumm, Attribut gesetzt,
 **0 dekodierte Tonbytes**.
 
 Der Test heisst `noton.js` und prüft alle vier Ebenen in einem Lauf.
+
+## 19. Empfangsvideo getauscht
+
+Neue Aufnahme vom Auftraggeber, 720 × 1280, 10 s statt 8 s. Wieder mit `-an`
+kodiert, also ohne Tonspur — nicht bloss stumm geschaltet.
+
+Gemessen: 2073 KB / 45,8 dB, **1694 KB / 44,3 dB**, 1372 KB / 42,8 dB. Genommen
+wieder CRF 24, dieselbe Einstellung wie bei den anderen beiden Clips.
+
+Die Datei heisst **`-v2`**, nicht wieder `-v1`. Der Dateiname ist auf GitHub
+Pages der Cache-Schlüssel: bei gleichem Namen bekämen Besucher, die schon einmal
+da waren, noch tagelang den alten Clip. Ein neuer Name ist die einzige
+verlässliche Art, das auszuschliessen. Dasselbe gilt für das Standbild.

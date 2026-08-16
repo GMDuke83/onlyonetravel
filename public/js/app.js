@@ -1645,8 +1645,8 @@
      -------------------------------------------------------------------- */
   const CLIPS=[
     { at:'vip',
-      src:'./video/onlyone-vip-welcome-v1.mp4',
-      poster:'./images/vip-welcome-poster.webp',
+      src:'./video/onlyone-vip-welcome-v2.mp4',
+      poster:'./images/vip-welcome-poster-v2.webp',
       eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
     { at:'excursions',
       src:'./video/onlyone-yacht-tour-v1.mp4',
