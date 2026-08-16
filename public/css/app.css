@@ -1353,13 +1353,13 @@ select.input option{background:#fff;color:var(--txt)}
    clear — but the card was sitting on its wheels, which read as the car being
    cut off rather than as a layer. More reserve, so the whole car is visible
    and the card only overlaps its rocker. */
-.carBand{--gapObj:206px}
-.carBand .flyBand__card{margin-top:var(--gapObj,206px)}
+.carBand{--gapObj:172px}
+.carBand .flyBand__card{margin-top:var(--gapObj,172px)}
 .carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
 .carBand__car{
   position:absolute;z-index:2;
-  left:50%;top:146px;
-  width:min(92%,410px);
+  left:50%;top:150px;
+  width:min(76%,330px);
   transform:
     translate3d(calc(-50% + (var(--p,0) - .5) * 7vw), 0, 0)
     scale(calc(1 + var(--p,0) * .05));
