@@ -616,7 +616,7 @@
       addToReq:'Добавить к запросу',
       excAdded:'Добавлено к запросу',
       duration:'Длительность',
-      heroEyebrow:'Анталья · Средиземное море',
+      heroEyebrow:'Анталья · Средиземное море', heroScript:'Анталья',
       heroTitle:'Лучшие адреса побережья.',
       heroSub:'Расскажите, как вы путешествуете, — обо всём остальном позаботимся мы.',
       discover:'Подобрать жильё', trust1:'Жильё, отобранное вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
@@ -718,7 +718,7 @@
       addToReq:'Zur Anfrage hinzufügen',
       excAdded:'Zur Anfrage hinzugefügt',
       duration:'Dauer',
-      heroEyebrow:'Antalya · Mittelmeer',
+      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Antalya',
       heroTitle:'Die schönsten Adressen der Küste.',
       heroSub:'Erzähl uns, wie du reist — um alles andere kümmern wir uns.',
       discover:'Unterkünfte entdecken', trust1:'Handverlesene Unterkünfte', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
@@ -820,7 +820,7 @@
       addToReq:'Add to my request',
       excAdded:'Added to your request',
       duration:'Duration',
-      heroEyebrow:'Antalya · Mediterranean',
+      heroEyebrow:'Antalya · Mediterranean', heroScript:'Antalya',
       heroTitle:'The finest addresses on the coast.',
       heroSub:'Tell us how you travel — we take care of the rest.',
       discover:'Discover stays', trust1:'Handpicked stays', trust2:'Personal advice', trust3:'Individual offers',
@@ -1266,9 +1266,14 @@
                  ['trips','trip','navTrips']];
     const open=S.requests.filter(r=>r.status==='offer'||r.status==='payopen').length;
     const unread=unreadForGuest();
+    /* The concierge is the offering, not one tab among five: the whole promise
+       is that a named person handles the trip. It gets the raised, filled
+       treatment and sits in the middle slot so it reads as the primary action
+       rather than a destination. */
     return `<nav class="tabbar">${items.map(([v,ic,k])=>{
       const dot = (v==='trips'&&open) || (v==='concierge'&&unread);
-      return `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${dot?'<i class="tab__dot"></i>':''}</button>`;}).join('')}</nav>`;
+      const hero = v==='concierge' ? ' tab--hero' : '';
+      return `<button class="tab${hero}${active===v?' is-on':''}" data-go="${v}"><span class="tab__ic">${icon(ic)}</span><span>${t(k)}</span>${dot?'<i class="tab__dot"></i>':''}</button>`;}).join('')}</nav>`;
   }
   function staffTabbar(active){
     const items=[['s-dash','grid','dashboard'],['s-req','inbox','requests'],['s-book','book','bookings'],['s-cust','user','customers'],['s-more','dots','more']];
@@ -1346,6 +1351,7 @@
       </video>
       <div class="pHero__scrim"></div>
       <div class="pHero__body">
+        <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
         <h1 class="pHero__title">${t('heroTitle')}</h1>
         <p class="pHero__sub">${t('heroSub')}</p>
         <div class="pHero__glass">
