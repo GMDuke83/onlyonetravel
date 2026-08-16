@@ -49,7 +49,6 @@
   var soundToggle  = document.getElementById('soundToggle');
   var skipIntro    = document.getElementById('skipIntro');
   var main         = document.getElementById('main');
-  var platformHeroVideo  = null;   // the platform home renders it; looked up on demand
 
   if (!intro || !video || !main) return;
 
@@ -344,27 +343,6 @@
     try { video.currentTime = 0; } catch (e) {}
   }
 
-  /* The platform hero is silent by construction — its audio track was
-     stripped when it was encoded, so it cannot carry sound past the intro
-     no matter what the element's muted flag says. */
-  function startPlatformHero() {
-    platformHeroVideo = document.getElementById('platformHeroVideo');
-    if (!platformHeroVideo) return;
-    platformHeroVideo.muted = true;
-    if (platformHeroVideo.preload === 'none') {
-      platformHeroVideo.preload = 'auto';
-      try { platformHeroVideo.load(); } catch (e) {}
-    }
-    var p = platformHeroVideo.play();
-    if (p && typeof p.catch === 'function') p.catch(function () {});
-  }
-
-  function stopPlatformHero() {
-    platformHeroVideo = document.getElementById('platformHeroVideo');
-    if (!platformHeroVideo) return;
-    try { platformHeroVideo.pause(); } catch (e) {}
-  }
-
   function goToMain() {
     if (leaving || onMain) return;
     leaving = true;
@@ -389,7 +367,6 @@
       }, 700);
 
       if (window.ONLYONE && window.ONLYONE.boot) window.ONLYONE.boot();
-      startPlatformHero();
     }, FLASH_MS);
   }
 
@@ -401,7 +378,6 @@
     if (!onMain) return;
     onMain = false;
 
-    stopPlatformHero();
     main.classList.remove('is-active');
     main.setAttribute('aria-hidden', 'true');
 
@@ -564,9 +540,8 @@
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       try { video.pause(); } catch (e) {}
-      stopPlatformHero();
     } else if (onMain) {
-      startPlatformHero();
+      // the platform hero is a slideshow now — CSS animations pause themselves
     } else if (!leaving && video.paused) {
       var p = video.play();
       if (p && typeof p.catch === 'function') p.catch(function () {});
@@ -588,7 +563,6 @@
      ====================================================================== */
   window.ONLYONE = window.ONLYONE || {};
   window.ONLYONE.replayIntro = backToIntro;
-  window.ONLYONE.startPlatformHero = startPlatformHero;
 
   /* ======================================================================
      Boot
@@ -690,14 +664,18 @@
       addToReq:'Добавить к запросу',
       excAdded:'Добавлено к запросу',
       duration:'Длительность',
-      heroEyebrow:'Анталья · Средиземное море', heroScript:'Турция',
+      heroEyebrow:'Анталья · Средиземное море', heroScript:'Турция', heroRibbon:'Личный консьерж',
       heroTitle:'Лучшие адреса побережья.',
       heroSub:'Расскажите, как вы путешествуете, — обо всём остальном позаботимся мы.',
       discover:'Подобрать жильё', trust1:'Жильё, отобранное вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
       navHome:'Главная', navSearch:'Поиск', navMap:'Карта', navFav:'Избранное', navTrips:'Мои поездки',
       where:'Куда?', wherePh:'Выберите регион', dates:'Даты поездки', datesPh:'Выберите даты',
       guests:'Гости', searchBtn:'Найти жильё', recommended:'Рекомендуем', all:'Все',
-      experiences:'Впечатления', conciergeName:'Мария Грычко', conciergeMark:'МГ',
+      experiences:'Впечатления',
+      vipHead:'Мы делаем больше,<br>чем просто поездки',
+      vip1:'VIP-сервис', vip1t:'Один человек ведёт вашу поездку — от первого вопроса до возвращения домой.',
+      vip2:'Проверенные адреса', vip2t:'Только дома, в которых мы были сами. Никаких каталожных отелей.',
+      vip3:'Консьерж на связи', vip3t:'Столик, трансфер, врач — пока вы в пути, мы на телефоне.', conciergeName:'Мария Грычко', conciergeMark:'МГ',
       flyEyebrow:'Дорога', flyTitle:'Прилететь<br>без пересадок',
       flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
       flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
@@ -792,14 +770,18 @@
       addToReq:'Zur Anfrage hinzufügen',
       excAdded:'Zur Anfrage hinzugefügt',
       duration:'Dauer',
-      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Türkiye',
+      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Türkiye', heroRibbon:'Privater Concierge',
       heroTitle:'Die schönsten Adressen.',
       heroSub:'Erzähl uns, wie du reist — um alles andere kümmern wir uns.',
       discover:'Unterkünfte entdecken', trust1:'Handverlesene Unterkünfte', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
       navHome:'Home', navSearch:'Suche', navMap:'Karte', navFav:'Favoriten', navTrips:'Meine Reise',
       where:'Wohin?', wherePh:'Region auswählen', dates:'Reisezeitraum', datesPh:'Zeitraum wählen',
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
-      experiences:'Erlebnisse', conciergeName:'Maria Grychko', conciergeMark:'MG',
+      experiences:'Erlebnisse',
+      vipHead:'Wir machen mehr<br>als nur Reisen',
+      vip1:'VIP-Service', vip1t:'Eine Betreuerin führt deine Reise — von der ersten Frage bis zur Heimkehr.',
+      vip2:'Geprüfte Adressen', vip2t:'Nur Häuser, die wir selbst kennen. Keine Katalogware.',
+      vip3:'Concierge erreichbar', vip3t:'Tisch, Transfer, Arzt — solange du unterwegs bist, sind wir am Telefon.', conciergeName:'Maria Grychko', conciergeMark:'MG',
       flyEyebrow:'Anreise', flyTitle:'Ankommen<br>ohne Umwege',
       flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
       flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
@@ -894,14 +876,18 @@
       addToReq:'Add to my request',
       excAdded:'Added to your request',
       duration:'Duration',
-      heroEyebrow:'Antalya · Mediterranean', heroScript:'Türkiye',
+      heroEyebrow:'Antalya · Mediterranean', heroScript:'Türkiye', heroRibbon:'Private Concierge',
       heroTitle:'The finest addresses.',
       heroSub:'Tell us how you travel — we take care of the rest.',
       discover:'Discover stays', trust1:'Handpicked stays', trust2:'Personal advice', trust3:'Individual offers',
       navHome:'Home', navSearch:'Search', navMap:'Map', navFav:'Saved', navTrips:'My trip',
       where:'Where to?', wherePh:'Choose a region', dates:'Travel dates', datesPh:'Select dates',
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
-      experiences:'Experiences', conciergeName:'Maria Grychko', conciergeMark:'MG',
+      experiences:'Experiences',
+      vipHead:'We do more<br>than book trips',
+      vip1:'VIP service', vip1t:'One person runs your trip — from the first question to your way home.',
+      vip2:'Houses we know', vip2t:'Only places we have stayed in ourselves. Nothing off a catalogue.',
+      vip3:'Concierge on call', vip3t:'A table, a transfer, a doctor — while you travel, we are on the phone.', conciergeName:'Maria Grychko', conciergeMark:'MG',
       flyEyebrow:'Getting there', flyTitle:'Arrive<br>without detours',
       flySpecA:'Flight & transfer', flySpecB:'Around the clock',
       flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
@@ -1274,6 +1260,9 @@
     lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V7.8a3.6 3.6 0 0 1 7.2 0v2.7"/>',
     play:'<path d="m8 5.5 11 6.5-11 6.5z"/>',
     star:'<path d="m12 4.2 2.35 4.9 5.35.72-3.9 3.76.96 5.32L12 16.4l-4.76 2.5.96-5.32-3.9-3.76 5.35-.72z"/>',
+    diamond:'<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18"/><path d="M9.5 4 7.5 9l4.5 11 4.5-11-2-5"/>',
+    keyhouse:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><circle cx="12" cy="12.6" r="1.7"/><path d="M12 14.3V17"/>',
+    headset:'<path d="M5 13v-1a7 7 0 0 1 14 0v1"/><path d="M5 13h2.2v4.4H5.6A1.6 1.6 0 0 1 4 15.8V13z"/><path d="M19 13h-2.2v4.4h1.6A1.6 1.6 0 0 0 20 15.8V13z"/><path d="M17.2 17.8v.4a2.4 2.4 0 0 1-2.4 2.4h-1.6"/>',
     globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
   };
   const icon=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
@@ -1281,6 +1270,16 @@
   /* ====================================================================
      5 · Bottom sheet
      ==================================================================== */
+  /* An open sheet takes the next back for itself: on a phone that gesture means
+     "close this", not "leave the page underneath".
+
+     It deliberately pushes NO history entry of its own. The first attempt did,
+     and closing it called history.back() — which is asynchronous, so when a
+     menu item closed the sheet and navigated in the same breath, the pushState
+     from go() landed first and the late popstate then stepped a view backwards.
+     Instead the sheet is handled entirely in popstate: back closes it and puts
+     the current entry straight back, so nothing is ever left dangling and no
+     ordering can go wrong. */
   function openSheet(html){
     $('#sheetInner').innerHTML=html;
     const w=$('#sheetWrap');
@@ -1306,16 +1305,84 @@
      Forward navigation deliberately starts at the top: a new view is new
      material. Only `back` restores. */
   function scrollNow(){ const a=$('#app'); return a?a.scrollTop:0; }
+
+  /* --------------------------------------------------------------------
+     Browser history
+
+     Views used to live only in STACK, so the phone's own back gesture knew
+     nothing about them and simply left the site — or returned to whatever
+     page the visitor had open before. Every view is now a history entry, so
+     back steps one view back and forward steps one view forward, which is
+     what the gesture means everywhere else on the phone.
+
+     The history state is the authority on which view is showing; STACK is
+     kept only for where each view was scrolled to, keyed by view rather than
+     ordered, because forward navigation has to find it too.
+     -------------------------------------------------------------------- */
+  const SCROLLS=Object.create(null);
+  const viewKey=(n,p)=>n+'|'+(p==null?'':p);
+  let historyReady=false;
+
+  function stateOf(){ return {oo:1, v:VIEW.name, p:VIEW.param}; }
+
+  function initHistory(){
+    if(historyReady||!window.history||!history.replaceState)return;
+    historyReady=true;
+    /* The intro sits underneath as its own entry: back from the first
+       platform view returns to it, and back from there leaves the site —
+       which is correct, because the intro is where the visit began. */
+    history.replaceState({oo:1,v:'intro',p:null},'');
+    history.pushState(stateOf(),'');
+  }
+
   function go(name,param,noPush){
-    if(!noPush&&VIEW.name)STACK.push({name:VIEW.name,param:VIEW.param,scroll:scrollNow()});
+    if(!noPush&&VIEW.name){
+      SCROLLS[viewKey(VIEW.name,VIEW.param)]=scrollNow();
+      STACK.push({name:VIEW.name,param:VIEW.param,scroll:scrollNow()});
+    }
     VIEW={name,param:param==null?null:param};
+    if(historyReady){
+      try{
+        /* noPush means "replace this step", not "leave history alone" — the
+           staff login swaps the login view for the dashboard without adding a
+           step. Leaving the entry untouched made it still say 'staff', so back
+           out of a request landed on the login form instead of the dashboard. */
+        if(noPush) history.replaceState(stateOf(),'');
+        else       history.pushState(stateOf(),'');
+      }catch(e){}
+    }
     render();
   }
+
+  /* The in-app arrow and the phone's gesture must not be two different
+     mechanisms, or they drift apart. The arrow simply asks the browser to go
+     back and the popstate handler does the work. */
   function back(){
+    if(historyReady&&window.history&&history.length>1){ history.back(); return; }
     const p=STACK.pop();
     VIEW=p||{name:'home',param:null};
     render(p?p.scroll:0);
   }
+
+  window.addEventListener('popstate',function(ev){
+    const st=ev.state;
+    // an open sheet swallows this back: close it and stay where we are
+    const w=$('#sheetWrap');
+    if(w&&w.classList.contains('is-open')){
+      closeSheet();
+      if(historyReady){ try{ history.pushState(stateOf(),''); }catch(e){} }
+      return;
+    }
+    if(!st||!st.oo)return;                 // not ours; leave it alone
+    if(st.v==='intro'){
+      SCROLLS[viewKey(VIEW.name,VIEW.param)]=scrollNow();
+      if(window.ONLYONE&&window.ONLYONE.replayIntro)window.ONLYONE.replayIntro();
+      return;
+    }
+    SCROLLS[viewKey(VIEW.name,VIEW.param)]=scrollNow();
+    VIEW={name:st.v,param:st.p==null?null:st.p};
+    render(SCROLLS[viewKey(VIEW.name,VIEW.param)]||0);
+  });
 
   /* ====================================================================
      7 · Shared fragments
@@ -1414,16 +1481,66 @@
   /* ====================================================================
      8 · Guest views
      ==================================================================== */
+  /* --------------------------------------------------------------------
+     Hero slideshow
+
+     Replaces the looping clip. Photographs cost a fraction of a video, decode
+     instantly and never sit there paused because a browser refused to autoplay
+     — which is most of what went wrong with the hero video.
+
+     The crossfade is a CSS animation rather than a timer, so nothing runs on
+     the main thread and the browser stops it on its own when the tab is
+     hidden. The keyframes depend on how many photographs there are, so they
+     are written once from the list: adding a file to HERO_SLIDES is the whole
+     change. The first frame is eager and preloaded; the rest are lazy, because
+     nobody sees slide four in the first seconds.
+     -------------------------------------------------------------------- */
+  const HERO_SLIDES=[
+    './images/hero/hero-01.webp',
+    './images/hero/hero-02.webp',
+    './images/hero/hero-03.webp',
+    './images/hero/hero-04.webp',
+    './images/hero/hero-05.webp',
+    './images/hero/hero-06.webp',
+  ];
+  const SLIDE_SECONDS=6;          // per photograph, including its fade
+  function heroSlides(){
+    const n=HERO_SLIDES.length;
+    if(!n)return '';
+    if(n===1)return `<img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high">`;
+    ensureSlideKeyframes(n);
+    const total=n*SLIDE_SECONDS;
+    return `<div class="pHero__slides" aria-hidden="true">${HERO_SLIDES.map((src,i)=>
+      `<img class="pHero__img" src="${src}" alt=""
+            ${i===0?'fetchpriority="high"':'loading="lazy"'} decoding="async"
+            style="animation-duration:${total}s;animation-delay:${-(n-i)*SLIDE_SECONDS}s">`).join('')}</div>`;
+  }
+  let slideKeyframesFor=0;
+  function ensureSlideKeyframes(n){
+    if(slideKeyframesFor===n)return;
+    slideKeyframesFor=n;
+    const slot=100/n;               // share of the cycle each photograph owns
+    const fade=Math.min(slot*0.34,9);
+    const css=`@keyframes heroSlide{
+      0%{opacity:0}
+      ${fade.toFixed(2)}%{opacity:1}
+      ${(slot-fade).toFixed(2)}%{opacity:1}
+      ${slot.toFixed(2)}%{opacity:0}
+      100%{opacity:0}
+    }`;
+    let el=document.getElementById('heroSlideKeyframes');
+    if(!el){el=document.createElement('style');el.id='heroSlideKeyframes';document.head.appendChild(el);}
+    el.textContent=css;
+  }
+
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
     <section class="pHero">
-      <video id="platformHeroVideo" class="pHero__img" muted loop playsinline webkit-playsinline
-             preload="none" poster="./images/onlyone-hero-coast-poster.webp"
-             disablepictureinpicture disableremoteplayback aria-hidden="true">
-        <source src="./video/onlyone-hero-coast-v1.mp4" type="video/mp4">
-      </video>
+      <span class="vipRibbon" aria-hidden="true"><i>${t('heroRibbon')}</i></span>
+      ${heroSlides()}
       <div class="pHero__scrim"></div>
+      <div class="pHero__glassLayer" aria-hidden="true"></div>
       <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
       <div class="pHero__body">
         <h1 class="pHero__title">${t('heroTitle')}</h1>
@@ -1439,6 +1556,16 @@
       </div>
     </section>
     <div class="wrap">
+      <section class="vipList">
+        <h2 class="vipList__head">${t('vipHead')}</h2>
+        <span class="vipList__rule" aria-hidden="true"></span>
+        ${[['diamond','vip1','vip1t'],['keyhouse','vip2','vip2t'],['headset','vip3','vip3t']]
+          .map(([ic,k,d])=>`<div class="vipItem">
+            <span class="vipItem__ic">${icon(ic)}</span>
+            <div><b>${t(k)}</b><p>${t(d)}</p></div>
+          </div>`).join('')}
+      </section>
+
       <div class="section">
         <div class="section__head"><h2 class="h-lg">${t('regions')}</h2></div>
         <div class="rail">
@@ -2413,7 +2540,6 @@
     armFlyBand();
     armAppbar();
     armReveals();
-    if(VIEW.name==='home'&&window.ONLYONE&&window.ONLYONE.startPlatformHero)window.ONLYONE.startPlatformHero();
   }
   function bindGallery(){
     const tr=$('#galTrack'),dots=$('#galDots');
@@ -2841,8 +2967,10 @@
   window.ONLYONE.boot = function(){
     if(!VIEW.name)VIEW={name:'home',param:null};
     render();
+    initHistory();
   };
   window.ONLYONE.resetToHome = function(){
     STACK.length=0;VIEW={name:'home',param:null};render();
+    initHistory();
   };
 })();

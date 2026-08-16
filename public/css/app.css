@@ -721,7 +721,76 @@ svg{
 
 /* --- platform hero -------------------------------------------------------- */
 .pHero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ground-2)}
+/* Corner ribbon. It says what the house actually sells — a person who arranges
+   the trip — in the one place a visitor looks before reading anything: the top
+   right of the first picture.
+
+   Kept to two words. "VIP Luxury with Private Concierge" was the brief, but a
+   luxury mark that shouts stops reading as one, and a 45° corner has room for
+   a phrase, not a sentence.
+
+   The clipping wrapper is what keeps it honest: the band is wider than the
+   corner and would otherwise stick out past the right edge of the screen and
+   give the page something to scroll sideways to. */
+.vipRibbon{
+  position:absolute;top:0;right:0;z-index:3;
+  width:142px;height:142px;overflow:hidden;pointer-events:none;
+}
+.vipRibbon i{
+  position:absolute;
+  /* The distance from the corner is what decides whether the wording survives,
+     not the size of the wrapper: a 45° band sitting p away from the corner has
+     only 2p of visible chord. Measured across sizes, 26px away clipped 9px off
+     the first letter at every wrapper size, and 42px away clipped nothing. */
+  top:44px;right:-32px;
+  width:206px;
+  transform:rotate(45deg);
+  background:linear-gradient(100deg,#C9A24A,#F0D787 46%,#C9A24A);
+  color:#2A2119;
+  font-style:normal;
+  font-family:var(--display);
+  font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  text-align:center;
+  padding:6px 0;
+  box-shadow:0 2px 12px rgba(0,0,0,.32);
+  white-space:nowrap;
+}
+@media (max-width:359px){
+  .vipRibbon i{font-size:8px;letter-spacing:.10em}
+}
+
+.pHero__slides{position:absolute;inset:0}
 .pHero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Each photograph carries the same keyframe and a negative delay one slot
+   further back, so the cycle is already under way on the first frame and no
+   slide has to wait its first turn out. */
+.pHero__slides .pHero__img{
+  opacity:0;
+  animation-name:heroSlide;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  animation-fill-mode:both;
+  will-change:opacity;
+}
+/* Dark glass over the slideshow: a tint plus a hair of blur, so the words sit
+   on something solid without the photographs turning to mush. It is one layer
+   over the whole hero rather than a panel behind the text — a panel drew its
+   own edges across the picture. */
+.pHero__glassLayer{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(16,12,8,.34) 0%,
+    rgba(16,12,8,.22) 34%,
+    rgba(16,12,8,.42) 68%,
+    rgba(16,12,8,.72) 100%);
+  -webkit-backdrop-filter:blur(1.5px) saturate(106%);
+  backdrop-filter:blur(1.5px) saturate(106%);
+}
+@media (prefers-reduced-motion:reduce){
+  .pHero__slides .pHero__img{animation:none}
+  .pHero__slides .pHero__img:first-child{opacity:1}
+}
 .pHero__scrim{
   position:absolute;inset:0;
   background:linear-gradient(180deg,
@@ -885,7 +954,13 @@ svg{
   display:flex;gap:12px;
   overflow-x:auto;scrollbar-width:none;
   overscroll-behavior-x:contain;touch-action:pan-x pan-y;
-  scroll-snap-type:x mandatory;
+  /* No snapping at all. Mandatory yanked every small drag back to the nearest
+     tile — a gentle push on the regions rail pulled Antalya straight back and
+     read as the page fighting the finger. Proximity still did it for short
+     nudges, because a short nudge really is nearest to where it started. A
+     rail is a strip of cards to browse, not a slideshow: it should simply go
+     where it is pushed and stay there. The photo gallery keeps mandatory,
+     where landing on one image at a time is the point. */
   scroll-padding-inline:20px;
   margin-inline:-20px;padding-inline:20px;padding-bottom:6px;
 }
@@ -1178,8 +1253,10 @@ select.input option{background:#fff;color:var(--txt)}
 }
 .reveal.is-in{opacity:1;transform:none;will-change:auto}
 /* Rails scroll sideways, so their cards arrive from the side instead. */
-.rail > .reveal{transform:translate3d(22px,0,0)}
-.rail > .reveal.is-in{transform:none}
+/* Rail cards fade only. A horizontal slide inside a horizontally snapping
+   scroller means two things moving the same axis at the same time, which is
+   the other half of what made this rail feel restless. */
+.rail > .reveal{transform:none}
 @media (prefers-reduced-motion:reduce){
   .reveal,.rail > .reveal{opacity:1;transform:none;transition:none}
 }
@@ -1279,6 +1356,98 @@ select.input option{background:#fff;color:var(--txt)}
   min-height:calc(100svh - var(--nav-h) - 64px - var(--sat));
   display:flex;flex-direction:column;
   padding-bottom:28px;
+}
+
+/* --------------------------------------------------------------------------
+   VIP service points
+
+   Three lines that say what the house does, in the manner of the reference:
+   a gold line icon at the left, a small tracked title, and one quiet sentence
+   under it. Centred heading over a short gold rule.
+
+   Deliberately not cards. Cards would put a box around each promise and turn
+   three sentences into a product grid; the point here is that they read as one
+   short paragraph about the house.
+   -------------------------------------------------------------------------- */
+.vipList{
+  padding:44px 20px 6px;
+  text-align:center;
+}
+.vipList__head{
+  font-family:var(--display);
+  font-size:clamp(21px,6.2vw,26px);
+  font-weight:600;letter-spacing:-.02em;line-height:1.28;
+  color:var(--txt);margin:0;
+}
+.vipList__rule{
+  display:block;width:46px;height:1px;margin:16px auto 30px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.vipItem{
+  display:flex;align-items:flex-start;gap:16px;
+  text-align:left;
+  padding:0 2px 24px;
+}
+.vipItem:last-child{padding-bottom:6px}
+.vipItem__ic{
+  flex:0 0 30px;display:grid;place-items:center;
+  color:var(--gold-ink);margin-top:1px;
+}
+.vipItem__ic svg{width:26px;height:26px;stroke-width:1.2}
+.vipItem b{
+  display:block;
+  font-size:11.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--txt);
+}
+.vipItem p{
+  margin:7px 0 0;
+  font-size:13.5px;line-height:1.6;
+  color:var(--txt-2);
+}
+
+/* --------------------------------------------------------------------------
+   Edge light
+
+   A warm point of light running down the left edge, continuously. It is
+   decoration, so it is built to be ignorable: two elements, a transform-only
+   animation, no repaint, and pointer-events off so it can never swallow a tap
+   near the edge. It sits above the content but below the tab bar and the
+   sheets, and it belongs to the platform only — the intro is a photograph and
+   wants nothing drawn over it.
+
+   The travel is expressed in the strip's own height: it is 42% of the column,
+   so running from -100% to 240% of itself carries it from just above the top
+   to just past the bottom.
+   -------------------------------------------------------------------------- */
+.edgeLed{
+  position:fixed;
+  left:var(--sal);top:0;bottom:0;
+  width:2px;z-index:45;
+  pointer-events:none;overflow:hidden;
+  background:linear-gradient(180deg,
+    rgba(216,180,92,.07), rgba(216,180,92,.13), rgba(216,180,92,.07));
+}
+.edgeLed i{
+  position:absolute;left:-2px;right:-2px;
+  height:42%;
+  /* summer light, not a status LED: amber through warm white and back */
+  background:linear-gradient(180deg,
+    rgba(255,206,120,0)   0%,
+    rgba(255,206,120,.45) 26%,
+    rgba(255,240,200,.95) 50%,
+    rgba(255,206,120,.45) 74%,
+    rgba(255,206,120,0)   100%);
+  box-shadow:0 0 20px 5px rgba(255,198,110,.40);
+  animation:edgeLed 8s linear infinite;
+  will-change:transform;
+}
+@keyframes edgeLed{
+  from{transform:translate3d(0,-100%,0)}
+  to  {transform:translate3d(0,240%,0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .edgeLed{display:none}
 }
 
 /* ==========================================================================

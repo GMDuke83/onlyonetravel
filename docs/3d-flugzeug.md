@@ -1,5 +1,8 @@
 # Die 3D-Objekte: Jet und Maybach
 
+> Hinweis: der Plattform-Hero ist seit dem Umbau eine Foto-Diashow, kein Video
+> mehr. `onlyone-hero-coast-v1.mp4` und sein Posterbild wurden dabei entfernt.
+
 Auf der Startseite folgen hinter den vier Erlebnis-Bannern zwei Bänder in der
 Reihenfolge **Transfer (Wagen), dann Anreise (Flugzeug)** — das Flugband
 schliesst die Seite ab. In beiden wandert ein Objekt beim Scrollen durch die
