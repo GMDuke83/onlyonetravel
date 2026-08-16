@@ -4,8 +4,8 @@
 > mehr. `onlyone-hero-coast-v1.mp4` und sein Posterbild wurden dabei entfernt.
 
 Auf der Startseite folgen hinter den vier Erlebnis-Bannern zwei Bänder in der
-Reihenfolge **Transfer (Wagen), dann Anreise (Flugzeug)** — das Flugband
-schliesst die Seite ab. In beiden wandert ein Objekt beim Scrollen durch die
+Reihenfolge **Transfer, dann Anreise (Flugzeug)** — das Flugband schliesst die
+Seite ab. Im Flugband wandert das Objekt beim Scrollen durch die
 Ebenen: die Überschrift liegt
 **dahinter**, das Laufband und die Infokarte **davor**. Genau dieser
 Sandwich-Effekt ist die ganze Wirkung — deshalb sind es getrennte Elemente und
@@ -89,11 +89,50 @@ verschwinden ganz.
 
 ---
 
-# Der Maybach im „Transfer"-Band
+# Das „Transfer"-Band: der Maybach ist raus
 
-Direkt hinter dem Flug folgt derselbe Dreischicht-Aufbau noch einmal, jetzt mit
+> **Stand 16.08.:** Der Wagen ist aus dem Band entfernt, `car-maybach.webp` ist
+> gelöscht. An seiner Stelle steht der animierte Schriftzug **VIP TRANSFER**
+> (`.vipWord`). Der Rest dieses Kapitels beschreibt, wie das Bild entstanden
+> ist — als Beleg, falls es je zurückkommen soll; die Datei liegt in der
+> Git-Historie und lässt sich mit `git show <commit>:public/images/3d/car-maybach.webp`
+> wieder herausholen.
+
+## Warum jetzt Schrift statt Auto
+
+Ein gerendertes Auto ist immer das Bild *eines bestimmten* Autos, und es war von
+Anfang an ein Kompromiss: 24 MB Modell auf ein Standbild eingedampft, und dieses
+Standbild musste dann noch mit Luft ringsum beschnitten werden, damit es am
+Bildschirmrand nicht wie abgeschnitten wirkte. Ein Wort kostet nichts, skaliert
+auf jedes Display und sagt die Sache direkt.
+
+Der Schriftzug läuft auf drei verschiedenen Uhren:
+
+1. **Auftritt** — jedes Zeichen steigt einzeln auf, gestaffelt um 50 ms. Der
+   verborgene Startzustand hängt an `.reveal`; ist das Reveal-System aus
+   (reduced motion, kein IntersectionObserver), steht das Wort einfach da,
+   statt für immer unsichtbar zu bleiben.
+2. **Licht** — ein warmer Schein wandert über die Buchstaben und wiederholt
+   sich. Pro Zeichen, nicht als auf den Text geclippter Verlauf: ein geclippter
+   Hintergrund überlebt die Einzeltransformationen aus Punkt 1 nicht.
+3. **Scrollen** — das ganze Wort wächst über den Durchlauf des Bandes um 4 %.
+   Das ist, was vom Objekt übrig ist, das durch die Ebenen wanderte.
+
+Pro Sprache eigenes Alphabet (`carWord`): **VIP TRANSFER** / **VIP ТРАНСФЕР**.
+Die Zeichen sind wortweise gruppiert und brechen innerhalb eines Wortes nicht —
+flach nebeneinander gesetzt landete im Russischen ein einzelnes **Р** in der
+zweiten Zeile. Die Schriftgrösse (`clamp(30px, 10.2vw, 48px)`) ist so gewählt,
+dass die längste der drei Sprachen auf einem 360-px-Telefon bei vollem
+Scroll-Zoom einzeilig bleibt; Russisch ist der Engpass und misst rund 3 % mehr
+als die lateinische Schreibweise.
+
+---
+
+## Wie das Bild damals entstand
+
+Direkt hinter dem Flug folgte derselbe Dreischicht-Aufbau noch einmal, jetzt mit
 dem Wagen: der Jet landet, das Auto übernimmt. Weil eine Limousine ein breites
-Objekt ist und der Jet ein hohes, quert sie die Überschrift seitlich, statt
+Objekt ist und der Jet ein hohes, querte sie die Überschrift seitlich, statt
 durch sie hindurchzusteigen.
 
 ## Warum auch hier ein Bild und kein Live-3D

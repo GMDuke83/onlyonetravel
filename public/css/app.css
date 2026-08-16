@@ -1381,6 +1381,19 @@ select.input option{background:#fff;color:var(--txt)}
 .vipList{
   padding:44px 20px 6px;
   text-align:center;
+  /* Breathes with the scroll: --z is 0 at the edges of the screen and 1 when
+     the block sits in the middle of it, so the panel grows a little as the
+     reader arrives at it and lets go again on the way out. Three per cent —
+     enough to feel, not enough to see type reflow.
+     It grows *up to* its natural size rather than past it. Scaling above 1
+     would push the block wider than the column, and this page has already been
+     bitten once by content that overflows sideways. */
+  transform:scale(calc(1 - (1 - var(--z,1)) * .03));
+  transform-origin:50% 50%;
+  will-change:transform;
+}
+@media (prefers-reduced-motion:reduce){
+  .vipList{transform:none}
 }
 .vipList__head{
   font-family:var(--display);
@@ -1504,10 +1517,21 @@ select.input option{background:#fff;color:var(--txt)}
   border-bottom:2px solid var(--ground-2);
   text-align:center;
 }
-/* The photograph and its frame are two elements on purpose. The wrapper takes
-   the scroll parallax, the image inside takes its own slow drift — one
-   transform per element, because a second on the same element would replace
-   the first rather than add to it. */
+/* Three nested elements, three transforms, because a second transform on the
+   same element replaces the first instead of adding to it:
+     __zoom  the arrival — a hair of extra scale that settles as the band
+             comes into view
+     __ph    the scroll parallax, rewritten every frame from --s
+     img     its own slow ambient drift
+   The arrival needs a transition, and a transition on the element that carries
+   --s would smear the parallax a second behind the finger. Hence the extra
+   wrapper rather than one more term in an existing transform. */
+.expBand__zoom{
+  position:absolute;inset:0;
+  transform:scale(1.085);
+  transition:transform 1.5s cubic-bezier(.16,.7,.24,1);
+}
+.expBand.is-in .expBand__zoom{transform:none}
 .expBand__ph{
   position:absolute;inset:0;overflow:hidden;
   transform:translate3d(0, calc(var(--s,0) * 13px), 0) scale(1.09);
@@ -1562,6 +1586,7 @@ select.input option{background:#fff;color:var(--txt)}
 @media (prefers-reduced-motion:reduce){
   .expBand__ph{transform:none}
   .expBand__ph > img{animation:none;transform:none}
+  .expBand__zoom{transform:none;transition:none}
 }
 
 /* ==========================================================================
@@ -1654,27 +1679,23 @@ select.input option{background:#fff;color:var(--txt)}
   .flyTrail{display:none}
 }
 
-/* Transfer band. Same three-layer idea as the flight, but a saloon is a wide
-   object where the jet was a tall one, so it crosses the headline sideways
-   instead of rising through it. The car keeps its own reflections and shadow
-   from the render; nothing is added on top. */
-/* The transfer band runs dark. It is the one section built around a black
-   object, and on ivory the saloon had nothing to sit on — now it stands on
-   black glass, which is also the rhythm the reference uses: light section,
-   dark section, light again. The flight band above deliberately stays light,
-   so the two do not merge into one long dark stretch.
+/* Transfer band. The saloon that used to cross this section is gone — the
+   lettering is the object now. A rendered car is a picture of one particular
+   car, and it was always going to be a compromise: 24 MB of model reduced to a
+   still, and then a still that had to be given air on both sides so it did not
+   read as cut off. A word costs nothing, scales to any screen, and says the
+   thing outright.
 
-   The saloon is wide and low where the jet is tall, and it has no ticker to
-   clear — but the card was sitting on its wheels, which read as the car being
-   cut off rather than as a layer. More reserve, so the whole car is visible
-   and the card only overlaps its rocker. */
+   The band still runs dark. It is the rhythm the reference uses — light
+   section, dark section, light again — and the flight band below deliberately
+   stays light so the two do not merge into one long dark stretch. */
 .carBand{
-  --gapObj:172px;
   background:
-    radial-gradient(120% 90% at 50% 34%, rgba(58,48,36,.55), transparent 70%),
+    radial-gradient(120% 90% at 50% 40%, rgba(58,48,36,.55), transparent 70%),
     linear-gradient(180deg,#171310 0%,#100D0A 55%,#171310 100%);
   border-top:1px solid rgba(255,255,255,.07);
   border-bottom:1px solid rgba(255,255,255,.07);
+  padding-top:52px;padding-bottom:38px;
 }
 .carBand .flyBand__title{color:#fff}
 .carBand .eyebrow{color:var(--gold-light)}
@@ -1683,20 +1704,63 @@ select.input option{background:#fff;color:var(--txt)}
 .carBand .flyBand__card{
   background:rgba(255,255,255,.07);
   border-color:rgba(255,255,255,.14);
+  margin-top:36px;
 }
-.carBand .flyBand__card{margin-top:var(--gapObj,172px)}
 .carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
-.carBand__car{
-  position:absolute;z-index:2;
-  left:50%;top:150px;
-  width:min(76%,330px);
-  transform:
-    translate3d(calc(-50% + (var(--p,0) - .5) * 7vw), 0, 0)
-    scale(calc(1 + var(--p,0) * .05));
+
+/* The lettering. Three things happen to it, on three different clocks:
+
+   1. arrival — each glyph rises and fades in, one after the next, once the
+      band comes into view. The hidden start state is scoped to .reveal, so if
+      the reveal system is off (reduced motion, or no IntersectionObserver) the
+      word is simply there rather than invisible for ever.
+   2. light — a warm glow travels along the word and repeats. Per glyph rather
+      than a gradient clipped to the text, because a clipped background cannot
+      survive the individual transforms of step 1.
+   3. scroll — the whole word grows a few per cent across the band's pass,
+      which is what is left of the object crossing the layers. */
+.vipWord{
+  margin:0;
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:0 .3em;
+  font-family:var(--display);font-weight:600;
+  /* Sized so the longest of the three languages still fits on one line on a
+     360 px phone, at full scroll zoom, inside the band's own clipping. Russian
+     is the constraint: VIP ТРАНСФЕР measures about 3 % wider than the Latin
+     spelling at the same size. */
+  font-size:clamp(30px,10.2vw,48px);line-height:1.06;
+  letter-spacing:.055em;
+  color:rgba(255,255,255,.94);
+  transform:scale(calc(1 + var(--p,0) * .04));
   will-change:transform;
-  pointer-events:none;
 }
-.carBand__car img{display:block;width:100%;height:auto}
+/* One group per word, and a group never breaks: a flat row of single glyphs
+   wraps between any two of them, which put a lone Р on the second line. */
+.vipWord__w{display:flex;white-space:nowrap}
+.vipWord i{
+  font-style:normal;display:inline-block;
+  animation:vipSheen 5.2s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .15s);
+}
+.reveal .vipWord i{opacity:0;transform:translate3d(0,.48em,0)}
+.reveal.is-in .vipWord i{
+  opacity:1;transform:none;
+  transition:opacity .5s var(--ease), transform .66s var(--ease);
+  transition-delay:calc(var(--i,0) * .05s);
+}
+@keyframes vipSheen{
+  0%,64%,100%{color:rgba(255,255,255,.94);text-shadow:none}
+  82%{color:#F7E6BC;text-shadow:0 0 20px rgba(240,208,140,.42)}
+}
+.carBand__line{
+  margin:20px 0 0;
+  font-size:13.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.62);
+}
+@media (prefers-reduced-motion:reduce){
+  .vipWord{transform:none}
+  .vipWord i{animation:none}
+}
 
 /* The running line under the flight — destinations pass beneath the aircraft.
    The row holds its content twice and travels exactly half its own width, so

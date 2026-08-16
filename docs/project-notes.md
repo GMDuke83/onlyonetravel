@@ -391,3 +391,36 @@ die Randspalte um 62–169 Stufen von der Seite sieben Pixel weiter innen. Ohne
 Streifen liegen dieselben sieben Messungen bei 1–34. Bei
 `prefers-reduced-motion` bleibt die Linie stehen und nur die Wanderung hört auf —
 vorher verschwand das ganze Element.
+
+## 15. Transfer-Band ohne Auto, und zwei Zoom-Effekte
+
+Der Maybach ist aus dem Band raus, `public/images/3d/car-maybach.webp` gelöscht.
+An seiner Stelle steht **VIP TRANSFER** als animierter Schriftzug — Auftritt
+Zeichen für Zeichen, ein warmes Licht, das über die Buchstaben wandert, und ein
+Zoom, der am Scrollstand hängt. Details in `docs/3d-flugzeug.md`.
+
+Dazu zwei Zoom-Effekte, beide gemessen:
+
+**Die VIP-Kachel unter dem Hero** folgt dem Scrollen laufend. Der Scroll-Pass
+setzte bisher `--s` (vorzeichenbehaftet, −1 beim Eintritt unten bis +1 beim
+Austritt oben) für die Parallaxe; dazu kommt jetzt `--z` — wie nah die Kachel an
+der Bildschirmmitte steht, 0 am Rand, 1 in der Mitte. Zwei Eigenschaften, weil
+eine Parallaxe eine Richtung braucht und ein Zoom nicht.
+
+Wichtig: die Kachel wächst **bis auf** ihre natürliche Grösse, nicht darüber
+hinaus (`scale(1 − (1 − z) · 0,03)`, also 0,97 → 1,00). Über 1 skaliert wäre der
+Block breiter als die Spalte, und genau daran hing schon einmal das seitliche
+Verschieben der Seite. Gemessen über sechs Scrollstände: `--z` 0,05 → 0,93,
+Skalierung 0,971 → 0,998, seitlicher Überlauf 0 px.
+
+**Die Banner darunter** zoomen beim Eintritt: das Foto sitzt 8,5 % zu gross und
+setzt sich über 1,5 s auf 1,0. Dafür gibt es eine dritte Ebene
+(`.expBand__zoom`) um das vorhandene Paar aus Parallaxen-Rahmen und driftendem
+Bild. Grund: der Effekt braucht eine `transition`, und eine `transition` auf dem
+Element, das `--s` trägt, würde die Parallaxe eine Sekunde hinter dem Finger
+herziehen. Drei Transformationen, drei Elemente — auf demselben Element ersetzt
+die zweite die erste.
+
+Gemessen (`zoom.js`): 1,085 → 1,065 nach 120 ms → exakt 1,0 im Ruhezustand, auf
+allen vier Bannern. Bei `prefers-reduced-motion` stehen beide Zooms, der Lichtlauf
+und der Wort-Zoom still, und die Buchstaben sind trotzdem sichtbar.

@@ -695,7 +695,7 @@
       flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
       flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
       flyCta:'Спросить консьержа',
-      carEyebrow:'Трансфер', carTitle:'Машина<br>уже ждёт',
+      carEyebrow:'Трансфер', carTitle:'Машина<br>уже ждёт', carWord:'VIP ТРАНСФЕР',
       carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
       carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
@@ -802,7 +802,7 @@
       flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
       flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
       flyCta:'Concierge fragen',
-      carEyebrow:'Transfer', carTitle:'Der Wagen<br>wartet schon',
+      carEyebrow:'Transfer', carTitle:'Der Wagen<br>wartet schon', carWord:'VIP TRANSFER',
       carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
       carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
@@ -909,7 +909,7 @@
       flySpecA:'Flight & transfer', flySpecB:'Around the clock',
       flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
       flyCta:'Ask the concierge',
-      carEyebrow:'Transfer', carTitle:'Your car<br>is waiting',
+      carEyebrow:'Transfer', carTitle:'Your car<br>is waiting', carWord:'VIP TRANSFER',
       carSpecA:'Private & discreet', carSpecB:'Door to door',
       carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
@@ -1673,12 +1673,12 @@
               simply replace the first. A band may also carry `vid`, in which
               case a looping clip plays over the still; armBgVideos() lazy-loads
               it on intersect, so a band nobody scrolls to costs nothing. */''}
-        <span class="expBand__ph" style="--pd:${(EXPERIENCES.indexOf(x)%4)*-7}s">
+        <span class="expBand__zoom"><span class="expBand__ph" style="--pd:${(EXPERIENCES.indexOf(x)%4)*-7}s">
           <img src="${x.img}" alt="" loading="lazy" decoding="async">
           ${x.vid?`<video data-bg="${x.vid}" muted loop playsinline webkit-playsinline
                  preload="none" poster="${x.img}" disablepictureinpicture
                  disableremoteplayback aria-hidden="true"></video>`:''}
-        </span>
+        </span></span>
         <span class="expBand__scrim"></span>
         <span class="expBand__txt">
           <b>${esc(x.n[LANG]||x.n.en)}</b>
@@ -1689,11 +1689,21 @@
 
     <section class="flyBand carBand">
       <div class="flyBand__head">
-        <div class="eyebrow">${t('carEyebrow')}</div>
-        <h2 class="flyBand__title">${t('carTitle')}</h2>
-      </div>
-      <div class="carBand__car" aria-hidden="true">
-        <img src="./images/3d/car-maybach.webp" alt="" loading="lazy" decoding="async" width="1000" height="552">
+        ${/* The saloon is gone; the lettering is the object now. Split into
+              single glyphs so each can arrive on its own beat and the warm
+              light can travel along the word — one span per letter is the only
+              way to give them separate clocks. The word is spelled out for
+              screen readers on the heading itself, and the pieces are hidden
+              from them, so it is still read once, as a word. */''}
+        ${(()=>{ const w=t('carWord'); let i=0;
+          /* Grouped by word, and each group refuses to break. A flat row of
+             glyphs wraps between any two of them: in Russian the line came out
+             as ТРАНСФЕ / Р. */
+          const words=w.split(/\s+/).filter(Boolean).map(word=>
+            `<span class="vipWord__w">${[...word].map(ch=>
+              `<i style="--i:${i++}" aria-hidden="true">${esc(ch)}</i>`).join('')}</span>`).join('');
+          return `<h2 class="vipWord" aria-label="${esc(w)}">${words}</h2>`; })()}
+        <p class="carBand__line">${t('carTitle').replace(/<br\s*\/?>/g,' ')}</p>
       </div>
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('carSpecA')}</span><span>${t('carSpecB')}</span></div>
@@ -2163,7 +2173,7 @@
 
     <section class="expBands" style="margin-top:34px">
       ${CONC_BANDS.map((x,i)=>`<div class="expBand">
-        <span class="expBand__ph" style="--pd:${(i%3)*-9}s"><img src="${x.img}" alt="" loading="lazy" decoding="async"></span>
+        <span class="expBand__zoom"><span class="expBand__ph" style="--pd:${(i%3)*-9}s"><img src="${x.img}" alt="" loading="lazy" decoding="async"></span></span>
         <span class="expBand__scrim"></span>
         <span class="expBand__txt">
           <b>${esc(x.n[LANG]||x.n.en)}</b>
@@ -2511,7 +2521,12 @@
       flyScroller = flyHandler = null;
     }
     const bands=$$('.flyBand');
-    const strips=$$('.expBand');
+    /* Everything that answers to its own position on screen. --s is signed
+       (-1 arriving at the bottom, +1 leaving at the top) and drives the
+       parallax; --z is how close to the middle it is (0 at either edge, 1 dead
+       centre) and drives the zoom. Two properties because a parallax wants a
+       direction and a zoom does not. */
+    const strips=$$('.expBand,.vipList');
     if(!bands.length && !strips.length) return;
     const scroller=$('#app'); if(!scroller) return;
     let raf=0;
@@ -2541,13 +2556,14 @@
       strips.forEach(el=>{
         const r=el.getBoundingClientRect();
         if(r.bottom<-40||r.top>vh+40) return;
-        const c=(r.top+r.height/2-vh/2)/((vh+r.height)/2);
-        el.style.setProperty('--s',Math.max(-1,Math.min(1,c)).toFixed(3));
+        const c=Math.max(-1,Math.min(1,(r.top+r.height/2-vh/2)/((vh+r.height)/2)));
+        el.style.setProperty('--s',c.toFixed(3));
+        el.style.setProperty('--z',(1-Math.abs(c)).toFixed(3));
       });
     };
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
       bands.forEach(b=>b.style.setProperty('--p','0.5'));   /* parked, no motion */
-      strips.forEach(el=>el.style.setProperty('--s','0'));
+      strips.forEach(el=>{el.style.setProperty('--s','0');el.style.setProperty('--z','0');});
       return;
     }
     flyHandler=()=>{ if(!raf) raf=requestAnimationFrame(update); };
