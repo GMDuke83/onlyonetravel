@@ -930,8 +930,37 @@ svg{
 .rail>*{scroll-snap-align:start;flex:0 0 auto}
 .regionCard{width:146px;border-radius:3px;overflow:hidden;position:relative;aspect-ratio:3/4;background:var(--ground-3);border:none;padding:0}
 .regionCard img{width:100%;height:100%;object-fit:cover}
+/* --------------------------------------------------------------------------
+   Dark glass
+
+   One recipe, used everywhere the treatment appears, so the pieces match
+   instead of each drifting to its own tint. Two layers of defence: the blur
+   is the effect, but a translucent background carries it on browsers without
+   backdrop-filter, where a blur-only panel would be plain glass and the white
+   text on it would vanish.
+   -------------------------------------------------------------------------- */
+.glassDark{
+  background:rgba(16,12,8,.56);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+  backdrop-filter:blur(14px) saturate(120%);
+  border:1px solid rgba(255,255,255,.10);
+  color:#fff;
+}
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .glassDark{background:rgba(16,12,8,.40)}
+}
+
 .regionCard__ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,10,0) 40%,rgba(20,15,10,.90) 100%)}
-.regionCard__txt{position:absolute;left:0;right:0;bottom:0;padding:14px 12px;color:#fff;z-index:2;text-align:left}
+.regionCard__txt{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:left;
+  padding:12px 12px 13px;
+  /* the gradient above still does the heavy lifting; this adds the pane */
+  background:rgba(16,12,8,.30);
+  -webkit-backdrop-filter:blur(10px) saturate(115%);
+  backdrop-filter:blur(10px) saturate(115%);
+  border-top:1px solid rgba(255,255,255,.12);
+  color:#fff;
+}
 .regionCard__txt b{display:block;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
 .regionCard__txt span{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);margin-top:5px}
 .chips{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-padding-inline:20px;margin-inline:-20px;padding-inline:20px;padding-bottom:4px}
@@ -1645,11 +1674,19 @@ select.input option{background:#fff;color:var(--txt)}
 .flyBand__card{
   position:relative;z-index:3;
   margin-top:26px;
-  background:rgba(255,255,255,.90);
-  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
-  border:1px solid var(--hair-soft);
   padding:17px 18px 18px;
+  /* Dark glass, not the ivory pane it was: the card overlaps the aircraft and
+     the saloon, and a white card simply cut a hole in them. */
+  background:rgba(16,12,8,.56);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+  backdrop-filter:blur(14px) saturate(120%);
+  border:1px solid rgba(255,255,255,.10);
+  color:#fff;
 }
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .flyBand__card{background:rgba(16,12,8,.40)}
+}
+
 .flyBand__spec{
   display:flex;justify-content:space-between;gap:12px;
   padding-bottom:11px;margin-bottom:12px;
@@ -1657,8 +1694,14 @@ select.input option{background:#fff;color:var(--txt)}
   font-size:10px;letter-spacing:.22em;text-transform:uppercase;
   font-weight:600;color:var(--gold-ink);
 }
+/* On the dark card the ivory-ground tones invert. These have to come after the
+   rules above, not before — same specificity, so the later one wins, and the
+   first attempt at this sat above them and did nothing. */
+.flyBand__card .flyBand__spec{border-bottom-color:rgba(255,255,255,.20);color:var(--gold-light)}
+.flyBand__card .btn--primary{background:rgba(255,255,255,.95);color:#2A2119}
 .flyBand__card p{
-  margin:0 0 15px;font-size:13.5px;line-height:1.62;color:var(--txt-2);
+  margin:0 0 15px;font-size:13.5px;line-height:1.62;
+  color:rgba(255,255,255,.86);      /* the card is dark glass */
 }
 @media (prefers-reduced-motion:reduce){
   .flyBand__plane{will-change:auto}

@@ -178,7 +178,14 @@
       if (leaving || onMain || seqStarted) { stopStallWatchdog(); return; }
 
       // real progress — the video is fine, stand down
-      if (video.currentTime > 0.3) { stopStallWatchdog(); return; }
+      if (video.currentTime > 0.3) { hideSoundHintKeepButton(); stopStallWatchdog(); return; }
+
+      /* Playing, just not far enough in yet. The button must go now: on a
+         phone that started the video by itself the offer had already been made
+         a moment earlier, and leaving it up put a "Start Journey" button on
+         top of a running intro. Only `playing` used to clear it, and by then
+         the watchdog had often already shown it again. */
+      if (!video.paused && video.readyState >= 3) { hideTapStart(); }
 
       /* Three different reasons the video is not running, and only one of them
          justifies moving on without it. Treating them alike is what sent
@@ -436,8 +443,14 @@
 
   function showTapStart() {
     if (leaving || onMain) return;
+    // never offer a manual start for something that is already running
+    if (!video.paused && video.readyState >= 3) return;
     if (tapStart) tapStart.classList.add('is-in');
   }
+  function hideTapStart() {
+    if (tapStart) tapStart.classList.remove('is-in');
+  }
+  function hideSoundHintKeepButton() { hideTapStart(); }
 
   /* ======================================================================
      Events
@@ -445,6 +458,7 @@
 
   // countdown is driven by real playback position, not by a wall clock
   video.addEventListener('timeupdate', function () {
+    if (video.currentTime > 0.05) hideTapStart();
     if (!seqStarted && !leaving && video.currentTime >= COUNTDOWN_START_AT) {
       startSequence();
     }
@@ -1508,16 +1522,45 @@
     './images/hero/hero-06.webp',
   ];
   const SLIDE_SECONDS=6;          // per photograph, including its fade
+  /* Only the first photograph is in the markup. loading="lazy" did nothing
+     here — every slide is absolutely positioned inside the viewport, so the
+     browser counts them all as visible and fetched all six at once: 1.7 MB
+     before anything else could happen. The rest are attached after the first
+     has painted, spaced out so each arrives well before its turn comes round. */
   function heroSlides(){
     const n=HERO_SLIDES.length;
     if(!n)return '';
-    if(n===1)return `<img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high">`;
-    ensureSlideKeyframes(n);
     const total=n*SLIDE_SECONDS;
-    return `<div class="pHero__slides" aria-hidden="true">${HERO_SLIDES.map((src,i)=>
-      `<img class="pHero__img" src="${src}" alt=""
-            ${i===0?'fetchpriority="high"':'loading="lazy"'} decoding="async"
-            style="animation-duration:${total}s;animation-delay:${-(n-i)*SLIDE_SECONDS}s">`).join('')}</div>`;
+    const attrs=i=>`style="animation-duration:${total}s;animation-delay:${-(n-i)*SLIDE_SECONDS}s"`;
+    if(n===1)return `<div class="pHero__slides" aria-hidden="true"><img class="pHero__img is-solo" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high"></div>`;
+    ensureSlideKeyframes(n);
+    return `<div class="pHero__slides" id="heroSlides" aria-hidden="true">
+      <img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high" decoding="async" ${attrs(0)}>
+    </div>`;
+  }
+
+  let slidesFilled=false;
+  function fillHeroSlides(){
+    const box=$('#heroSlides');
+    if(!box||slidesFilled)return;
+    if(box.children.length>=HERO_SLIDES.length){slidesFilled=true;return;}
+    slidesFilled=true;
+    const n=HERO_SLIDES.length, total=n*SLIDE_SECONDS;
+    HERO_SLIDES.slice(1).forEach((src,k)=>{
+      const i=k+1;
+      // one every 1.2s: ahead of its slot, never all at once
+      setTimeout(()=>{
+        if(!document.body.contains(box))return;
+        const img=new Image();
+        img.className='pHero__img';
+        img.alt='';
+        img.decoding='async';
+        img.style.animationDuration=total+'s';
+        img.style.animationDelay=(-(n-i)*SLIDE_SECONDS)+'s';
+        img.src=src;
+        box.appendChild(img);
+      }, 900+k*1200);
+    });
   }
   let slideKeyframesFor=0;
   function ensureSlideKeyframes(n){
@@ -1545,17 +1588,13 @@
       <div class="pHero__scrim"></div>
       <div class="pHero__glassLayer" aria-hidden="true"></div>
       <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
+      ${/* Title and subtitle, nothing else. The trust list and the button were
+            three more blocks competing with the photograph on the one screen
+            that should simply be an image and a promise — the same three
+            points are made properly further down, with room to breathe. */''}
       <div class="pHero__body">
         <h1 class="pHero__title">${t('heroTitle')}</h1>
         <p class="pHero__sub">${t('heroSub')}</p>
-        <div class="pHero__glass">
-          <ul class="trust">
-            <li>${icon('check')}${t('trust1')}</li>
-            <li>${icon('check')}${t('trust2')}</li>
-            <li>${icon('check')}${t('trust3')}</li>
-          </ul>
-        </div>
-        <div style="margin-top:14px"><button class="btn btn--primary" data-go="search">${t('discover')}</button></div>
       </div>
     </section>
     <div class="wrap">
@@ -2543,6 +2582,7 @@
     armFlyBand();
     armAppbar();
     armReveals();
+    if(VIEW.name==='home')fillHeroSlides(); else slidesFilled=false;
   }
   function bindGallery(){
     const tr=$('#galTrack'),dots=$('#galDots');

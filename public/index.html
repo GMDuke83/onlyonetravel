@@ -12,6 +12,10 @@
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="preload" as="image" href="./images/onlyone-hero-poster.webp">
+<!-- The platform hero shows the moment the intro ends. Fetching its first
+     photograph now, while the intro is still playing, means it is decoded and
+     waiting instead of starting from zero at the hand-over. -->
+<link rel="preload" as="image" href="./images/hero/hero-01.webp">
 <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
