@@ -1521,21 +1521,37 @@
     './images/hero/hero-05.webp',
     './images/hero/hero-06.webp',
   ];
-  const SLIDE_SECONDS=6;          // per photograph, including its fade
+  const SLIDE_SECONDS=9;          // how long one photograph owns the screen
+  const FADE_SECONDS=2.2;         // the handover, on top of the slot above
+  const HIDE_GUARD=0.4;           // covered, but held a moment against jitter
+  const HIDE_FADE=1.0;            // the retreat itself — happens out of sight
   /* Only the first photograph is in the markup. loading="lazy" did nothing
      here — every slide is absolutely positioned inside the viewport, so the
      browser counts them all as visible and fetched all six at once: 1.7 MB
      before anything else could happen. The rest are attached after the first
-     has painted, spaced out so each arrives well before its turn comes round. */
+     has painted, spaced out so each arrives well before its turn comes round.
+
+     Because they arrive at different moments and animation-delay counts from
+     the moment an element joins the document, every delay is worked out
+     against one shared origin (heroT0). Without that, each later photograph
+     ran a little behind the one before it, and the last one ended up with a
+     third of its screen time. */
+  let heroT0=0;
+  const slideDelay=i=>(i*SLIDE_SECONDS-FADE_SECONDS)-(heroT0?(performance.now()-heroT0)/1000:0);
   function heroSlides(){
     const n=HERO_SLIDES.length;
     if(!n)return '';
-    const total=n*SLIDE_SECONDS;
-    const attrs=i=>`style="animation-duration:${total}s;animation-delay:${-(n-i)*SLIDE_SECONDS}s"`;
     if(n===1)return `<div class="pHero__slides" aria-hidden="true"><img class="pHero__img is-solo" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high"></div>`;
     ensureSlideKeyframes(n);
+    heroT0=performance.now();
+    // a fresh container each render — the old one's fill does not count
+    slidesFilled=false;
+    /* The first photograph skips its own fade-in — it starts already opaque.
+       There is nothing behind it on the first frame, so fading it up from zero
+       is exactly the black moment we are here to remove. */
     return `<div class="pHero__slides" id="heroSlides" aria-hidden="true">
-      <img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high" decoding="async" ${attrs(0)}>
+      <img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high" decoding="async"
+           style="animation-duration:${n*SLIDE_SECONDS}s;animation-delay:${slideDelay(0).toFixed(2)}s">
     </div>`;
   }
 
@@ -1548,7 +1564,7 @@
     const n=HERO_SLIDES.length, total=n*SLIDE_SECONDS;
     HERO_SLIDES.slice(1).forEach((src,k)=>{
       const i=k+1;
-      // one every 1.2s: ahead of its slot, never all at once
+      // one every 1.4s: long before its slot, never all at once
       setTimeout(()=>{
         if(!document.body.contains(box))return;
         const img=new Image();
@@ -1556,24 +1572,33 @@
         img.alt='';
         img.decoding='async';
         img.style.animationDuration=total+'s';
-        img.style.animationDelay=(-(n-i)*SLIDE_SECONDS)+'s';
+        img.style.animationDelay=slideDelay(i).toFixed(2)+'s';
         img.src=src;
         box.appendChild(img);
-      }, 900+k*1200);
+      }, 900+k*1400);
     });
   }
   let slideKeyframesFor=0;
   function ensureSlideKeyframes(n){
     if(slideKeyframesFor===n)return;
     slideKeyframesFor=n;
-    const slot=100/n;               // share of the cycle each photograph owns
-    const fade=Math.min(slot*0.34,9);
+    const T=n*SLIDE_SECONDS, pc=s=>(s/T*100);
+    const inDone = pc(FADE_SECONDS);                                  // arrived
+    const covered= pc(SLIDE_SECONDS+FADE_SECONDS+HIDE_GUARD);         // hidden
+    const gone   = pc(SLIDE_SECONDS+FADE_SECONDS+HIDE_GUARD+HIDE_FADE);
+    const handOff= pc(SLIDE_SECONDS);                                 // next rises
     const css=`@keyframes heroSlide{
       0%{opacity:0}
-      ${fade.toFixed(2)}%{opacity:1}
-      ${(slot-fade).toFixed(2)}%{opacity:1}
-      ${slot.toFixed(2)}%{opacity:0}
+      ${inDone.toFixed(3)}%{opacity:1}
+      ${covered.toFixed(3)}%{opacity:1}
+      ${gone.toFixed(3)}%{opacity:0}
       100%{opacity:0}
+    }
+    @keyframes heroLift{
+      0%{z-index:3}
+      ${handOff.toFixed(3)}%{z-index:2}
+      ${gone.toFixed(3)}%{z-index:1}
+      100%{z-index:1}
     }`;
     let el=document.getElementById('heroSlideKeyframes');
     if(!el){el=document.createElement('style');el.id='heroSlideKeyframes';document.head.appendChild(el);}

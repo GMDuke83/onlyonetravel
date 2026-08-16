@@ -722,13 +722,25 @@ svg{
 /* --- platform hero -------------------------------------------------------- */
 .pHero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ground-2)}
 .pHero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-/* Each photograph carries the same keyframe and a negative delay one slot
-   further back, so the cycle is already under way on the first frame and no
-   slide has to wait its first turn out. */
+/* The slides get their own stacking context, so the z-index they trade among
+   themselves during a handover stays inside this box and can never climb over
+   the scrim or the headline. */
+.pHero__slides{position:absolute;inset:0;z-index:0;isolation:isolate}
+/* Two animations per photograph, deliberately split:
+     heroSlide  — the opacity, eased
+     heroLift   — the z-index, stepped
+   The second one is what removes the black flash between pictures. A plain
+   crossfade dips: two half-transparent layers over a background leave a quarter
+   of that background showing, and under this hero's scrim that quarter reads as
+   black. So instead the arriving photograph is lifted on top and fades in over
+   the outgoing one, which stays FULLY opaque underneath until it is completely
+   covered. At no point in the cycle is the stack less than solid.
+   z-index needs the step, opacity needs the ease — hence two animations rather
+   than one, since a keyframe's timing function applies to every property in it. */
 .pHero__slides .pHero__img{
   opacity:0;
-  animation-name:heroSlide;
-  animation-timing-function:ease-in-out;
+  animation-name:heroSlide,heroLift;
+  animation-timing-function:ease-in-out,step-end;
   animation-iteration-count:infinite;
   animation-fill-mode:both;
   will-change:opacity;
@@ -1406,53 +1418,67 @@ select.input option{background:#fff;color:var(--txt)}
 /* --------------------------------------------------------------------------
    Edge light
 
-   A warm point of light running down the left edge, continuously. It is
-   decoration, so it is built to be ignorable: two elements, a transform-only
-   animation, no repaint, and pointer-events off so it can never swallow a tap
-   near the edge. It sits above the content but below the tab bar and the
-   sheets, and it belongs to the platform only — the intro is a photograph and
-   wants nothing drawn over it.
+   A warm hairline down each edge, lit from top to bottom the whole time, with
+   a slow shimmer travelling down it. The line is the point; the shimmer only
+   proves it is alive.
 
-   The travel is expressed in the strip's own height: it is 42% of the column,
-   so running from -100% to 240% of itself carries it from just above the top
-   to just past the bottom.
+   An earlier version was a bright travelling blob on a 3px column with a 38px
+   halo. Two things were wrong with it. The halo made the light read as roughly
+   forty pixels wide — a smear along the edge rather than a line — and between
+   passes the edge went dark, so it was a marker sweeping past rather than
+   something the room is trimmed with. Now the column is a single pixel, the
+   glow is clipped to it (overflow:hidden), and the base gradient never drops
+   to nothing: what moves is a brightening of a line that is always there.
+
+   It stays cheap: two elements, transform only, no repaint, pointer-events off
+   so it can never swallow a tap at the edge. It sits above the content but
+   below the tab bar and the sheets, and it belongs to the platform only — the
+   intro is a photograph and wants nothing drawn over it.
+
+   The travel is expressed in the shimmer's own height: it is 34% of the
+   column, so running from -100% to 295% of itself carries it from just above
+   the top to just past the bottom.
    -------------------------------------------------------------------------- */
 .edgeLed{
   position:fixed;
   top:0;bottom:0;
-  width:3px;z-index:45;
-  pointer-events:none;overflow:visible;
+  width:1px;z-index:45;
+  pointer-events:none;overflow:hidden;
+  /* the constant line — faded at both ends so it does not butt into the
+     corners, strongest through the middle of the screen */
   background:linear-gradient(180deg,
-    rgba(216,180,92,.10), rgba(216,180,92,.20), rgba(216,180,92,.10));
+    rgba(224,184,112,0)   0%,
+    rgba(224,184,112,.30) 7%,
+    rgba(236,202,142,.44) 50%,
+    rgba(224,184,112,.30) 93%,
+    rgba(224,184,112,0)  100%);
 }
 .edgeLed--l{left:var(--sal)}
 .edgeLed--r{right:var(--sar)}
 .edgeLed i{
-  position:absolute;left:-3px;right:-3px;
-  height:42%;
-  /* summer light, not a status LED: amber through warm white and back */
+  position:absolute;left:0;right:0;
+  height:34%;
+  /* summer light, not a status LED: amber through warm white and back. No box
+     shadow — on a one pixel line a bloom is all anyone would see. */
   background:linear-gradient(180deg,
-    rgba(255,206,120,0)   0%,
-    rgba(255,208,124,.70) 24%,
-    rgba(255,246,214,1)   50%,
-    rgba(255,208,124,.70) 76%,
-    rgba(255,206,120,0)   100%);
-  /* two shadows: a tight core and a wide bloom, which is what makes it read as
-     light spilling onto the page rather than a painted bar */
-  box-shadow:0 0 14px 3px rgba(255,198,110,.75),
-             0 0 38px 12px rgba(255,190,100,.34);
-  animation:edgeLed 8s linear infinite;
+    rgba(255,224,170,0)   0%,
+    rgba(255,228,182,.42) 26%,
+    rgba(255,242,212,.92) 50%,
+    rgba(255,228,182,.42) 74%,
+    rgba(255,224,170,0)  100%);
+  animation:edgeLed 14s linear infinite;
   will-change:transform;
 }
-/* The two run half a cycle apart, so one is always somewhere on screen and the
-   pair reads as a room being lit rather than two synchronised bars. */
-.edgeLed--r i{animation-delay:-4s}
+/* The two run half a cycle apart, so the pair reads as a room being lit rather
+   than two synchronised bars. */
+.edgeLed--r i{animation-delay:-7s}
 @keyframes edgeLed{
   from{transform:translate3d(0,-100%,0)}
-  to  {transform:translate3d(0,240%,0)}
+  to  {transform:translate3d(0,295%,0)}
 }
 @media (prefers-reduced-motion:reduce){
-  .edgeLed{display:none}
+  /* the line stays, the shimmer stops — it is the motion that is the problem */
+  .edgeLed i{animation:none;opacity:0}
 }
 
 /* ==========================================================================

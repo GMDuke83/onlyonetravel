@@ -329,3 +329,65 @@ Damit sind **alle sieben Regionen**, **alle fünf Ausflüge** und **zwölf von
 vierzehn Hotelmotiven** echte Fotografie. Offen: `h13` (antike Ruine am Strand)
 und `h14` (Boutique-Dachterrasse); Prompts stehen in
 `docs/chatgpt-bildauftrag.md`.
+
+## 13. Die Diashow im Hero: warum es zwischendurch schwarz wurde
+
+Zwei Fotos konnten sich nie überlappen. Jedes Bild bekam einen Sechstel-Anteil
+am Durchlauf und blendete **innerhalb** dieses Anteils auf und wieder ab: bei
+36 Sekunden Gesamtlauf war ein Bild ganze 1,9 Sekunden lang wirklich zu sehen,
+davor und danach lagen je zwei Sekunden, in denen das eine schon weg und das
+nächste noch nicht da war. Was in dieser Lücke durchscheint, ist der Kasten
+hinter den Bildern — und der liegt unter Schleier und Glasschicht, also praktisch
+schwarz. Genau der beschriebene Effekt.
+
+Die Rechnung dazu ist kurz: liegen Ebenen mit den Deckkräften `o₁…oₙ`
+übereinander, bleibt vom Hintergrund das Produkt `∏(1 − oᵢ)` sichtbar. Bei einer
+klassischen Kreuzblende stehen in der Mitte beide auf 0,5 — es bleiben 25 %
+Hintergrund. Für ein sauberes Bild muss also **irgendeine Ebene jederzeit auf 1
+stehen**.
+
+Deshalb blendet jetzt nur noch das ankommende Foto auf, und zwar **über** dem
+alten, das dabei voll deckend liegen bleibt. Erst wenn es vollständig verdeckt
+ist, zieht es sich zurück — unsichtbar. Damit das ankommende Bild wirklich oben
+liegt, wandert der `z-index` mit; er braucht harte Stufen, die Deckkraft eine
+weiche Kurve, und weil eine Keyframe-Zeitfunktion immer für alle Eigenschaften
+des Keyframes gilt, sind es zwei getrennte Animationen (`heroSlide`, `heroLift`).
+Die Bilder liegen dafür in einem eigenen Stapelkontext, sonst könnte ein
+`z-index: 3` über Schleier und Überschrift klettern.
+
+Standzeit: **9 Sekunden je Foto** statt 6, davon 8,5 s allein und voll deckend
+(vorher 1,9 s). Die Blende dauert 2,2 s und liegt **zusätzlich** auf der
+Standzeit, nicht darin.
+
+Nebenbei repariert: `animation-delay` zählt ab dem Moment, in dem ein Element ins
+Dokument kommt. Die Fotos werden nacheinander nachgeladen, also lief jedes
+spätere ein Stück hinter dem vorigen her — das letzte hatte am Ende ein Drittel
+seiner Zeit. Alle Verzögerungen werden jetzt gegen **einen** gemeinsamen
+Nullpunkt gerechnet.
+
+Gemessen (`slides.js`): 217 Messpunkte über den vollen 54-Sekunden-Durchlauf,
+Hintergrund maximal **0,0 %** sichtbar, alle sechs Übergaben in der richtigen
+Ebenenfolge, kürzeste Alleinstandzeit 8,5 s. Gegengeprüft an echten Pixeln
+(`fadepx.js`): der Kasten hinter den Bildern wird magenta eingefärbt und der
+Schleier abgeschaltet — durch die ganze Übergabe **0 %** Magenta. Die Gegenprobe
+mit zwangsweise unsichtbaren Bildern zeigt 100 %, der Test misst also wirklich
+etwas.
+
+## 14. Das Kantenlicht: Linie statt Suchscheinwerfer
+
+Die erste Fassung war ein heller Fleck auf einer 3 px breiten Spalte mit 38 px
+Streuschein. Damit war das Licht gefühlt vierzig Pixel breit — ein Schmierstreifen
+am Rand statt einer Linie — und zwischen zwei Durchläufen war die Kante schlicht
+dunkel.
+
+Jetzt ist die Spalte **1 px** breit, der Schein auf sie beschnitten
+(`overflow: hidden`, kein `box-shadow` mehr), und der Grundverlauf geht nirgends
+auf null: die Linie brennt durchgehend von oben nach unten. Was wandert, ist nur
+noch eine Aufhellung dieser Linie, in 14 s statt 8 s, rechts um eine halbe Runde
+versetzt.
+
+Gemessen (`led.js`): an sieben Höhen zwischen 12 % und 82 % unterscheidet sich
+die Randspalte um 62–169 Stufen von der Seite sieben Pixel weiter innen. Ohne
+Streifen liegen dieselben sieben Messungen bei 1–34. Bei
+`prefers-reduced-motion` bleibt die Linie stehen und nur die Wanderung hört auf —
+vorher verschwand das ganze Element.
