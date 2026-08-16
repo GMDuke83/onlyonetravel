@@ -940,14 +940,15 @@ svg{
    text on it would vanish.
    -------------------------------------------------------------------------- */
 .glassDark{
-  background:rgba(16,12,8,.56);
-  -webkit-backdrop-filter:blur(14px) saturate(120%);
-  backdrop-filter:blur(14px) saturate(120%);
+  /* Nearly opaque on purpose. The first version dropped to 40% wherever
+     backdrop-filter was supported, on the assumption the blur would darken
+     what showed through — but blurring ivory just gives ivory, so the panel
+     came out mid-grey instead of black. The blur is texture here, not tint. */
+  background:rgba(12,9,6,.88);
+  -webkit-backdrop-filter:blur(16px) saturate(115%);
+  backdrop-filter:blur(16px) saturate(115%);
   border:1px solid rgba(255,255,255,.10);
   color:#fff;
-}
-@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
-  .glassDark{background:rgba(16,12,8,.40)}
 }
 
 .regionCard__ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,10,0) 40%,rgba(20,15,10,.90) 100%)}
@@ -955,9 +956,14 @@ svg{
   position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:left;
   padding:12px 12px 13px;
   /* the gradient above still does the heavy lifting; this adds the pane */
-  background:rgba(16,12,8,.30);
-  -webkit-backdrop-filter:blur(10px) saturate(115%);
-  backdrop-filter:blur(10px) saturate(115%);
+  /* .62 measured at brightness 137 over a bright sky — nowhere near black.
+     A translucent pane has to be judged against the lightest photograph it
+     will ever sit on, not against the average one. .80 then measured 15, which
+     is a black bar rather than glass — .66 lands around 35, dark enough to
+     carry white type and still let the photograph through. */
+  background:rgba(10,8,5,.66);
+  -webkit-backdrop-filter:blur(12px) saturate(115%);
+  backdrop-filter:blur(12px) saturate(115%);
   border-top:1px solid rgba(255,255,255,.12);
   color:#fff;
 }
@@ -1413,26 +1419,34 @@ select.input option{background:#fff;color:var(--txt)}
    -------------------------------------------------------------------------- */
 .edgeLed{
   position:fixed;
-  left:var(--sal);top:0;bottom:0;
-  width:2px;z-index:45;
-  pointer-events:none;overflow:hidden;
+  top:0;bottom:0;
+  width:3px;z-index:45;
+  pointer-events:none;overflow:visible;
   background:linear-gradient(180deg,
-    rgba(216,180,92,.07), rgba(216,180,92,.13), rgba(216,180,92,.07));
+    rgba(216,180,92,.10), rgba(216,180,92,.20), rgba(216,180,92,.10));
 }
+.edgeLed--l{left:var(--sal)}
+.edgeLed--r{right:var(--sar)}
 .edgeLed i{
-  position:absolute;left:-2px;right:-2px;
+  position:absolute;left:-3px;right:-3px;
   height:42%;
   /* summer light, not a status LED: amber through warm white and back */
   background:linear-gradient(180deg,
     rgba(255,206,120,0)   0%,
-    rgba(255,206,120,.45) 26%,
-    rgba(255,240,200,.95) 50%,
-    rgba(255,206,120,.45) 74%,
+    rgba(255,208,124,.70) 24%,
+    rgba(255,246,214,1)   50%,
+    rgba(255,208,124,.70) 76%,
     rgba(255,206,120,0)   100%);
-  box-shadow:0 0 20px 5px rgba(255,198,110,.40);
+  /* two shadows: a tight core and a wide bloom, which is what makes it read as
+     light spilling onto the page rather than a painted bar */
+  box-shadow:0 0 14px 3px rgba(255,198,110,.75),
+             0 0 38px 12px rgba(255,190,100,.34);
   animation:edgeLed 8s linear infinite;
   will-change:transform;
 }
+/* The two run half a cycle apart, so one is always somewhere on screen and the
+   pair reads as a room being lit rather than two synchronised bars. */
+.edgeLed--r i{animation-delay:-4s}
 @keyframes edgeLed{
   from{transform:translate3d(0,-100%,0)}
   to  {transform:translate3d(0,240%,0)}
@@ -1618,11 +1632,32 @@ select.input option{background:#fff;color:var(--txt)}
    object where the jet was a tall one, so it crosses the headline sideways
    instead of rising through it. The car keeps its own reflections and shadow
    from the render; nothing is added on top. */
-/* The saloon is wide and low where the jet is tall, and it has no ticker to
+/* The transfer band runs dark. It is the one section built around a black
+   object, and on ivory the saloon had nothing to sit on — now it stands on
+   black glass, which is also the rhythm the reference uses: light section,
+   dark section, light again. The flight band above deliberately stays light,
+   so the two do not merge into one long dark stretch.
+
+   The saloon is wide and low where the jet is tall, and it has no ticker to
    clear — but the card was sitting on its wheels, which read as the car being
    cut off rather than as a layer. More reserve, so the whole car is visible
    and the card only overlaps its rocker. */
-.carBand{--gapObj:172px}
+.carBand{
+  --gapObj:172px;
+  background:
+    radial-gradient(120% 90% at 50% 34%, rgba(58,48,36,.55), transparent 70%),
+    linear-gradient(180deg,#171310 0%,#100D0A 55%,#171310 100%);
+  border-top:1px solid rgba(255,255,255,.07);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.carBand .flyBand__title{color:#fff}
+.carBand .eyebrow{color:var(--gold-light)}
+/* On a dark ground the card no longer needs to be a separate slab — a hair
+   lighter than the band is enough to read as a pane of glass on it. */
+.carBand .flyBand__card{
+  background:rgba(255,255,255,.07);
+  border-color:rgba(255,255,255,.14);
+}
 .carBand .flyBand__card{margin-top:var(--gapObj,172px)}
 .carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
 .carBand__car{
@@ -1675,16 +1710,14 @@ select.input option{background:#fff;color:var(--txt)}
   position:relative;z-index:3;
   margin-top:26px;
   padding:17px 18px 18px;
-  /* Dark glass, not the ivory pane it was: the card overlaps the aircraft and
-     the saloon, and a white card simply cut a hole in them. */
-  background:rgba(16,12,8,.56);
-  -webkit-backdrop-filter:blur(14px) saturate(120%);
-  backdrop-filter:blur(14px) saturate(120%);
+  /* Black, not a grey pane. Over an ivory band a 40% wash reads as taupe no
+     matter how much blur sits behind it — the panel has to bring its own
+     darkness. */
+  background:rgba(12,9,6,.88);
+  -webkit-backdrop-filter:blur(16px) saturate(115%);
+  backdrop-filter:blur(16px) saturate(115%);
   border:1px solid rgba(255,255,255,.10);
   color:#fff;
-}
-@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
-  .flyBand__card{background:rgba(16,12,8,.40)}
 }
 
 .flyBand__spec{
