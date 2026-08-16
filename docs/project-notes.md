@@ -711,3 +711,66 @@ Linie beschnitten — breiter machen oder den Halo zurückgeben war genau das, w
 die erste Fassung wie einen Schmierstreifen aussehen liess.
 
 Kosten insgesamt: 37 KB, lazy geladen. Die Seite wiegt danach 6495 statt 6453 KB.
+
+## 22. Wortmarke modern, Glühen im Hero, und die Blöcke öffnen sich
+
+### „Türkiye" in moderner Form
+
+Vorher Playfair Display kursiv — ein schöner lateinischer Schriftzug und ein
+bloss ausreichender kyrillischer. Eine kursive Didone lebt von Serifenformen,
+die ТУРЦИЯ nicht teilt, also sah dieselbe Marke in zwei Alphabeten aus wie zwei
+Marken.
+
+Jetzt Inter im Haarschnitt (250), in Versalien, mit 0,20 em Sperrung. Das ist die
+zeitgenössische Wortmarken-Form, die Konstruktion ist in Latein und Kyrillisch
+identisch, und sie kostet **nichts**: Inter liegt für die Überschrift ohnehin
+schon da, dieser Bildschirm bekommt also keine zusätzliche Anfrage und kein
+zusätzliches Byte. Goldverlauf und Schatten bleiben, die trugen ohnehin die
+Dekoration.
+
+Nebenbei: Playfair war damit für die ganze Seite überflüssig. Beide Schnitte
+sind gelöscht — **35 KB weniger** auf den ersten beiden Bildschirmen.
+
+### Glühen auf der Hero-Seite
+
+Zwei warme Lichtwolken, die langsam hinter der Schrift wandern, plus ein Halo um
+den Schriftzug selbst — drei verschiedene Uhren, damit nichts im Gleichtakt
+pulsiert.
+
+Entscheidend ist der Mischmodus: **`screen`**. Screen kann nur aufhellen, also
+fügt eine Lichtwolke über einer ohnehin hellen Bildstelle fast nichts hinzu und
+hebt einen Schatten an. Derselbe Verlauf normal gemischt ist bei jeder Deckkraft
+ein fettiger Wisch. Sie liegen über dem dunklen Glas (z 1) und unter den Wörtern
+(z 2) — unter dem Glas dämpfte es sie, über den Wörtern hätte es die Schrift
+ausgewaschen.
+
+Der erste Anlauf war zu stark: der Hang links wurde sichtbar vernebelt. Die
+Spitzendeckkraft ist deshalb um rund ein Viertel zurückgenommen.
+
+### Die vier Bildblöcke öffnen sich
+
+`VIP-Empfang`, `Yacht-Tour`, `VIP TRANSFER` und `Anreise` haben jetzt eigene
+Seiten (`vBlock`, Route `block`).
+
+- Die beiden Clip-Bänder sind **ganz** anklickbar — ein bildschirmfüllendes Foto,
+  das auf Druck nichts tut, liest sich auf dem Telefon als kaputt. Als `<button>`,
+  nicht als `div` mit Handler: so ist es per Tastatur erreichbar und wird als
+  „öffnet etwas" angesagt.
+- Die beiden Flugbänder tragen bereits einen Concierge-Knopf, bekommen also
+  einen zweiten, leisen Link statt einer grossen Fläche mit zwei Bedeutungen.
+- Wo der Kopf ein **Foto** ist, steht die Überschrift darauf. Wo er ein
+  freigestelltes **Objekt** ist (Jet, Schriftzug), kollidierte sie damit — dort
+  stehen die Wörter darunter.
+
+**Der eigentliche Detailtext fehlt noch** und kommt vom Auftraggeber. Auf den
+Seiten steht deshalb nur, was die Seite heute ehrlich sagen kann: die vorhandene
+Zeile des Blocks und wie ein Angebot tatsächlich zustande kommt (drei Schritte),
+dazu der Weg zum Concierge. **Nichts ist erfunden** — keine Leistungsversprechen,
+keine Pakete, kein Preis. Wenn der Text kommt, ist es ein Feld mehr in `BLOCKS`
+und drei Schlüssel pro Sprache, keine neue Seite.
+
+`blocks.js` prüft: jeder Block hat einen Einstieg, jeder Einstieg ist ein Knopf,
+jede Seite hat Kopfbild, Überschrift, Einleitung, drei Schritte, Concierge-Weg
+und Zurück; Browser-Zurück landet auf der Startseite; die Titel stimmen in allen
+drei Sprachen; kein seitlicher Überlauf; und — die Hausregel — **auf keiner der
+Seiten steht ein Preis**.

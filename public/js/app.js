@@ -700,6 +700,11 @@
       welcomeBody:'Личная встреча в Анталии — табличка с именем, короткий путь, без очередей.',
       yachtEyebrow:'Эксклюзив', yachtTitle:'Яхт-тур',
       yachtBody:'Лодка только для вас — маршрут, бухты и кухня по вашему желанию.',
+      blockMore:'Подробнее', blockHow:'Как это работает',
+      blockStep1:'Расскажите, как хотите путешествовать.',
+      blockStep2:'Ваш консьерж соберёт предложение именно под эту поездку.',
+      blockStep3:'Вы подтверждаете — остальное берём на себя.',
+      blockAskText:'Готовых пакетов у нас нет: каждое предложение пишется под вас. Напишите консьержу — и мы всё подготовим.',
       carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
       carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
@@ -811,6 +816,11 @@
       welcomeBody:'Persönlicher Empfang in Antalya — Namensschild, kurzer Weg, kein Anstehen.',
       yachtEyebrow:'Exklusiv', yachtTitle:'Yacht-Tour',
       yachtBody:'Ein Boot nur für euch — Route, Buchten und Küche nach deinem Wunsch.',
+      blockMore:'Mehr erfahren', blockHow:'So läuft es',
+      blockStep1:'Sag uns, wie du reisen willst.',
+      blockStep2:'Deine Betreuerin stellt ein Angebot für genau diese Reise zusammen.',
+      blockStep3:'Du bestätigst — den Rest übernehmen wir.',
+      blockAskText:'Fertige Pakete gibt es bei uns nicht: jedes Angebot wird für dich geschrieben. Schreib deiner Betreuerin — wir bereiten alles vor.',
       carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
       carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
@@ -922,6 +932,11 @@
       welcomeBody:'Met in person in Antalya — name sign, short walk, no queue.',
       yachtEyebrow:'Exclusive', yachtTitle:'Yacht tour',
       yachtBody:'A boat just for you — route, coves and galley exactly as you like.',
+      blockMore:'Learn more', blockHow:'How it works',
+      blockStep1:'Tell us how you want to travel.',
+      blockStep2:'Your concierge puts together an offer for exactly this trip.',
+      blockStep3:'You confirm — we take care of the rest.',
+      blockAskText:'There are no ready-made packages here: every offer is written for you. Write to your concierge and we will prepare it.',
       carSpecA:'Private & discreet', carSpecB:'Door to door',
       carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
@@ -1652,18 +1667,23 @@
      and the file is lighter than the intro video at the same size and length.
      -------------------------------------------------------------------- */
   const CLIPS=[
-    { at:'vip',
+    { at:'vip', id:'welcome',
       src:'./video/onlyone-vip-welcome-v3.mp4',
       poster:'./images/vip-welcome-poster-v2.webp',
       eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
-    { at:'excursions',
+    { at:'excursions', id:'yacht',
       src:'./video/onlyone-yacht-tour-v2.mp4',
       poster:'./images/yacht-tour-poster.webp',
       eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
   ];
   function clipBand(at){
+    /* The whole band is the target, not a small link in the corner: on a phone
+       a full-width picture that does nothing when you press it reads as broken.
+       A <button> rather than a div with a handler, so it is reachable by
+       keyboard and announced as something that can be opened. */
     return CLIPS.filter(c=>c.at===at).map(c=>`<section class="clipBand ${c.cls||''}">
-      <div class="clipBand__frame">
+      <button class="clipBand__frame" type="button" data-block="${c.id}"
+              aria-label="${esc(t(c.title))}">
         ${/* The still is the floor of this section: it is on screen before the
               clip has a frame decoded, it is what a reader with data saving on
               sees, and it is what stays if the video ever fails to load. */''}
@@ -1675,8 +1695,9 @@
           <div class="eyebrow">${t(c.eyebrow)}</div>
           <h2 class="clipBand__title">${t(c.title)}</h2>
           <p>${t(c.body)}</p>
+          <span class="clipBand__more">${t('blockMore')}${icon('chev')}</span>
         </div>
-      </div>
+      </button>
     </section>`).join('');
   }
 
@@ -1692,6 +1713,61 @@
     ).join('')}</span>`;
   }
 
+  /* The four blocks that open. Each row is: where its picture comes from, and
+     which strings it uses. The detail copy itself is still to come from the
+     operator — when it does, it is three more keys per block and a `long` field
+     here, not a new page. */
+  const BLOCKS={
+    welcome:{ img:'./images/vip-welcome-poster-v2.webp', vid:'./video/onlyone-vip-welcome-v3.mp4',
+              eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
+    yacht:  { img:'./images/yacht-tour-poster.webp',     vid:'./video/onlyone-yacht-tour-v2.mp4',
+              eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody'   },
+    transfer:{word:true, eyebrow:'carEyebrow', title:'carTitle', body:'carBody',
+              specA:'carSpecA', specB:'carSpecB' },
+    flight: { img:'./images/3d/plane-top.webp', plane:true,
+              eyebrow:'flyEyebrow', title:'flyTitle', body:'flyBody',
+              specA:'flySpecA', specB:'flySpecB' },
+  };
+  function vBlock(id){
+    const b=BLOCKS[id]; if(!b) return vHome();
+    const title=t(b.title).replace(/<br\s*\/?>/g,' ');
+    return `${appbar({back:true})}
+    <section class="blockHero${b.plane?' blockHero--plane':''}${b.word?' blockHero--word':''}">
+      ${b.img?`<img class="blockHero__img" src="${b.img}" alt="" fetchpriority="high" decoding="async">`:''}
+      ${b.word?`<span class="blockHero__word">${esc(t('carWord'))}</span>`:''}
+      <span class="blockHero__scrim" aria-hidden="true"></span>
+      ${/* The title only sits ON the picture where there is a picture to sit on.
+            Over the jet and over the lettering it collided with the object —
+            both of those heroes are a single object on a plain ground, so the
+            words belong under them, not across them. */''}
+      ${b.img&&!b.plane?`<div class="blockHero__txt">
+        <div class="eyebrow">${t(b.eyebrow)}</div>
+        <h1 class="blockHero__title">${title}</h1>
+      </div>`:''}
+    </section>
+    <div class="wrap">
+      ${b.img&&!b.plane?'':`<div class="blockHead">
+        <div class="eyebrow">${t(b.eyebrow)}</div>
+        <h1 class="blockHero__title">${title}</h1>
+      </div>`}
+      <p class="blockLede">${t(b.body)}</p>
+      ${b.specA?`<div class="blockSpec"><span>${t(b.specA)}</span><span>${t(b.specB)}</span></div>`:''}
+
+      <h2 class="blockHow">${t('blockHow')}</h2>
+      <ol class="blockSteps">
+        <li><b>1</b><span>${t('blockStep1')}</span></li>
+        <li><b>2</b><span>${t('blockStep2')}</span></li>
+        <li><b>3</b><span>${t('blockStep3')}</span></li>
+      </ol>
+
+      <div class="listCard blockAsk">
+        <p>${t('blockAskText')}</p>
+        <button class="btn btn--primary" data-go="concierge">${t('flyCta')}</button>
+      </div>
+    </div>
+    <div class="pageBottom"></div>${tabbar('')}`;
+  }
+
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
@@ -1699,6 +1775,11 @@
       ${heroSlides()}
       <div class="pHero__scrim"></div>
       <div class="pHero__glassLayer" aria-hidden="true"></div>
+      ${/* Two warm blooms drifting behind the type — late sun coming through the
+            picture rather than a light drawn on top of it. Separate elements
+            because each has its own path and its own clock. */''}
+      <span class="pHero__glow pHero__glow--a" aria-hidden="true"></span>
+      <span class="pHero__glow pHero__glow--b" aria-hidden="true"></span>
       <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
       ${/* Title and subtitle, nothing else. The trust list and the button were
             three more blocks competing with the photograph on the one screen
@@ -1804,7 +1885,10 @@
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('carSpecA')}</span><span>${t('carSpecB')}</span></div>
         <p>${t('carBody')}</p>
-        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+        <div class="flyBand__acts">
+          <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+          <button class="linkMore" type="button" data-block="transfer">${t('blockMore')}${icon('chev')}</button>
+        </div>
       </div>
     </section>
 
@@ -1865,7 +1949,10 @@
       <div class="flyBand__card">
         <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
         <p>${t('flyBody')}</p>
-        <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+        <div class="flyBand__acts">
+          <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
+          <button class="linkMore" type="button" data-block="flight">${t('blockMore')}${icon('chev')}</button>
+        </div>
       </div>
     </section>
 
@@ -2718,6 +2805,7 @@
       case 'map':       html=vMap();break;
       case 'excursions':html=vExcursions();break;
       case 'concierge': html=vConcierge();break;
+      case 'block':     html=vBlock(VIEW.param);break;
       case 'staff':     html=vStaffLogin();break;
       case 's-dash':    html=S.staff?vStaffDash():vStaffLogin();break;
       case 's-req':     html=S.staff?vStaffReqs():vStaffLogin();break;
@@ -2978,6 +3066,9 @@
   document.addEventListener('click',e=>{
     const T=e.target;
     if(T.closest('[data-sheet-close]')){closeSheet();return;}
+
+    const bl=T.closest('[data-block]');
+    if(bl){go('block',bl.dataset.block);return;}
 
     const g=T.closest('[data-go]');
     if(g){const v=g.dataset.go;go(v==='staff'&&S.staff?'s-dash':v);return;}
