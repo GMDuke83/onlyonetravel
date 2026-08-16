@@ -30,7 +30,11 @@
   var FLASH_MS           = 380;
   var AUTOPLAY_PROBE_MS  = 1800;
   var STALL_OFFER_HELP_S = 4;     // no progress this long → offer a start button
-  var STALL_GIVE_UP_S    = 8;     // still nothing → run the sequence anyway
+  /* Only counts while the video is provably dead — nothing decoded and nothing
+     arriving. A slow download resets it and a blocked autoplay never reaches
+     it, so this can stay short: a visitor whose file will never play should not
+     stare at a poster for twenty seconds. */
+  var STALL_GIVE_UP_S    = 9;
 
   /* ---- elements --------------------------------------------------------- */
   var intro        = document.getElementById('intro');
@@ -156,9 +160,20 @@
     if (stallTimer) { clearInterval(stallTimer); stallTimer = null; }
   }
 
+  /* How much of the file has arrived. Growing = the network is working and the
+     visitor is simply on a slow connection, which is not a fault to route
+     around. */
+  function bufferedEnd() {
+    try {
+      var b = video.buffered;
+      return b && b.length ? b.end(b.length - 1) : 0;
+    } catch (e) { return 0; }
+  }
+
   function startStallWatchdog() {
     stopStallWatchdog();
     stallSeconds = 0;
+    var lastBuffered = bufferedEnd();
 
     stallTimer = setInterval(function () {
       if (leaving || onMain || seqStarted) { stopStallWatchdog(); return; }
@@ -166,15 +181,53 @@
       // real progress — the video is fine, stand down
       if (video.currentTime > 0.3) { stopStallWatchdog(); return; }
 
+      /* Three different reasons the video is not running, and only one of them
+         justifies moving on without it. Treating them alike is what sent
+         visitors to the hero having seen no intro at all: the 8s deadline fired
+         while the file was still downloading, or while it sat decoded and ready
+         behind a blocked autoplay. */
+
+      // 1. Decodable and ready, but autoplay was refused. Nothing is wrong —
+      //    the visitor just has to touch the screen. Offer the button, keep
+      //    quietly retrying, and never advance on our own: skipping the intro
+      //    for someone whose phone could have played it is the worst outcome.
+      if (video.readyState >= 2 && video.paused) {
+        showTapStart();
+        var again = video.play();
+        if (again && typeof again.catch === 'function') again.catch(function () {});
+        return;
+      }
+
+      // 2. Still arriving. Offer the button so the impatient have a way out,
+      //    but hold the deadline open — a long clip on a slow connection is not
+      //    a broken clip.
+      var now = bufferedEnd();
+      if (now > lastBuffered + 0.01) {
+        lastBuffered = now;
+        stallSeconds = 0;
+        showTapStart();
+        return;
+      }
+
+      // 3. Nothing decoded, nothing arriving. Now the clock runs.
       stallSeconds += 1;
-
       if (stallSeconds === STALL_OFFER_HELP_S) showTapStart();
-
       if (stallSeconds >= STALL_GIVE_UP_S) {
         stopStallWatchdog();
         startSequence();
       }
     }, 1000);
+  }
+
+  /* A hard media error is the one case where waiting cannot help: the file will
+     never decode on this device, so move on rather than strand anyone. */
+  function giveUpOnVideo() {
+    if (leaving || onMain || seqStarted) return;
+    showTapStart();
+    stopStallWatchdog();
+    setTimeout(function () {
+      if (!seqStarted && !leaving && !onMain) startSequence();
+    }, 1200);
   }
 
   /* ======================================================================
@@ -430,11 +483,28 @@
     if (tapStart) tapStart.classList.remove('is-in');
   });
 
-  video.addEventListener('error', showTapStart);
+  /* Autoplay is refused far more often than it is impossible, and the refusal
+     is not always final — a browser that says no while the tab is in the
+     background, or before the first frame is decoded, will often say yes a
+     moment later. So ask again at each of those moments rather than handing
+     the visitor a button on the first refusal. */
+  function nudgePlay() {
+    if (leaving || onMain || seqStarted) return;
+    if (!video.paused) return;
+    var p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(function () {});
+  }
+  video.addEventListener('loadeddata', nudgePlay);
+  video.addEventListener('canplay', nudgePlay);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) nudgePlay();
+  });
+
+  video.addEventListener('error', giveUpOnVideo);
 
   // A failing <source> fires its error on the source element, not the video.
   var heroSource = video.querySelector('source');
-  if (heroSource) heroSource.addEventListener('error', showTapStart);
+  if (heroSource) heroSource.addEventListener('error', giveUpOnVideo);
 
   /* --- first tap on the hero: unlock sound, replay with the ocean -------- */
   intro.addEventListener('click', function (event) {
@@ -446,6 +516,10 @@
       enableSound();
       resetSequence();
       playFromStart();          // §12: from 0:00, ocean audible
+    } else {
+      // Sound is already unlocked but playback is not running — this tap is a
+      // gesture, so spend it on getting the video going.
+      nudgePlay();
     }
   });
 
@@ -616,7 +690,7 @@
       addToReq:'Добавить к запросу',
       excAdded:'Добавлено к запросу',
       duration:'Длительность',
-      heroEyebrow:'Анталья · Средиземное море', heroScript:'Анталья',
+      heroEyebrow:'Анталья · Средиземное море', heroScript:'Турция',
       heroTitle:'Лучшие адреса побережья.',
       heroSub:'Расскажите, как вы путешествуете, — обо всём остальном позаботимся мы.',
       discover:'Подобрать жильё', trust1:'Жильё, отобранное вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
@@ -628,7 +702,7 @@
       flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
       flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
       flyCta:'Спросить консьержа',
-      carEyebrow:'Трансфер', carTitle:'Последний<br>километр',
+      carEyebrow:'Трансфер', carTitle:'Машина<br>уже ждёт',
       carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
       carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
@@ -718,7 +792,7 @@
       addToReq:'Zur Anfrage hinzufügen',
       excAdded:'Zur Anfrage hinzugefügt',
       duration:'Dauer',
-      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Antalya',
+      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Türkiye',
       heroTitle:'Die schönsten Adressen der Küste.',
       heroSub:'Erzähl uns, wie du reist — um alles andere kümmern wir uns.',
       discover:'Unterkünfte entdecken', trust1:'Handverlesene Unterkünfte', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
@@ -730,7 +804,7 @@
       flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
       flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
       flyCta:'Concierge fragen',
-      carEyebrow:'Transfer', carTitle:'Der letzte<br>Kilometer',
+      carEyebrow:'Transfer', carTitle:'Der Wagen<br>wartet schon',
       carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
       carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
@@ -820,7 +894,7 @@
       addToReq:'Add to my request',
       excAdded:'Added to your request',
       duration:'Duration',
-      heroEyebrow:'Antalya · Mediterranean', heroScript:'Antalya',
+      heroEyebrow:'Antalya · Mediterranean', heroScript:'Türkiye',
       heroTitle:'The finest addresses on the coast.',
       heroSub:'Tell us how you travel — we take care of the rest.',
       discover:'Discover stays', trust1:'Handpicked stays', trust2:'Personal advice', trust3:'Individual offers',
@@ -832,7 +906,7 @@
       flySpecA:'Flight & transfer', flySpecB:'Around the clock',
       flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
       flyCta:'Ask the concierge',
-      carEyebrow:'Transfer', carTitle:'The last<br>mile',
+      carEyebrow:'Transfer', carTitle:'Your car<br>is waiting',
       carSpecA:'Private & discreet', carSpecB:'Door to door',
       carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
@@ -1350,8 +1424,8 @@
         <source src="./video/onlyone-hero-coast-v1.mp4" type="video/mp4">
       </video>
       <div class="pHero__scrim"></div>
+      <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
       <div class="pHero__body">
-        <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
         <h1 class="pHero__title">${t('heroTitle')}</h1>
         <p class="pHero__sub">${t('heroSub')}</p>
         <div class="pHero__glass">
