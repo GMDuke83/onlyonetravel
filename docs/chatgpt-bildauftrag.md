@@ -607,35 +607,62 @@ mehr Reserve, sonst sitzt sie ihm auf den Rädern.
 
 Der wischbare Bereich hinter dem Yacht-Band läuft mit **Zwischenbildern**, die
 aus vorhandenem Material zugeschnitten sind. Zwei davon kommen aus 1200 × 750
-und wurden auf 720 × 1280 hochgerechnet — sie sind unter dem dunklen Verlauf
-tragbar, aber nicht scharf. Für die endgültige Fassung braucht es drei eigene
-Aufnahmen **im Hochformat 9:16, 1080 × 1920**, warmes Spätlicht, dieselbe
-elfenbein-goldene Farbwelt wie der Rest der Seite, keine Schrift im Bild (die
-Tafel liegt darüber), unteres Fünftel ruhig halten.
+und wurden auf 720 × 1280 hochgerechnet — unter dem dunklen Verlauf tragbar,
+aber nicht scharf.
 
-**Slide 1 · VIP-Service** — ersetzt `public/images/vipslides/slide-1.webp`
-> Vertical 9:16 photograph, late golden hour. A chauffeur in a dark suit holds
-> the rear door of a black luxury saloon open on a stone driveway of a
-> Mediterranean villa; bougainvillea and cypresses at the edges, the sea far
-> below in the background. Shot from behind at a respectful distance, no faces.
-> Warm ivory and gold tones, soft natural light, no text. 1080×1920.
+**Format:** 9:16 hoch, **1080 × 1920**, keine Schrift im Bild.
 
-**Slide 2 · Unterkünfte** — ersetzt `slide-2.webp`
-> Vertical 9:16 photograph at dusk. A private villa on the Turkish
-> Mediterranean coast: warm interior light through open glass doors, an infinity
-> pool in the foreground reflecting the last sun, olive trees and lavender, the
-> bay and mountains behind. No people, no text. Warm ivory, terracotta and gold.
-> 1080×1920.
+**Das Wichtigste:** die Glastafel mit dem Text deckt die **unteren 33 %** ab
+(gemessen: sie beginnt je nach Sprache bei 63–67 % der Höhe). Das Motiv muss
+also in den **oberen zwei Dritteln** stehen; unten gehören ruhige Flächen hin —
+Boden, Wasser, Terrasse — nichts, das man vermissen würde.
 
-**Slide 3 · Anlässe** — ersetzt `slide-3.webp`
-> Vertical 9:16 photograph, blue hour. A table laid for a private dinner on a
-> terrace above the sea: linen, candles, string lights overhead, a few glasses
-> caught in the warm light. The bay and distant town lights behind. Seen from
-> the side, no faces, no text. Warm gold against a deep evening blue. 1080×1920.
+Die drei sollen als **Serie** wirken: gleiche Tageszeit-Familie (Spätlicht bis
+blaue Stunde), gleiche warme Elfenbein-, Terrakotta- und Goldtöne wie der Rest
+der Seite, kein kaltes Blau, keine Gesichter frontal.
 
-Nach dem Austausch beide Zeilen laufen lassen (720 × 1280 ist die Ausspielgrösse):
+---
+
+### Slide 1 · VIP-Service → `public/images/vipslides/slide-1.webp`
+
+> Vertical 9:16 photograph, 1080x1920, late golden hour on the Turkish
+> Mediterranean coast. A chauffeur in a dark suit stands at the open rear door
+> of a black luxury saloon on the stone forecourt of a Mediterranean villa.
+> Seen from behind at a respectful distance — no faces. Bougainvillea and
+> cypresses frame the upper edges, the bay lies far below in the background.
+> The car and the chauffeur sit in the upper two thirds of the frame; the lower
+> third is quiet stone paving in warm shadow. Warm ivory, terracotta and gold,
+> soft natural light, gentle contrast. No text, no logos, no watermark.
+
+### Slide 2 · Unterkünfte → `slide-2.webp`
+
+> Vertical 9:16 photograph, 1080x1920, dusk. A private villa above a bay on the
+> Turkish Mediterranean coast: warm interior light spilling through open glass
+> doors, a deep terrace with linen loungers, olive trees and lavender, the
+> mountains and the last of the sun behind. The house fills the upper two
+> thirds; the lower third is the still surface of an infinity pool catching the
+> warm light. No people, no text, no logos. Warm ivory, terracotta and gold
+> against a soft evening sky.
+
+### Slide 3 · Anlässe → `slide-3.webp`
+
+> Vertical 9:16 photograph, 1080x1920, blue hour. A long table laid for a
+> private dinner on a terrace high above the sea: white linen, low candles,
+> string lights strung overhead, glasses catching the warm light. Seen from the
+> side at eye level, no faces. The strung lights and the bay with distant town
+> lights occupy the upper two thirds; the lower third is the quiet, softly lit
+> tablecloth. Warm gold against a deep blue evening. No text, no logos.
+
+---
+
+Nach dem Austausch je Bild eine Zeile (720 × 1280 ist die Ausspielgrösse — der
+Slide ist auf einem Telefon 393 px breit, das reicht bis DPR 3 aus):
 
 ```bash
-ffmpeg -i <neu>.jpg -vf "scale=720:1280" -c:v libwebp -quality 78 \
+ffmpeg -i <neu>.png -vf "scale=720:1280" -c:v libwebp -quality 78 \
        -compression_level 6 -preset photo public/images/vipslides/slide-N.webp
 ```
+
+Kommen die Bilder in einem anderen Seitenverhältnis, vorher auf 9:16 schneiden —
+`.vipDeck__slide` steht fest auf `aspect-ratio:9/16`, ein abweichendes Bild wird
+sonst von `object-fit:cover` beschnitten, und zwar mittig.
