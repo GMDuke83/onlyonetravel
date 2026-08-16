@@ -600,3 +600,42 @@ in `vHome()` mitgezogen werden — die Werte reservieren den Platz vor dem Laden
 sonst springt das Layout beim Nachladen. Und `--gapObj` im `.carBand` ist auf
 die Höhe *dieses* Wagens abgestimmt: wird er deutlich höher, braucht die Karte
 mehr Reserve, sonst sitzt sie ihm auf den Rädern.
+
+---
+
+## VIP-Deck: drei Hochformat-Slides (offen)
+
+Der wischbare Bereich hinter dem Yacht-Band läuft mit **Zwischenbildern**, die
+aus vorhandenem Material zugeschnitten sind. Zwei davon kommen aus 1200 × 750
+und wurden auf 720 × 1280 hochgerechnet — sie sind unter dem dunklen Verlauf
+tragbar, aber nicht scharf. Für die endgültige Fassung braucht es drei eigene
+Aufnahmen **im Hochformat 9:16, 1080 × 1920**, warmes Spätlicht, dieselbe
+elfenbein-goldene Farbwelt wie der Rest der Seite, keine Schrift im Bild (die
+Tafel liegt darüber), unteres Fünftel ruhig halten.
+
+**Slide 1 · VIP-Service** — ersetzt `public/images/vipslides/slide-1.webp`
+> Vertical 9:16 photograph, late golden hour. A chauffeur in a dark suit holds
+> the rear door of a black luxury saloon open on a stone driveway of a
+> Mediterranean villa; bougainvillea and cypresses at the edges, the sea far
+> below in the background. Shot from behind at a respectful distance, no faces.
+> Warm ivory and gold tones, soft natural light, no text. 1080×1920.
+
+**Slide 2 · Unterkünfte** — ersetzt `slide-2.webp`
+> Vertical 9:16 photograph at dusk. A private villa on the Turkish
+> Mediterranean coast: warm interior light through open glass doors, an infinity
+> pool in the foreground reflecting the last sun, olive trees and lavender, the
+> bay and mountains behind. No people, no text. Warm ivory, terracotta and gold.
+> 1080×1920.
+
+**Slide 3 · Anlässe** — ersetzt `slide-3.webp`
+> Vertical 9:16 photograph, blue hour. A table laid for a private dinner on a
+> terrace above the sea: linen, candles, string lights overhead, a few glasses
+> caught in the warm light. The bay and distant town lights behind. Seen from
+> the side, no faces, no text. Warm gold against a deep evening blue. 1080×1920.
+
+Nach dem Austausch beide Zeilen laufen lassen (720 × 1280 ist die Ausspielgrösse):
+
+```bash
+ffmpeg -i <neu>.jpg -vf "scale=720:1280" -c:v libwebp -quality 78 \
+       -compression_level 6 -preset photo public/images/vipslides/slide-N.webp
+```

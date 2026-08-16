@@ -798,3 +798,54 @@ Dokumentation. Wer den Code liest, findet die Verbindung über diesen Absatz.
 21 Zeichenketten geändert, pro Sprachblock einzeln — der deutsche und der
 englische `conciergeRole` waren wortgleich, ein einfaches Suchen-und-Ersetzen
 über die ganze Datei hätte den einen zweimal getroffen und den anderen gar nicht.
+
+## 24. Das wischbare VIP-Deck
+
+Hinter dem Yacht-Band liegt jetzt ein Bereich aus **drei Hochformat-Slides zum
+Wischen**, mit Punkten darunter — die Form, die man von solchen Stapeln kennt,
+aber in der Sprache dieser Seite: 9:16 wie die beiden Clips, dunkle Glastafel,
+Goldlinien-Icon, dieselbe Typografie.
+
+Inhalt: **VIP-Service**, **Unterkünfte**, **Anlässe** — die drei Dinge, die
+hervorgehoben werden sollten.
+
+Ein Text musste noch umgeschrieben werden: der erste Entwurf für den
+Unterkunfts-Slide sagte „Keine Katalog-Hotels" und brachte damit das Wort
+**Hotels** zurück auf die Startseite. `conc.js` prüft genau das (§ „Unterkünfte,
+nicht Hotel") und schlug an — die Zeile heisst jetzt „Jedes Haus haben wir selbst
+gesehen — sonst steht es nicht bei uns."
+
+### Warum hier eingerastet wird und bei den Regionen nicht
+
+Beim Regionen-Laufband wurde das Einrasten entfernt, weil ein kurzer Schubs auf
+einer 190-px-Kachel zurücksprang und die Seite unruhig wirken liess. Hier füllt
+ein Slide die ganze Breite: ein Wisch wechselt den Slide oder eben nicht, es
+gibt keinen Halb-Zustand, aus dem etwas zurückspringen könnte. Gemessen: bei
+62 % Wischweg rastet die Leiste auf Slide 2 ein und **bleibt dort** (scrollLeft
+393 bei 393 px Slidebreite).
+
+Die Punkte hängen am **Scrollstand**, nicht am Klick — so stimmen sie, egal
+womit die Leiste bewegt wurde: Finger, Punkt oder Tastatur.
+
+`touch-action:pan-x` und `overscroll-behavior-x:contain` wie überall auf der
+Seite: die Leiste nimmt die Seitwärtsgeste und reicht sie nicht an die Seite
+weiter. Gemessen: seitlicher Überlauf der Seite 0 px.
+
+### Die Bilder sind Zwischenstand
+
+Drei Slides zu 720 × 1280, zusammen 262 KB, lazy geladen. Zugeschnitten aus
+vorhandenem Material:
+
+| Slide | Quelle | Zustand |
+|---|---|---|
+| VIP-Service | `concierge/conc-there.webp` (1200 × 750) | 9:16 beschnitten, hochgerechnet — **weich** |
+| Unterkünfte | `hero/hero-05.webp` (941 × 1672) | nativ 9:16, **scharf** |
+| Anlässe | `concierge/conc-tailor.webp` (1200 × 750) | 9:16 beschnitten, hochgerechnet — **weich** |
+
+Die beiden hochgerechneten haben eine leichte Unschärfemaske bekommen — das
+stellt Kantenkontrast wieder her, keine Details. Unter dem dunklen Verlauf
+tragen sie, aber echte Hochformat-Aufnahmen wären besser; die drei Prompts dafür
+stehen in `docs/chatgpt-bildauftrag.md`.
+
+Qualität wie im Kompressionsdurchlauf gewählt: q78, PSNR 40,6–45,0 dB — dieselbe
+40-dB-Grenze wie beim übrigen Bildbestand.

@@ -2162,3 +2162,81 @@ select.input option{background:#fff;color:var(--txt)}
 .blockHero--plane,.blockHero--word{align-items:center;justify-content:center}
 .blockHero--plane{aspect-ratio:5/4}
 .blockHero--plane .blockHero__img{padding:6% 20%}
+
+/* ==========================================================================
+   VIP DECK
+
+   Three upright slides you swipe through, with dots — the shape people already
+   know from a card stack, in this site's language rather than a generic one.
+
+   One slide fills the width, which is what makes the snap safe here: a swipe
+   either changes the slide or it does not, so there is no half-card state to
+   bounce back from. (The regions rail had its snapping removed for exactly
+   that reason — 190px cards where a short nudge snapped back felt restless.)
+
+   scroll-behavior:smooth on the rail rather than only in the dot handler, so a
+   keyboard or a programmatic jump eases the same way a finger does.
+   ========================================================================== */
+.vipDeck{margin:34px 0 0;position:relative}
+.vipDeck__head{
+  font-family:var(--display);
+  font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--txt);text-align:center;margin:0;
+  padding:26px 20px 22px;background:var(--ground-2);
+  border-top:1px solid var(--hair-soft);
+}
+.vipDeck__rail{
+  display:flex;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  /* the page scrolls up and down, the deck sideways, and neither hands its
+     gesture to the other — this pair is why the page stopped sliding about */
+  touch-action:pan-x;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.vipDeck__rail::-webkit-scrollbar{display:none}
+.vipDeck__slide{
+  position:relative;flex:0 0 100%;width:100%;
+  aspect-ratio:9/16;overflow:hidden;background:#100D0A;
+  scroll-snap-align:center;scroll-snap-stop:always;
+}
+.vipDeck__slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vipDeck__scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(16,12,8,.34) 0%,rgba(16,12,8,0) 26%,
+    rgba(16,12,8,.26) 58%,rgba(16,12,8,.84) 100%);
+}
+.vipDeck__panel{
+  position:absolute;left:16px;right:16px;bottom:18px;
+  padding:18px 18px 16px;
+}
+.vipDeck__ic{display:block;color:var(--gold-light);margin-bottom:11px}
+.vipDeck__ic svg{width:24px;height:24px;stroke-width:1.2}
+.vipDeck__panel .eyebrow{color:var(--gold-light)}
+.vipDeck__title{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(23px,6.6vw,30px);line-height:1.12;letter-spacing:-.02em;
+  margin:8px 0 0;color:#fff;
+}
+.vipDeck__panel p{
+  margin:9px 0 0;font-size:13.5px;line-height:1.6;
+  color:rgba(255,255,255,.86);
+}
+.vipDeck__panel .linkMore{margin-top:12px;padding-left:0}
+.vipDeck__dots{
+  display:flex;justify-content:center;gap:9px;
+  padding:16px 0 22px;background:var(--ground-2);
+}
+.vipDeck__dot{
+  width:7px;height:7px;border-radius:50%;padding:0;border:0;
+  background:rgba(42,33,25,.22);cursor:pointer;
+  transition:background .25s var(--ease),transform .25s var(--ease);
+}
+.vipDeck__dot.is-on{background:var(--gold-ink);transform:scale(1.3)}
+@media (prefers-reduced-motion:reduce){
+  .vipDeck__rail{scroll-behavior:auto}
+  .vipDeck__dot{transition:none}
+}

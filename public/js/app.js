@@ -644,6 +644,13 @@
      ==================================================================== */
   const I18N = {
     ru:{
+      deckHead:'Что мы делаем для вас',
+      deck1Eyebrow:'VIP-сервис', deck1Title:'Всё из одних рук',
+      deck1Body:'Встреча, трансфер, столик, врач — один номер на всю поездку.',
+      deck2Eyebrow:'Жильё', deck2Title:'Только проверенные адреса',
+      deck2Body:'Каждый дом мы видели сами — иначе его у нас нет.',
+      deck3Eyebrow:'События', deck3Title:'Вечера, которые запоминаются',
+      deck3Body:'Место, стол и порядок — от тихого ужина до большого праздника.',
       kind:'Тип размещения',
       yourContact:'Ваш контакт',
       noThreadYet:'Здесь появится прямая связь с вашим менеджером, как только вы отправите запрос.',
@@ -760,6 +767,13 @@
       transferIncl:'Трансфер включён...',
     },
     de:{
+      deckHead:'Was wir für dich tun',
+      deck1Eyebrow:'VIP-Service', deck1Title:'Alles aus einer Hand',
+      deck1Body:'Empfang, Transfer, Tisch, Arzt — eine Nummer für die ganze Reise.',
+      deck2Eyebrow:'Unterkünfte', deck2Title:'Nur geprüfte Adressen',
+      deck2Body:'Jedes Haus haben wir selbst gesehen — sonst steht es nicht bei uns.',
+      deck3Eyebrow:'Anlässe', deck3Title:'Abende, die bleiben',
+      deck3Body:'Ort, Tisch und Ablauf — vom stillen Dinner bis zur grossen Feier.',
       kind:'Art der Unterkunft',
       yourContact:'Dein Ansprechpartner',
       noThreadYet:'Hier entsteht die direkte Leitung zu deinem Betreuer, sobald du eine Anfrage gesendet hast.',
@@ -876,6 +890,13 @@
       transferIncl:'Transfer inklusive...',
     },
     en:{
+      deckHead:'What we do for you',
+      deck1Eyebrow:'VIP service', deck1Title:'One point of contact',
+      deck1Body:'A welcome, a transfer, a table, a doctor — one number for the whole trip.',
+      deck2Eyebrow:'Stays', deck2Title:'Only addresses we know',
+      deck2Body:'We have seen every house ourselves — otherwise it is not with us.',
+      deck3Eyebrow:'Occasions', deck3Title:'Evenings that stay with you',
+      deck3Body:'The place, the table and the timing — from a quiet dinner to a large celebration.',
       kind:'Type of stay',
       yourContact:'Your contact',
       noThreadYet:'Your direct line to the person handling your trip appears here once you send a request.',
@@ -1768,6 +1789,64 @@
     <div class="pageBottom"></div>${tabbar('')}`;
   }
 
+  /* --------------------------------------------------------------------
+     VIP deck — three upright slides you swipe through, with dots.
+
+     One slide fills the width, so the snap is unambiguous: a swipe either
+     changes the slide or it does not. (The regions rail had snapping removed
+     because there a short nudge on a 190px card snapped back and felt
+     restless; that argument does not apply to a one-slide-per-screen deck,
+     which is the shape people already expect to snap.)
+
+     The dots are driven from the scroll position rather than from a click
+     handler, so they stay right whichever way the deck was moved — finger,
+     dot, or keyboard.
+     -------------------------------------------------------------------- */
+  const DECK=[
+    {img:'./images/vipslides/slide-1.webp', ic:'headset', k:'deck1'},
+    {img:'./images/vipslides/slide-2.webp', ic:'keyhouse', k:'deck2'},
+    {img:'./images/vipslides/slide-3.webp', ic:'star',    k:'deck3'},
+  ];
+  function vipDeck(){
+    return `<section class="vipDeck">
+      <h2 class="vipDeck__head">${t('deckHead')}</h2>
+      <div class="vipDeck__rail" id="vipDeck">
+        ${DECK.map((d,i)=>`<article class="vipDeck__slide">
+          <img src="${d.img}" alt="" loading="lazy" decoding="async" width="720" height="1280">
+          <span class="vipDeck__scrim" aria-hidden="true"></span>
+          <div class="vipDeck__panel glassDark">
+            <span class="vipDeck__ic" aria-hidden="true">${icon(d.ic)}</span>
+            <div class="eyebrow">${t(d.k+'Eyebrow')}</div>
+            <h3 class="vipDeck__title">${t(d.k+'Title')}</h3>
+            <p>${t(d.k+'Body')}</p>
+            <button class="linkMore" type="button" data-go="concierge">${t('blockMore')}${icon('chev')}</button>
+          </div>
+        </article>`).join('')}
+      </div>
+      <div class="vipDeck__dots" id="vipDeckDots" role="tablist" aria-label="${esc(t('deckHead'))}">
+        ${DECK.map((d,i)=>`<button class="vipDeck__dot${i?'':' is-on'}" type="button"
+           data-deck="${i}" role="tab" aria-label="${i+1}/${DECK.length}"></button>`).join('')}
+      </div>
+    </section>`;
+  }
+  let deckScroller=null, deckHandler=null;
+  function armDeck(){
+    if(deckScroller&&deckHandler){deckScroller.removeEventListener('scroll',deckHandler);deckScroller=deckHandler=null;}
+    const rail=$('#vipDeck'), dots=$('#vipDeckDots');
+    if(!rail||!dots)return;
+    let raf=0;
+    const mark=()=>{
+      raf=0;
+      const w=rail.clientWidth||1;
+      const i=Math.max(0,Math.min(dots.children.length-1,Math.round(rail.scrollLeft/w)));
+      [...dots.children].forEach((d,k)=>d.classList.toggle('is-on',k===i));
+    };
+    deckHandler=()=>{if(!raf)raf=requestAnimationFrame(mark);};
+    deckScroller=rail;
+    rail.addEventListener('scroll',deckHandler,{passive:true});
+    mark();
+  }
+
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
@@ -1832,6 +1911,8 @@
     </div>
 
     ${clipBand('excursions')}
+
+    ${vipDeck()}
 
     <div class="wrap">
       <div class="section">
@@ -2837,6 +2918,7 @@
     armFlyBand();
     armAppbar();
     armReveals();
+    armDeck();
     if(VIEW.name==='home')fillHeroSlides(); else slidesFilled=false;
   }
   function bindGallery(){
@@ -3066,6 +3148,11 @@
   document.addEventListener('click',e=>{
     const T=e.target;
     if(T.closest('[data-sheet-close]')){closeSheet();return;}
+
+    const dk=T.closest('[data-deck]');
+    if(dk){const rail=$('#vipDeck');
+      if(rail)rail.scrollTo({left:rail.clientWidth*(+dk.dataset.deck),behavior:'smooth'});
+      return;}
 
     const bl=T.closest('[data-block]');
     if(bl){go('block',bl.dataset.block);return;}
