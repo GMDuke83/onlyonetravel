@@ -461,3 +461,41 @@ Standbild, Nachladen, stumm/Schleife/`playsinline`, keine Tonspur, kein
 seitlicher Überlauf und der Titel in allen drei Sprachen. Mit einem
 Platzhalter-Clip einmal durchgemessen: 393 × 699, Verhältnis 0,563, Ebenen
 0 < 1 < 2 < 3, Überlauf 0 px.
+
+## 17. Zwei Hochformat-Clips vom Auftraggeber
+
+Der Auftraggeber dreht 9:16. Ein 9:16-Rahmen ist auf Telefonbreite fast genau
+ein Bildschirm hoch (393 × 699 px), und genau darum geht es: das Material
+bekommt die Form, für die es gedreht wurde, statt in einen Querformat-Schlitz
+gequetscht zu werden.
+
+| Abschnitt | steht hinter | Datei | Grösse | PSNR |
+|---|---|---|---|---|
+| VIP-Empfang | den vier VIP-Punkten | `onlyone-vip-welcome-v1.mp4` | 1,4 MB | 43,4 dB |
+| Yacht-Tour | dem Ausflüge-Laufband | `onlyone-yacht-tour-v1.mp4` | 2,7 MB | 40,4 dB |
+
+Beide bei CRF 24 aus dem Original (3,0 bzw. 5,8 MB). Gemessen statt geraten: für
+den Empfang standen 1910 KB / 44,7 dB, 1438 KB / 43,4 dB und 1107 KB / 42,2 dB
+zur Wahl; 43,4 dB ist derselbe Wert, auf den die Hero-Fotos eingestellt sind.
+
+Der Yacht-Clip ist bei gleicher Einstellung fast doppelt so schwer und liegt
+tiefer im PSNR — Wasser, Kielwelle und Gegenlicht sind teuer. `preset veryslow`
+mit `aq-mode=3` brachte 2303 KB bei 39,4 dB, also keinen echten Gewinn; die
+Physik lässt sich nicht überreden. Beide Clips laden erst beim Hereinscrollen
+(`armBgVideos`), bis dahin kostet der Abschnitt sein Standbild (64 bzw. 100 KB).
+
+Drei Ebenen im Rahmen, aus demselben Grund wie bei den Erlebnis-Bannern:
+Standbild (z 0) steht sofort da und bleibt, falls das Video nie lädt; Video
+(z 1) legt sich darüber; Schleier (z 2) und Glastafel (z 3) tragen die Schrift.
+Die Schrift steht auf einer eigenen dunklen Tafel, nicht nur auf dem Verlauf:
+hinter bewegtem Bild wechselt der Untergrund jedes Wortes von Bild zu Bild.
+
+Das Standbild ist **Bild 0** des fertigen Clips, kein hübscheres weiter hinten —
+so hat die Übergabe von Standbild zu Video nichts zu überspringen.
+
+Beide Clips sind ohne Tonspur kodiert (`-an`). §13 des Auftrags — nach dem Intro
+macht nichts auf der Seite Ton — hält damit per Bauart und nicht per Attribut;
+gemessen: 0 dekodierte Tonbytes bei beiden.
+
+Ein neuer Clip ist eine Zeile in `CLIPS` plus drei Zeilen Text pro Sprache. Die
+beiden ffmpeg-Aufrufe stehen im Kommentar darüber.

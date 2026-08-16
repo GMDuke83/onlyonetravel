@@ -1503,31 +1503,31 @@ select.input option{background:#fff;color:var(--txt)}
    the phone, so the type sits in the photograph rather than on a card.
    ========================================================================== */
 /* --------------------------------------------------------------------------
-   VIP welcome clip
+   Upright clip bands
 
-   The operator's own footage, shot upright. A 9:16 frame at phone width is
-   almost exactly one screen tall, which is the point: the clip gets the screen
-   to itself, the way it was filmed, instead of being letterboxed into a
-   landscape slot.
+   The operator's own footage, shot 9:16 on a phone. A 9:16 frame at phone width
+   is almost exactly one screen tall, which is the point: the clip gets the
+   screen to itself, the way it was filmed, instead of being letterboxed into a
+   landscape slot. One rule set, one row in CLIPS per clip.
 
    Three layers in the frame — still, clip, type — for the same reason the
    experience bands have them: the still is on screen first, the clip arrives
    over it when the section comes into view, and if the video never loads at
    all the section still reads as a finished thing rather than a black hole.
    -------------------------------------------------------------------------- */
-.vipClip{margin:30px 0 0}
-.vipClip__frame{
+.clipBand{margin:30px 0 0}
+.clipBand__frame{
   position:relative;width:100%;
   aspect-ratio:9/16;
   overflow:hidden;background:#100D0A;
   border-top:1px solid var(--hair-soft);
   border-bottom:1px solid var(--hair-soft);
 }
-.vipClip__still,.vipClip__vid{
+.clipBand__still,.clipBand__vid{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
 }
-.vipClip__vid{z-index:1}
-.vipClip__scrim{
+.clipBand__vid{z-index:1}
+.clipBand__scrim{
   position:absolute;inset:0;z-index:2;pointer-events:none;
   background:linear-gradient(180deg,
     rgba(16,12,8,.44) 0%,
@@ -1538,17 +1538,17 @@ select.input option{background:#fff;color:var(--txt)}
 /* The type sits on its own dark pane rather than on the gradient alone: this
    is moving image, so whatever is behind a given word changes from frame to
    frame, and a gradient tuned to one frame fails on the next. */
-.vipClip__panel{
+.clipBand__panel{
   position:absolute;left:16px;right:16px;bottom:18px;z-index:3;
   padding:16px 18px 18px;
 }
-.vipClip__panel .eyebrow{color:var(--gold-light)}
-.vipClip__title{
+.clipBand__panel .eyebrow{color:var(--gold-light)}
+.clipBand__title{
   font-family:var(--display);font-weight:600;
   font-size:clamp(24px,7vw,32px);line-height:1.1;letter-spacing:-.02em;
   margin:8px 0 0;color:#fff;
 }
-.vipClip__panel p{
+.clipBand__panel p{
   margin:9px 0 0;font-size:13.5px;line-height:1.6;
   color:rgba(255,255,255,.86);
 }

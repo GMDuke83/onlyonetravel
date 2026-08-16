@@ -698,6 +698,8 @@
       carEyebrow:'Трансфер', carTitle:'Машина<br>уже ждёт', carWord:'VIP ТРАНСФЕР',
       welcomeEyebrow:'Прибытие', welcomeTitle:'VIP-приём',
       welcomeBody:'Личная встреча в Анталии — табличка с именем, короткий путь, без очередей.',
+      yachtEyebrow:'Эксклюзив', yachtTitle:'Яхт-тур',
+      yachtBody:'Лодка только для вас — маршрут, бухты и кухня по вашему желанию.',
       carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
       carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
@@ -807,6 +809,8 @@
       carEyebrow:'Transfer', carTitle:'Der Wagen<br>wartet schon', carWord:'VIP TRANSFER',
       welcomeEyebrow:'Ankunft', welcomeTitle:'VIP-Empfang',
       welcomeBody:'Persönlicher Empfang in Antalya — Namensschild, kurzer Weg, kein Anstehen.',
+      yachtEyebrow:'Exklusiv', yachtTitle:'Yacht-Tour',
+      yachtBody:'Ein Boot nur für euch — Route, Buchten und Küche nach deinem Wunsch.',
       carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
       carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
@@ -916,6 +920,8 @@
       carEyebrow:'Transfer', carTitle:'Your car<br>is waiting', carWord:'VIP TRANSFER',
       welcomeEyebrow:'Arrival', welcomeTitle:'VIP welcome',
       welcomeBody:'Met in person in Antalya — name sign, short walk, no queue.',
+      yachtEyebrow:'Exclusive', yachtTitle:'Yacht tour',
+      yachtBody:'A boat just for you — route, coves and galley exactly as you like.',
       carSpecA:'Private & discreet', carSpecB:'Door to door',
       carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
@@ -1612,43 +1618,58 @@
   }
 
   /* --------------------------------------------------------------------
-     VIP welcome — the operator's own 9:16 clip, full width, right after the
-     four service points.
+     Upright clips
 
-     Set VIP_CLIP to the file and its poster frame to switch the section on;
-     while it is null the section is not rendered at all. A 9:16 frame is
-     almost exactly one phone screen tall, so an empty one would be the
-     largest hole on the page — better no section than a black rectangle.
+     The operator films 9:16 on a phone. A 9:16 frame at phone width is almost
+     exactly one screen tall, and that is the point: the footage gets the shape
+     it was shot for instead of being letterboxed into a landscape slot.
 
-     Dropping a new clip in:
-       ffmpeg -i <original> -vf "scale=1080:-2" -c:v libx264 -profile:v main \
-              -crf 24 -preset slow -movflags +faststart -an \
-              public/video/onlyone-vip-welcome-v1.mp4
-       ffmpeg -ss 1.5 -i public/video/onlyone-vip-welcome-v1.mp4 -frames:v 1 \
-              -c:v libwebp -quality 86 public/images/vip-welcome-poster.webp
+     One entry per clip. `at` says which section it follows, so adding a clip is
+     adding a row here plus its three lines of copy — no new markup.
+
+     Preparing a clip (both lines matter):
+       ffmpeg -i <original> -c:v libx264 -profile:v main -crf 24 -preset slow \
+              -pix_fmt yuv420p -movflags +faststart -an \
+              public/video/<name>.mp4
+       ffmpeg -i public/video/<name>.mp4 -vf "select=eq(n\,0)" -frames:v 1 \
+              -c:v libwebp -quality 88 public/images/<name>-poster.webp
      -an is not optional: §13 of the brief is that nothing on the site makes a
-     sound after the intro, and stripping the track keeps that true by
-     construction rather than by attribute. --------------------------------- */
-  const VIP_CLIP=null;
-  // const VIP_CLIP={src:'./video/onlyone-vip-welcome-v1.mp4',
-  //                 poster:'./images/vip-welcome-poster.webp'};
-  function vipClip(){
-    if(!VIP_CLIP) return '';
-    return `<section class="vipClip">
-      <div class="vipClip__frame">
+     sound after the intro, and a stripped track holds that by construction
+     rather than by attribute. The poster is frame 0, not a prettier frame
+     further in, so the hand-over from still to video has nothing to jump over.
+
+     CRF 24 was measured, not guessed: against the supplied original the three
+     candidates came out 1910 KB at 44.7 dB, 1438 KB at 43.4 dB and 1107 KB at
+     42.2 dB. 43.4 dB is the same figure the hero photographs were tuned to,
+     and the file is lighter than the intro video at the same size and length.
+     -------------------------------------------------------------------- */
+  const CLIPS=[
+    { at:'vip',
+      src:'./video/onlyone-vip-welcome-v1.mp4',
+      poster:'./images/vip-welcome-poster.webp',
+      eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
+    { at:'excursions',
+      src:'./video/onlyone-yacht-tour-v1.mp4',
+      poster:'./images/yacht-tour-poster.webp',
+      eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
+  ];
+  function clipBand(at){
+    return CLIPS.filter(c=>c.at===at).map(c=>`<section class="clipBand ${c.cls||''}">
+      <div class="clipBand__frame">
         ${/* The still is the floor of this section: it is on screen before the
               clip has a frame decoded, it is what a reader with data saving on
               sees, and it is what stays if the video ever fails to load. */''}
-        <img class="vipClip__still" src="${VIP_CLIP.poster}" alt="" loading="lazy" decoding="async">
-        ${bgVideo(VIP_CLIP.src, VIP_CLIP.poster, 'vipClip__vid')}
-        <span class="vipClip__scrim" aria-hidden="true"></span>
-        <div class="vipClip__panel glassDark">
-          <div class="eyebrow">${t('welcomeEyebrow')}</div>
-          <h2 class="vipClip__title">${t('welcomeTitle')}</h2>
-          <p>${t('welcomeBody')}</p>
+        <img class="clipBand__still" src="${c.poster}" alt="" loading="lazy" decoding="async"
+             width="720" height="1280">
+        ${bgVideo(c.src, c.poster, 'clipBand__vid')}
+        <span class="clipBand__scrim" aria-hidden="true"></span>
+        <div class="clipBand__panel glassDark">
+          <div class="eyebrow">${t(c.eyebrow)}</div>
+          <h2 class="clipBand__title">${t(c.title)}</h2>
+          <p>${t(c.body)}</p>
         </div>
       </div>
-    </section>`;
+    </section>`).join('');
   }
 
   function vHome(){
@@ -1680,7 +1701,7 @@
       </section>
     </div>
 
-    ${vipClip()}
+    ${clipBand('vip')}
 
     <div class="wrap">
       <div class="section">
@@ -1707,6 +1728,11 @@
           </button>`).join('')}
         </div>
       </div>
+    </div>
+
+    ${clipBand('excursions')}
+
+    <div class="wrap">
       <div class="section">
         <div class="section__head"><h2 class="h-lg">${t('recommended')}</h2>
           <button class="tiny muted" data-go="search" style="font-weight:600">${t('all')}</button></div>
