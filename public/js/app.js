@@ -1811,15 +1811,21 @@
     return `<section class="vipDeck">
       <h2 class="vipDeck__head">${t('deckHead')}</h2>
       <div class="vipDeck__rail" id="vipDeck">
+        ${/* The slide is the scroll unit and stays full width; the frame inside
+              it is the picture, and it keeps 9:16 whatever height is left over
+              between the header and the tab bar. Two elements, because one
+              cannot be both a full-width snap target and a ratio-locked box. */''}
         ${DECK.map((d,i)=>`<article class="vipDeck__slide">
-          <img src="${d.img}" alt="" loading="lazy" decoding="async" width="720" height="1280">
-          <span class="vipDeck__scrim" aria-hidden="true"></span>
-          <div class="vipDeck__panel glassDark">
-            <span class="vipDeck__ic" aria-hidden="true">${icon(d.ic)}</span>
-            <div class="eyebrow">${t(d.k+'Eyebrow')}</div>
-            <h3 class="vipDeck__title">${t(d.k+'Title')}</h3>
-            <p>${t(d.k+'Body')}</p>
-            <button class="linkMore" type="button" data-go="concierge">${t('blockMore')}${icon('chev')}</button>
+          <div class="vipDeck__frame">
+            <img src="${d.img}" alt="" loading="lazy" decoding="async" width="720" height="1280">
+            <span class="vipDeck__scrim" aria-hidden="true"></span>
+            <div class="vipDeck__panel glassDark">
+              <span class="vipDeck__ic" aria-hidden="true">${icon(d.ic)}</span>
+              <div class="eyebrow">${t(d.k+'Eyebrow')}</div>
+              <h3 class="vipDeck__title">${t(d.k+'Title')}</h3>
+              <p>${t(d.k+'Body')}</p>
+              <button class="linkMore" type="button" data-go="concierge">${t('blockMore')}${icon('chev')}</button>
+            </div>
           </div>
         </article>`).join('')}
       </div>

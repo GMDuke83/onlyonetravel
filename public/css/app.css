@@ -2177,7 +2177,16 @@ select.input option{background:#fff;color:var(--txt)}
    scroll-behavior:smooth on the rail rather than only in the dot handler, so a
    keyboard or a programmatic jump eases the same way a finger does.
    ========================================================================== */
-.vipDeck{margin:34px 0 0;position:relative}
+.vipDeck{
+  margin:34px 0 0;position:relative;
+  /* everything that is NOT the picture: the sticky header, the tab bar, the row
+     of dots, and a little air. A 9:16 slide is 699 px tall on a 393 px phone
+     while the window between the two bars is 702 — so it "fitted" by three
+     pixels and in practice always had a bar across it. In a browser with its
+     address bar showing (measured 390 × 664) the window is 514 px and the slide
+     overhung it by 179. The slide is capped against this instead. */
+  --deckChrome:calc(64px + var(--sat) + var(--nav-h) + 66px);
+}
 .vipDeck__head{
   font-family:var(--display);
   font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
@@ -2190,9 +2199,15 @@ select.input option{background:#fff;color:var(--txt)}
   overflow-x:auto;overflow-y:hidden;
   scroll-snap-type:x mandatory;
   scroll-behavior:smooth;
-  /* the page scrolls up and down, the deck sideways, and neither hands its
-     gesture to the other — this pair is why the page stopped sliding about */
-  touch-action:pan-x;
+  /* pan-x AND pan-y, which is the pattern every other sideways scroller here
+     uses. The two properties do different jobs and it is easy to conflate them:
+     `overscroll-behavior-x:contain` is what stops a sideways swipe running on
+     into the page, while `touch-action` says which gestures this element will
+     take at all. Written as bare `pan-x` it took the horizontal one and threw
+     the vertical one away — so a finger that landed on a slide could not scroll
+     the page, and since a slide is two thirds of a screen tall, almost every
+     scroll in this section landed on one. */
+  touch-action:pan-x pan-y;
   overscroll-behavior-x:contain;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
@@ -2200,10 +2215,22 @@ select.input option{background:#fff;color:var(--txt)}
 .vipDeck__rail::-webkit-scrollbar{display:none}
 .vipDeck__slide{
   position:relative;flex:0 0 100%;width:100%;
-  aspect-ratio:9/16;overflow:hidden;background:#100D0A;
+  display:grid;place-items:center;
+  /* 9:16 while it fits, otherwise as tall as the free window — never taller */
+  height:min(calc(100vw * 16 / 9), calc(100svh - var(--deckChrome)));
+  background:var(--ground-2);
   scroll-snap-align:center;scroll-snap-stop:always;
 }
-.vipDeck__slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* The picture keeps its shape. When the window is the binding constraint the
+   frame narrows rather than cropping, so the photograph is always whole — which
+   is the point: these were composed for 9:16 and a crop takes the composition
+   apart. What appears beside it is the section's own ivory, so the narrow case
+   reads as a card rather than as a mistake. */
+.vipDeck__frame{
+  position:relative;height:100%;aspect-ratio:9/16;max-width:100%;
+  overflow:hidden;background:#100D0A;
+}
+.vipDeck__frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vipDeck__scrim{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(16,12,8,.34) 0%,rgba(16,12,8,0) 26%,
@@ -2239,4 +2266,14 @@ select.input option{background:#fff;color:var(--txt)}
 @media (prefers-reduced-motion:reduce){
   .vipDeck__rail{scroll-behavior:auto}
   .vipDeck__dot{transition:none}
+}
+/* On a short window the frame shrinks but the panel does not, and it ended up
+   covering most of the picture. Trim it where the room is scarce. */
+@media (max-height:740px){
+  .vipDeck__panel{left:12px;right:12px;bottom:12px;padding:13px 14px 12px}
+  .vipDeck__ic{margin-bottom:8px}
+  .vipDeck__ic svg{width:20px;height:20px}
+  .vipDeck__title{font-size:clamp(19px,5.4vw,24px);margin-top:6px}
+  .vipDeck__panel p{font-size:12.5px;margin-top:7px}
+  .vipDeck__panel .linkMore{margin-top:9px;font-size:10px}
 }

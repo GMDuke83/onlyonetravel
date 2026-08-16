@@ -603,12 +603,11 @@ mehr Reserve, sonst sitzt sie ihm auf den Rädern.
 
 ---
 
-## VIP-Deck: drei Hochformat-Slides (offen)
+## VIP-Deck: drei Hochformat-Slides — **geliefert 16.08.**
 
-Der wischbare Bereich hinter dem Yacht-Band läuft mit **Zwischenbildern**, die
-aus vorhandenem Material zugeschnitten sind. Zwei davon kommen aus 1200 × 750
-und wurden auf 720 × 1280 hochgerechnet — unter dem dunklen Verlauf tragbar,
-aber nicht scharf.
+Alle drei sind da, jeweils 941 × 1672 geliefert und auf 720 × 1280 ausgespielt.
+Die Zwischenbilder sind ersetzt. Die Prompts bleiben hier stehen, falls
+nachgeschossen wird.
 
 **Format:** 9:16 hoch, **1080 × 1920**, keine Schrift im Bild.
 

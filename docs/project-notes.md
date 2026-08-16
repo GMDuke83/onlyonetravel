@@ -831,21 +831,48 @@ womit die Leiste bewegt wurde: Finger, Punkt oder Tastatur.
 Seite: die Leiste nimmt die Seitwärtsgeste und reicht sie nicht an die Seite
 weiter. Gemessen: seitlicher Überlauf der Seite 0 px.
 
-### Die Bilder sind Zwischenstand
+### Die Bilder
 
-Drei Slides zu 720 × 1280, zusammen 262 KB, lazy geladen. Zugeschnitten aus
-vorhandenem Material:
+Drei echte Hochformat-Aufnahmen vom Auftraggeber, jeweils 941 × 1672 geliefert
+und auf 720 × 1280 ausgespielt — zusammen 356 KB, lazy geladen. Die
+Zwischenbilder aus zugeschnittenem Altmaterial sind weg.
 
-| Slide | Quelle | Zustand |
-|---|---|---|
-| VIP-Service | `concierge/conc-there.webp` (1200 × 750) | 9:16 beschnitten, hochgerechnet — **weich** |
-| Unterkünfte | `hero/hero-05.webp` (941 × 1672) | nativ 9:16, **scharf** |
-| Anlässe | `concierge/conc-tailor.webp` (1200 × 750) | 9:16 beschnitten, hochgerechnet — **weich** |
+Qualität wie im Kompressionsdurchlauf gewählt, pro Bild einzeln: q78 reicht bei
+Villa (41,3 dB) und Dinner (40,7 dB); die Auffahrt liegt bei q78 nur bei 38,9 dB,
+weil das gesamte untere Drittel feines Kopfsteinpflaster ist — das kostet Bits.
+Sie steht deshalb auf q84 (40,9 dB), damit alle drei über der 40-dB-Grenze
+bleiben, die auch für den übrigen Bildbestand gilt.
 
-Die beiden hochgerechneten haben eine leichte Unschärfemaske bekommen — das
-stellt Kantenkontrast wieder her, keine Details. Unter dem dunklen Verlauf
-tragen sie, aber echte Hochformat-Aufnahmen wären besser; die drei Prompts dafür
-stehen in `docs/chatgpt-bildauftrag.md`.
+### Zwei Fehler, die auf dem Testgerät auffielen
 
-Qualität wie im Kompressionsdurchlauf gewählt: q78, PSNR 40,6–45,0 dB — dieselbe
-40-dB-Grenze wie beim übrigen Bildbestand.
+**Der Slider verschluckte das Scrollen.** Auf einem Slide konnte man die Seite
+weder hoch noch runter schieben. Ursache: `touch-action:pan-x` auf der Leiste.
+Das liest sich wie „nimm die Seitwärtsgeste", heisst aber „nimm die
+Seitwärtsgeste **und wirf die senkrechte weg**". Alle anderen seitlichen
+Scroller der Seite stehen längst auf `pan-x pan-y` — die Leiste war die einzige
+Ausnahme, und weil ein Slide zwei Drittel Bildschirm hoch ist, begann fast jede
+Wischbewegung in diesem Abschnitt auf ihm.
+
+Die beiden Eigenschaften machen verschiedene Dinge und werden leicht
+verwechselt: **`overscroll-behavior-x:contain`** verhindert, dass ein
+Seitwärtswisch auf die Seite überläuft; **`touch-action`** legt fest, welche
+Gesten das Element überhaupt annimmt.
+
+`panning.js` prüft das jetzt zweifach: einmal als Vertrag über **alle**
+seitlichen Scroller aller Ansichten (wer seitlich scrollt, muss `pan-y`
+zulassen), einmal als echte Geste über den Eingabepfad des Browsers. Gegengeprüft
+mit dem alten CSS: Seite bewegt sich 0 px, beide Prüfungen schlagen an.
+
+**Das Bild wurde von Kopf- und Tableiste beschnitten.** Ein 9:16-Slide ist auf
+einem 393-px-Telefon 699 px hoch, das Fenster zwischen den beiden Leisten misst
+702 — es „passte" um drei Pixel und hatte in der Praxis immer eine Leiste quer
+darüber. Im Browser mit sichtbarer Adresszeile (gemessen 390 × 664) blieben 514
+px übrig und der Slide ragte um **179 px** hinaus.
+
+Jetzt ist der Slide weiterhin die volle Breite (er ist die Scroll-Einheit), das
+Bild darin sitzt aber in einem eigenen Rahmen, der 9:16 hält und gegen das freie
+Fenster gedeckelt ist. Wird das Fenster knapp, **schmälert sich der Rahmen,
+statt das Bild zu beschneiden** — die Aufnahmen sind für 9:16 komponiert, ein
+Beschnitt nimmt die Komposition auseinander. Neben dem Bild erscheint dann das
+Elfenbein des Abschnitts, sodass der schmale Fall wie eine Karte wirkt und nicht
+wie ein Fehler. Gemessen: 654 px Bildhöhe bei 702 px Fenster, 466 bei 514.
