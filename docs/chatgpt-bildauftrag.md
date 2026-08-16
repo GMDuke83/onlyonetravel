@@ -400,20 +400,31 @@ Ablage: `public/images/experiences/`
 
 | # | Datei | Banner | Status |
 |---|---|---|---|
-| 1 | `exp-beach.webp` | Strandresorts | ⬜ ersetzen |
+| 1 | `exp-beach.webp` | Strandresorts | ⬜ ersetzen (Luxus-Strandclub statt Küstenpanorama) |
 | 2 | `exp-honeymoon.webp` | Flitterwochen | ⬜ ersetzen |
 | 3 | `exp-ancient.webp` | Antike Welten | ⬜ ersetzen |
 | 4 | `exp-cappadocia.webp` | Kappadokien | ⬜ ersetzen |
 
 ### 1 · `exp-beach.webp` — Strandresorts
 
-> A wide aerial photograph of the Turkish Riviera coastline near Belek at
-> golden hour, seen from about 120 metres. A long sandy beach curves from the
-> lower left into the distance, rows of white parasols and sun loungers in neat
-> lines, turquoise water shading into deep blue, dense green pine forest behind
-> the beach and the Taurus mountains soft and hazy on the horizon. Warm late
-> afternoon sunlight, long soft shadows, calm sea, no people recognisable, no
-> text or logos. Editorial travel photography, natural colours, 16:10 landscape.
+Die erste Fassung war eine Küstenaufnahme aus 120 Metern — richtig als
+Landschaft, aber sie zeigte einen *öffentlichen* Strand mit Reihen gleicher
+Schirme. Das ist Pauschalreise, nicht ONLYONE. Der Ersatz geht auf Augenhöhe
+und zeigt Luxus statt Weite:
+
+> A luxury private beach club on the Turkish Mediterranean at golden hour,
+> photographed at eye level from the shaded edge of the terrace looking out to
+> sea. In the foreground a pair of wide cream daybeds with white cushions and a
+> canvas parasol, a low teak table with two glasses and a folded linen towel. A
+> few metres beyond, calm turquoise water laps onto pale, raked sand. Weathered
+> teak decking underfoot, a row of olive trees and a low limestone wall framing
+> the left edge. Warm low sunlight from the right, long soft shadows, gentle
+> haze over the water, a headland faint in the distance. Uncrowded and quiet —
+> no people, no crowds, no rows of identical loungers, no hotel buildings in
+> frame. No text, no logos, no watermarks. Editorial travel photography, shot on
+> a full-frame camera at f/2.8 so the far water softens, natural muted colours,
+> warm sand and ivory tones rather than saturated blue. 16:10 landscape, the
+> lower third kept calm and free of detail.
 
 ### 2 · `exp-honeymoon.webp` — Flitterwochen
 

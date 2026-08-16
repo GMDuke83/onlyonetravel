@@ -1393,7 +1393,18 @@
     <section class="expBands">
       <h2 class="expBands__head">${t('experiences')}</h2>
       ${EXPERIENCES.map(x=>`<button class="expBand" data-exp="${x.id}">
-        <img src="${x.img}" alt="" loading="lazy" decoding="async">
+        ${/* The photograph lives in a wrapper: the wrapper carries the
+              scroll parallax, the image inside it carries its own slow drift.
+              One transform per element — on the same element the second would
+              simply replace the first. A band may also carry `vid`, in which
+              case a looping clip plays over the still; armBgVideos() lazy-loads
+              it on intersect, so a band nobody scrolls to costs nothing. */''}
+        <span class="expBand__ph" style="--pd:${(EXPERIENCES.indexOf(x)%4)*-7}s">
+          <img src="${x.img}" alt="" loading="lazy" decoding="async">
+          ${x.vid?`<video data-bg="${x.vid}" muted loop playsinline webkit-playsinline
+                 preload="none" poster="${x.img}" disablepictureinpicture
+                 disableremoteplayback aria-hidden="true"></video>`:''}
+        </span>
         <span class="expBand__scrim"></span>
         <span class="expBand__txt">
           <b>${esc(x.n[LANG]||x.n.en)}</b>
@@ -1877,8 +1888,8 @@
     </div>
 
     <section class="expBands" style="margin-top:34px">
-      ${CONC_BANDS.map(x=>`<div class="expBand">
-        <img src="${x.img}" alt="" loading="lazy" decoding="async">
+      ${CONC_BANDS.map((x,i)=>`<div class="expBand">
+        <span class="expBand__ph" style="--pd:${(i%3)*-9}s"><img src="${x.img}" alt="" loading="lazy" decoding="async"></span>
         <span class="expBand__scrim"></span>
         <span class="expBand__txt">
           <b>${esc(x.n[LANG]||x.n.en)}</b>

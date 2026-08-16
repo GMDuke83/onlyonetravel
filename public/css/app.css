@@ -1214,10 +1214,36 @@ select.input option{background:#fff;color:var(--txt)}
   border-bottom:2px solid var(--ground-2);
   text-align:center;
 }
-.expBand img{
+/* The photograph and its frame are two elements on purpose. The wrapper takes
+   the scroll parallax, the image inside takes its own slow drift — one
+   transform per element, because a second on the same element would replace
+   the first rather than add to it. */
+.expBand__ph{
+  position:absolute;inset:0;overflow:hidden;
+  transform:translate3d(0, calc(var(--s,0) * 13px), 0) scale(1.09);
+}
+.expBand__ph > img,
+.expBand__ph > video{
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;
 }
+/* A still photograph that never moves reads as a screenshot next to the
+   moving parts of the page. A slow drift and a hair of zoom give it life
+   without becoming a slideshow; `alternate` means it eases back instead of
+   snapping at the end of the cycle. The scale is what buys the travel — pan a
+   1.0 image and you expose its edges. */
+.expBand__ph > img{
+  animation:driftPhoto 34s ease-in-out infinite alternate;
+  animation-delay:var(--pd,0s);
+  transform-origin:50% 50%;
+}
+@keyframes driftPhoto{
+  from{transform:scale(1.02) translate3d(-1.1%, 0.7%, 0)}
+  to  {transform:scale(1.10) translate3d( 1.2%,-0.9%, 0)}
+}
+/* Where a clip is supplied it plays over the still, which stays behind it as
+   the poster until the video has decoded a frame. */
+.expBand__ph > video{z-index:1}
 .expBand__scrim{
   position:absolute;inset:0;
   background:linear-gradient(180deg,
@@ -1243,16 +1269,9 @@ select.input option{background:#fff;color:var(--txt)}
   color:rgba(255,255,255,.90);
   text-shadow:0 1px 14px rgba(0,0,0,.5);
 }
-/* Parallax. The photograph drifts a little slower than the band it sits in, so
-   the image reads as sitting behind the frame rather than glued to it. The
-   1.09 scale is what buys the travel: without it the drift would expose the
-   edges of the crop. No transition here — the value is refreshed per frame from
-   the scroll position, and a transition would fight it into a lag. */
-.expBand img{
-  transform:translate3d(0, calc(var(--s,0) * 13px), 0) scale(1.09);
-}
 @media (prefers-reduced-motion:reduce){
-  .expBand img{transform:none}
+  .expBand__ph{transform:none}
+  .expBand__ph > img{animation:none;transform:none}
 }
 
 /* ==========================================================================
