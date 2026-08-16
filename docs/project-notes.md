@@ -774,3 +774,27 @@ jede Seite hat Kopfbild, Überschrift, Einleitung, drei Schritte, Concierge-Weg
 und Zurück; Browser-Zurück landet auf der Startseite; die Titel stimmen in allen
 drei Sprachen; kein seitlicher Überlauf; und — die Hausregel — **auf keiner der
 Seiten steht ein Preis**.
+
+## 23. „Concierge" heisst jetzt „VIP Assistent"
+
+Umbenannt wurde nur, was ein Besucher liest, in allen drei Sprachen:
+
+| | vorher | jetzt |
+|---|---|---|
+| Reiter | Concierge / Консьерж | VIP Assistent / **VIP-ассистент** / VIP Assistant |
+| Überschrift | Dein persönlicher Concierge | Dein persönlicher VIP Assistent |
+| Rolle unter dem Namen | ONLYONE Concierge · Antalya | ONLYONE VIP Assistent · Antalya |
+| VIP-Punkt 4 | Concierge erreichbar | VIP Assistent erreichbar |
+| Knopf an den Bändern | Concierge fragen | VIP Assistent fragen |
+| Block-Seiten | „…Ihr Concierge…" | „…Ihr VIP Assistent…" |
+| `<meta description>` | personal concierge | personal VIP assistant |
+
+**Nicht umbenannt:** der Routenname `concierge`, die Übersetzungsschlüssel
+(`conciergeTitle`, `conciergeRole`, …), der Bildordner `images/concierge/` und
+die CSS-Klassen. Das sind interne Bezeichner — sie umzubenennen ändert für
+niemanden etwas Sichtbares, bricht aber Verweise quer durch Code, Tests und
+Dokumentation. Wer den Code liest, findet die Verbindung über diesen Absatz.
+
+21 Zeichenketten geändert, pro Sprachblock einzeln — der deutsche und der
+englische `conciergeRole` waren wortgleich, ein einfaches Suchen-und-Ersetzen
+über die ganze Datei hätte den einen zweimal getroffen und den anderen gar nicht.
