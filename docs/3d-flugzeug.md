@@ -28,7 +28,8 @@ Wird das Bild ersetzt, unbedingt `width`/`height` am `<img>` in `vHome()`
 mitziehen: die Werte reservieren den Platz vor dem Laden. Und die Geometrie im
 `.flyBand__plane` ist auf dieses Seitenverhältnis abgestimmt — ein deutlich
 höheres oder breiteres Bild braucht andere Werte für `top`, `width` und die
-Flugstrecke.
+Flugstrecke. Auch die x-Positionen der Spuren in `vHome()` sitzen auf den
+Hinterkanten *dieses* Flügels und müssten mitwandern.
 
 ## Warum kein echtes 3D im Browser
 
@@ -58,11 +59,20 @@ sicher, solange das Band mittig lag und `--p=1` nie erreichte. Deshalb misst
 Moment, und der Weg steht auf −3,5svh. Gemessen: maximal 23–27 % der
 Überschrift verdeckt (die gewollte Kreuzung), 0–14 % des Laufbands.
 
-Zusätzlich fliegt das Flugzeug unabhängig vom Scrollen: der Wrapper trägt die
-scrollgekoppelte Transformation, das Bild darin eine eigene 7-Sekunden-Schleife
-aus Drift, leichter Schräglage und Atmen der Grösse. Zwei verschachtelte
-Elemente, weil zwei Uhren: eine Transformation pro Element, sonst überschreiben
-sie sich.
+Das Flugzeug selbst steht **gerade und still**. Eine frühere Fassung hatte eine
+eigene 7-Sekunden-Schleife aus Drift, Schräglage und Atmen der Grösse — ein
+gekipptes, wackelndes Foto sah aus wie ein Spielzeug, das jemand hin und her
+schwenkt. Ein Jet wirkt wie ein Jet, wenn er gerade liegt. Geblieben ist allein
+der Ebenendurchgang zwischen Überschrift und Karte, und das ist auch der Sinn
+des Abschnitts.
+
+Das Gefühl von Geschwindigkeit übernehmen stattdessen **acht Spuren hinter den
+Tragflächen** (`.flyTrail`). Jede beginnt an der Hinterkante an ihrer eigenen
+x-Position — weiter aussen heisst weiter hinten, weil der Flügel gepfeilt ist —
+und zieht nach unten weg. Längen, Laufzeiten und Verzögerungen sind gestaffelt,
+sonst pulsieren sie im Gleichtakt. Jede Linie ist ein Verlauf, der an beiden
+Enden ausblendet: ein hart endender Balken liest sich als Kratzer auf dem
+Display, ein ausblendender als Luft.
 
 Unter dem Flugzeug läuft ein Laufband aus Zielen (Regionen + Ausflüge, in der
 Sprache der Oberfläche). Die Zeile enthält ihren Inhalt exakt zweimal und
@@ -70,7 +80,8 @@ wandert um genau −50 % — der Umbruchpunkt landet auf demselben Pixel, die
 Schleife hat keine Naht.
 
 Bei `prefers-reduced-motion: reduce` wird `--p` fest auf `0.5` gesetzt, es wird
-gar kein Scroll-Listener registriert, und Flug wie Laufband stehen still.
+gar kein Scroll-Listener registriert, das Laufband steht still und die Spuren
+verschwinden ganz.
 
 
 ---
