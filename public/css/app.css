@@ -721,46 +721,6 @@ svg{
 
 /* --- platform hero -------------------------------------------------------- */
 .pHero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ground-2)}
-/* Corner ribbon. It says what the house actually sells — a person who arranges
-   the trip — in the one place a visitor looks before reading anything: the top
-   right of the first picture.
-
-   Kept to two words. "VIP Luxury with Private Concierge" was the brief, but a
-   luxury mark that shouts stops reading as one, and a 45° corner has room for
-   a phrase, not a sentence.
-
-   The clipping wrapper is what keeps it honest: the band is wider than the
-   corner and would otherwise stick out past the right edge of the screen and
-   give the page something to scroll sideways to. */
-.vipRibbon{
-  position:absolute;top:0;right:0;z-index:3;
-  width:142px;height:142px;overflow:hidden;pointer-events:none;
-}
-.vipRibbon i{
-  position:absolute;
-  /* The distance from the corner is what decides whether the wording survives,
-     not the size of the wrapper: a 45° band sitting p away from the corner has
-     only 2p of visible chord. Measured across sizes, 26px away clipped 9px off
-     the first letter at every wrapper size, and 42px away clipped nothing. */
-  top:44px;right:-32px;
-  width:206px;
-  transform:rotate(45deg);
-  background:linear-gradient(100deg,#C9A24A,#F0D787 46%,#C9A24A);
-  color:#2A2119;
-  font-style:normal;
-  font-family:var(--display);
-  font-size:9px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-  text-align:center;
-  padding:6px 0;
-  box-shadow:0 2px 12px rgba(0,0,0,.32);
-  white-space:nowrap;
-}
-@media (max-width:359px){
-  .vipRibbon i{font-size:8px;letter-spacing:.10em}
-}
-
-.pHero__slides{position:absolute;inset:0}
 .pHero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* Each photograph carries the same keyframe and a negative delay one slot
    further back, so the cycle is already under way on the first frame and no

@@ -664,7 +664,7 @@
       addToReq:'Добавить к запросу',
       excAdded:'Добавлено к запросу',
       duration:'Длительность',
-      heroEyebrow:'Анталья · Средиземное море', heroScript:'Турция', heroRibbon:'Личный консьерж',
+      heroEyebrow:'Анталья · Средиземное море', heroScript:'Турция',
       heroTitle:'Лучшие адреса побережья.',
       heroSub:'Расскажите, как вы путешествуете, — обо всём остальном позаботимся мы.',
       discover:'Подобрать жильё', trust1:'Жильё, отобранное вручную', trust2:'Персональная консультация', trust3:'Индивидуальные предложения',
@@ -675,6 +675,7 @@
       vipHead:'Мы делаем больше,<br>чем просто поездки',
       vip1:'VIP-сервис', vip1t:'Один человек ведёт вашу поездку — от первого вопроса до возвращения домой.',
       vip2:'Проверенные адреса', vip2t:'Только дома, в которых мы были сами. Никаких каталожных отелей.',
+      vipX:'Эксклюзивные впечатления', vipXt:'Яхты, вертолёты, гастрономия и приватные экскурсии — по вашему вкусу.',
       vip3:'Консьерж на связи', vip3t:'Столик, трансфер, врач — пока вы в пути, мы на телефоне.', conciergeName:'Мария Грычко', conciergeMark:'МГ',
       flyEyebrow:'Дорога', flyTitle:'Прилететь<br>без пересадок',
       flySpecA:'Перелёт и трансфер', flySpecB:'Круглосуточно',
@@ -770,7 +771,7 @@
       addToReq:'Zur Anfrage hinzufügen',
       excAdded:'Zur Anfrage hinzugefügt',
       duration:'Dauer',
-      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Türkiye', heroRibbon:'Privater Concierge',
+      heroEyebrow:'Antalya · Mittelmeer', heroScript:'Türkiye',
       heroTitle:'Die schönsten Adressen.',
       heroSub:'Erzähl uns, wie du reist — um alles andere kümmern wir uns.',
       discover:'Unterkünfte entdecken', trust1:'Handverlesene Unterkünfte', trust2:'Persönliche Beratung', trust3:'Individuelle Angebote',
@@ -781,6 +782,7 @@
       vipHead:'Wir machen mehr<br>als nur Reisen',
       vip1:'VIP-Service', vip1t:'Eine Betreuerin führt deine Reise — von der ersten Frage bis zur Heimkehr.',
       vip2:'Geprüfte Adressen', vip2t:'Nur Häuser, die wir selbst kennen. Keine Katalogware.',
+      vipX:'Exklusive Erlebnisse', vipXt:'Yachten, Hubschrauber, Gastronomie und private Touren — nach deinem Geschmack.',
       vip3:'Concierge erreichbar', vip3t:'Tisch, Transfer, Arzt — solange du unterwegs bist, sind wir am Telefon.', conciergeName:'Maria Grychko', conciergeMark:'MG',
       flyEyebrow:'Anreise', flyTitle:'Ankommen<br>ohne Umwege',
       flySpecA:'Flug & Transfer', flySpecB:'Rund um die Uhr',
@@ -876,7 +878,7 @@
       addToReq:'Add to my request',
       excAdded:'Added to your request',
       duration:'Duration',
-      heroEyebrow:'Antalya · Mediterranean', heroScript:'Türkiye', heroRibbon:'Private Concierge',
+      heroEyebrow:'Antalya · Mediterranean', heroScript:'Türkiye',
       heroTitle:'The finest addresses.',
       heroSub:'Tell us how you travel — we take care of the rest.',
       discover:'Discover stays', trust1:'Handpicked stays', trust2:'Personal advice', trust3:'Individual offers',
@@ -887,6 +889,7 @@
       vipHead:'We do more<br>than book trips',
       vip1:'VIP service', vip1t:'One person runs your trip — from the first question to your way home.',
       vip2:'Houses we know', vip2t:'Only places we have stayed in ourselves. Nothing off a catalogue.',
+      vipX:'Exclusive experiences', vipXt:'Yachts, helicopters, dining and private tours — cut to your taste.',
       vip3:'Concierge on call', vip3t:'A table, a transfer, a doctor — while you travel, we are on the phone.', conciergeName:'Maria Grychko', conciergeMark:'MG',
       flyEyebrow:'Getting there', flyTitle:'Arrive<br>without detours',
       flySpecA:'Flight & transfer', flySpecB:'Around the clock',
@@ -1262,6 +1265,7 @@
     star:'<path d="m12 4.2 2.35 4.9 5.35.72-3.9 3.76.96 5.32L12 16.4l-4.76 2.5.96-5.32-3.9-3.76 5.35-.72z"/>',
     diamond:'<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18"/><path d="M9.5 4 7.5 9l4.5 11 4.5-11-2-5"/>',
     keyhouse:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><circle cx="12" cy="12.6" r="1.7"/><path d="M12 14.3V17"/>',
+    yacht:'<path d="M4 16.5h15.5l-1.9 3.2a1.6 1.6 0 0 1-1.4.8H7a1.6 1.6 0 0 1-1.4-.8z"/><path d="M11.4 14.4V4.2l6.9 8.1a1 1 0 0 1-.8 1.6z"/><path d="M9.4 14.4V8l-3.6 5.1a.8.8 0 0 0 .7 1.3z"/>',
     headset:'<path d="M5 13v-1a7 7 0 0 1 14 0v1"/><path d="M5 13h2.2v4.4H5.6A1.6 1.6 0 0 1 4 15.8V13z"/><path d="M19 13h-2.2v4.4h1.6A1.6 1.6 0 0 0 20 15.8V13z"/><path d="M17.2 17.8v.4a2.4 2.4 0 0 1-2.4 2.4h-1.6"/>',
     globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
   };
@@ -1537,7 +1541,6 @@
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
     <section class="pHero">
-      <span class="vipRibbon" aria-hidden="true"><i>${t('heroRibbon')}</i></span>
       ${heroSlides()}
       <div class="pHero__scrim"></div>
       <div class="pHero__glassLayer" aria-hidden="true"></div>
@@ -1559,7 +1562,7 @@
       <section class="vipList">
         <h2 class="vipList__head">${t('vipHead')}</h2>
         <span class="vipList__rule" aria-hidden="true"></span>
-        ${[['diamond','vip1','vip1t'],['keyhouse','vip2','vip2t'],['headset','vip3','vip3t']]
+        ${[['diamond','vip1','vip1t'],['keyhouse','vip2','vip2t'],['yacht','vipX','vipXt'],['headset','vip3','vip3t']]
           .map(([ic,k,d])=>`<div class="vipItem">
             <span class="vipItem__ic">${icon(ic)}</span>
             <div><b>${t(k)}</b><p>${t(d)}</p></div>
