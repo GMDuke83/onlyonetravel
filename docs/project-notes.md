@@ -424,3 +424,40 @@ die zweite die erste.
 Gemessen (`zoom.js`): 1,085 → 1,065 nach 120 ms → exakt 1,0 im Ruhezustand, auf
 allen vier Bannern. Bei `prefers-reduced-motion` stehen beide Zooms, der Lichtlauf
 und der Wort-Zoom still, und die Buchstaben sind trotzdem sichtbar.
+
+## 16. VIP-Empfang: der 9:16-Clip
+
+Direkt hinter den vier VIP-Punkten ist ein Abschnitt für das eigene Hochformat-
+Video des Auftraggebers gebaut: `.vipClip`, volle Breite, Seitenverhältnis
+**9:16**. Auf einem 393-px-Telefon sind das 393 × 699 px — also fast genau ein
+Bildschirm. Das ist Absicht: der Clip bekommt die Fläche, für die er gedreht
+wurde, statt in einen Querformat-Schlitz gequetscht zu werden.
+
+Drei Ebenen im Rahmen, aus demselben Grund wie bei den Erlebnis-Bannern:
+
+| Ebene | z | wofür |
+|---|---|---|
+| Standbild | 0 | steht sofort da, bleibt bei Datensparmodus und wenn das Video nie lädt |
+| Video | 1 | wird erst beim Hereinscrollen nachgeladen (`armBgVideos`) |
+| Schleier | 2 | Verlauf, damit die Tafel nicht auf der nackten Aufnahme klebt |
+| Glastafel | 3 | Ankunft / VIP-Empfang / eine Zeile |
+
+Die Schrift steht auf einer eigenen dunklen Tafel, nicht nur auf dem Verlauf:
+hinter einem bewegten Bild wechselt der Untergrund jedes Wortes von Bild zu
+Bild, und ein Verlauf, der auf ein Einzelbild abgestimmt ist, versagt beim
+nächsten.
+
+**Der Abschnitt ist noch aus.** `VIP_CLIP` steht auf `null`, solange die Datei
+nicht da ist — ein leerer 9:16-Rahmen wäre das grösste Loch der Seite. Zum
+Einschalten: Datei ablegen, die zwei ffmpeg-Zeilen im Kommentar über `VIP_CLIP`
+laufen lassen (Clip auf 1080 px Breite, H.264, `-an`; Standbild bei 1,5 s), die
+Konstante setzen. `-an` ist nicht optional: §13 des Auftrags ist, dass nach dem
+Intro nichts auf der Seite Ton macht, und eine entfernte Tonspur hält das per
+Bauart und nicht per Attribut.
+
+`vipclip.js` prüft beide Zustände — ausgeschaltet, dass keine Reste im DOM
+liegen und keine Datei fehlt; eingeschaltet Seitenverhältnis, Ebenenfolge,
+Standbild, Nachladen, stumm/Schleife/`playsinline`, keine Tonspur, kein
+seitlicher Überlauf und der Titel in allen drei Sprachen. Mit einem
+Platzhalter-Clip einmal durchgemessen: 393 × 699, Verhältnis 0,563, Ebenen
+0 < 1 < 2 < 3, Überlauf 0 px.

@@ -696,6 +696,8 @@
       flyBody:'Рейс, частный трансфер из аэропорта Анталии и встреча у выхода. Скажите, откуда летите — остальное возьмёт на себя ваш консьерж.',
       flyCta:'Спросить консьержа',
       carEyebrow:'Трансфер', carTitle:'Машина<br>уже ждёт', carWord:'VIP ТРАНСФЕР',
+      welcomeEyebrow:'Прибытие', welcomeTitle:'VIP-приём',
+      welcomeBody:'Личная встреча в Анталии — табличка с именем, короткий путь, без очередей.',
       carSpecA:'Приватно и тихо', carSpecB:'От двери до двери',
       carBody:'Автомобиль с водителем встречает вас в аэропорту Анталии и довозит до самых дверей — без очередей и пересадок.',
       regions:'Регионы', allRegions:'Все регионы', hotels:'вариантов', hotel:'Размещение',
@@ -803,6 +805,8 @@
       flyBody:'Flug, privater Transfer ab Antalya und Empfang am Ausgang. Sag uns, von wo du fliegst — den Rest übernimmt deine Betreuerin.',
       flyCta:'Concierge fragen',
       carEyebrow:'Transfer', carTitle:'Der Wagen<br>wartet schon', carWord:'VIP TRANSFER',
+      welcomeEyebrow:'Ankunft', welcomeTitle:'VIP-Empfang',
+      welcomeBody:'Persönlicher Empfang in Antalya — Namensschild, kurzer Weg, kein Anstehen.',
       carSpecA:'Privat & diskret', carSpecB:'Tür zu Tür',
       carBody:'Ein Wagen mit Fahrer holt dich in Antalya ab und bringt dich bis vor die Tür deiner Unterkunft — ohne Warteschlange, ohne Umsteigen.',
       regions:'Regionen', allRegions:'Alle Regionen', hotels:'Unterkünfte', hotel:'Stay',
@@ -910,6 +914,8 @@
       flyBody:'The flight, a private transfer from Antalya and someone waiting at the exit. Tell us where you fly from — your concierge takes care of the rest.',
       flyCta:'Ask the concierge',
       carEyebrow:'Transfer', carTitle:'Your car<br>is waiting', carWord:'VIP TRANSFER',
+      welcomeEyebrow:'Arrival', welcomeTitle:'VIP welcome',
+      welcomeBody:'Met in person in Antalya — name sign, short walk, no queue.',
       carSpecA:'Private & discreet', carSpecB:'Door to door',
       carBody:'A car and driver meet you at Antalya and take you to the door of your stay — no queue, no changing over.',
       regions:'Regions', allRegions:'All regions', hotels:'stays', hotel:'Stay',
@@ -1605,6 +1611,46 @@
     el.textContent=css;
   }
 
+  /* --------------------------------------------------------------------
+     VIP welcome — the operator's own 9:16 clip, full width, right after the
+     four service points.
+
+     Set VIP_CLIP to the file and its poster frame to switch the section on;
+     while it is null the section is not rendered at all. A 9:16 frame is
+     almost exactly one phone screen tall, so an empty one would be the
+     largest hole on the page — better no section than a black rectangle.
+
+     Dropping a new clip in:
+       ffmpeg -i <original> -vf "scale=1080:-2" -c:v libx264 -profile:v main \
+              -crf 24 -preset slow -movflags +faststart -an \
+              public/video/onlyone-vip-welcome-v1.mp4
+       ffmpeg -ss 1.5 -i public/video/onlyone-vip-welcome-v1.mp4 -frames:v 1 \
+              -c:v libwebp -quality 86 public/images/vip-welcome-poster.webp
+     -an is not optional: §13 of the brief is that nothing on the site makes a
+     sound after the intro, and stripping the track keeps that true by
+     construction rather than by attribute. --------------------------------- */
+  const VIP_CLIP=null;
+  // const VIP_CLIP={src:'./video/onlyone-vip-welcome-v1.mp4',
+  //                 poster:'./images/vip-welcome-poster.webp'};
+  function vipClip(){
+    if(!VIP_CLIP) return '';
+    return `<section class="vipClip">
+      <div class="vipClip__frame">
+        ${/* The still is the floor of this section: it is on screen before the
+              clip has a frame decoded, it is what a reader with data saving on
+              sees, and it is what stays if the video ever fails to load. */''}
+        <img class="vipClip__still" src="${VIP_CLIP.poster}" alt="" loading="lazy" decoding="async">
+        ${bgVideo(VIP_CLIP.src, VIP_CLIP.poster, 'vipClip__vid')}
+        <span class="vipClip__scrim" aria-hidden="true"></span>
+        <div class="vipClip__panel glassDark">
+          <div class="eyebrow">${t('welcomeEyebrow')}</div>
+          <h2 class="vipClip__title">${t('welcomeTitle')}</h2>
+          <p>${t('welcomeBody')}</p>
+        </div>
+      </div>
+    </section>`;
+  }
+
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
@@ -1632,7 +1678,11 @@
             <div><b>${t(k)}</b><p>${t(d)}</p></div>
           </div>`).join('')}
       </section>
+    </div>
 
+    ${vipClip()}
+
+    <div class="wrap">
       <div class="section">
         <div class="section__head"><h2 class="h-lg">${t('regions')}</h2></div>
         <div class="rail">
