@@ -471,8 +471,8 @@ gequetscht zu werden.
 
 | Abschnitt | steht hinter | Datei | Grösse | PSNR |
 |---|---|---|---|---|
-| VIP-Empfang | den vier VIP-Punkten | `onlyone-vip-welcome-v2.mp4` | 1,4 MB | 43,4 dB |
-| Yacht-Tour | dem Ausflüge-Laufband | `onlyone-yacht-tour-v1.mp4` | 2,7 MB | 40,4 dB |
+| VIP-Empfang | den vier VIP-Punkten | `onlyone-vip-welcome-v3.mp4` | 1,4 MB | 43,4 dB |
+| Yacht-Tour | dem Ausflüge-Laufband | `onlyone-yacht-tour-v2.mp4` | 2,7 MB | 40,4 dB |
 
 Beide bei CRF 24 aus dem Original (3,0 bzw. 5,8 MB). Gemessen statt geraten: für
 den Empfang standen 1910 KB / 44,7 dB, 1438 KB / 43,4 dB und 1107 KB / 42,2 dB
@@ -508,7 +508,7 @@ zwei davon am Quelltext statt am Bildschirm — eine Seite, die ein Test nie
 öffnet, ist genau die Stelle, an der ein nicht stummes Video überlebt.
 
 **1 · Die Dateien.** Von fünf MP4 in `public/video` trägt genau eine eine
-Tonspur: `onlyone-hero-ocean-v1.mp4`, das Intro. Die anderen vier sind mit `-an`
+Tonspur: `onlyone-hero-ocean-v2.mp4`, das Intro. Die anderen vier sind mit `-an`
 kodiert, sind also nicht bloss stumm geschaltet, sondern haben gar keinen Ton.
 
 **2 · Die Markup-Ebene.** Alle drei `<video>` im Projekt tragen das
@@ -546,3 +546,87 @@ Die Datei heisst **`-v2`**, nicht wieder `-v1`. Der Dateiname ist auf GitHub
 Pages der Cache-Schlüssel: bei gleichem Namen bekämen Besucher, die schon einmal
 da waren, noch tagelang den alten Clip. Ein neuer Name ist die einzige
 verlässliche Art, das auszuschliessen. Dasselbe gilt für das Standbild.
+
+## 20. Kompression: 10,4 MB → 6,5 MB
+
+Zuerst gemessen, was ein Telefon **wirklich** lädt, und in welcher Reihenfolge.
+Die Gesamtgrösse des Repositories ist die falsche Zahl: das meiste ist lazy, und
+wer nie scrollt, zahlt es nie. Also nach Phasen gezählt (`weight.js`):
+
+| Phase | vorher | nachher |
+|---|---|---|
+| 1 · Intro, erster Bildschirm | 2947 KB | **1878 KB** (−36 %) |
+| 2 · Startseite ohne Scrollen | 810 KB | **391 KB** (−52 %) |
+| 3 · Startseite ganz durchgescrollt | 6660 KB | **4184 KB** (−37 %) |
+| **gesamt** | **10 417 KB** | **6453 KB** (−38 %) |
+
+Video 6669 → 3857 KB, Bild 3373 → 2220 KB.
+
+### Video: alle fünf auf CRF 28
+
+Das Intro allein war 2249 KB von 2947 KB der ersten Phase — 76 %. Dort
+entscheidet sich, wie schnell sich die Seite anfühlt, also lag der Hebel da.
+
+Die Wahl von CRF 28 ist nicht geraten, sondern angesehen: Standbilder aus
+Original, aktueller Datei und den Kandidaten nebeneinander, 1:1 und auf 2,4-fach
+gezoomt, jeweils an der schwierigsten Stelle (Wasseroberfläche, Kielwelle,
+Gegenlicht). Bis CRF 30 war kein Unterschied zu sehen; genommen wurde 28 mit
+Reserve.
+
+| Datei | vorher | nachher | PSNR |
+|---|---|---|---|
+| Intro (mit Ton) | 2248 KB | 1264 KB | 39,5 dB |
+| Yacht-Tour | 2725 KB | 1483 KB | 37,8 dB |
+| VIP-Empfang | 1694 KB | 1108 KB | 41,4 dB |
+| Bestätigung | 1615 KB | 845 KB | 35,6 dB |
+| Ausflüge | 1216 KB | 641 KB | 36,9 dB |
+
+Die beiden Hochformat-Clips wurden aus den **Originalen** neu kodiert, nicht aus
+den ausgelieferten Dateien — sonst wäre es eine zweite Generation Verlust auf
+eine erste. Für Intro, Bestätigung und Ausflüge gibt es keine Originale mehr,
+deshalb ist deren PSNR gegen die bisher ausgelieferte Datei gemessen und
+entsprechend niedriger; das ist genau der Verlust gegenüber dem, was Besucher
+bisher gesehen haben.
+
+Bestätigung und Ausflüge lagen mit 404 × 720 bzw. 406 × 720 bei 1,5 Mbit/s —
+das waren Bits in ein Bild, das ohnehin auf die dreifache Breite hochskaliert
+wird. Da war am wenigsten zu verlieren.
+
+**Alle Dateinamen sind hochgezählt.** Der Name ist auf GitHub Pages der
+Cache-Schlüssel; ohne neuen Namen bekämen Wiederkehrer noch tagelang die alten,
+grossen Dateien — womit die ganze Übung wirkungslos wäre.
+
+### Bilder: gemessener WebP-Durchlauf
+
+Neu kodiert wurde nur, wo es **mindestens 8 % spart und PSNR ≥ 40 dB bleibt** —
+13 von 56 Dateien. Die übrigen 43 waren schon effizient und blieben unangetastet
+(ein Durchlauf hätte sie teils sogar vergrössert).
+
+Den grössten Teil machen die sechs Hero-Fotos aus: 1733 → 1245 KB (−28 %,
+40,5–42,2 dB). Weil es an dieser Stelle schon einmal eine Beschwerde über die
+Bildqualität gab, ist das nicht nur berechnet, sondern angesehen worden:
+Ausschnitt mit Wasserkräuseln und Felsstruktur, 2,4-fach gezoomt, alt gegen neu —
+kein sichtbarer Unterschied. Die Auflösung wurde **nicht** angefasst; 941 × 1672
+liegt bei DPR 3 ohnehin unter dem Ideal, und Herunterrechnen war genau die
+Ursache der damaligen Beschwerde.
+
+### Der Hero-Nachschub kommt jetzt gestaffelt
+
+Die Fotos 2–6 wurden alle innerhalb der ersten sieben Sekunden geholt — also
+genau dann, wenn sie mit dem ersten Bildschirm um die Verbindung konkurrieren,
+obwohl Foto 6 erst nach 43 Sekunden dran ist. Jedes wird jetzt rund sechs
+Sekunden vor seinem Auftritt geholt. Das verschiebt 619 KB aus den ersten drei
+Sekunden heraus, ohne ein einziges Byte zu sparen — Phase 2 fällt dadurch allein
+von 810 auf 391 KB.
+
+`slides.js` wartet dafür jetzt bis zu 60 s, bis alle sechs hängen, und steht in
+`run.js` bei den langsamen Tests.
+
+### Was noch ginge
+
+**AVIF statt WebP**: gemessen an `hero-02` liefert AVIF bei vergleichbarer
+Qualität 150 KB gegen 243 KB in WebP — rund 38 % weniger, für den gesamten
+Bildbestand also noch einmal etwa 1,3 MB. Nicht gemacht, weil es `<picture>` mit
+WebP-Rückfall an acht Stellen bräuchte und jede Datei doppelt im Repository läge
+— das verdoppelt den Bildbestand und verkompliziert den Bild-Workflow. Sinnvoll,
+wenn Ladezeit wichtiger wird als Einfachheit.

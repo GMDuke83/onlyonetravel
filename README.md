@@ -40,7 +40,7 @@ onlyonetravel/
 │   ├── css/app.css                intro styles + platform styles
 │   ├── js/app.js                  intro controller + platform application
 │   ├── video/
-│   │   ├── onlyone-hero-ocean-v1.mp4   intro hero — with ocean audio
+│   │   ├── onlyone-hero-ocean-v2.mp4   intro hero — with ocean audio
 │   │   └── onlyone-marina-v1.mp4       platform banner — silent by design
 │   ├── images/
 │   │   ├── hotels/                     hotel & region imagery
@@ -228,7 +228,7 @@ and payment status.
 
 ## Hero video
 
-`public/video/onlyone-hero-ocean-v1.mp4`
+`public/video/onlyone-hero-ocean-v2.mp4`
 
 | | |
 |---|---|

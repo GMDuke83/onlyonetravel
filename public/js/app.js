@@ -1492,7 +1492,7 @@
   }
   function vExcursions(){
     return `<section class="bandHero">
-      ${bgVideo('./video/onlyone-excursions-v1.mp4','./images/onlyone-excursions-poster.webp')}
+      ${bgVideo('./video/onlyone-excursions-v2.mp4','./images/onlyone-excursions-poster.webp')}
       <div class="bandHero__scrim"></div>
       <div class="gal__bar"><span></span>
         <button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button></div>
@@ -1576,7 +1576,15 @@
     const n=HERO_SLIDES.length, total=n*SLIDE_SECONDS;
     HERO_SLIDES.slice(1).forEach((src,k)=>{
       const i=k+1;
-      // one every 1.4s: long before its slot, never all at once
+      /* Each photograph is fetched a fixed lead time before it is due, rather
+         than all of them in the first few seconds. Slide i has its turn at
+         i·SLIDE_SECONDS, so asking for it LEAD seconds earlier still leaves a
+         wide margin — and it takes the whole set off the moment right after
+         the intro, where it was competing with the first screen for the
+         connection. Measured: 619 KB of that burst moves out of the first
+         three seconds. */
+      const LEAD=6;
+      const due=Math.max(900, (i*SLIDE_SECONDS-FADE_SECONDS-LEAD)*1000);
       setTimeout(()=>{
         if(!document.body.contains(box))return;
         const img=new Image();
@@ -1587,7 +1595,7 @@
         img.style.animationDelay=slideDelay(i).toFixed(2)+'s';
         img.src=src;
         box.appendChild(img);
-      }, 900+k*1400);
+      }, due);
     });
   }
   let slideKeyframesFor=0;
@@ -1645,11 +1653,11 @@
      -------------------------------------------------------------------- */
   const CLIPS=[
     { at:'vip',
-      src:'./video/onlyone-vip-welcome-v2.mp4',
+      src:'./video/onlyone-vip-welcome-v3.mp4',
       poster:'./images/vip-welcome-poster-v2.webp',
       eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
     { at:'excursions',
-      src:'./video/onlyone-yacht-tour-v1.mp4',
+      src:'./video/onlyone-yacht-tour-v2.mp4',
       poster:'./images/yacht-tour-poster.webp',
       eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
   ];
@@ -2104,7 +2112,7 @@
     const r=request(id);if(!r)return vHome();
     const h=hotel(r.hotelId);
     return `<section class="confirmBg">
-      ${bgVideo('./video/onlyone-confirm-v1.mp4','./images/onlyone-confirm-poster.webp')}
+      ${bgVideo('./video/onlyone-confirm-v2.mp4','./images/onlyone-confirm-poster.webp')}
       <div class="confirmBg__scrim"></div>
     </section>
     <div class="wrap confirmOver" style="position:relative;z-index:2;padding-top:calc(var(--sat) + 52px);text-align:center">
