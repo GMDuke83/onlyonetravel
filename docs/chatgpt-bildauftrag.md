@@ -515,3 +515,77 @@ referenziert sie bereits. Zuschneiden falls nötig:
 ffmpeg -i quelle.png -vf "scale=1200:750:force_original_aspect_ratio=increase,crop=1200:750" \
        -quality 82 public/images/concierge/conc-reach.webp
 ```
+
+---
+
+# Nachtrag · Der Wagen im „Transfer"-Band
+
+Ersetzt `public/images/3d/car-maybach.webp`. Das Band ist dreischichtig:
+Überschrift **hinter** dem Wagen, Infokarte **davor**. Damit das funktioniert,
+muss der Wagen freigestellt sein — ein Bild mit Hintergrund würde die
+Überschrift verdecken statt sie durchscheinen zu lassen.
+
+## Harte Vorgaben
+
+| | |
+|---|---|
+| Format | Querformat, Seitenverhältnis **1,81 : 1** (Zielgrösse 1000 × 552) |
+| Hintergrund | **transparent** (PNG mit Alphakanal) |
+| Schatten | weicher Kontaktschatten **im Bild**, direkt unter dem Wagen |
+| Rand | rund 5 % Luft ringsum — nichts darf die Bildkante berühren |
+| Ansicht | Front-Dreiviertel, Kamera leicht über Scheinwerferhöhe |
+| Marken | **keine** Logos, Embleme, Schriftzüge, Kennzeichen |
+
+Zum Schatten: das CSS setzt **keinen** `drop-shadow`. Bringt das Bild keinen
+mit, schwebt der Wagen konturlos über dem Elfenbein; bringt es einen mit und
+das CSS auch, sehen zwei übereinanderliegende Schatten schmutzig aus. Genau
+einer, und zwar im Bild.
+
+Zu den Marken: das bisherige 3D-Modell trug echte Herstellerembleme. Auf der
+Seite eines Reiseanbieters suggeriert das eine Partnerschaft, die es nicht
+gibt — deshalb ausdrücklich ohne.
+
+## Der Prompt
+
+> A photorealistic black luxury chauffeur saloon with a long wheelbase,
+> photographed in a clean studio. Front three-quarter view from the left, camera
+> slightly above headlight height, the whole car in frame from front bumper to
+> rear bumper. Deep gloss black paint with soft warm highlights running along
+> the shoulder line and the roof edge, polished chrome window trim, bright
+> multi-spoke alloy wheels, dark tinted glass. Soft large-softbox lighting, warm
+> key from the upper left, gentle neutral fill from the right, no harsh
+> speculars, no colour casts. A soft neutral contact shadow directly beneath the
+> car, close and diffuse, no long cast shadow. Completely transparent
+> background, no floor, no wall, no reflections of a studio environment. No
+> badges, no emblems, no brand lettering, no number plate, no people. Centred in
+> the frame with generous empty margin on all four sides. Wide landscape format,
+> aspect ratio 1.81:1. Photographic, not an illustration or a render with visible
+> CGI grid.
+
+### Falls die Transparenz nicht klappt
+
+Bildgeneratoren liefern echten Alphakanal unzuverlässig. Kommt das Bild mit
+Hintergrund zurück, denselben Prompt mit diesem Schluss noch einmal:
+
+> …instead of a transparent background: a completely uniform, flat pure white
+> background with no gradient, no vignette and no visible floor line, so the car
+> can be cut out cleanly. Keep the soft contact shadow beneath the car.
+
+Ein sauberes Weiss lässt sich verlustfrei freistellen — schick es einfach so
+her, das Ausschneiden übernehme ich.
+
+## Einbauen
+
+Datei unter genau diesem Namen ablegen:
+
+```bash
+# auf 1000 px Breite, WebP mit Alpha
+ffmpeg -i wagen.png -vf "scale=1000:-1" -c:v libwebp -quality 90 \
+       -compression_level 6 public/images/3d/car-maybach.webp
+```
+
+**Wichtig:** weicht das Seitenverhältnis ab, müssen `width`/`height` am `<img>`
+in `vHome()` mitgezogen werden — die Werte reservieren den Platz vor dem Laden,
+sonst springt das Layout beim Nachladen. Und `--gapObj` im `.carBand` ist auf
+die Höhe *dieses* Wagens abgestimmt: wird er deutlich höher, braucht die Karte
+mehr Reserve, sonst sitzt sie ihm auf den Rädern.
