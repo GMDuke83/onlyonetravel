@@ -779,13 +779,15 @@ svg{
    own edges across the picture. */
 .pHero__glassLayer{
   position:absolute;inset:0;z-index:1;pointer-events:none;
+  /* Tint only, no blur. A backdrop-filter here blurred the photographs
+     themselves — the one thing on this screen that has to look sharp. The
+     gradient alone carries the type, and it costs the picture nothing but a
+     little light. */
   background:linear-gradient(180deg,
-    rgba(16,12,8,.34) 0%,
-    rgba(16,12,8,.22) 34%,
-    rgba(16,12,8,.42) 68%,
-    rgba(16,12,8,.72) 100%);
-  -webkit-backdrop-filter:blur(1.5px) saturate(106%);
-  backdrop-filter:blur(1.5px) saturate(106%);
+    rgba(14,10,7,.50) 0%,
+    rgba(14,10,7,.36) 30%,
+    rgba(14,10,7,.56) 64%,
+    rgba(14,10,7,.82) 100%);
 }
 @media (prefers-reduced-motion:reduce){
   .pHero__slides .pHero__img{animation:none}
