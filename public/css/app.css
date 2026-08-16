@@ -1448,8 +1448,8 @@ select.input option{background:#fff;color:var(--txt)}
    below the tab bar and the sheets, and it belongs to the platform only — the
    intro is a photograph and wants nothing drawn over it.
 
-   The travel is expressed in the shimmer's own height: it is 34% of the
-   column, so running from -100% to 295% of itself carries it from just above
+   The travel is expressed in the shimmer's own height: it is 40% of the
+   column, so running from -100% to 250% of itself carries it from just above
    the top to just past the bottom.
    -------------------------------------------------------------------------- */
 .edgeLed{
@@ -1458,26 +1458,29 @@ select.input option{background:#fff;color:var(--txt)}
   width:1px;z-index:45;
   pointer-events:none;overflow:hidden;
   /* the constant line — faded at both ends so it does not butt into the
-     corners, strongest through the middle of the screen */
+     corners, strongest through the middle of the screen. Turned up a step: the
+     character stays a one-pixel hairline, only the brightness changes, because
+     widening it or giving the glow back is what made the first version read as
+     a smear along the edge. */
   background:linear-gradient(180deg,
     rgba(224,184,112,0)   0%,
-    rgba(224,184,112,.30) 7%,
-    rgba(236,202,142,.44) 50%,
-    rgba(224,184,112,.30) 93%,
+    rgba(226,187,116,.46) 6%,
+    rgba(240,208,150,.66) 50%,
+    rgba(226,187,116,.46) 94%,
     rgba(224,184,112,0)  100%);
 }
 .edgeLed--l{left:var(--sal)}
 .edgeLed--r{right:var(--sar)}
 .edgeLed i{
   position:absolute;left:0;right:0;
-  height:34%;
+  height:40%;
   /* summer light, not a status LED: amber through warm white and back. No box
      shadow — on a one pixel line a bloom is all anyone would see. */
   background:linear-gradient(180deg,
     rgba(255,224,170,0)   0%,
-    rgba(255,228,182,.42) 26%,
-    rgba(255,242,212,.92) 50%,
-    rgba(255,228,182,.42) 74%,
+    rgba(255,229,185,.58) 24%,
+    rgba(255,248,224,1)   50%,
+    rgba(255,229,185,.58) 76%,
     rgba(255,224,170,0)  100%);
   animation:edgeLed 14s linear infinite;
   will-change:transform;
@@ -1487,7 +1490,7 @@ select.input option{background:#fff;color:var(--txt)}
 .edgeLed--r i{animation-delay:-7s}
 @keyframes edgeLed{
   from{transform:translate3d(0,-100%,0)}
-  to  {transform:translate3d(0,295%,0)}
+  to  {transform:translate3d(0,250%,0)}
 }
 @media (prefers-reduced-motion:reduce){
   /* the line stays, the shimmer stops — it is the motion that is the problem */
@@ -1701,6 +1704,62 @@ select.input option{background:#fff;color:var(--txt)}
   display:block;width:100%;height:auto;
   position:relative;z-index:1;   /* over its own slipstream */
   /* the supplied artwork carries its own shadow — a second one muddies it */
+  /* A tracking shot holds the aircraft almost still and lets the world move —
+     that is the clouds' job. All this adds is the small amount an aircraft
+     wanders in frame: four pixels of rise, two of sway, over nine seconds. No
+     rotation and no scale. The earlier version banked and breathed, and a
+     tilting, pulsing photograph looked like a toy being waved about. */
+  animation:flyDrift 9s ease-in-out infinite;
+}
+@keyframes flyDrift{
+  0%,100%{transform:translate3d(0,0,0)}
+  30%    {transform:translate3d(-2px,-4px,0)}
+  70%    {transform:translate3d(2px,2px,0)}
+}
+
+/* --------------------------------------------------------------------------
+   The sky
+
+   Four cloud sprites, raymarched offline (scripts/render-clouds/clouds.py) and
+   moved here with nothing but a transform, so the phone composites them and
+   never repaints.
+
+   Direction is the whole illusion: the aircraft's nose points up the screen, so
+   the clouds have to travel DOWN past it. Depth is carried entirely by the
+   inline numbers — far cloud is small, pale, blurred and slow; near cloud is
+   large, quick, blurrier still, and grows as it passes, because something close
+   to the camera changes size visibly while something far below does not.
+   -------------------------------------------------------------------------- */
+.flySky{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.flySky--far{z-index:0}
+/* In front of the aircraft, but kept off the type at both ends. A wisp over the
+   aircraft is atmosphere; the same wisp over the headline is a grey wash across
+   the words, which is exactly what the first pass did. So the layer stops above
+   the ticker and is masked out over the headline — cloud fades in as it comes
+   down past the title, which is also how it would look. */
+.flySky--near{
+  z-index:2;bottom:34%;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,transparent 20%,#000 34%);
+  mask-image:linear-gradient(180deg,transparent 0,transparent 20%,#000 34%);
+}
+.flySky img{
+  position:absolute;
+  left:var(--l,0);top:0;
+  width:var(--w,30%);height:auto;
+  opacity:0;
+  filter:blur(var(--b,1px));
+  animation:flyCloud var(--d,26s) linear var(--dl,0s) infinite;
+  will-change:transform,opacity;
+}
+@keyframes flyCloud{
+  0%  {transform:translate3d(0,-38svh,0) scale(var(--s0,1));opacity:0}
+  9%  {opacity:var(--o,.45)}
+  88% {opacity:var(--o,.45)}
+  100%{transform:translate3d(var(--x,0),102svh,0) scale(var(--s1,1.1));opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .flySky{display:none}
+  .flyBand__plane img{animation:none}
 }
 
 /* Slipstream behind the wings. Sits under the aircraft, so the lines appear to

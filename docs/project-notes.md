@@ -630,3 +630,84 @@ Bildbestand also noch einmal etwa 1,3 MB. Nicht gemacht, weil es `<picture>` mit
 WebP-Rückfall an acht Stellen bräuchte und jede Datei doppelt im Repository läge
 — das verdoppelt den Bildbestand und verkompliziert den Bild-Workflow. Sinnvoll,
 wenn Ladezeit wichtiger wird als Einfachheit.
+
+## 21. Wolken um das Flugzeug — offline gerechnet, auf dem Handy nur geschoben
+
+Vier Wolken-Sprites, **volumetrisch raygemarcht** (`scripts/render-clouds/clouds.py`),
+und im Band nur noch per `transform` aneinander vorbeigeschoben.
+
+### Warum offline
+
+Dieselbe Rechnung wie beim Jet und beim Maybach. Eine echte Volumenwolke ist ein
+Dichtefeld, das pro Pixel **zweimal** durchmarschiert werden muss: einmal entlang
+des Blickstrahls und einmal Richtung Licht, für die Selbstverschattung, die aus
+einem Schmierfleck einen Körper macht. Das ist ein Fragment-Shader, der auf dem
+Telefon in jedem Bild läuft — für etwas, das seine Form nie ändert. Einmal hier
+gerechnet, sind es vier Bilder zu **37 KB zusammen**, die der Compositor
+umsonst bewegt.
+
+Was das Skript pro Pixel tut:
+
+```
+für jeden Schritt entlang des Blickstrahls
+    d = Dichte(p)                       fbm-Rauschen, von einem Ellipsoid geformt
+    wenn d > 0
+        ein paar Schritte Richtung Licht, Verdeckung aufsummieren
+        Licht = exp(-Verdeckung)        Beer-Lambert
+        Farbe += Licht · d · Resttransparenz
+        Resttransparenz *= exp(-d · Schritt)
+```
+
+Deshalb ist die linke obere Seite jeder Wolke hell und die Unterseite fällt in
+den Schatten — genau das macht sie dreidimensional.
+
+Zwei Dinge, die beim ersten Versuch schiefgingen:
+
+- **Eine Wolke aus nichts.** Die Maske war `(1-r)^k`, was nur in einem einzigen
+  Punkt 1 erreicht; multipliziert mit dem Rauschen lag das ganze Feld unter der
+  Schwelle und der erste Render hatte 0,5 % mittlere Deckung. Jetzt hat die
+  Maske ein Plateau und fällt erst in der äusseren Schale ab.
+- **Die Farbe.** Weiss ist auf Elfenbein unsichtbar. Was man von einer echten
+  Wolke gegen hellen Dunst sieht, ist ihre beschattete Kontur — also liegt der
+  helle Ton knapp über der Bandfarbe und der Schatten trägt die Form.
+
+### Warum es nach Flug aussieht
+
+Drei Dinge, alle gemessen (`sky.js`):
+
+1. **Richtung.** Die Nase zeigt nach oben, also ziehen die Wolken nach **unten**.
+   Gemessen: 10 von 10 nach unten, 0 nach oben — eine, die nach oben zöge, läse
+   sich als Sinkflug.
+2. **Parallaxe.** Nahe Wolken müssen schneller sein als ferne, sonst ist es eine
+   flache Tapete. Gemessen: fern 63 px, nah 129 px in 1,4 s → **Faktor 2,04**.
+3. **Divergenz.** Was nah an der Kamera ist, läuft beim Vorbeiziehen nach aussen
+   und wird grösser. Die nahen Schleier driften deshalb vom Zentrum weg und
+   wachsen um bis zu 34 %, die fernen um 5 %.
+
+Die nahe Ebene liegt **vor** dem Flugzeug (z 2, im DOM hinter ihm) — eine Ebene
+nur dahinter wäre eine Kulisse; erst etwas, das davor vorbeizieht, setzt das
+Flugzeug ins Wetter hinein. Über der Überschrift ist sie ausmaskiert: ein
+Schleier über einem Bild ist Atmosphäre, derselbe Schleier über Wörtern ist ein
+grauer Wisch — genau das machte der erste Durchgang.
+
+### Das Flugzeug bewegt sich jetzt, aber richtig
+
+Eine Verfolgungsaufnahme hält das Flugzeug fast still und lässt die Welt laufen —
+das ist die Aufgabe der Wolken. Dazu kommt nur das bisschen, das ein Flugzeug im
+Bild wandert: **vier Pixel hoch, zwei zur Seite, über neun Sekunden.** Keine
+Drehung, keine Skalierung. Die frühere Fassung kippte und atmete, und ein
+schräges, pulsierendes Foto sah aus wie ein Spielzeug, das jemand schwenkt.
+
+`trail.js` prüft das jetzt an der **Form der Matrix** statt an „bewegt sich
+nicht": Skalierung 1,000/1,000, Scherung 0,000/0,000, Versatz unter 4/6 px.
+
+### Kantenlicht eine Stufe heller
+
+Nur die Helligkeit, nicht die Breite: Grundlinie von .30/.44 auf .46/.66, der
+wandernde Schein auf volle Deckung und von 34 % auf 40 % Höhe. Gemessen an den
+sieben Höhen zwischen 12 % und 82 % steigt der Abstand zur Seite von **62–169**
+auf **106–209** Stufen. Ein Pixel breit bleibt es, und der Schein bleibt auf die
+Linie beschnitten — breiter machen oder den Halo zurückgeben war genau das, was
+die erste Fassung wie einen Schmierstreifen aussehen liess.
+
+Kosten insgesamt: 37 KB, lazy geladen. Die Seite wiegt danach 6495 statt 6453 KB.

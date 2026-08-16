@@ -1680,6 +1680,18 @@
     </section>`).join('');
   }
 
+  /* One cloud layer. Every value that makes a cloud feel near or far is a
+     number on its own row, so the whole sky can be re-tuned by reading a table
+     instead of hunting through CSS. The sprites themselves were raymarched
+     offline — see scripts/render-clouds/clouds.py. */
+  function sky(rows, cls){
+    return `<span class="flySky flySky--${cls}" aria-hidden="true">${rows.map(
+      ([w,l,dur,delay,op,blur,drift,s0,s1,n])=>
+      `<img src="./images/clouds/cloud-${n}.webp" alt="" loading="lazy" decoding="async"
+            style="--w:${w}%;--l:${l}%;--d:${dur}s;--dl:${delay}s;--o:${op};--b:${blur}px;--x:${drift}px;--s0:${s0};--s1:${s1}">`
+    ).join('')}</span>`;
+  }
+
   function vHome(){
     const top=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,6);
     return `${appbar({})}
@@ -1797,6 +1809,25 @@
     </section>
 
     <section class="flyBand">
+      ${/* The sky. Clouds stream from the top of the band to the bottom, which
+            is backwards relative to an aircraft whose nose points up — that is
+            what makes it read as flight rather than hovering. Depth comes from
+            the numbers, not from more elements: the ones far below are small,
+            pale, soft and slow, the ones near the camera are large, quick and
+            grow as they pass. Everything below the aircraft sits in the first
+            layer; the second crosses in front of it. */''}
+      ${sky([
+        // w%  left%  sec  delay  opac blur drift  scale from → to  sprite
+        // far and low: small, pale, soft, slow, barely diverging
+        [ 26,   4,  36,  -5,  .42, 1.3,  -8, 1.00, 1.05, 1],
+        [ 22,  66,  32, -21,  .38, 1.4,   9, 1.00, 1.05, 3],
+        [ 30, -10,  30, -13,  .46, 1.1, -12, 1.00, 1.07, 2],
+        [ 25,  44,  34, -27,  .40, 1.2,   6, 1.00, 1.06, 4],
+        // mid: the altitude the aircraft is at — bigger, clearer, quicker
+        [ 40, -16,  21,  -3,  .62,  .6, -26, 1.00, 1.16, 1],
+        [ 36,  62,  23, -16,  .58,  .6,  30, 1.00, 1.14, 3],
+        [ 46,  22,  19, -11,  .60,  .5,  10, 1.00, 1.18, 2],
+      ],'far')}
       <div class="flyBand__head">
         <div class="eyebrow">${t('flyEyebrow')}</div>
         <h2 class="flyBand__title">${t('flyTitle')}</h2>
@@ -1814,6 +1845,17 @@
         </span>
         <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1111">
       </div>
+      ${/* Two veils pass in FRONT of the aircraft. One layer of cloud behind it
+            is a backdrop; something crossing in front is what puts the aircraft
+            inside the weather rather than on top of a picture of it. Fast, wide
+            and faint, because that is how near cloud reads from a cockpit. */''}
+      ${sky([
+        // near: wide, fast, blurred, and splaying outward as they sweep past —
+        // divergence is what perspective does to anything close to the camera
+        [ 82, -30, 10.5, -2,  .42, 2.2, -46, 1.06, 1.34, 4],
+        [ 70,  46, 13.5, -7,  .34, 2.6,  50, 1.06, 1.28, 4],
+        [ 60, -12, 16.0,-11,  .28, 3.0, -34, 1.06, 1.24, 1],
+      ],'near')}
       <div class="flyTicker" aria-hidden="true">
         ${(()=>{ const half=[...REGIONS.map(r=>r.name[LANG]||r.name.en),
                              ...EXCURSIONS.map(e=>e.n[LANG]||e.n.en)]
