@@ -499,3 +499,37 @@ gemessen: 0 dekodierte Tonbytes bei beiden.
 
 Ein neuer Clip ist eine Zeile in `CLIPS` plus drei Zeilen Text pro Sprache. Die
 beiden ffmpeg-Aufrufe stehen im Kommentar darüber.
+
+## 18. Nachgeprüft: kein Ton ausser im Intro
+
+Auf Nachfrage die ganze Kette durchgemessen, nicht nur die zwei neuen Clips.
+Ergebnis: **es war nichts zu ändern.** Vier voneinander unabhängige Prüfungen,
+zwei davon am Quelltext statt am Bildschirm — eine Seite, die ein Test nie
+öffnet, ist genau die Stelle, an der ein nicht stummes Video überlebt.
+
+**1 · Die Dateien.** Von fünf MP4 in `public/video` trägt genau eine eine
+Tonspur: `onlyone-hero-ocean-v1.mp4`, das Intro. Die anderen vier sind mit `-an`
+kodiert, sind also nicht bloss stumm geschaltet, sondern haben gar keinen Ton.
+
+**2 · Die Markup-Ebene.** Alle drei `<video>` im Projekt tragen das
+`muted`-Attribut — die beiden aus `app.js` (Erlebnis-Banner und `bgVideo()`) und
+das Intro in `index.html`. Das Attribut zählt, nicht nur die Eigenschaft: ein
+Medienelement, das neu erzeugt oder neu geladen wird, fällt auf das Attribut
+zurück, während eine im Skript gesetzte Eigenschaft verloren geht.
+
+**3 · Wer überhaupt entstummen darf.** Acht Stellen im Quelltext setzen
+`.muted = false`, `.volume` oder entfernen das Attribut — alle acht liegen im
+ersten IIFE (Zeile 1–618, das Intro-Modul) und alle acht sprechen `video` an,
+das in Zeile 41 an `#heroVideo` gebunden ist. Im Plattform-Modul kommt keine
+einzige vor. Es gibt ausserdem kein `<audio>`, kein `new Audio`, keinen
+`AudioContext` und keine einzige Audiodatei im Projekt.
+
+**4 · Die Übergabe.** Der wirkliche Fehlerfall wäre, dass das Intro unter der
+Plattform weiterläuft. Also im Test den Ton eingeschaltet, übergeben, nachgesehen:
+pausiert, stumm, `muted`-Attribut wieder da, Position auf 0. Danach die drei
+Seiten mit Video abgelaufen — Startseite (beide Hochformat-Clips),
+VIP-Ausflüge (Kopfvideo) und die Bestätigungsseite, die erst nach einer echten
+Anfrage durch den Wizard existiert. Alle vier Elemente stumm, Attribut gesetzt,
+**0 dekodierte Tonbytes**.
+
+Der Test heisst `noton.js` und prüft alle vier Ebenen in einem Lauf.
