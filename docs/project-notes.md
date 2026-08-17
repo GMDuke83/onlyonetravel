@@ -503,12 +503,12 @@ beiden ffmpeg-Aufrufe stehen im Kommentar darüber.
 ## 18. Nachgeprüft: kein Ton ausser im Intro
 
 Auf Nachfrage die ganze Kette durchgemessen, nicht nur die zwei neuen Clips.
-Ergebnis: **es war nichts zu ändern.** Vier voneinander unabhängige Prüfungen,
+Ergebnis: **Stand aktualisiert: alle Videos sind physisch ohne Tonspur.** Vier voneinander unabhängige Prüfungen,
 zwei davon am Quelltext statt am Bildschirm — eine Seite, die ein Test nie
 öffnet, ist genau die Stelle, an der ein nicht stummes Video überlebt.
 
 **1 · Die Dateien.** Von fünf MP4 in `public/video` trägt genau eine eine
-Tonspur: `onlyone-hero-ocean-v2.mp4`, das Intro. Die anderen vier sind mit `-an`
+Keine Tonspur: `onlyone-hero-ocean-v3.mp4` und die anderen Videos sind mit `-an`
 kodiert, sind also nicht bloss stumm geschaltet, sondern haben gar keinen Ton.
 
 **2 · Die Markup-Ebene.** Alle drei `<video>` im Projekt tragen das
@@ -876,3 +876,52 @@ statt das Bild zu beschneiden** — die Aufnahmen sind für 9:16 komponiert, ein
 Beschnitt nimmt die Komposition auseinander. Neben dem Bild erscheint dann das
 Elfenbein des Abschnitts, sodass der schmale Fall wie eine Karte wirkt und nicht
 wie ein Fehler. Gemessen: 654 px Bildhöhe bei 702 px Fenster, 466 bei 514.
+
+## 25. Startseite: Türkiye-weite Struktur und klare Bildthemen
+
+Die Startseite wurde neu geordnet, damit die Marke nicht mehr wie ein Antalya-
+Katalog wirkt. Die öffentliche Dramaturgie ist jetzt bewusst kürzer:
+
+**Hero → Reisewelten → Destinationen → VIP Assistent → handverlesene Unterkünfte → ausgewählte Erlebnisse → Abschluss-CTA.**
+
+Vier Reisewelten bilden den Kundenvorschlag direkt ab: **Strandresorts, Villen,
+Gruppenreisen / thematische Reisen und Event-Management**. Jede Reisewelt öffnet
+eine eigene Editorial-Seite. Strandresorts und Villen führen von dort optional
+in die passende Unterkunftssuche; Gruppenreisen führen zu den Touren;
+Event-Management zum VIP Assistenten.
+
+Die frühere Startseiten-Sektion „Regionen“ wurde durch eine Türkiye-weite
+Destinationsebene ersetzt: **Antalya, Bodrum, Fethiye & Ölüdeniz, Istanbul,
+Kappadokien, Çeşme & Alaçatı**. Die alten Antalya-Unterregionen bleiben in der
+Unterkunftssuche erhalten, wo sie fachlich hingehören.
+
+### Hero
+
+- weiterhin **TÜRKİYE – Die schönsten Adressen.**
+- nur noch drei starke Hero-Fotos
+- kein Glow mehr
+- Glas-/Dunkel-Layer deutlich reduziert
+- sehr langsame, kaum sichtbare Foto-Bewegung statt statischem Bild
+- CTA zum VIP Assistenten
+- zusätzliche Regeln für kurze Smartphone-Displays
+
+### Bilder
+
+Die Startseite verwendet keine identischen Motive mehr für verschiedene Themen.
+Neue getrennte Asset-Gruppen liegen in:
+
+- `public/images/worlds/`
+- `public/images/destinations/`
+- `public/images/home-experiences/`
+
+Strand, Villa, Gruppenreise und Event haben klar voneinander unterscheidbare
+Bildwelten. Die Destinationen verwenden ebenfalls sechs unterschiedliche Motive;
+die vier Homepage-Erlebnisse zeigen Yacht, Pamukkale, Ephesos und VIP-Transfer.
+
+### Sprache
+
+Die Startsprache wird aus `navigator.languages` / `navigator.language` erkannt.
+Eine manuell gewählte Sprache bleibt im gespeicherten Zustand und hat beim
+nächsten Aufruf Vorrang. Es gibt keine automatische Umleitung ukrainischer oder
+anderer Systemsprachen auf Russisch mehr. Nicht unterstützte Systemsprachen
+fallen aktuell auf Englisch zurück.

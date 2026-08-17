@@ -8,6 +8,22 @@ Deliberately not a booking-portal look.
 The cinematic intro is the entrance; behind it sits the booking platform —
 hotel discovery, requests, individual offers, payment and a staff back office.
 
+The public home experience is now structured as:
+
+`Hero → travel worlds → Türkiye-wide destinations → VIP assistant → handpicked stays → selected experiences`
+
+The four primary travel worlds are **Beach resorts, Villas, Group tours / themed
+journeys, and Event management**. Each has its own editorial entry page instead
+of being just another small filter tile. The home destination layer is Türkiye-
+wide (Antalya, Bodrum, Fethiye & Ölüdeniz, Istanbul, Cappadocia, Çeşme & Alaçatı),
+while the existing Antalya-area region data remains available inside the actual
+accommodation search.
+
+The initial UI language is detected from the visitor's device/browser language
+for the currently supported languages (`ru`, `de`, `en`). A language explicitly
+chosen in the menu is stored and takes precedence on later visits; unsupported
+system languages fall back to English.
+
 The current development phase targets **smartphones only**. Desktop comes later —
 on a large screen the app is framed as a device rather than stretched.
 
@@ -40,11 +56,15 @@ onlyonetravel/
 │   ├── css/app.css                intro styles + platform styles
 │   ├── js/app.js                  intro controller + platform application
 │   ├── video/
-│   │   ├── onlyone-hero-ocean-v2.mp4   intro hero — with ocean audio
+│   │   ├── onlyone-hero-ocean-v3.mp4   intro hero — silent
 │   │   └── onlyone-marina-v1.mp4       platform banner — silent by design
 │   ├── images/
-│   │   ├── hotels/                     hotel & region imagery
-│   │   └── *.webp                      video posters
+│   │   ├── hero/                       3-image cinematic hero rotation
+│   │   ├── worlds/                     4 distinct travel-world images
+│   │   ├── destinations/               Türkiye-wide destination imagery
+│   │   ├── home-experiences/           selected homepage experiences
+│   │   ├── hotels/                     hotel & Antalya-region imagery
+│   │   └── *.webp                      service imagery / video posters
 │   ├── icons/
 │   ├── _headers                   Cloudflare Pages cache/mime rules
 │   └── manifest.webmanifest
@@ -228,14 +248,14 @@ and payment status.
 
 ## Hero video
 
-`public/video/onlyone-hero-ocean-v2.mp4`
+`public/video/onlyone-hero-ocean-v3.mp4`
 
 | | |
 |---|---|
 | Format | MP4 · H.264 High@4.0 · **yuv420p** |
 | Resolution | 720 × 1280 (portrait, mobile-native) |
 | Duration | 8.0 s |
-| Audio | AAC-LC 44.1 kHz stereo — the real ocean sound |
+| Audio | none — silent by design |
 | `faststart` | yes (`moov` before `mdat`) |
 | Size | ~2.2 MB |
 
@@ -259,9 +279,9 @@ If you replace the hero, encode it like this:
 ffmpeg -i input.mp4 \
   -c:v libx264 -profile:v high -level 4.0 -pix_fmt yuv420p \
   -crf 25 -preset slower \
-  -c:a aac -b:a 112k -ar 44100 -ac 2 \
+  -an \
   -movflags +faststart \
-  public/video/onlyone-hero-ocean-v2.mp4
+  public/video/onlyone-hero-ocean-v3.mp4
 ```
 
 `yuv420p` and `+faststart` are not optional — without them the video either
@@ -271,29 +291,10 @@ fails to decode on iOS or refuses to start until fully downloaded.
 
 ## Audio
 
-The ocean is the **video's own audio track**. There is no synthesised
-Web Audio noise anywhere in the app (the prototype simulated surf with a
-filtered noise buffer because its video was silent — that code is removed).
-
-Browsers only allow unmuted playback after a user gesture, so:
-
-1. **On load** — the hero autoplays `muted` (as required by every mobile browser).
-2. **First tap anywhere on the hero** — audio unlocks, and the intro replays
-   from `0:00` so the sequence is experienced with the ocean from the start.
-3. The sound button (top right) toggles it afterwards.
-
-### Sound stops when the intro is left
-
-Leaving the intro always does three things, in this order: **pause → mute →
-rewind to 0**. The ocean can never bleed into page two. Page two's own banner
-video has no audio track, so it is silent regardless.
-
-### Returning to the intro
-
-The circular-arrow button in the main header replays the intro. It resets the
-video to `0:00`, the countdown back to `3`, and clears the end title. If sound
-was unlocked before, it comes back — that return is itself a user gesture, so
-the browser allows it.
+All website videos are **silent by design**. The MP4 files used by the intro,
+VIP welcome, yacht, excursions and confirmation flows carry no audio track,
+so no browser can unexpectedly unmute them. The intro remains `muted` for
+maximum autoplay compatibility on iOS and Android.
 
 ---
 

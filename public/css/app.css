@@ -708,7 +708,7 @@ svg{
 .iconBtn.is-fav svg{fill:currentColor}
 
 /* --- platform hero -------------------------------------------------------- */
-.pHero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ground-2)}
+.pHero{position:relative;min-height:calc(100svh - var(--nav-h));display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--ground-2)}
 .pHero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* The slides get their own stacking context, so the z-index they trade among
    themselves during a handover stays inside this box and can never climb over
@@ -727,99 +727,38 @@ svg{
    than one, since a keyframe's timing function applies to every property in it. */
 .pHero__slides .pHero__img{
   opacity:0;
-  animation-name:heroSlide,heroLift;
-  animation-timing-function:ease-in-out,step-end;
-  animation-iteration-count:infinite;
-  animation-fill-mode:both;
-  will-change:opacity;
+  animation-name:heroSlide,heroLift,heroFloat;
+  animation-timing-function:ease-in-out,step-end,ease-in-out;
+  animation-iteration-count:infinite,infinite,infinite;
+  animation-fill-mode:both,both,both;
+  will-change:opacity,transform;
 }
-/* --------------------------------------------------------------------------
-   Hero glow
-
-   Two warm blooms that drift slowly behind the type. They are `screen`-blended,
-   which is the whole reason it reads as light rather than paint: screen can only
-   lighten, so a bloom over an already bright part of a photograph adds almost
-   nothing and one over a shadow lifts it. A normal-blended gradient of the same
-   colour is a greasy smear at any opacity.
-
-   They sit above the dark glass (z 1, later in the DOM) and below the words
-   (z 2). Under the glass the glass simply dimmed them; over the words they would
-   have washed the type.
-
-   Each is a radial gradient with no hard stop anywhere — a bloom with an edge
-   is a disc. Transform and opacity only, so the phone composites them.
-   -------------------------------------------------------------------------- */
-.pHero__glow{
-  position:absolute;z-index:1;pointer-events:none;
-  border-radius:50%;
-  mix-blend-mode:screen;
-  will-change:transform,opacity;
+@keyframes heroFloat{
+  0%{transform:scale(1.025) translate3d(-.45%, .25%, 0)}
+  50%{transform:scale(1.050) translate3d(.35%, -.30%, 0)}
+  100%{transform:scale(1.035) translate3d(.50%, .18%, 0)}
 }
-.pHero__glow--a{
-  left:-24%;top:16%;width:86%;aspect-ratio:1;
-  background:radial-gradient(circle,
-    rgba(255,206,132,.34) 0%, rgba(255,190,110,.16) 38%,
-    rgba(255,178,96,.05) 62%, transparent 78%);
-  animation:heroGlowA 26s ease-in-out infinite;
-}
-.pHero__glow--b{
-  right:-30%;top:44%;width:104%;aspect-ratio:1;
-  background:radial-gradient(circle,
-    rgba(255,226,176,.26) 0%, rgba(250,196,124,.12) 42%,
-    rgba(240,180,110,.04) 66%, transparent 80%);
-  animation:heroGlowB 34s ease-in-out infinite;
-}
-@keyframes heroGlowA{
-  0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.72}
-  50%    {transform:translate3d(7%,-5%,0) scale(1.16);opacity:1}
-}
-@keyframes heroGlowB{
-  0%,100%{transform:translate3d(0,0,0) scale(1.08);opacity:.62}
-  50%    {transform:translate3d(-8%,6%,0) scale(.94);opacity:.95}
-}
-/* The country word gets its own halo, breathing on a third clock so the screen
-   never pulses in unison. drop-shadow rather than text-shadow because the word
-   is painted through a background-clip, and text-shadow would draw behind the
-   clip instead of around the letters. */
-.pHero__script{
-  animation:scriptGlow 11s ease-in-out infinite;
-}
-@keyframes scriptGlow{
-  0%,100%{filter:drop-shadow(0 2px 5px rgba(0,0,0,.55)) drop-shadow(0 3px 20px rgba(0,0,0,.45))
-                 drop-shadow(0 0 10px rgba(240,196,120,.16))}
-  50%    {filter:drop-shadow(0 2px 5px rgba(0,0,0,.55)) drop-shadow(0 3px 20px rgba(0,0,0,.45))
-                 drop-shadow(0 0 22px rgba(246,208,140,.44))}
-}
-@media (prefers-reduced-motion:reduce){
-  .pHero__glow{animation:none}
-  .pHero__script{animation:none}
-}
-
 /* Dark glass over the slideshow: a tint plus a hair of blur, so the words sit
    on something solid without the photographs turning to mush. It is one layer
    over the whole hero rather than a panel behind the text — a panel drew its
    own edges across the picture. */
 .pHero__glassLayer{
   position:absolute;inset:0;z-index:1;pointer-events:none;
-  /* Tint only, no blur. A backdrop-filter here blurred the photographs
-     themselves — the one thing on this screen that has to look sharp. The
-     gradient alone carries the type, and it costs the picture nothing but a
-     little light. */
   background:linear-gradient(180deg,
-    rgba(14,10,7,.50) 0%,
-    rgba(14,10,7,.36) 30%,
-    rgba(14,10,7,.56) 64%,
-    rgba(14,10,7,.82) 100%);
+    rgba(14,10,7,.14) 0%,
+    rgba(14,10,7,.06) 30%,
+    rgba(14,10,7,.16) 64%,
+    rgba(14,10,7,.30) 100%);
 }
 @media (prefers-reduced-motion:reduce){
-  .pHero__slides .pHero__img{animation:none}
+  .pHero__slides .pHero__img{animation:none;transform:none}
   .pHero__slides .pHero__img:first-child{opacity:1}
 }
 .pHero__scrim{
   position:absolute;inset:0;
   background:linear-gradient(180deg,
-    rgba(20,15,10,.56) 0%, rgba(20,15,10,.08) 28%,
-    rgba(20,15,10,.40) 62%, rgba(20,15,10,.96) 100%);
+    rgba(20,15,10,.20) 0%, rgba(20,15,10,.01) 30%,
+    rgba(20,15,10,.14) 62%, rgba(20,15,10,.60) 100%);
 }
 /* The copy sits on a frosted slab. Over a bright, busy photograph a text
    shadow alone was not enough — the eyebrow and the sub-line disappeared into
@@ -891,6 +830,15 @@ svg{
   text-shadow:0 1px 3px rgba(0,0,0,.5), 0 2px 18px rgba(0,0,0,.55);
 }
 .pHero__sub{margin:15px 0 0;font-size:15.5px;line-height:1.55;max-width:32ch;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 14px rgba(0,0,0,.5)}
+.pHero__cta{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:20px;padding:0 0 8px;border:0;border-bottom:1px solid rgba(220,184,102,.9);
+  background:none;color:var(--gold-light);
+  font-size:12px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;
+  text-shadow:0 1px 14px rgba(0,0,0,.45);
+}
+.pHero__cta svg{width:16px;height:16px;transform:translateY(-.5px)}
+.pHero__cta:active{opacity:.74}
 .pHero__glass{
   margin-top:22px;padding:15px 0 0;
   border-top:1px solid rgba(255,255,255,.16);
@@ -898,6 +846,124 @@ svg{
 .trust{margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
 .trust li{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--txt);list-style:none;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 14px rgba(0,0,0,.5)}
 .trust svg{width:15px;height:15px;flex:0 0 15px;color:var(--gold);stroke-width:2.4}
+
+
+/* Short phones: keep the hero hierarchy clear without crowding the bottom nav. */
+@media (max-height:720px){
+  .pHero__script{font-size:clamp(28px,8.4vw,38px);margin-bottom:0}
+  .pHero__body{margin-bottom:8svh;padding-top:12px;padding-bottom:14px}
+  .pHero__title{font-size:clamp(29px,8.6vw,37px)}
+  .pHero__sub{font-size:13.5px;line-height:1.45;margin-top:11px}
+  .pHero__cta{font-size:10.5px;margin-top:14px}
+}
+
+/* ========================================================================== 
+   Home editorial structure — one visual language, distinct chapters.
+   ========================================================================== */
+.homeEditorialHead{padding:32px calc(20px + var(--sar)) 18px calc(20px + var(--sal))}
+.homeEditorialHead h2{margin:6px 0 0;font-family:var(--display);font-size:28px;line-height:1.06;letter-spacing:-.025em;font-weight:600}
+.homeEditorialHead--row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.homeTextLink{border:0;background:none;padding:7px 0;color:var(--gold-ink);font-size:10px;font-weight:650;letter-spacing:.14em;text-transform:uppercase}
+.homeTextLink--light{color:var(--gold-light)}
+
+.travelWorlds{background:#15100c;color:#fff;padding:6px 0 42px;border-top:1px solid rgba(255,255,255,.05)}
+.travelWorlds .eyebrow{color:var(--gold-light)}
+.travelWorlds__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}
+.travelWorlds__rail::-webkit-scrollbar{display:none}
+.travelWorld{position:relative;flex:0 0 min(82vw,340px);aspect-ratio:4/5;border:0;padding:0;border-radius:5px;overflow:hidden;background:#251d17;text-align:left;scroll-snap-align:start;box-shadow:0 18px 44px rgba(0,0,0,.28)}
+.travelWorld img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.015);transition:transform .8s var(--ease)}
+.travelWorld:active img{transform:scale(1.045)}
+.travelWorld__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.03) 34%,rgba(10,8,6,.26) 58%,rgba(10,8,6,.92) 100%)}
+.travelWorld__copy{position:absolute;left:18px;right:18px;bottom:18px;display:grid;grid-template-columns:1fr auto;align-items:end;gap:5px 12px}
+.travelWorld__copy b{grid-column:1/2;font-family:var(--display);font-size:27px;line-height:1;font-weight:600;color:#fff;letter-spacing:-.02em}
+.travelWorld__copy i{grid-column:1/2;font-style:normal;color:var(--gold-light);font-size:11px;line-height:1.35;letter-spacing:.07em;text-transform:uppercase}
+.travelWorld__copy>span{grid-column:2;grid-row:1/3;align-self:center;color:var(--gold-light)}
+.travelWorld__copy svg{width:18px;height:18px}
+
+.destinationHome{background:var(--ground-2);padding:6px 0 44px;border-bottom:1px solid var(--hair-soft)}
+.destinationHome__rail{display:flex;gap:13px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal))}
+.destinationHome__rail::-webkit-scrollbar{display:none}
+.destinationHome__card{position:relative;flex:0 0 min(68vw,278px);aspect-ratio:4/5;border:0;border-radius:4px;overflow:hidden;background:var(--ground-3);padding:0;text-align:left;scroll-snap-align:start;box-shadow:0 12px 30px rgba(44,32,20,.08)}
+.destinationHome__card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
+.destinationHome__card:active img{transform:scale(1.035)}
+.destinationHome__shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 44%,rgba(12,9,7,.78) 100%)}
+.destinationHome__copy{position:absolute;left:15px;right:15px;bottom:14px;color:#fff}
+.destinationHome__copy b{display:block;font-family:var(--display);font-size:21px;font-weight:600;line-height:1.08}
+.destinationHome__copy i{display:block;margin-top:5px;font-style:normal;color:rgba(255,255,255,.82);font-size:10.5px;letter-spacing:.06em}
+
+.homeConcierge{position:relative;min-height:540px;overflow:hidden;background:#16100d;color:#fff}
+.homeConcierge>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%}
+.homeConcierge__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,11,8,.15),rgba(15,11,8,.22) 35%,rgba(15,11,8,.88) 100%)}
+.homeConcierge__copy{position:absolute;z-index:1;left:calc(22px + var(--sal));right:calc(22px + var(--sar));bottom:30px}
+.homeConcierge__copy .eyebrow{color:var(--gold-light)}
+.homeConcierge__copy h2{font-family:var(--display);font-size:34px;line-height:1.04;margin:8px 0 0;font-weight:600;letter-spacing:-.025em}
+.homeConcierge__copy p{max-width:31ch;margin:12px 0 0;color:rgba(255,255,255,.84);font-size:13.5px;line-height:1.55}
+.homeConcierge__actions{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+.homeConcierge__link{display:inline-flex;align-items:center;gap:7px;background:none;border:0;padding:10px 0;color:#fff;font-size:10px;font-weight:650;letter-spacing:.12em;text-transform:uppercase}
+.homeConcierge__link svg{width:15px;height:15px}
+
+.homeStays{padding-top:14px;padding-bottom:34px}
+.homeStays .section{margin-top:0}
+
+.homeExperiences{padding:8px 0 48px;background:linear-gradient(180deg,#17110c,#0f0b08);color:#fff}
+.homeExperiences .eyebrow{color:var(--gold-light)}
+.homeExperiences__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal))}
+.homeExperiences__rail::-webkit-scrollbar{display:none}
+.homeExperience{position:relative;flex:0 0 min(78vw,320px);aspect-ratio:4/3;border:0;border-radius:4px;overflow:hidden;padding:0;background:#211913;text-align:left;scroll-snap-align:start}
+.homeExperience img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
+.homeExperience:active img{transform:scale(1.04)}
+.homeExperience__shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(12,9,7,.82) 100%)}
+.homeExperience__copy{position:absolute;left:15px;right:15px;bottom:14px;color:#fff}
+.homeExperience__copy b{display:block;font-family:var(--display);font-size:20px;font-weight:600;line-height:1.08}
+.homeExperience__copy i{display:block;margin-top:5px;font-style:normal;color:var(--gold-light);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase}
+
+.homeFinalCta{padding:48px calc(22px + var(--sar)) 54px calc(22px + var(--sal));background:var(--ground-2);text-align:center;border-top:1px solid var(--hair-soft)}
+.homeFinalCta h2{font-family:var(--display);font-size:31px;line-height:1.05;margin:9px 0 0;font-weight:600}
+.homeFinalCta p{margin:13px auto 22px;max-width:31ch;font-size:13.5px;line-height:1.6;color:var(--txt-2)}
+.homeFinalCta .btn{max-width:300px;margin:0 auto}
+
+
+.destinationIndex{padding:18px 0 42px;background:var(--ground-2)}
+.destinationIndex__intro{padding:18px calc(20px + var(--sar)) 24px calc(20px + var(--sal))}
+.destinationIndex__intro h1{font-family:var(--display);font-size:34px;line-height:1.02;margin:8px 0 0;font-weight:600;letter-spacing:-.03em}
+.destinationIndex__intro p{margin:12px 0 0;max-width:34ch;font-size:13px;line-height:1.55;color:var(--txt-2)}
+.destinationIndex__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 calc(16px + var(--sar)) 0 calc(16px + var(--sal))}
+.destinationIndex__card{position:relative;aspect-ratio:4/5;border:0;border-radius:4px;overflow:hidden;padding:0;text-align:left;background:var(--ground-3)}
+.destinationIndex__card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
+.destinationIndex__card:active img{transform:scale(1.04)}
+.destinationIndex__shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(12,9,7,.82) 100%)}
+.destinationIndex__copy{position:absolute;left:12px;right:12px;bottom:11px;color:#fff}
+.destinationIndex__copy b{display:block;font-family:var(--display);font-size:18px;font-weight:600;line-height:1.05}
+.destinationIndex__copy i{display:block;margin-top:4px;font-style:normal;color:rgba(255,255,255,.8);font-size:9.5px;line-height:1.25}
+
+/* Category and destination detail pages. */
+.storyHero{position:relative;height:min(68svh,650px);min-height:440px;overflow:hidden;background:var(--ground-3);color:#fff}
+.storyHero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.storyHero__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,9,7,.10),rgba(12,9,7,.14) 38%,rgba(12,9,7,.78) 100%)}
+.storyHero__copy{position:absolute;left:calc(22px + var(--sal));right:calc(22px + var(--sar));bottom:26px}
+.storyHero__copy .eyebrow{color:var(--gold-light)}
+.storyHero__copy h1{font-family:var(--display);font-size:clamp(38px,11vw,52px);line-height:.98;font-weight:600;margin:8px 0 0;letter-spacing:-.035em}
+.storyHero__copy p{margin:10px 0 0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.86)}
+.storyIntro{padding:30px calc(22px + var(--sar)) 34px calc(22px + var(--sal));background:var(--ground-2);border-bottom:1px solid var(--hair-soft)}
+.storyIntro>p{font-family:var(--display);font-size:20px;line-height:1.45;margin:0;color:var(--txt)}
+.storyIntro .storyIntro__muted{font-family:var(--sans);font-size:12.5px;line-height:1.55;color:var(--txt-2);margin-top:12px}
+.storyActions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:24px}
+.storyRelated{padding-top:32px;padding-bottom:40px}
+.storyTiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px calc(18px + var(--sar)) 42px calc(18px + var(--sal));background:var(--ground-2)}
+.storyTile{position:relative;aspect-ratio:4/5;border:0;border-radius:4px;overflow:hidden;padding:0;text-align:left;background:var(--ground-3)}
+.storyTile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.storyTile:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(12,9,7,.78))}
+.storyTile span{position:absolute;z-index:1;left:12px;right:12px;bottom:11px;color:#fff}
+.storyTile b{display:block;font-family:var(--display);font-size:16px;line-height:1.08}
+.storyTile i{display:block;font-style:normal;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-light);margin-top:4px}
+.eventPromise{padding:42px calc(22px + var(--sar)) 48px calc(22px + var(--sal));background:#15100c;color:#fff}
+.eventPromise .eyebrow{color:var(--gold-light)}
+.eventPromise h2{font-family:var(--display);font-size:28px;line-height:1.08;margin:9px 0 0;font-weight:600}
+.eventPromise p{margin:14px 0 22px;color:rgba(255,255,255,.78);font-size:13px;line-height:1.6}
+
+@media (prefers-reduced-motion:reduce){
+  .travelWorld img,.destinationHome__card img,.homeExperience img{transition:none}
+}
 
 /* --- buttons -------------------------------------------------------------- */
 .btn{
@@ -1043,6 +1109,113 @@ svg{
 }
 .regionCard__txt b{display:block;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
 .regionCard__txt span{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);margin-top:5px}
+
+
+/* --- Home destination / excursion showcases ----------------------------- */
+.homeShowcase{
+  position:relative;
+  margin-top:64px;
+  padding:40px 0 46px;
+  overflow:hidden;
+}
+.homeShowcase--regions{
+  background:var(--ground-2);
+  border-top:1px solid var(--hair-soft);
+  border-bottom:1px solid var(--hair-soft);
+}
+.homeShowcase--excursions{
+  margin-top:72px;
+  padding-top:44px;
+  padding-bottom:52px;
+  background:linear-gradient(180deg,#17110C 0%,#0F0B08 100%);
+  color:#fff;
+}
+.homeShowcase__head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
+  padding:0 calc(20px + var(--sar)) 22px calc(20px + var(--sal));
+}
+.homeShowcase__title{
+  margin:6px 0 0;
+  font-family:var(--display);font-size:29px;line-height:1.08;
+  font-weight:600;letter-spacing:-.03em;
+}
+.homeShowcase__all{
+  flex:0 0 auto;
+  padding:8px 0 7px;
+  border:0;border-bottom:1px solid currentColor;background:none;
+  color:var(--gold-ink);
+  font-size:10px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;
+}
+.homeShowcase--excursions .eyebrow,
+.homeShowcase--excursions .homeShowcase__all{color:var(--gold-light)}
+.featureRail{
+  display:flex;gap:16px;
+  overflow-x:auto;scrollbar-width:none;
+  overscroll-behavior-x:contain;touch-action:pan-x pan-y;
+  scroll-snap-type:x proximity;
+  scroll-padding-inline:20px;
+  margin:0;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal));
+}
+.featureRail::-webkit-scrollbar{display:none}
+.featureCard{
+  position:relative;flex:0 0 auto;overflow:hidden;
+  border:0;border-radius:4px;padding:0;background:var(--ground-3);
+  text-align:left;scroll-snap-align:start;
+  box-shadow:0 12px 32px rgba(36,27,18,.08);
+  isolation:isolate;
+}
+.featureCard--region{
+  width:min(76vw,310px);
+  aspect-ratio:4/5;
+}
+.featureCard--excursion{
+  width:min(86vw,352px);
+  aspect-ratio:16/11;
+  box-shadow:0 18px 42px rgba(0,0,0,.28);
+}
+.featureCard img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.01);
+  transition:transform .7s var(--ease),filter .35s var(--ease);
+}
+.featureCard:active img{transform:scale(1.035)}
+.featureCard__shade{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,
+    rgba(12,9,6,.04) 24%,
+    rgba(12,9,6,.20) 54%,
+    rgba(12,9,6,.88) 100%);
+}
+.featureCard__copy{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:28px 20px 20px;color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.38);
+}
+.featureCard__copy b{
+  display:block;
+  font-family:var(--display);font-size:25px;line-height:1.05;
+  font-weight:600;letter-spacing:-.025em;
+}
+.featureCard__copy i{
+  display:block;margin-top:8px;
+  font-style:normal;font-size:11px;line-height:1.45;
+  letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.84);
+}
+.featureCard__copy small{
+  display:block;margin-top:10px;
+  font-size:9.5px;font-weight:650;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold-light);
+}
+.featureCard--excursion .featureCard__copy b{font-size:27px}
+.featureCard--excursion .featureCard__copy i{color:var(--gold-light)}
+@media (max-width:360px){
+  .featureCard--region{width:80vw}
+  .featureCard--excursion{width:88vw}
+  .featureCard__copy b{font-size:23px}
+}
+@media (prefers-reduced-motion:reduce){
+  .featureCard img{transition:none}
+}
 .chips{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-padding-inline:20px;margin-inline:-20px;padding-inline:20px;padding-bottom:4px}
 .chips::-webkit-scrollbar{display:none}
 .chip{
@@ -1075,8 +1248,8 @@ svg{
 }
 .tabbar--staff{background:rgba(8,41,60,.97)}
 .tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;padding:4px 1px;color:var(--txt-3);transition:color .25s;min-width:0}
-.tab__ic{display:grid;place-items:center;width:26px;height:26px}
-.tab svg{width:20px;height:20px}
+.tab__ic{display:grid;place-items:center;width:29px;height:29px}
+.tab svg{width:22px;height:22px}
 
 /* The concierge tab. Raised out of the bar and filled, because the offering is
    a named person handling the trip — that is the product, not a fifth
@@ -1101,7 +1274,7 @@ svg{
 .tab--hero .tab__dot{top:-14px;right:calc(50% - 22px);border:2px solid var(--ground-2);width:10px;height:10px}
 /* Not uppercased: Russian labels like "Мои поездки" are far wider in caps
    and broke out of the bar. */
-.tab span{font-size:9px;letter-spacing:.02em;line-height:1.15;text-align:center}
+.tab span{font-size:10px;font-weight:520;letter-spacing:.01em;line-height:1.12;text-align:center}
 .tab.is-on{color:var(--dark)}
 .tab.is-on svg{stroke-width:1.9}
 .tab__dot{position:absolute;top:1px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--gold-ink)}
@@ -1619,6 +1792,7 @@ select.input option{background:#fff;color:var(--txt)}
 }
 
 .expBands{margin-top:44px}
+.expBands--homeTop{margin-top:0}
 .expBands__head{
   font-family:var(--display);
   font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
@@ -2277,3 +2451,132 @@ select.input option{background:#fff;color:var(--txt)}
   .vipDeck__panel p{font-size:12.5px;margin-top:7px}
   .vipDeck__panel .linkMore{margin-top:9px;font-size:10px}
 }
+
+
+/* ==========================================================================
+   Slim home — categories, excursions and VIP assistance first
+   ========================================================================== */
+.travelWorlds--focus{padding-bottom:28px}
+.homeEditorialHead__sub{
+  margin:8px 0 0;max-width:33ch;font-size:12.5px;line-height:1.55;color:var(--muted);
+}
+.homeEditorialHead--dark{color:#fff}
+.homeEditorialHead--dark .homeEditorialHead__sub{color:rgba(255,255,255,.68)}
+
+.homeVipFocus{
+  margin:0;padding:24px calc(20px + var(--sar)) 25px calc(20px + var(--sal));
+  background:#17110c;color:#fff;border-top:1px solid rgba(214,176,89,.22);border-bottom:1px solid rgba(214,176,89,.22);
+  display:grid;grid-template-columns:42px 1fr;gap:0 14px;align-items:start;
+}
+.homeVipFocus__icon{
+  width:42px;height:42px;border:1px solid rgba(214,176,89,.55);border-radius:50%;
+  display:grid;place-items:center;color:var(--gold-light);grid-row:1/3;
+}
+.homeVipFocus__icon svg{width:20px;height:20px}
+.homeVipFocus__copy .eyebrow{color:var(--gold-light)}
+.homeVipFocus__copy h2{margin:5px 0 0;font-family:var(--display);font-size:25px;line-height:1.08;font-weight:600}
+.homeVipFocus__copy p{margin:8px 0 0;font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.74)}
+.homeVipFocus__cta{
+  grid-column:2;margin-top:15px;width:max-content;display:inline-flex;align-items:center;gap:8px;
+  padding:0 0 7px;border:0;border-bottom:1px solid rgba(214,176,89,.7);background:none;color:var(--gold-light);
+  font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;
+}
+.homeVipFocus__cta svg{width:14px;height:14px}
+
+.homeExcFocus{padding:34px 0 38px;background:var(--ground-2)}
+.homeExcFocus .homeEditorialHead{padding-bottom:20px}
+.homeExcFocus__rail{
+  display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;
+  padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal));
+}
+.homeExcFocus__rail::-webkit-scrollbar{display:none}
+.homeExcCard{
+  position:relative;flex:0 0 min(78vw,320px);aspect-ratio:4/5;overflow:hidden;border:0;border-radius:4px;
+  padding:0;background:#17110c;text-align:left;scroll-snap-align:start;box-shadow:0 12px 30px rgba(36,27,18,.10);
+}
+.homeExcCard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.015);transition:transform .6s var(--ease)}
+.homeExcCard:active img{transform:scale(1.045)}
+.homeExcCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,10,7,.03) 35%,rgba(15,10,7,.80) 100%)}
+.homeExcCard__copy{position:absolute;left:18px;right:18px;bottom:17px;color:#fff}
+.homeExcCard__copy b{display:block;font-family:var(--display);font-size:23px;line-height:1.1;font-weight:600}
+.homeExcCard__copy i{display:block;margin-top:7px;font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light)}
+.homeExcCard__copy span{position:absolute;right:0;bottom:0;color:var(--gold-light)}
+.homeExcCard__copy span svg{width:17px;height:17px}
+
+.homeMotion{padding:34px 0 38px;background:linear-gradient(180deg,#15100c,#0d0a08);color:#fff}
+.homeMotion__rail{
+  display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;
+  padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal));
+}
+.homeMotion__rail::-webkit-scrollbar{display:none}
+.homeMotionCard{
+  position:relative;flex:0 0 min(72vw,294px);aspect-ratio:4/5;overflow:hidden;border:1px solid rgba(255,255,255,.09);
+  border-radius:4px;padding:0;background:#100d0a;text-align:left;scroll-snap-align:start;
+}
+.homeMotionCard>img,.homeMotionCard__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.homeMotionCard__video{z-index:1}
+.homeMotionCard__shade{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(12,9,7,.08) 28%,rgba(12,9,7,.82) 100%)}
+.homeMotionCard__copy{position:absolute;z-index:3;left:17px;right:17px;bottom:16px;color:#fff}
+.homeMotionCard__copy .eyebrow{color:var(--gold-light)}
+.homeMotionCard__copy b{display:block;margin-top:7px;font-family:var(--display);font-size:22px;line-height:1.12}
+.homeMotionCard__copy i{display:flex;align-items:center;gap:5px;margin-top:9px;font-style:normal;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-light)}
+.homeMotionCard__copy i svg{width:13px;height:13px}
+
+.homeServiceSlim{padding:34px calc(20px + var(--sar)) 38px calc(20px + var(--sal));background:var(--ground-2)}
+.homeServiceSlim .homeEditorialHead{padding:0 0 18px}
+.homeServiceSlim__grid{display:grid;gap:11px}
+.homeServiceCard{
+  position:relative;display:block;width:100%;height:138px;overflow:hidden;border:1px solid var(--hair-soft);border-radius:4px;
+  padding:0;background:#14100d;text-align:left;color:#fff;
+}
+.homeServiceCard--transfer{background:radial-gradient(circle at 80% 20%,rgba(181,139,55,.18),transparent 45%),linear-gradient(135deg,#16110d,#0c0907)}
+.homeServiceCard__word{position:absolute;left:18px;top:16px;font-family:var(--sans);font-size:clamp(25px,8vw,36px);font-weight:250;letter-spacing:.14em;color:rgba(214,176,89,.46)}
+.homeServiceCard--flight img{position:absolute;right:-8px;top:-36px;width:56%;height:190%;object-fit:contain;opacity:.88;transform:rotate(7deg)}
+.homeServiceCard--flight:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,9,7,.95) 0%,rgba(12,9,7,.50) 55%,rgba(12,9,7,.10) 100%)}
+.homeServiceCard__copy{position:absolute;z-index:2;left:18px;right:18px;bottom:16px}
+.homeServiceCard__copy b{display:block;max-width:60%;font-family:var(--display);font-size:20px;line-height:1.1}
+.homeServiceCard__copy i{display:flex;align-items:center;gap:5px;margin-top:8px;font-style:normal;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-light)}
+.homeServiceCard__copy i svg{width:12px;height:12px}
+
+.homeSecondaryLinks{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 calc(20px + var(--sar)) 30px calc(20px + var(--sal));background:var(--ground-2);
+}
+.homeSecondaryLinks button{
+  min-height:48px;padding:0 12px;border:1px solid var(--hair);border-radius:3px;background:transparent;color:var(--txt);
+  display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;
+}
+.homeSecondaryLinks button svg{width:13px;height:13px;color:var(--gold-ink)}
+
+@media (prefers-reduced-motion:reduce){
+  .homeExcCard img{transition:none}
+}
+
+
+/* Five curated offers, horizontal to keep the home page compact. */
+.homeOffers{padding:34px 0 40px;background:var(--ground)}
+.homeOffers .homeEditorialHead{padding-bottom:20px}
+.homeOfferRail{
+  display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;
+  scroll-snap-type:x proximity;overscroll-behavior-x:contain;
+  padding:0 calc(20px + var(--sar)) 4px calc(20px + var(--sal));
+}
+.homeOfferRail::-webkit-scrollbar{display:none}
+.homeOfferCard{
+  position:relative;flex:0 0 min(74vw,300px);border:0;padding:0;background:none;
+  text-align:left;scroll-snap-align:start;border-radius:4px;overflow:hidden;
+}
+.homeOfferCard__media{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--ground-3)}
+.homeOfferCard__media>img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.homeOfferCard:active .homeOfferCard__media>img{transform:scale(1.025)}
+.homeOfferCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,11,8,.02) 38%,rgba(15,11,8,.82) 100%)}
+.homeOfferCard__fav{
+  position:absolute;z-index:3;right:10px;top:10px;width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;border:1px solid rgba(255,255,255,.4);
+  background:rgba(15,11,8,.32);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)
+}
+.homeOfferCard__fav svg{width:16px;height:16px}
+.homeOfferCard__fav.is-on{color:var(--gold-light);border-color:rgba(220,184,102,.8)}
+.homeOfferCard__copy{position:absolute;left:16px;right:16px;bottom:15px;z-index:2;color:#fff}
+.homeOfferCard__copy .stars{display:block;color:var(--gold-light);font-size:10px;letter-spacing:.14em;margin-bottom:6px}
+.homeOfferCard__copy b{display:block;font-family:var(--display);font-size:20px;line-height:1.08;font-weight:600;text-shadow:0 2px 14px rgba(0,0,0,.46)}
+.homeOfferCard__copy i{display:block;margin-top:7px;font-style:normal;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:rgba(255,255,255,.82)}
