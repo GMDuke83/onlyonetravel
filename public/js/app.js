@@ -11,8 +11,9 @@
 
    Audio
    -----
-   All website videos are intentionally silent. The intro stays muted and
-   user gestures are used only to recover autoplay when a browser pauses it.
+   The intro contains the original ocean soundtrack. Browser-safe autoplay
+   starts muted; a user gesture or the sound button unlocks the soundtrack.
+   All videos inside the actual website remain intentionally silent.
    ========================================================================== */
 
 (function () {
@@ -57,15 +58,15 @@
     en: { kicker:'This is not just a trip',
           h:'This is your<br>Only One<em class="headline__script">Journey</em>',
           endT:'Your Journey<em>Begins Now</em>',
-          skip:'Skip', start:'Start Journey' },
+          skip:'Skip', start:'Start Journey', soundOn:'Enable ocean sound', soundOff:'Mute ocean sound' },
     de: { kicker:'Das ist nicht nur eine Reise',
           h:'Das ist deine<br>Only One<em class="headline__script">Journey</em>',
           endT:'Deine Reise<em>beginnt jetzt</em>',
-          skip:'Überspringen', start:'Reise starten' },
+          skip:'Überspringen', start:'Reise starten', soundOn:'Meeresrauschen einschalten', soundOff:'Meeresrauschen ausschalten' },
     ru: { kicker:'Это не просто поездка',
           h:'Это твоё<br>Only One<em class="headline__script">Journey</em>',
           endT:'Твоё путешествие<em>начинается сейчас</em>',
-          skip:'Пропустить', start:'Начать путешествие' }
+          skip:'Пропустить', start:'Начать путешествие', soundOn:'Включить шум моря', soundOff:'Выключить шум моря' }
   };
   function introLang(){
     try {
@@ -240,7 +241,8 @@
     var on = !video.muted && wantSound;
     soundToggle.classList.toggle('is-on', on);
     soundToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
-    soundToggle.setAttribute('aria-label', on ? 'Mute ocean sound' : 'Enable ocean sound');
+    var L = INTRO_I18N[introLang()] || INTRO_I18N.en;
+    soundToggle.setAttribute('aria-label', on ? L.soundOff : L.soundOn);
   }
 
   /* The tap still has to be discoverable — no browser starts audio on its own —
@@ -392,11 +394,19 @@
 
     resetSequence();
 
-    // Every website video stays silent, including replaying the intro.
-    wantSound = false;
-    video.setAttribute('muted', '');
-    video.defaultMuted = true;
-    video.muted = true;
+    // The intro may use its remembered soundtrack preference; site videos stay silent.
+    wantSound = loadSoundPref();
+    if (wantSound) {
+      video.removeAttribute('muted');
+      video.defaultMuted = false;
+      video.muted = false;
+      video.volume = 1;
+    } else {
+      video.setAttribute('muted', '');
+      video.defaultMuted = true;
+      video.muted = true;
+    }
+    reflectSoundUi();
     playFromStart();
   }
 
@@ -486,24 +496,45 @@
   var heroSource = video.querySelector('source');
   if (heroSource) heroSource.addEventListener('error', giveUpOnVideo);
 
-  /* --- silent intro gesture ---------------------------------------------
-     All site videos are intentionally silent. A tap only helps a browser that
-     has paused autoplay; it never restarts the sequence to unlock audio. */
+  /* --- first tap on the hero: unlock sound, replay with the ocean -------- */
   intro.addEventListener('click', function (event) {
     if (leaving || onMain) return;
-    if (event.target.closest('#tapStart, #skipIntro')) return;
-    nudgePlay();
+    if (event.target.closest('#soundToggle, #tapStart, #skipIntro')) return;
+
+    if (!audioUnlocked) {
+      enableSound();
+      resetSequence();
+      playFromStart();
+    } else {
+      nudgePlay();
+    }
   });
+
+  /* --- explicit sound toggle -------------------------------------------- */
+  if (soundToggle) {
+    soundToggle.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (video.muted) {
+        enableSound();
+        // Replay from 0:00 so sound and the cinematic intro always begin together.
+        resetSequence();
+        playFromStart();
+      } else {
+        wantSound = false;
+        saveSoundPref(false);
+        muteSound();
+      }
+    });
+  }
 
   /* --- autoplay fallback button ----------------------------------------- */
   if (tapStartBtn) {
     tapStartBtn.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
-      wantSound = false;
-      video.setAttribute('muted', '');
-      video.defaultMuted = true;
-      video.muted = true;
+      enableSound();
       resetSequence();
       playFromStart();
     });
@@ -552,12 +583,20 @@
 
   video.playsInline = true;
 
-  // Silent by design: do not use or restore any previous audio preference.
-  wantSound = false;
-  saveSoundPref(false);
-  video.setAttribute('muted', '');
-  video.defaultMuted = true;
-  video.muted = true;
+  // Autoplay starts browser-safe. A saved preference may be honoured on
+  // browsers that allow it; iOS falls back to muted and waits for a gesture.
+  wantSound = loadSoundPref();
+  if (wantSound) {
+    video.removeAttribute('muted');
+    video.defaultMuted = false;
+    video.muted = false;
+    video.volume = 1;
+  } else {
+    video.setAttribute('muted', '');
+    video.defaultMuted = true;
+    video.muted = true;
+  }
+  reflectSoundUi();
 
   playFromStart();
 
@@ -652,7 +691,7 @@
       guests:'Гости', searchBtn:'Найти жильё', recommended:'Рекомендуем', all:'Все',
       experiences:'Впечатления',
       focusExcursions:'Экскурсии и впечатления', focusExcursionsSub:'Лучшие идеи для вашей поездки — от Каппадокии до Эфеса.',
-      vipMoments:'ONLYONE в движении', vipMomentsSub:'Личные встречи и особенные моменты.',
+      vipMoments:'ONLYONE в движении', vipMomentsSub:'Групповые путешествия, частные события и особенные экскурсии в движении.',
       vipServices:'VIP-сервисы', vipServicesSub:'Трансфер и перелёт — организуем вместе с поездкой.',
       destinationsShort:'Направления', staysShort:'Подобрать жильё',
       travelWays:'Как вы хотите путешествовать?', destinations:'Направления', selectedExperiences:'Избранные впечатления',
@@ -672,6 +711,13 @@
       welcomeBody:'Личная встреча в аэропорту назначения — табличка с именем, короткий путь, без очередей.',
       yachtEyebrow:'Эксклюзив', yachtTitle:'Яхт-тур',
       yachtBody:'Лодка только для вас — маршрут, бухты и кухня по вашему желанию.',
+      groupsEyebrow:'Групповые путешествия', groupsTitle:'Каппадокия в группе',
+      groupsBody:'Небольшая группа, продуманный маршрут и общие впечатления — Каппадокия без массового туризма.',
+      eventEyebrow:'Особый повод', eventTitle:'Частный ужин',
+      eventBody:'Частный ужин и элегантный вечер — от сервировки до атмосферы всё организовано персонально.',
+      pamukkaleEyebrow:'Экскурсия', pamukkaleTitle:'Памуккале',
+      pamukkaleBody:'Спокойная премиальная экскурсия к белым террасам Памуккале — комфортно, красиво и без суеты.',
+      featuredOffer:'ONLYONE CHOICE', featuredMeta:'Частный пляж · VIP-трансфер по запросу', moreSelected:'Другие избранные предложения', finalCtaEyebrow:'ONLYONE · VIP', finalCtaTitle:'Расскажите только, как вы хотите путешествовать.', finalCtaBody:'Ваш VIP-ассистент соберёт проживание, трансферы и впечатления в одну персональную поездку.', finalCtaButton:'Начать с VIP-ассистентом',
       blockMore:'Подробнее', blockHow:'Как это работает',
       blockStep1:'Расскажите, как хотите путешествовать.',
       blockStep2:'Ваш VIP-ассистент соберёт предложение именно под эту поездку.',
@@ -783,7 +829,7 @@
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
       experiences:'Erlebnisse',
       focusExcursions:'Ausflüge & Erlebnisse', focusExcursionsSub:'Die besten Ideen für deine Reise – von Kappadokien bis Ephesos.',
-      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Persönlicher Empfang und besondere Momente.',
+      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Gruppenreisen, Event-Momente und besondere Ausflüge in Bewegung.',
       vipServices:'VIP-Services', vipServicesSub:'Transfer und Anreise organisieren wir passend zur Reise.',
       destinationsShort:'Destinationen', staysShort:'Unterkünfte entdecken',
       travelWays:'Wie möchtest du reisen?', destinations:'Destinationen', selectedExperiences:'Ausgewählte Erlebnisse',
@@ -803,6 +849,13 @@
       welcomeBody:'Persönlicher Empfang am Zielflughafen — Namensschild, kurzer Weg, kein Anstehen.',
       yachtEyebrow:'Exklusiv', yachtTitle:'Yacht-Tour',
       yachtBody:'Ein Boot nur für euch — Route, Buchten und Küche nach deinem Wunsch.',
+      groupsEyebrow:'Gruppenreisen', groupsTitle:'Kappadokien als Gruppenreise',
+      groupsBody:'Kleine Gruppen, begleitet und stilvoll geplant — gemeinsame Eindrücke statt Massentourismus.',
+      eventEyebrow:'Besonderer Anlass', eventTitle:'Private Dinner Events',
+      eventBody:'Ein stilvoller Abend mit gedeckter Tafel, Atmosphäre und diskreter Organisation bis ins Detail.',
+      pamukkaleEyebrow:'Ausflug', pamukkaleTitle:'Pamukkale-Ausflug',
+      pamukkaleBody:'Ein ruhiger Premium-Ausflug zu den weißen Terrassen von Pamukkale — angenehm geführt und entspannt geplant.',
+      featuredOffer:'ONLYONE CHOICE', featuredMeta:'Privatstrand · VIP Transfer auf Wunsch', moreSelected:'Weitere erlesene Angebote', finalCtaEyebrow:'ONLYONE · VIP', finalCtaTitle:'Erzähl uns nur, wie du reisen möchtest.', finalCtaBody:'Dein VIP Assistent verbindet Unterkunft, Transfers und Erlebnisse zu einer persönlichen Reise.', finalCtaButton:'Mit VIP Assistent starten',
       blockMore:'Mehr erfahren', blockHow:'So läuft es',
       blockStep1:'Sag uns, wie du reisen willst.',
       blockStep2:'Deine Betreuerin stellt ein Angebot für genau diese Reise zusammen.',
@@ -914,7 +967,7 @@
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
       experiences:'Experiences',
       focusExcursions:'Excursions & experiences', focusExcursionsSub:'The best ideas for your trip — from Cappadocia to Ephesus.',
-      vipMoments:'ONLYONE in motion', vipMomentsSub:'Personal welcomes and memorable moments.',
+      vipMoments:'ONLYONE in motion', vipMomentsSub:'Group journeys, private events and memorable excursions brought to life.',
       vipServices:'VIP services', vipServicesSub:'Transfer and arrival arranged around your trip.',
       destinationsShort:'Destinations', staysShort:'Discover stays',
       travelWays:'How would you like to travel?', destinations:'Destinations', selectedExperiences:'Selected experiences',
@@ -934,6 +987,13 @@
       welcomeBody:'Met in person at your destination airport — name sign, short walk, no queue.',
       yachtEyebrow:'Exclusive', yachtTitle:'Yacht tour',
       yachtBody:'A boat just for you — route, coves and galley exactly as you like.',
+      groupsEyebrow:'Group journeys', groupsTitle:'Cappadocia group journey',
+      groupsBody:'Small groups, thoughtful guidance and shared moments — a premium group experience without mass tourism.',
+      eventEyebrow:'Special occasion', eventTitle:'Private dinner events',
+      eventBody:'An elegant evening dinner event, personally coordinated from atmosphere to every table detail.',
+      pamukkaleEyebrow:'Excursion', pamukkaleTitle:'Pamukkale excursion',
+      pamukkaleBody:'A calm premium excursion to the white terraces of Pamukkale — beautifully paced and comfortably led.',
+      featuredOffer:'ONLYONE CHOICE', featuredMeta:'Private beach · VIP transfer on request', moreSelected:'More selected offers', finalCtaEyebrow:'ONLYONE · VIP', finalCtaTitle:'Just tell us how you want to travel.', finalCtaBody:'Your VIP assistant brings stays, transfers and experiences together into one personal journey.', finalCtaButton:'Start with a VIP assistant',
       blockMore:'Learn more', blockHow:'How it works',
       blockStep1:'Tell us how you want to travel.',
       blockStep2:'Your VIP assistant puts together an offer for exactly this trip.',
@@ -1249,7 +1309,7 @@
   /* The language follows the device unless the visitor picks one. `lang` stays
      null until they do, so an explicit choice always wins and a guess never
      hardens into a setting. */
-  const SUPPORTED = ['ru','de','en'];
+  const SUPPORTED = ['de','en','ru'];
   function detectLang(){
     var list = [];
     try {
@@ -1273,6 +1333,7 @@
   }
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
   LANG = S.lang || detectLang();
+  document.documentElement.lang=LANG;
 
   const FLOW=['new','review','offer','accepted','payopen','paid','confirmed'];
   const STATUS_LABEL={new:'stNew',review:'stCheck',offer:'stOffer',accepted:'stAccepted',payopen:'stPay',paid:'stPaid',confirmed:'stConfirmed'};
@@ -1560,114 +1621,97 @@
      8 · Guest views
      ==================================================================== */
   /* --------------------------------------------------------------------
-     Hero slideshow
+     Hero slideshow — zero-gap crossfade
 
-     Replaces the looping clip. Photographs cost a fraction of a video, decode
-     instantly and never sit there paused because a browser refused to autoplay
-     — which is most of what went wrong with the hero video.
-
-     The crossfade is a CSS animation rather than a timer, so nothing runs on
-     the main thread and the browser stops it on its own when the tab is
-     hidden. The keyframes depend on how many photographs there are, so they
-     are written once from the list: adding a file to HERO_SLIDES is the whole
-     change. The first frame is eager and preloaded; the rest are lazy, because
-     nobody sees slide four in the first seconds.
+     All three photographs are present from the first render and are preloaded
+     in <head>. The outgoing photograph remains fully visible underneath the
+     incoming one until the incoming file has loaded and its opacity transition
+     has completed. This guarantees there is never a white/empty hand-over.
      -------------------------------------------------------------------- */
   const HERO_SLIDES=[
     './images/hero/hero-06.webp',
     './images/hero/hero-03.webp',
     './images/hero/hero-04.webp',
   ];
-  const SLIDE_SECONDS=9;          // how long one photograph owns the screen
-  const FADE_SECONDS=2.2;         // the handover, on top of the slot above
-  const HIDE_GUARD=0.4;           // covered, but held a moment against jitter
-  const HIDE_FADE=1.0;            // the retreat itself — happens out of sight
-  /* Only the first photograph is in the markup. loading="lazy" did nothing
-     here — every slide is absolutely positioned inside the viewport, so the
-     browser counts them all as visible and fetched all six at once: 1.7 MB
-     before anything else could happen. The rest are attached after the first
-     has painted, spaced out so each arrives well before its turn comes round.
+  const HERO_HOLD_MS=8800;
+  const HERO_FADE_MS=1800;
+  let heroTimer=null;
+  let heroIndex=0;
+  let heroFadeTimer=null;
 
-     Because they arrive at different moments and animation-delay counts from
-     the moment an element joins the document, every delay is worked out
-     against one shared origin (heroT0). Without that, each later photograph
-     ran a little behind the one before it, and the last one ended up with a
-     third of its screen time. */
-  let heroT0=0;
-  const slideDelay=i=>(i*SLIDE_SECONDS-FADE_SECONDS)-(heroT0?(performance.now()-heroT0)/1000:0);
   function heroSlides(){
-    const n=HERO_SLIDES.length;
-    if(!n)return '';
-    if(n===1)return `<div class="pHero__slides" aria-hidden="true"><img class="pHero__img is-solo" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high"></div>`;
-    ensureSlideKeyframes(n);
-    heroT0=performance.now();
-    // a fresh container each render — the old one's fill does not count
-    slidesFilled=false;
-    /* The first photograph skips its own fade-in — it starts already opaque.
-       There is nothing behind it on the first frame, so fading it up from zero
-       is exactly the black moment we are here to remove. */
+    if(!HERO_SLIDES.length)return '';
     return `<div class="pHero__slides" id="heroSlides" aria-hidden="true">
-      <img class="pHero__img" src="${HERO_SLIDES[0]}" alt="" fetchpriority="high" decoding="async"
-           style="animation-duration:${n*SLIDE_SECONDS}s,${n*SLIDE_SECONDS}s,32s;animation-delay:${slideDelay(0).toFixed(2)}s,${slideDelay(0).toFixed(2)}s,-2.5s">
+      ${HERO_SLIDES.map((src,i)=>`<img class="pHero__img${i===0?' is-active':''}"
+        src="${src}" alt="" ${i===0?'fetchpriority="high"':'fetchpriority="low"'} decoding="async"
+        style="--hero-delay:${-2.5-(i*5)}s">`).join('')}
     </div>`;
   }
 
-  let slidesFilled=false;
-  function fillHeroSlides(){
-    const box=$('#heroSlides');
-    if(!box||slidesFilled)return;
-    if(box.children.length>=HERO_SLIDES.length){slidesFilled=true;return;}
-    slidesFilled=true;
-    const n=HERO_SLIDES.length, total=n*SLIDE_SECONDS;
-    HERO_SLIDES.slice(1).forEach((src,k)=>{
-      const i=k+1;
-      /* Each photograph is fetched a fixed lead time before it is due, rather
-         than all of them in the first few seconds. Slide i has its turn at
-         i·SLIDE_SECONDS, so asking for it LEAD seconds earlier still leaves a
-         wide margin — and it takes the whole set off the moment right after
-         the intro, where it was competing with the first screen for the
-         connection. Measured: 619 KB of that burst moves out of the first
-         three seconds. */
-      const LEAD=6;
-      const due=Math.max(900, (i*SLIDE_SECONDS-FADE_SECONDS-LEAD)*1000);
-      setTimeout(()=>{
-        if(!document.body.contains(box))return;
-        const img=new Image();
-        img.className='pHero__img';
-        img.alt='';
-        img.decoding='async';
-        img.style.animationDuration=total+'s,'+total+'s,32s';
-        img.style.animationDelay=slideDelay(i).toFixed(2)+'s,'+slideDelay(i).toFixed(2)+'s,'+(-2.5-(i*4))+'s';
-        img.src=src;
-        box.appendChild(img);
-      }, due);
+  function stopHeroSlides(){
+    if(heroTimer){clearInterval(heroTimer);heroTimer=null;}
+    if(heroFadeTimer){clearTimeout(heroFadeTimer);heroFadeTimer=null;}
+  }
+
+  function heroImageReady(img){
+    if(img.complete&&img.naturalWidth>0)return Promise.resolve(true);
+    return new Promise(resolve=>{
+      const done=()=>resolve(img.naturalWidth>0);
+      img.addEventListener('load',done,{once:true});
+      img.addEventListener('error',done,{once:true});
     });
   }
-  let slideKeyframesFor=0;
-  function ensureSlideKeyframes(n){
-    if(slideKeyframesFor===n)return;
-    slideKeyframesFor=n;
-    const T=n*SLIDE_SECONDS, pc=s=>(s/T*100);
-    const inDone = pc(FADE_SECONDS);                                  // arrived
-    const covered= pc(SLIDE_SECONDS+FADE_SECONDS+HIDE_GUARD);         // hidden
-    const gone   = pc(SLIDE_SECONDS+FADE_SECONDS+HIDE_GUARD+HIDE_FADE);
-    const handOff= pc(SLIDE_SECONDS);                                 // next rises
-    const css=`@keyframes heroSlide{
-      0%{opacity:0}
-      ${inDone.toFixed(3)}%{opacity:1}
-      ${covered.toFixed(3)}%{opacity:1}
-      ${gone.toFixed(3)}%{opacity:0}
-      100%{opacity:0}
+
+  function showNextHero(box,imgs){
+    if(!box||!document.body.contains(box)||imgs.length<2)return;
+    const current=imgs[heroIndex];
+    const nextIndex=(heroIndex+1)%imgs.length;
+    const next=imgs[nextIndex];
+
+    /* Never remove the current frame before the next frame is actually ready.
+       A slow network therefore lengthens a slide instead of exposing the hero
+       background between photographs. */
+    if(!(next.complete&&next.naturalWidth>0)){
+      heroImageReady(next).then(ok=>{if(ok&&document.body.contains(box))showNextHero(box,imgs);});
+      return;
     }
-    @keyframes heroLift{
-      0%{z-index:3}
-      ${handOff.toFixed(3)}%{z-index:2}
-      ${gone.toFixed(3)}%{z-index:1}
-      100%{z-index:1}
-    }`;
-    let el=document.getElementById('heroSlideKeyframes');
-    if(!el){el=document.createElement('style');el.id='heroSlideKeyframes';document.head.appendChild(el);}
-    el.textContent=css;
+
+    current.classList.remove('is-active');
+    current.classList.add('is-prev');
+    next.classList.add('is-active');
+    heroIndex=nextIndex;
+    const hero=box.closest('.pHero');
+    if(hero)hero.dataset.heroSlide=String(nextIndex);
+
+    if(heroFadeTimer)clearTimeout(heroFadeTimer);
+    heroFadeTimer=setTimeout(()=>{
+      current.classList.remove('is-prev');
+      heroFadeTimer=null;
+    },HERO_FADE_MS+120);
+  }
+
+  function fillHeroSlides(){
+    stopHeroSlides();
+    const box=$('#heroSlides');
+    if(!box)return;
+    const imgs=$$('.pHero__img',box);
+    if(!imgs.length)return;
+
+    heroIndex=0;
+    const hero=box.closest('.pHero');
+    if(hero)hero.dataset.heroSlide='0';
+    imgs.forEach((img,i)=>{
+      img.classList.toggle('is-active',i===0);
+      img.classList.remove('is-prev');
+    });
+
+    /* Start changing pictures only after every hero file has either loaded or
+       reported an error. If one fails, the active image/fallback remains on
+       screen; there is still no empty transition. */
+    Promise.all(imgs.map(heroImageReady)).then(()=>{
+      if(!document.body.contains(box)||imgs.length<2)return;
+      heroTimer=setInterval(()=>showNextHero(box,imgs),HERO_HOLD_MS);
+    });
   }
 
   /* --------------------------------------------------------------------
@@ -1697,14 +1741,18 @@
      and the file is lighter than the intro video at the same size and length.
      -------------------------------------------------------------------- */
   const CLIPS=[
-    { at:'vip', id:'welcome',
-      src:'./video/onlyone-vip-welcome-v3.mp4',
-      poster:'./images/vip-welcome-poster-v2.webp',
-      eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
-    { at:'excursions', id:'yacht',
-      src:'./video/onlyone-yacht-tour-v2.mp4',
-      poster:'./images/yacht-tour-poster.webp',
-      eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
+    { id:'groups',
+      src:'./video/onlyone-groups-cappadocia-v1.mp4',
+      poster:'./images/video-posters/groups-cappadocia.webp',
+      eyebrow:'groupsEyebrow', title:'groupsTitle', body:'groupsBody' },
+    { id:'events',
+      src:'./video/onlyone-event-dinner-v1.mp4',
+      poster:'./images/video-posters/event-dinner.webp',
+      eyebrow:'eventEyebrow', title:'eventTitle', body:'eventBody' },
+    { id:'pamukkale',
+      src:'./video/onlyone-pamukkale-v1.mp4',
+      poster:'./images/video-posters/pamukkale-tour.webp',
+      eyebrow:'pamukkaleEyebrow', title:'pamukkaleTitle', body:'pamukkaleBody' },
   ];
   function clipBand(at){
     /* The whole band is the target, not a small link in the corner: on a phone
@@ -1752,6 +1800,12 @@
               eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
     yacht:  { img:'./images/yacht-tour-poster.webp',     vid:'./video/onlyone-yacht-tour-v2.mp4',
               eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody'   },
+    groups: { img:'./images/video-posters/groups-cappadocia.webp', vid:'./video/onlyone-groups-cappadocia-v1.mp4',
+              eyebrow:'groupsEyebrow',  title:'groupsTitle', body:'groupsBody' },
+    events: { img:'./images/video-posters/event-dinner.webp',      vid:'./video/onlyone-event-dinner-v1.mp4',
+              eyebrow:'eventEyebrow',   title:'eventTitle', body:'eventBody' },
+    pamukkale:{ img:'./images/video-posters/pamukkale-tour.webp',  vid:'./video/onlyone-pamukkale-v1.mp4',
+              eyebrow:'pamukkaleEyebrow', title:'pamukkaleTitle', body:'pamukkaleBody' },
     transfer:{word:true, eyebrow:'carEyebrow', title:'carTitle', body:'carBody',
               specA:'carSpecA', specB:'carSpecB' },
     flight: { img:'./images/3d/plane-top.webp', plane:true,
@@ -1762,8 +1816,9 @@
     const b=BLOCKS[id]; if(!b) return vHome();
     const title=t(b.title).replace(/<br\s*\/?>/g,' ');
     return `${appbar({back:true})}
-    <section class="blockHero${b.plane?' blockHero--plane':''}${b.word?' blockHero--word':''}">
+    <section class="blockHero${b.plane?' blockHero--plane':''}${b.word?' blockHero--word':''}${b.vid?' blockHero--video':''}">
       ${b.img?`<img class="blockHero__img" src="${b.img}" alt="" fetchpriority="high" decoding="async">`:''}
+      ${b.vid?`<video class="blockHero__video" muted autoplay loop playsinline webkit-playsinline preload="auto" poster="${b.img||''}" disablepictureinpicture disableremoteplayback aria-hidden="true"><source src="${b.vid}" type="video/mp4"></video>`:''}
       ${b.word?`<span class="blockHero__word">${esc(t('carWord'))}</span>`:''}
       <span class="blockHero__scrim" aria-hidden="true"></span>
       ${/* The title only sits ON the picture where there is a picture to sit on.
@@ -1864,6 +1919,8 @@
 
   function vHome(){
     const curated=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,5);
+    const featured=curated[0];
+    const curatedRest=curated.slice(1);
     return `${appbar({over:true})}
     <section class="pHero">
       ${heroSlides()}
@@ -1900,7 +1957,7 @@
       <div class="homeVipFocus__copy">
         <div class="eyebrow">ONLYONE · VIP</div>
         <h2>${t('vip3')}</h2>
-        <p>${t('vip1t')}</p>
+        <p>${t('vip3t')}</p>
       </div>
       <button class="homeVipFocus__cta" type="button" data-go="concierge">${t('askVip')}${icon('chev')}</button>
     </section>
@@ -1928,8 +1985,22 @@
         </div>
         <button class="homeTextLink" type="button" data-go="search">${t('all')}</button>
       </div>
-      <div class="homeOfferRail" aria-label="${esc(t('curatedOffers'))}">
-        ${curated.map(h=>`<article class="homeOfferCard" data-hotel="${h.id}" role="button" tabindex="0">
+      ${featured?`<article class="homeOfferCard homeOfferCard--featured" data-hotel="${featured.id}" role="button" tabindex="0">
+        <div class="homeOfferCard__media">
+          <img src="${featured.imgs[0]}" alt="${esc(featured.name)}" loading="lazy" decoding="async">
+          <span class="homeOfferCard__shade"></span>
+          <span class="homeOfferCard__badge">${t('featuredOffer')}</span>
+          <button class="homeOfferCard__fav${isFav(featured.id)?' is-on':''}" data-act="fav" data-id="${featured.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
+          <span class="homeOfferCard__copy">
+            <span class="stars">${stars(featured.stars)}</span>
+            <b>${esc(featured.name)}</b>
+            <i>${esc(regionName(featured.region))} · ${fmtNum(featured.rating)}</i>
+            <em>${t('featuredMeta')}</em>
+          </span>
+        </div>
+      </article>`:''}
+      <div class="homeOfferGrid" aria-label="${esc(t('moreSelected'))}">
+        ${curatedRest.map(h=>`<article class="homeOfferCard homeOfferCard--small" data-hotel="${h.id}" role="button" tabindex="0">
           <div class="homeOfferCard__media">
             <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="lazy" decoding="async">
             <span class="homeOfferCard__shade"></span>
@@ -1955,7 +2026,7 @@
           <img src="${c.poster}" alt="" loading="lazy" decoding="async">
           ${bgVideo(c.src,c.poster,'homeMotionCard__video')}
           <span class="homeMotionCard__shade"></span>
-          <span class="homeMotionCard__copy"><div class="eyebrow">${t(c.eyebrow)}</div><b>${t(c.title)}</b><i>${t('blockMore')}${icon('chev')}</i></span>
+          <span class="homeMotionCard__copy"><div class="eyebrow">${t(c.eyebrow)}</div><b>${t(c.title)}</b><p>${t(c.body)}</p><i>${t('blockMore')}${icon('chev')}</i></span>
         </button>`).join('')}
       </div>
     </section>
@@ -2019,6 +2090,13 @@
     <section class="homeSecondaryLinks">
       <button type="button" data-go="destinations">${t('destinationsShort')}${icon('chev')}</button>
       <button type="button" data-go="search">${t('staysShort')}${icon('chev')}</button>
+    </section>
+
+    <section class="homeFinalCta">
+      <div class="eyebrow">${t('finalCtaEyebrow')}</div>
+      <h2>${t('finalCtaTitle')}</h2>
+      <p>${t('finalCtaBody')}</p>
+      <button type="button" data-go="concierge">${t('finalCtaButton')}${icon('chev')}</button>
     </section>
 
     <div class="pageBottom"></div>
@@ -2753,13 +2831,19 @@
             v.dataset.loaded = '1';
             try { v.load(); } catch (err) {}
           }
+          if(!v.dataset.readyHook){
+            const ready=()=>v.classList.add('is-ready');
+            v.addEventListener('playing',ready);
+            v.addEventListener('loadeddata',ready,{once:true});
+            v.dataset.readyHook='1';
+          }
           const pr = v.play();
           if (pr && pr.catch) pr.catch(() => {});
         } else {
           try { v.pause(); } catch (err) {}
         }
       });
-    }, { root: $('#app'), threshold: 0.15 });
+    }, { root: $('#app'), rootMargin:'240px 0px 240px 0px', threshold: 0.08 });
     vids.forEach(v => bgObserver.observe(v));
   }
 
@@ -2773,6 +2857,7 @@
   const REVEAL_SEL = [
     '.section__head', '.cardList > .card', '.rail > *', '.expBand',
     '.expBands__head', '.flyBand__head', '.flyBand__card', '.listCard',
+    '.homeVipFocus', '.homeEditorialHead', '.homeMotionCard', '.homeOfferCard', '.homeServiceCard', '.homeSecondaryLinks button', '.homeFinalCta',
     '.statRow', '.doList', '.person', '.searchCard', '.tl',
   ].join(',');
   let revealObserver=null;
@@ -2812,7 +2897,7 @@
     }, { root, rootMargin:'0px 0px -8% 0px', threshold:0.06 });
 
     const triggers=new Set();
-    $$('.reveal', root).forEach(el=>triggers.add(el.closest('.rail') || el));
+    $$('.reveal', root).forEach(el=>triggers.add(el.closest('.rail,.homeMotion__rail,.homeOfferGrid,.homeExcFocus__rail,.travelWorlds__rail') || el));
     triggers.forEach(t=>revealObserver.observe(t));
   }
 
@@ -2965,7 +3050,7 @@
     armAppbar();
     armReveals();
     armDeck();
-    if(VIEW.name==='home')fillHeroSlides(); else slidesFilled=false;
+    if(VIEW.name==='home')fillHeroSlides(); else stopHeroSlides();
   }
   function bindGallery(){
     const tr=$('#galTrack'),dots=$('#galDots');
@@ -3088,7 +3173,7 @@
         `<button class="menuItem" data-mgo="${v}">${icon(ic)}<span>${t(k)}</span><span class="chev">${icon('chev')}</span></button>`).join('')}
         <button class="menuItem" data-mgo="intro">${icon('play')}<span>${t('mIntro')}</span><span class="chev">${icon('chev')}</span></button></div>
       <div class="field"><label class="label">${t('mLang')}</label>
-        <div class="langRow">${['ru','de','en'].map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
+        <div class="langRow">${SUPPORTED.map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
       <div style="margin-top:18px"><button class="btn btn--dark" data-mgo="staff">${icon('lock')}${t('mStaff')}</button></div>
     </div>`);
   }
@@ -3287,7 +3372,7 @@
     const sq=T.closest('[data-sreq]');
     if(sq){go('s-reqd',sq.dataset.sreq);return;}
     const lg=T.closest('[data-lang]');
-    if(lg){LANG=lg.dataset.lang;S.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
+    if(lg){LANG=lg.dataset.lang;S.lang=LANG;document.documentElement.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
 
     /* wizard */
     const w=T.closest('[data-w]');

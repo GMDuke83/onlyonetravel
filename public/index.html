@@ -15,7 +15,9 @@
 <!-- The platform hero shows the moment the intro ends. Fetching its first
      photograph now, while the intro is still playing, means it is decoded and
      waiting instead of starting from zero at the hand-over. -->
-<link rel="preload" as="image" href="./images/hero/hero-01.webp">
+<link rel="preload" as="image" href="./images/hero/hero-06.webp" fetchpriority="high">
+<link rel="preload" as="image" href="./images/hero/hero-03.webp">
+<link rel="preload" as="image" href="./images/hero/hero-04.webp">
 <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
@@ -38,7 +40,7 @@
     disableremoteplayback
     x5-playsinline
   >
-    <source src="./video/onlyone-hero-ocean-v3.mp4" type="video/mp4">
+    <source src="./video/onlyone-hero-ocean-v4.mp4" type="video/mp4">
   </video>
 
   <div class="intro__scrim" aria-hidden="true"></div>
@@ -49,6 +51,19 @@
     <small>LUXURY TRAVEL</small>
   </header>
 
+  <button class="soundToggle" id="soundToggle" type="button"
+          aria-label="Enable ocean sound" aria-pressed="false">
+    <svg class="soundToggle__on" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+      <path d="M15.8 9.6a3.6 3.6 0 0 1 0 4.8"/>
+      <path d="M18.4 7a7.2 7.2 0 0 1 0 10"/>
+    </svg>
+    <svg class="soundToggle__off" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+      <path d="m16.2 10.2 4 3.6"/>
+      <path d="m20.2 10.2-4 3.6"/>
+    </svg>
+  </button>
 
   <div class="intro__copy" id="introCopy">
     <p class="kicker">This is not just a trip</p>

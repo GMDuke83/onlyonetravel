@@ -25,3 +25,9 @@
 - Manual language selection remains persistent and overrides future auto-detection.
 - No automatic mapping of unsupported system languages to Russian; fallback is English.
 - Public pricing rule unchanged: no hotel prices are stored or shown before an individual offer is created.
+
+## Hero zero-gap crossfade
+- Hero slideshow rewritten to keep the outgoing image visible until the incoming image is loaded and fully faded in.
+- All three current hero images are preloaded.
+- hero-06 is used as a permanent CSS fallback background, preventing white/empty frames even on slow or failed image requests.
+- Subtle photo movement remains enabled; reduced-motion users get a short static crossfade.
