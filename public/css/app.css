@@ -2842,3 +2842,45 @@ select.input option{background:#fff;color:var(--txt)}
 @media (prefers-reduced-motion: reduce){
   .pHero__img{animation:none !important;transform:scale(1.012) !important}
 }
+
+/* ========================================================================== 
+   HERO MOTION VISIBILITY FIX · 2026-08-17
+   The slideshow holds each image for ~8.8 s. Previous 42–46 s animations only
+   moved a few pixels during that window and looked static. Run a restrained
+   Ken Burns pass only while the slide is active so every visible frame has a
+   clearly perceptible, premium movement without affecting page performance.
+   ========================================================================== */
+.pHero__img{
+  animation:none !important;
+  transform:scale(1.012) translate3d(0,0,0);
+  will-change:transform,opacity;
+}
+.pHero__img.is-active{
+  animation:onlyoneHeroActive 9.6s cubic-bezier(.18,.68,.28,1) both !important;
+}
+.pHero__img:nth-child(2).is-active{
+  animation-name:onlyoneHeroActiveReverse !important;
+}
+.pHero__img:nth-child(3).is-active{
+  animation-name:onlyoneHeroActiveThird !important;
+}
+@keyframes onlyoneHeroActive{
+  0%{transform:scale(1.012) translate3d(-.35%, .12%, 0)}
+  100%{transform:scale(1.060) translate3d(.38%, -.18%, 0)}
+}
+@keyframes onlyoneHeroActiveReverse{
+  0%{transform:scale(1.016) translate3d(.34%, -.12%, 0)}
+  100%{transform:scale(1.058) translate3d(-.38%, .16%, 0)}
+}
+@keyframes onlyoneHeroActiveThird{
+  0%{transform:scale(1.014) translate3d(-.18%, -.10%, 0)}
+  100%{transform:scale(1.062) translate3d(.20%, .18%, 0)}
+}
+@media (prefers-reduced-motion: reduce){
+  .pHero__img,
+  .pHero__img.is-active{
+    animation:none !important;
+    transform:scale(1.018) !important;
+  }
+}
+
