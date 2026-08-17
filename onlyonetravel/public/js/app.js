@@ -877,7 +877,7 @@
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
       experiences:'Erlebnisse',
       focusExcursions:'Ausflüge & Erlebnisse', focusExcursionsSub:'Die besten Ideen für deine Reise – von Kappadokien bis Ephesos.',
-      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Gruppenreisen, Event-Momente und besondere Ausflüge in Bewegung.',
+      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Yacht-Momente, besondere Ausflüge, Events, Gruppenreisen und VIP-Empfang in Bewegung.',
       vipServices:'VIP-Services', vipServicesSub:'Transfer und Anreise organisieren wir passend zur Reise.',
       destinationsShort:'Destinationen', staysShort:'Unterkünfte entdecken',
       travelWays:'Wie möchtest du reisen?', destinations:'Destinationen', selectedExperiences:'Ausgewählte Erlebnisse',
@@ -1015,7 +1015,7 @@
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
       experiences:'Experiences',
       focusExcursions:'Excursions & experiences', focusExcursionsSub:'The best ideas for your trip — from Cappadocia to Ephesus.',
-      vipMoments:'ONLYONE in motion', vipMomentsSub:'Group journeys, private events and memorable excursions brought to life.',
+      vipMoments:'ONLYONE in motion', vipMomentsSub:'Yacht moments, memorable excursions, private events, group journeys and VIP welcomes brought to life.',
       vipServices:'VIP services', vipServicesSub:'Transfer and arrival arranged around your trip.',
       destinationsShort:'Destinations', staysShort:'Discover stays',
       travelWays:'How would you like to travel?', destinations:'Destinations', selectedExperiences:'Selected experiences',
@@ -1789,6 +1789,10 @@
      and the file is lighter than the intro video at the same size and length.
      -------------------------------------------------------------------- */
   const CLIPS=[
+    { id:'yacht',
+      src:'./video/onlyone-yacht-tour-v2.mp4',
+      poster:'./images/yacht-tour-poster.webp',
+      eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
     { id:'pamukkale',
       src:'./video/onlyone-pamukkale-v1.mp4',
       poster:'./images/video-posters/pamukkale-tour.webp',
@@ -1801,6 +1805,10 @@
       src:'./video/onlyone-groups-cappadocia-v1.mp4',
       poster:'./images/video-posters/groups-cappadocia.webp',
       eyebrow:'groupsEyebrow', title:'groupsTitle', body:'groupsBody' },
+    { id:'welcome',
+      src:'./video/onlyone-vip-welcome-v3.mp4',
+      poster:'./images/vip-welcome-poster-v2.webp',
+      eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
   ];
   function clipBand(at){
     /* The whole band is the target, not a small link in the corner: on a phone
