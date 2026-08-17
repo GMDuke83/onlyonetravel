@@ -736,20 +736,31 @@ svg{
 }
 .pHero__slides{position:absolute;inset:0;z-index:0;isolation:isolate;background:transparent}
 .pHero__img{
-  position:absolute;inset:-1.5%;width:103%;height:103%;object-fit:cover;
+  position:absolute;inset:-1.1%;width:102.2%;height:102.2%;object-fit:cover;
   opacity:0;z-index:0;
-  transition:opacity 1.45s ease-in-out;
-  animation:heroFloat 30s ease-in-out infinite alternate;
+  transition:opacity 1.55s ease-in-out;
+  /* Very light cinematic drift: enough to keep a still photograph alive, but
+     deliberately restrained so it never feels like an artificial camera pan. */
+  animation:heroFloat 38s ease-in-out infinite alternate;
   animation-delay:var(--hero-delay,0s);
   transform-origin:50% 50%;
   will-change:opacity,transform;
 }
+.pHero__img:nth-child(2){animation-name:heroFloatReverse}
+.pHero__img:nth-child(3){animation-duration:42s;transform-origin:48% 52%}
 /* Incoming image is always above the outgoing fully-opaque frame. */
 .pHero__img.is-active{opacity:1;z-index:2}
 .pHero__img.is-prev{opacity:1;z-index:1}
 @keyframes heroFloat{
-  from{transform:scale(1.018) translate3d(-.45%, .22%, 0)}
-  to{transform:scale(1.055) translate3d(.48%, -.28%, 0)}
+  from{transform:scale(1.012) translate3d(-.18%, .10%, 0)}
+  to{transform:scale(1.032) translate3d(.22%, -.12%, 0)}
+}
+@keyframes heroFloatReverse{
+  from{transform:scale(1.014) translate3d(.18%, -.08%, 0)}
+  to{transform:scale(1.034) translate3d(-.20%, .12%, 0)}
+}
+@media (prefers-reduced-motion: reduce){
+  .pHero__img{animation:none !important;transform:scale(1.015)}
 }
 .pHero__glassLayer{
   position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -2623,18 +2634,22 @@ select.input option{background:#fff;color:var(--txt)}
    One consolidated layer for the homepage instead of chained patch blocks.
    ========================================================================== */
 
-/* Hero — slower, quieter editorial movement and a softer crossfade. */
+/* Hero — very light editorial movement and a soft crossfade. */
 .pHero__img{
-  inset:-1.1%;width:102.2%;height:102.2%;
-  transition:opacity 1.8s cubic-bezier(.22,.61,.36,1);
-  animation:heroFloat 38s ease-in-out infinite alternate;
+  inset:-1.0%;width:102%;height:102%;
+  transition:opacity 1.75s cubic-bezier(.22,.61,.36,1);
+  animation:onlyoneHeroDrift 42s ease-in-out infinite alternate;
 }
 .pHero__img:nth-child(1){object-position:50% 50%}
-.pHero__img:nth-child(2){object-position:48% 50%}
-.pHero__img:nth-child(3){object-position:53% 50%}
-@keyframes heroFloat{
-  from{transform:scale(1.014) translate3d(-.20%, .10%, 0)}
-  to{transform:scale(1.042) translate3d(.22%, -.14%, 0)}
+.pHero__img:nth-child(2){object-position:48% 50%;animation-name:onlyoneHeroDriftReverse;animation-duration:44s}
+.pHero__img:nth-child(3){object-position:53% 50%;animation-duration:46s}
+@keyframes onlyoneHeroDrift{
+  from{transform:scale(1.010) translate3d(-.12%, .06%, 0)}
+  to{transform:scale(1.026) translate3d(.14%, -.08%, 0)}
+}
+@keyframes onlyoneHeroDriftReverse{
+  from{transform:scale(1.011) translate3d(.12%, -.05%, 0)}
+  to{transform:scale(1.027) translate3d(-.13%, .07%, 0)}
 }
 .pHero__glassLayer{
   background:linear-gradient(180deg,rgba(14,10,7,.11) 0%,rgba(14,10,7,.04) 34%,rgba(14,10,7,.13) 66%,rgba(14,10,7,.27) 100%);
@@ -2820,4 +2835,10 @@ select.input option{background:#fff;color:var(--txt)}
   .pHero__img{animation:none;transition-duration:.35s}
   .homeMotionCard__video{transition:none}
   .homeMotionCard.reveal,.homeOfferCard.reveal,.homeServiceCard.reveal,.homeSecondaryLinks button.reveal{transform:none}
+}
+
+
+/* Accessibility: final override after all premium animation layers. */
+@media (prefers-reduced-motion: reduce){
+  .pHero__img{animation:none !important;transform:scale(1.012) !important}
 }

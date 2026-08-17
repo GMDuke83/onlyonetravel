@@ -19,6 +19,49 @@
 (function () {
   'use strict';
 
+  /* ---- shared language resolution ---------------------------------------
+     One resolver is used by both the cinematic intro and the platform UI.
+     An explicit visitor choice stored in state always wins; otherwise we use
+     the browser's ordered language preferences and finally English.
+
+     To add another UI language later, add it to SUPPORTED_LANGS and provide
+     its translation dictionary. No second detector is required. */
+  var LANGUAGE_STATE_KEY = 'onlyone.state.v1';
+  var SUPPORTED_LANGS = ['de','en','ru'];
+
+  function normalizedLanguage(tag){
+    tag = String(tag || '').trim().toLowerCase().replace(/_/g,'-');
+    if (!tag) return '';
+    var base = tag.split('-')[0];
+    return SUPPORTED_LANGS.indexOf(base) > -1 ? base : '';
+  }
+
+  function storedLanguage(){
+    try {
+      var state = JSON.parse(localStorage.getItem(LANGUAGE_STATE_KEY));
+      var saved = state && normalizedLanguage(state.lang);
+      if (saved) return saved;
+    } catch (e) {}
+    return '';
+  }
+
+  function deviceLanguage(){
+    var list = [];
+    try {
+      if (navigator.languages && navigator.languages.length) list = navigator.languages.slice();
+      else if (navigator.language) list = [navigator.language];
+    } catch (e) {}
+    for (var i = 0; i < list.length; i++) {
+      var resolved = normalizedLanguage(list[i]);
+      if (resolved) return resolved;
+    }
+    return 'en';
+  }
+
+  function resolveLanguage(){
+    return storedLanguage() || deviceLanguage();
+  }
+
   /* ---- configuration ---------------------------------------------------- */
   var COUNTDOWN_START_AT = 3.0;   // seconds of playback before the countdown
   var COUNTDOWN_FROM     = 3;     // 3 · 2 · 1
@@ -70,19 +113,8 @@
           skip:'Пропустить', start:'Начать путешествие', soundOn:'Включить шум моря', soundOff:'Выключить шум моря' }
   };
   function introLang(){
-    try {
-      var st = JSON.parse(localStorage.getItem('onlyone.state.v1'));
-      if (st && st.lang && INTRO_I18N[st.lang]) return st.lang;
-    } catch (e) {}
-    try {
-      var list = (navigator.languages && navigator.languages.length)
-        ? navigator.languages : [navigator.language || ''];
-      for (var i = 0; i < list.length; i++) {
-        var base = String(list[i] || '').toLowerCase().split('-')[0];
-        if (INTRO_I18N[base]) return base;
-      }
-    } catch (e) {}
-    return 'en';
+    var lang = resolveLanguage();
+    return INTRO_I18N[lang] ? lang : 'en';
   }
   (function applyIntroLang(){
     var L = INTRO_I18N[introLang()];
@@ -1395,25 +1427,13 @@
   /* ====================================================================
      3 · State
      ==================================================================== */
-  const KEY='onlyone.state.v1';
+  const KEY=LANGUAGE_STATE_KEY;
 
-  /* The language follows the device unless the visitor picks one. `lang` stays
-     null until they do, so an explicit choice always wins and a guess never
-     hardens into a setting. */
-  const SUPPORTED = ['de','en','ru'];
-  function detectLang(){
-    var list = [];
-    try {
-      if (navigator.languages && navigator.languages.length) list = navigator.languages.slice();
-      else if (navigator.language) list = [navigator.language];
-    } catch (e) {}
-    for (var i = 0; i < list.length; i++) {
-      var tag = String(list[i] || '').toLowerCase();
-      var base = tag.split('-')[0];
-      if (SUPPORTED.indexOf(base) > -1) return base;
-    }
-    return 'en';
-  }
+  /* Shared with the intro: the device language is used until the visitor makes
+     an explicit choice. The choice remains stored and therefore wins on every
+     later visit. */
+  const SUPPORTED = SUPPORTED_LANGS.slice();
+  function detectLang(){ return deviceLanguage(); }
 
   const DEF={lang:null,favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
              search:{from:'',to:'',adults:2,children:0}};
