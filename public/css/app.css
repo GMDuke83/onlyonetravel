@@ -736,31 +736,20 @@ svg{
 }
 .pHero__slides{position:absolute;inset:0;z-index:0;isolation:isolate;background:transparent}
 .pHero__img{
-  position:absolute;inset:-1.1%;width:102.2%;height:102.2%;object-fit:cover;
+  position:absolute;inset:-1.5%;width:103%;height:103%;object-fit:cover;
   opacity:0;z-index:0;
-  transition:opacity 1.55s ease-in-out;
-  /* Very light cinematic drift: enough to keep a still photograph alive, but
-     deliberately restrained so it never feels like an artificial camera pan. */
-  animation:heroFloat 38s ease-in-out infinite alternate;
+  transition:opacity 1.45s ease-in-out;
+  animation:heroFloat 30s ease-in-out infinite alternate;
   animation-delay:var(--hero-delay,0s);
   transform-origin:50% 50%;
   will-change:opacity,transform;
 }
-.pHero__img:nth-child(2){animation-name:heroFloatReverse}
-.pHero__img:nth-child(3){animation-duration:42s;transform-origin:48% 52%}
 /* Incoming image is always above the outgoing fully-opaque frame. */
 .pHero__img.is-active{opacity:1;z-index:2}
 .pHero__img.is-prev{opacity:1;z-index:1}
 @keyframes heroFloat{
-  from{transform:scale(1.012) translate3d(-.18%, .10%, 0)}
-  to{transform:scale(1.032) translate3d(.22%, -.12%, 0)}
-}
-@keyframes heroFloatReverse{
-  from{transform:scale(1.014) translate3d(.18%, -.08%, 0)}
-  to{transform:scale(1.034) translate3d(-.20%, .12%, 0)}
-}
-@media (prefers-reduced-motion: reduce){
-  .pHero__img{animation:none !important;transform:scale(1.015)}
+  from{transform:scale(1.018) translate3d(-.45%, .22%, 0)}
+  to{transform:scale(1.055) translate3d(.48%, -.28%, 0)}
 }
 .pHero__glassLayer{
   position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -2634,22 +2623,18 @@ select.input option{background:#fff;color:var(--txt)}
    One consolidated layer for the homepage instead of chained patch blocks.
    ========================================================================== */
 
-/* Hero — very light editorial movement and a soft crossfade. */
+/* Hero — slower, quieter editorial movement and a softer crossfade. */
 .pHero__img{
-  inset:-1.0%;width:102%;height:102%;
-  transition:opacity 1.75s cubic-bezier(.22,.61,.36,1);
-  animation:onlyoneHeroDrift 42s ease-in-out infinite alternate;
+  inset:-1.1%;width:102.2%;height:102.2%;
+  transition:opacity 1.8s cubic-bezier(.22,.61,.36,1);
+  animation:heroFloat 38s ease-in-out infinite alternate;
 }
 .pHero__img:nth-child(1){object-position:50% 50%}
-.pHero__img:nth-child(2){object-position:48% 50%;animation-name:onlyoneHeroDriftReverse;animation-duration:44s}
-.pHero__img:nth-child(3){object-position:53% 50%;animation-duration:46s}
-@keyframes onlyoneHeroDrift{
-  from{transform:scale(1.010) translate3d(-.12%, .06%, 0)}
-  to{transform:scale(1.026) translate3d(.14%, -.08%, 0)}
-}
-@keyframes onlyoneHeroDriftReverse{
-  from{transform:scale(1.011) translate3d(.12%, -.05%, 0)}
-  to{transform:scale(1.027) translate3d(-.13%, .07%, 0)}
+.pHero__img:nth-child(2){object-position:48% 50%}
+.pHero__img:nth-child(3){object-position:53% 50%}
+@keyframes heroFloat{
+  from{transform:scale(1.014) translate3d(-.20%, .10%, 0)}
+  to{transform:scale(1.042) translate3d(.22%, -.14%, 0)}
 }
 .pHero__glassLayer{
   background:linear-gradient(180deg,rgba(14,10,7,.11) 0%,rgba(14,10,7,.04) 34%,rgba(14,10,7,.13) 66%,rgba(14,10,7,.27) 100%);
@@ -2838,49 +2823,48 @@ select.input option{background:#fff;color:var(--txt)}
 }
 
 
-/* Accessibility: final override after all premium animation layers. */
-@media (prefers-reduced-motion: reduce){
-  .pHero__img{animation:none !important;transform:scale(1.012) !important}
-}
-
 /* ========================================================================== 
-   HERO MOTION VISIBILITY FIX · 2026-08-17
-   The slideshow holds each image for ~8.8 s. Previous 42–46 s animations only
-   moved a few pixels during that window and looked static. Run a restrained
-   Ken Burns pass only while the slide is active so every visible frame has a
-   clearly perceptible, premium movement without affecting page performance.
+   HERO MOTION STABLE · r8
+   Visible but restrained Ken Burns movement. Animation begins only when a
+   slide becomes active, so the full motion is visible during its 8.8 s hold.
+   The outgoing slide is frozen at its current frame during the crossfade.
    ========================================================================== */
 .pHero__img{
   animation:none !important;
-  transform:scale(1.012) translate3d(0,0,0);
-  will-change:transform,opacity;
+  transform:scale(1.015) translate3d(0,0,0);
+  transform-origin:50% 50%;
+  will-change:opacity,transform;
 }
-.pHero__img.is-active{
-  animation:onlyoneHeroActive 9.6s cubic-bezier(.18,.68,.28,1) both !important;
+.pHero__img.is-active,
+.pHero__img.is-prev{
+  animation-duration:9.6s !important;
+  animation-timing-function:cubic-bezier(.22,.61,.36,1) !important;
+  animation-fill-mode:both !important;
+  animation-iteration-count:1 !important;
 }
-.pHero__img:nth-child(2).is-active{
-  animation-name:onlyoneHeroActiveReverse !important;
+.pHero__img:nth-child(1).is-active,
+.pHero__img:nth-child(1).is-prev{animation-name:heroMotionR8A !important}
+.pHero__img:nth-child(2).is-active,
+.pHero__img:nth-child(2).is-prev{animation-name:heroMotionR8B !important}
+.pHero__img:nth-child(3).is-active,
+.pHero__img:nth-child(3).is-prev{animation-name:heroMotionR8C !important}
+.pHero__img.is-active{animation-play-state:running !important}
+.pHero__img.is-prev{animation-play-state:paused !important}
+@keyframes heroMotionR8A{
+  from{transform:scale(1.015) translate3d(-.25%, .10%,0)}
+  to{transform:scale(1.065) translate3d(.55%,-.32%,0)}
 }
-.pHero__img:nth-child(3).is-active{
-  animation-name:onlyoneHeroActiveThird !important;
+@keyframes heroMotionR8B{
+  from{transform:scale(1.018) translate3d(.38%,-.12%,0)}
+  to{transform:scale(1.062) translate3d(-.48%,.28%,0)}
 }
-@keyframes onlyoneHeroActive{
-  0%{transform:scale(1.012) translate3d(-.35%, .12%, 0)}
-  100%{transform:scale(1.060) translate3d(.38%, -.18%, 0)}
+@keyframes heroMotionR8C{
+  from{transform:scale(1.016) translate3d(-.18%,-.18%,0)}
+  to{transform:scale(1.068) translate3d(.38%,.24%,0)}
 }
-@keyframes onlyoneHeroActiveReverse{
-  0%{transform:scale(1.016) translate3d(.34%, -.12%, 0)}
-  100%{transform:scale(1.058) translate3d(-.38%, .16%, 0)}
-}
-@keyframes onlyoneHeroActiveThird{
-  0%{transform:scale(1.014) translate3d(-.18%, -.10%, 0)}
-  100%{transform:scale(1.062) translate3d(.20%, .18%, 0)}
-}
-@media (prefers-reduced-motion: reduce){
-  .pHero__img,
-  .pHero__img.is-active{
+@media (prefers-reduced-motion:reduce){
+  .pHero__img,.pHero__img.is-active,.pHero__img.is-prev{
     animation:none !important;
-    transform:scale(1.018) !important;
+    transform:scale(1.02) !important;
   }
 }
-
