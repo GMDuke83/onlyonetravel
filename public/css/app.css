@@ -2824,7 +2824,7 @@ select.input option{background:#fff;color:var(--txt)}
 
 
 /* ========================================================================== 
-   HERO MOTION STABLE · r8
+   HERO MOTION STABLE · r9
    Visible but restrained Ken Burns movement. Animation begins only when a
    slide becomes active, so the full motion is visible during its 8.8 s hold.
    The outgoing slide is frozen at its current frame during the crossfade.
@@ -2843,22 +2843,22 @@ select.input option{background:#fff;color:var(--txt)}
   animation-iteration-count:1 !important;
 }
 .pHero__img:nth-child(1).is-active,
-.pHero__img:nth-child(1).is-prev{animation-name:heroMotionR8A !important}
+.pHero__img:nth-child(1).is-prev{animation-name:heroMotionR9A !important}
 .pHero__img:nth-child(2).is-active,
-.pHero__img:nth-child(2).is-prev{animation-name:heroMotionR8B !important}
+.pHero__img:nth-child(2).is-prev{animation-name:heroMotionR9B !important}
 .pHero__img:nth-child(3).is-active,
-.pHero__img:nth-child(3).is-prev{animation-name:heroMotionR8C !important}
+.pHero__img:nth-child(3).is-prev{animation-name:heroMotionR9C !important}
 .pHero__img.is-active{animation-play-state:running !important}
 .pHero__img.is-prev{animation-play-state:paused !important}
-@keyframes heroMotionR8A{
+@keyframes heroMotionR9A{
   from{transform:scale(1.015) translate3d(-.25%, .10%,0)}
   to{transform:scale(1.065) translate3d(.55%,-.32%,0)}
 }
-@keyframes heroMotionR8B{
+@keyframes heroMotionR9B{
   from{transform:scale(1.018) translate3d(.38%,-.12%,0)}
   to{transform:scale(1.062) translate3d(-.48%,.28%,0)}
 }
-@keyframes heroMotionR8C{
+@keyframes heroMotionR9C{
   from{transform:scale(1.016) translate3d(-.18%,-.18%,0)}
   to{transform:scale(1.068) translate3d(.38%,.24%,0)}
 }
@@ -2868,3 +2868,99 @@ select.input option{background:#fff;color:var(--txt)}
     transform:scale(1.02) !important;
   }
 }
+
+/* ========================================================================== 
+   LIVING IMAGE MOTION · r9
+   Quiet Ken-Burns movement for editorial stills. Only cards currently near the
+   viewport receive .is-alive, so off-screen images do not keep the compositor
+   busy on iOS. Transform-only animation keeps layout and paint untouched.
+   ========================================================================== */
+.travelWorld img,
+.homeExcCard img,
+.destinationHome__card img,
+.homeExperience img,
+.homeOfferCard__media>img,
+.featureCard img,
+.vipDeck__frame>img,
+.homeConcierge>img{
+  transform-origin:50% 50%;
+  backface-visibility:hidden;
+}
+
+.travelWorld.is-alive img,
+.homeExcCard.is-alive img,
+.destinationHome__card.is-alive img,
+.homeExperience.is-alive img,
+.homeOfferCard.is-alive .homeOfferCard__media>img,
+.featureCard.is-alive img,
+.vipDeck__frame.is-alive>img,
+.homeConcierge.is-alive>img{
+  will-change:transform;
+  animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both;
+}
+
+.travelWorld:nth-child(3n+2).is-alive img,
+.homeExcCard:nth-child(3n+2).is-alive img,
+.destinationHome__card:nth-child(3n+2).is-alive img,
+.homeExperience:nth-child(3n+2).is-alive img,
+.homeOfferCard:nth-child(3n+2).is-alive .homeOfferCard__media>img,
+.featureCard:nth-child(3n+2).is-alive img,
+.vipDeck__slide:nth-child(3n+2) .vipDeck__frame.is-alive>img{
+  animation-name:livingImageB;
+  animation-duration:15.8s;
+}
+
+.travelWorld:nth-child(3n).is-alive img,
+.homeExcCard:nth-child(3n).is-alive img,
+.destinationHome__card:nth-child(3n).is-alive img,
+.homeExperience:nth-child(3n).is-alive img,
+.homeOfferCard:nth-child(3n).is-alive .homeOfferCard__media>img,
+.featureCard:nth-child(3n).is-alive img,
+.vipDeck__slide:nth-child(3n) .vipDeck__frame.is-alive>img{
+  animation-name:livingImageC;
+  animation-duration:16.6s;
+}
+
+@keyframes livingImageA{
+  from{transform:scale(1.018) translate3d(-.35%, .16%, 0)}
+  to{transform:scale(1.074) translate3d(.72%, -.38%, 0)}
+}
+@keyframes livingImageB{
+  from{transform:scale(1.022) translate3d(.42%, -.18%, 0)}
+  to{transform:scale(1.071) translate3d(-.68%, .34%, 0)}
+}
+@keyframes livingImageC{
+  from{transform:scale(1.020) translate3d(-.18%, -.24%, 0)}
+  to{transform:scale(1.068) translate3d(.34%, .58%, 0)}
+}
+
+/* Hero gets one extra step of movement compared with r8: still elegant, but
+   visible immediately on a phone rather than only after staring at the frame. */
+@keyframes heroMotionR9A{
+  from{transform:scale(1.018) translate3d(-.38%, .14%,0)}
+  to{transform:scale(1.086) translate3d(.88%,-.48%,0)}
+}
+@keyframes heroMotionR9B{
+  from{transform:scale(1.020) translate3d(.52%,-.16%,0)}
+  to{transform:scale(1.082) translate3d(-.82%,.42%,0)}
+}
+@keyframes heroMotionR9C{
+  from{transform:scale(1.019) translate3d(-.28%,-.22%,0)}
+  to{transform:scale(1.088) translate3d(.66%,.38%,0)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .travelWorld.is-alive img,
+  .homeExcCard.is-alive img,
+  .destinationHome__card.is-alive img,
+  .homeExperience.is-alive img,
+  .homeOfferCard.is-alive .homeOfferCard__media>img,
+  .featureCard.is-alive img,
+  .vipDeck__frame.is-alive>img,
+  .homeConcierge.is-alive>img{
+    animation:none !important;
+    transform:scale(1.02) !important;
+    will-change:auto;
+  }
+}
+

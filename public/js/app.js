@@ -3001,6 +3001,29 @@
     setTimeout(scheduleBgMeasure,900);
   }
 
+  /* Quiet life for still photography. Only images near the viewport animate.
+     This keeps the desired editorial movement while avoiding a page full of
+     off-screen transforms competing with video playback on iOS. */
+  let livingImagesObserver=null;
+  function armLivingImages(){
+    if(livingImagesObserver){ livingImagesObserver.disconnect(); livingImagesObserver=null; }
+    const root=$('#app'); if(!root) return;
+    const targets=$$('.travelWorld,.homeExcCard,.destinationHome__card,.homeExperience,.homeOfferCard,.featureCard,.vipDeck__frame,.homeConcierge',root);
+    if(!targets.length) return;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
+      targets.forEach(el=>el.classList.remove('is-alive'));
+      return;
+    }
+    if(!('IntersectionObserver' in window)){
+      targets.forEach(el=>el.classList.add('is-alive'));
+      return;
+    }
+    livingImagesObserver=new IntersectionObserver(entries=>{
+      entries.forEach(e=>e.target.classList.toggle('is-alive',e.isIntersecting));
+    },{root,rootMargin:'18% 12% 18% 12%',threshold:0.02});
+    targets.forEach(el=>livingImagesObserver.observe(el));
+  }
+
   /* Reveal on scroll. One observer for the whole view, each element released
      once and then forgotten — an element that has arrived never needs watching
      again, and unobserving keeps the callback cheap on long pages.
@@ -3203,6 +3226,7 @@
     armFlyBand();
     armAppbar();
     armReveals();
+    armLivingImages();
     armDeck();
     if(VIEW.name==='home')fillHeroSlides(); else stopHeroSlides();
   }
