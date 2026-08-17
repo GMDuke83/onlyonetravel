@@ -28,6 +28,7 @@ const MIME = {
   '.json': 'application/json; charset=utf-8',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.mp4': 'video/mp4',
+  '.m4a': 'audio/mp4',
   '.webm': 'video/webm',
   '.webp': 'image/webp',
   '.png': 'image/png',

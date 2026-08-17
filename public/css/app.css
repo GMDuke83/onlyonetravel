@@ -193,6 +193,10 @@ svg{
   z-index:0;
   background:var(--navy);
   pointer-events:none;            /* taps belong to the hero, not the player */
+  transform:translateZ(0);
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  will-change:transform;
 }
 
 .intro__scrim{
@@ -492,6 +496,21 @@ svg{
   100% { transform:scale(1);    opacity:1; }
 }
 
+
+
+/* iOS Safari: animated SVG filters over a hardware-decoded full-screen video
+   can briefly freeze the video compositor. Keep the countdown cinematic but
+   use a static ring and a cheap number pulse on WebKit touch devices. */
+@supports (-webkit-touch-callout:none){
+  .countdown{transform:translate3d(-50%,0,0);contain:layout paint;}
+  .countdown__ringProgress{stroke-dashoffset:0;filter:none!important;animation:none!important;}
+  .countdown::before{box-shadow:none;}
+  .countdown.is-ticking .countdown__value{animation:countPulseIOS .42s ease-out both;}
+  @keyframes countPulseIOS{
+    from{transform:scale(.94);opacity:.72}
+    to{transform:scale(1);opacity:1}
+  }
+}
 
 /* --- autoplay fallback ---------------------------------------------------- */
 .tapStart{

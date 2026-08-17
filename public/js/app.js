@@ -166,6 +166,33 @@
     } catch (e) { return 0; }
   }
 
+  /* Main-page imagery must not compete with the intro video on mobile Safari.
+     Warm only the first important frames after the intro is substantially
+     buffered. This keeps the film continuous and still makes the first page
+     feel immediate when the hand-over happens. */
+  var homeWarmStarted = false;
+  var HOME_WARM_IMAGES = [
+    './images/hero/hero-06.webp','./images/hero/hero-03.webp','./images/hero/hero-04.webp',
+    './images/worlds/beach.webp','./images/worlds/villas.webp',
+    './images/worlds/groups-v2.webp','./images/worlds/events.webp',
+    './images/excursions/exc-cappadocia.webp','./images/excursions/exc-pamukkale.webp'
+  ];
+  function prewarmHomeImages(){
+    if (homeWarmStarted) return;
+    homeWarmStarted = true;
+    HOME_WARM_IMAGES.forEach(function(src){
+      var im = new Image();
+      try { im.decoding = 'async'; } catch (e) {}
+      im.src = src;
+    });
+  }
+  function maybePrewarmHomeImages(){
+    if (homeWarmStarted) return;
+    var dur = isFinite(video.duration) && video.duration > 1 ? video.duration : 8;
+    var target = Math.max(4.5, Math.min(6.5, dur - 0.7));
+    if (bufferedEnd() >= target) prewarmHomeImages();
+  }
+
   function startStallWatchdog() {
     stopStallWatchdog();
     stallSeconds = 0;
@@ -324,9 +351,21 @@
     if (tapStart)   tapStart.classList.remove('is-in');
   }
 
+  function keepIntroRolling() {
+    if (leaving || onMain) return;
+    video.setAttribute('muted','');
+    video.defaultMuted = true;
+    video.muted = true;
+    if (video.paused) {
+      var rp = video.play();
+      if (rp && typeof rp.catch === 'function') rp.catch(function(){});
+    }
+  }
+
   function startSequence() {
     if (seqStarted || leaving) return;
     seqStarted = true;
+    keepIntroRolling();
 
     var remaining = COUNTDOWN_FROM;
 
@@ -341,6 +380,7 @@
     draw();
 
     countTimer = setInterval(function () {
+      keepIntroRolling();
       remaining -= 1;
 
       if (remaining > 0) {
@@ -487,6 +527,7 @@
   // countdown is driven by real playback position, not by a wall clock
   video.addEventListener('timeupdate', function () {
     if (video.currentTime > 0.05) hideTapStart();
+    maybePrewarmHomeImages();
     if (!seqStarted && !leaving && video.currentTime >= COUNTDOWN_START_AT) {
       startSequence();
     }
@@ -513,6 +554,8 @@
     if (p && typeof p.catch === 'function') p.catch(function () {});
   }
   video.addEventListener('loadeddata', nudgePlay);
+  video.addEventListener('progress', maybePrewarmHomeImages);
+  video.addEventListener('canplaythrough', prewarmHomeImages, {once:true});
   video.addEventListener('canplay', nudgePlay);
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) nudgePlay();
@@ -1997,7 +2040,7 @@
       </div>
       <div class="travelWorlds__rail">
         ${EXPERIENCES.map(x=>`<button class="travelWorld" data-world="${x.id}">
-          <img src="${x.img}" alt="${esc(x.n[LANG]||x.n.en)}" loading="lazy" decoding="async">
+          <img src="${x.img}" alt="${esc(x.n[LANG]||x.n.en)}" loading="eager" decoding="async" fetchpriority="auto">
           <span class="travelWorld__shade"></span>
           <span class="travelWorld__copy">
             <b>${esc(x.n[LANG]||x.n.en)}</b>
@@ -2025,7 +2068,7 @@
       </div>
       <div class="homeExcFocus__rail">
         ${EXCURSIONS.map(e=>`<button class="homeExcCard" data-exc="${e.id}">
-          <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="lazy" decoding="async">
+          <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="eager" decoding="async" fetchpriority="low">
           <span class="homeExcCard__shade"></span>
           <span class="homeExcCard__copy"><b>${esc(e.n[LANG]||e.n.en)}</b><i>${esc(e.dur[LANG]||e.dur.en)}</i><span>${icon('chev')}</span></span>
         </button>`).join('')}
@@ -2043,7 +2086,7 @@
       </div>
       ${featured?`<article class="homeOfferCard homeOfferCard--featured" data-hotel="${featured.id}" role="button" tabindex="0">
         <div class="homeOfferCard__media">
-          <img src="${featured.imgs[0]}" alt="${esc(featured.name)}" loading="lazy" decoding="async">
+          <img src="${featured.imgs[0]}" alt="${esc(featured.name)}" loading="eager" decoding="async" fetchpriority="low">
           <span class="homeOfferCard__shade"></span>
           <span class="homeOfferCard__badge">${t('featuredOffer')}</span>
           <button class="homeOfferCard__fav${isFav(featured.id)?' is-on':''}" data-act="fav" data-id="${featured.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
@@ -2058,7 +2101,7 @@
       <div class="homeOfferGrid" aria-label="${esc(t('moreSelected'))}">
         ${curatedRest.map(h=>`<article class="homeOfferCard homeOfferCard--small" data-hotel="${h.id}" role="button" tabindex="0">
           <div class="homeOfferCard__media">
-            <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="lazy" decoding="async">
+            <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="eager" decoding="async" fetchpriority="low">
             <span class="homeOfferCard__shade"></span>
             <button class="homeOfferCard__fav${isFav(h.id)?' is-on':''}" data-act="fav" data-id="${h.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
             <span class="homeOfferCard__copy">
@@ -2079,7 +2122,7 @@
       </div>
       <div class="homeMotion__rail">
         ${CLIPS.map(c=>`<button class="homeMotionCard" type="button" data-block="${c.id}" aria-label="${esc(t(c.title))}">
-          <img src="${c.poster}" alt="" loading="lazy" decoding="async">
+          <img src="${c.poster}" alt="" loading="eager" decoding="async" fetchpriority="low">
           ${bgVideo(c.src,c.poster,'homeMotionCard__video')}
           <span class="homeMotionCard__shade"></span>
           <span class="homeMotionCard__copy"><div class="eyebrow">${t(c.eyebrow)}</div><b>${t(c.title)}</b><p>${t(c.body)}</p><i>${t('blockMore')}${icon('chev')}</i></span>
@@ -2120,7 +2163,7 @@
           ${[[15,63],[24,59],[33,55],[42,52],[58,52],[67,55],[76,59],[85,63]]
             .map(([x,y],i)=>`<i style="left:${x}%;top:${y}%;--d:${(i%4)*0.55+(i>3?0.28:0)}s;--t:${2.4+(i%3)*0.35}s;--h:${16+(i%3)*7}%"></i>`).join('')}
         </span>
-        <img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async" width="900" height="1111">
+        <img src="./images/3d/plane-top.webp" alt="" loading="eager" decoding="async" fetchpriority="low" width="900" height="1111">
       </div>
       ${sky([
         [ 82, -30, 10.5, -2,  .42, 2.2, -46, 1.06, 1.34, 4],
@@ -2865,42 +2908,97 @@
      after the intro — holds by construction rather than by attribute.
      -------------------------------------------------------------------- */
   function bgVideo(src, poster, cls){
-    return `<video class="bgVideo ${cls||''}" muted loop playsinline webkit-playsinline
+    return `<video class="bgVideo ${cls||''}" muted autoplay loop playsinline webkit-playsinline
       preload="none" poster="${poster}" data-bg="${src}"
       disablepictureinpicture disableremoteplayback aria-hidden="true"></video>`;
   }
-  let bgObserver = null;
+
+  let bgScroller=null, bgScrollHandler=null, bgTouchHandler=null,
+      bgResizeHandler=null, bgVisibilityHandler=null, bgRaf=0, bgVids=[], bgRailRoots=[];
+
+  function prepareBgVideo(v){
+    v.muted=true; v.defaultMuted=true; v.playsInline=true;
+    v.setAttribute('muted','');
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+  }
+  function loadBgVideo(v){
+    prepareBgVideo(v);
+    if(v.dataset.loaded)return;
+    v.dataset.loaded='1';
+    v.preload='auto';
+    /* Setting video.src directly is more reliable on iOS than appending a
+       <source> after IntersectionObserver fires. */
+    v.src=v.dataset.bg;
+    if(!v.dataset.readyHook){
+      const ready=()=>v.classList.add('is-ready');
+      v.addEventListener('playing',ready);
+      v.addEventListener('loadeddata',ready,{once:true});
+      v.addEventListener('canplay',()=>safePlayBgVideo(v));
+      v.dataset.readyHook='1';
+    }
+    try{v.load();}catch(err){}
+  }
+  function safePlayBgVideo(v){
+    prepareBgVideo(v);
+    if(!v.dataset.loaded)loadBgVideo(v);
+    const p=v.play();
+    if(p&&p.catch)p.catch(()=>{ v.dataset.playBlocked='1'; });
+  }
+  function bgMeasure(){
+    bgRaf=0;
+    const app=$('#app');
+    if(!app||!bgVids.length)return;
+    const ar=app.getBoundingClientRect();
+    bgVids.forEach(v=>{
+      const r=v.getBoundingClientRect();
+      const verticalNear=r.bottom>ar.top-1100 && r.top<ar.bottom+1100;
+      const horizontalNear=r.right>ar.left-700 && r.left<ar.right+700;
+      const near=verticalNear&&horizontalNear;
+      const active=r.bottom>ar.top-120 && r.top<ar.bottom+120 &&
+                   r.right>ar.left-80 && r.left<ar.right+80;
+      if(near)loadBgVideo(v);
+      if(active && !document.hidden) safePlayBgVideo(v);
+      else if(v.dataset.loaded && (r.bottom<ar.top-900 || r.top>ar.bottom+900)){
+        try{v.pause();}catch(err){}
+      }
+    });
+  }
+  function scheduleBgMeasure(){
+    if(!bgRaf)bgRaf=requestAnimationFrame(bgMeasure);
+  }
   function armBgVideos(){
-    if (bgObserver) { bgObserver.disconnect(); bgObserver = null; }
-    const vids = $$('[data-bg]');
-    if (!vids.length) return;
-    if (!('IntersectionObserver' in window)) return;
-    bgObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        const v = e.target;
-        if (e.isIntersecting) {
-          if (!v.dataset.loaded) {
-            const s = document.createElement('source');
-            s.src = v.dataset.bg; s.type = 'video/mp4';
-            v.appendChild(s);
-            v.preload = 'auto';
-            v.dataset.loaded = '1';
-            try { v.load(); } catch (err) {}
-          }
-          if(!v.dataset.readyHook){
-            const ready=()=>v.classList.add('is-ready');
-            v.addEventListener('playing',ready);
-            v.addEventListener('loadeddata',ready,{once:true});
-            v.dataset.readyHook='1';
-          }
-          const pr = v.play();
-          if (pr && pr.catch) pr.catch(() => {});
-        } else {
-          try { v.pause(); } catch (err) {}
-        }
+    if(bgScroller&&bgScrollHandler)bgScroller.removeEventListener('scroll',bgScrollHandler);
+    if(bgScroller&&bgTouchHandler)bgScroller.removeEventListener('touchstart',bgTouchHandler);
+    if(bgResizeHandler)window.removeEventListener('resize',bgResizeHandler);
+    if(bgVisibilityHandler)document.removeEventListener('visibilitychange',bgVisibilityHandler);
+    bgRailRoots.forEach(r=>{ if(bgScrollHandler)r.removeEventListener('scroll',bgScrollHandler); });
+    bgRailRoots=[];
+    bgVids=$$('[data-bg]');
+    bgScroller=$('#app');
+    if(!bgVids.length||!bgScroller)return;
+    bgScrollHandler=scheduleBgMeasure;
+    /* A touch is an explicit user gesture, so this is also a fallback for iOS
+       configurations that refuse even muted autoplay (for example Low Power
+       Mode). */
+    bgTouchHandler=()=>{
+      const ar=bgScroller.getBoundingClientRect();
+      bgVids.forEach(v=>{
+        const r=v.getBoundingClientRect();
+        if(r.bottom>ar.top-80&&r.top<ar.bottom+80) safePlayBgVideo(v);
       });
-    }, { root: $('#app'), rootMargin:'240px 0px 240px 0px', threshold: 0.08 });
-    vids.forEach(v => bgObserver.observe(v));
+    };
+    bgResizeHandler=scheduleBgMeasure;
+    bgVisibilityHandler=()=>{ if(!document.hidden)scheduleBgMeasure(); };
+    bgScroller.addEventListener('scroll',bgScrollHandler,{passive:true});
+    bgScroller.addEventListener('touchstart',bgTouchHandler,{passive:true});
+    bgRailRoots=[...new Set(bgVids.map(v=>v.closest('.homeMotion__rail,.rail')).filter(Boolean))];
+    bgRailRoots.forEach(r=>r.addEventListener('scroll',bgScrollHandler,{passive:true}));
+    window.addEventListener('resize',bgResizeHandler,{passive:true});
+    document.addEventListener('visibilitychange',bgVisibilityHandler);
+    scheduleBgMeasure();
+    setTimeout(scheduleBgMeasure,180);
+    setTimeout(scheduleBgMeasure,900);
   }
 
   /* Reveal on scroll. One observer for the whole view, each element released
