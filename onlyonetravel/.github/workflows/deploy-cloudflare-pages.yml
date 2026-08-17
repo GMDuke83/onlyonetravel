@@ -1,0 +1,72 @@
+name: Deploy test environment
+
+# Publishes public/ to Cloudflare Pages.
+#
+# Inactive until these two repository secrets exist
+# (Settings → Secrets and variables → Actions):
+#
+#   CLOUDFLARE_API_TOKEN    token with the "Cloudflare Pages: Edit" permission
+#   CLOUDFLARE_ACCOUNT_ID   from the Cloudflare dashboard URL
+#
+# Without them the job is skipped instead of failing, so a red X never appears
+# on a perfectly good commit.
+#
+# If you connect the repository through the Cloudflare Pages Git integration
+# instead, Cloudflare deploys on its own and this workflow is redundant —
+# delete it then, so the same commit is not deployed twice.
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Check credentials
+        id: check
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare secrets are not set — skipping deployment."
+          fi
+
+      - name: Checkout
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - name: Verify the hero video is a real file
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          set -e
+          video="public/video/onlyone-hero-ocean-v3.mp4"
+          test -f "$video" || { echo "::error::$video is missing"; exit 1; }
+
+          # Guard the rule that matters most: the video must never be inlined.
+          if grep -qE 'data:video/|VIDEO_B64' public/index.html public/js/app.js; then
+            echo "::error::A video appears to be embedded in the page. It must be served as a file."
+            exit 1
+          fi
+
+          bytes=$(stat -c%s "$video")
+          echo "hero video: $bytes bytes"
+          [ "$bytes" -gt 100000 ] || { echo "::error::hero video looks truncated"; exit 1; }
+
+      - name: Publish to Cloudflare Pages
+        if: steps.check.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy public --project-name=onlyone-luxury-travel --branch=${{ github.ref_name }}

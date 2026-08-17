@@ -1,0 +1,15 @@
+{
+  "name": "onlyone-luxury-travel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ONLYONE LUXURY TRAVEL — mobile-first cinematic luxury travel experience.",
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "start": "node scripts/dev-server.js",
+    "build": "echo \"No build step — 'public/' is deployed as-is.\" && exit 0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

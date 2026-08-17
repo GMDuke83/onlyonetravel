@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>ONLYONE LUXURY TRAVEL</title>
+<meta name="description" content="Mobile-first cinematic luxury travel experience. Handpicked stays across Türkiye, personal VIP assistant, individual offers.">
+<meta name="theme-color" content="#15100B">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest?v=20260817-1907-ios2">
+<link rel="preload" as="image" href="./images/onlyone-hero-poster.webp">
+<!-- The platform hero shows the moment the intro ends. Fetching its first
+     photograph now, while the intro is still playing, means it is decoded and
+     waiting instead of starting from zero at the hand-over. -->
+<link rel="preload" as="image" href="./images/hero/hero-06.webp" fetchpriority="high">
+<link rel="preload" as="image" href="./images/hero/hero-03.webp">
+<link rel="preload" as="image" href="./images/hero/hero-04.webp">
+<link rel="stylesheet" href="./css/app.css?v=20260817-1907-ios2">
+</head>
+<body>
+
+<!-- ============================================================
+     INTRO  ·  cinematic hero — the entrance to the experience
+     ============================================================ -->
+<section class="intro" id="intro" aria-label="ONLYONE intro">
+
+  <video
+    id="heroVideo"
+    class="intro__video"
+    autoplay
+    muted
+    playsinline
+    webkit-playsinline
+    preload="auto"
+    poster="./images/onlyone-hero-poster.webp"
+    disablepictureinpicture
+    disableremoteplayback
+    x5-playsinline
+  >
+    <source src="./video/onlyone-hero-ocean-v4.mp4?v=20260817-1907-ios2" type="video/mp4">
+  </video>
+
+  <audio id="heroAudio" preload="auto" aria-hidden="true">
+    <source src="./audio/onlyone-hero-ocean-v1.m4a?v=20260817-1907-ios2" type="audio/mp4">
+  </audio>
+
+  <div class="intro__scrim" aria-hidden="true"></div>
+
+  <header class="intro__brand">
+    <span class="brandMark" aria-hidden="true"></span>
+    <strong>ONLYONE</strong>
+    <small>LUXURY TRAVEL</small>
+  </header>
+
+  <button class="soundToggle" id="soundToggle" type="button"
+          aria-label="Enable ocean sound" aria-pressed="false">
+    <svg class="soundToggle__on" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+      <path d="M15.8 9.6a3.6 3.6 0 0 1 0 4.8"/>
+      <path d="M18.4 7a7.2 7.2 0 0 1 0 10"/>
+    </svg>
+    <svg class="soundToggle__off" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+      <path d="m16.2 10.2 4 3.6"/>
+      <path d="m20.2 10.2-4 3.6"/>
+    </svg>
+  </button>
+
+  <div class="intro__copy" id="introCopy">
+    <p class="kicker">This is not just a trip</p>
+    <h1 class="headline">
+      This is your<br>
+      Only One
+      <em class="headline__script">Journey</em>
+    </h1>
+  </div>
+
+  <div class="intro__end" id="introEnd" aria-hidden="true">
+    <p class="intro__endEyebrow">ONLYONE Luxury Travel</p>
+    <h2 class="intro__endTitle">Your Journey<em>Begins Now</em></h2>
+  </div>
+
+  <!-- countdown: fixed, bottom-centered, never moves -->
+  <div class="countdown" id="countdown" aria-hidden="true">
+    <svg class="countdown__ring" viewBox="0 0 100 100" aria-hidden="true">
+      <circle class="countdown__ringTrack" cx="50" cy="50" r="47"/>
+      <circle class="countdown__ringProgress" cx="50" cy="50" r="47"/>
+    </svg>
+    <span class="countdown__value" id="countdownValue">3</span>
+  </div>
+
+  <div class="tapStart" id="tapStart">
+    <button type="button" id="tapStartBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+      Start Journey
+    </button>
+  </div>
+
+  <button class="skipIntro" id="skipIntro" type="button">Skip</button>
+
+  <div class="intro__flash" id="introFlash" aria-hidden="true"></div>
+</section>
+
+
+<!-- ============================================================
+     PLATFORM  ·  everything below is rendered by js/app.js
+     ============================================================ -->
+<main class="main" id="main" aria-hidden="true">
+  <span class="edgeLed edgeLed--l" aria-hidden="true"><i></i></span>
+  <span class="edgeLed edgeLed--r" aria-hidden="true"><i></i></span>
+  <div id="app"></div>
+</main>
+
+<div class="sheetWrap" id="sheetWrap">
+  <div class="sheetBackdrop" data-sheet-close></div>
+  <div class="sheet" id="sheet"><div class="sheet__grip"></div><div id="sheetInner"></div></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var CURRENT_BUILD = "20260817-1907-ios2";
+  window.ONLYONE_BUILD = CURRENT_BUILD;
+
+  function checkBuild(){
+    try {
+      fetch("./version.json?_=" + Date.now(), {cache:"no-store"})
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(v){
+          if (!v || !v.build || v.build === CURRENT_BUILD) return;
+          var u = new URL(window.location.href);
+          if (u.searchParams.get("v") === v.build) return;
+          u.searchParams.set("v", v.build);
+          window.location.replace(u.toString());
+        })
+        .catch(function(){});
+    } catch (e) {}
+  }
+
+  window.onlyoneCheckBuild = checkBuild;
+  window.addEventListener("pageshow", checkBuild);
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) checkBuild();
+  });
+  checkBuild();
+})();
+</script>
+<script src="./js/app.js?v=20260817-1907-ios2" defer></script>
+</body>
+</html>
