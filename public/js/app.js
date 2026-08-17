@@ -11,9 +11,9 @@
 
    Audio
    -----
-   The intro contains the original ocean soundtrack. Browser-safe autoplay
-   starts muted; a user gesture or the sound button unlocks the soundtrack.
-   All videos inside the actual website remain intentionally silent.
+   The intro video always autoplays muted. The original ocean soundtrack is
+   mirrored into a separate <audio> element so iOS Safari can start it directly
+   inside a real user gesture. All videos inside the website remain silent.
    ========================================================================== */
 
 (function () {
@@ -36,6 +36,7 @@
   /* ---- elements --------------------------------------------------------- */
   var intro        = document.getElementById('intro');
   var video        = document.getElementById('heroVideo');
+  var oceanAudio   = document.getElementById('heroAudio');
   var introCopy    = document.getElementById('introCopy');
   var introEnd     = document.getElementById('introEnd');
   var introFlash   = document.getElementById('introFlash');
@@ -238,19 +239,15 @@
 
   function reflectSoundUi() {
     if (!soundToggle) return;
-    var on = !video.muted && wantSound;
+    var on = !!(oceanAudio && wantSound && !oceanAudio.paused);
     soundToggle.classList.toggle('is-on', on);
     soundToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
     var L = INTRO_I18N[introLang()] || INTRO_I18N.en;
     soundToggle.setAttribute('aria-label', on ? L.soundOff : L.soundOn);
   }
 
-  /* The tap still has to be discoverable — no browser starts audio on its own —
-     but the wording is gone: a labelled pill competed with the headline on the
-     one screen that is meant to be a single image. The sound button pulses
-     instead, which says "press me" without putting words on the picture. */
   function showSoundHint(){
-    if (!soundToggle || audioUnlocked || !video.muted) return;
+    if (!soundToggle || (oceanAudio && !oceanAudio.paused)) return;
     soundToggle.classList.add('is-hinting');
     clearTimeout(hintTimer);
     hintTimer = setTimeout(hideSoundHint, 9000);
@@ -260,24 +257,53 @@
     clearTimeout(hintTimer);
   }
 
-  // Must run synchronously inside a user gesture on iOS.
-  function enableSound() {
+  /* iOS Safari requires audible media playback to originate directly from the
+     tap. Keep the cinematic video muted forever and start the copied original
+     AAC soundtrack as a separate media element inside that tap handler. */
+  function primeSoundPreference() {
     wantSound = true;
     audioUnlocked = true;
-    video.muted = false;
-    video.defaultMuted = false;
-    video.removeAttribute('muted');
-    video.volume = 1;
     saveSoundPref(true);
     hideSoundHint();
+  }
+
+  function startWithSoundFromGesture() {
+    primeSoundPreference();
+
+    try { video.pause(); } catch (e) {}
+    try { video.currentTime = 0; } catch (e) {}
+    video.setAttribute('muted', '');
+    video.defaultMuted = true;
+    video.muted = true;
+
+    if (oceanAudio) {
+      try { oceanAudio.pause(); } catch (e) {}
+      try { oceanAudio.currentTime = 0; } catch (e) {}
+      try { oceanAudio.volume = 1; } catch (e) {}
+
+      /* Do not await anything before this call. On iOS this play() must still be
+         in the original click/touch call stack. */
+      var ap = oceanAudio.play();
+      if (ap && typeof ap.then === 'function') {
+        ap.then(reflectSoundUi).catch(function () {
+          reflectSoundUi();
+          showSoundHint();
+        });
+      }
+    }
+
+    resetSequence();
+    playFromStart();
     reflectSoundUi();
   }
 
   function muteSound() {
-    // Attribute and property are kept in step deliberately — see boot.
-    video.muted = true;
-    video.defaultMuted = true;
+    if (oceanAudio) {
+      try { oceanAudio.pause(); } catch (e) {}
+    }
     video.setAttribute('muted', '');
+    video.defaultMuted = true;
+    video.muted = true;
     reflectSoundUi();
   }
 
@@ -345,6 +371,9 @@
     try { video.pause(); } catch (e) {}
     muteSound();
     try { video.currentTime = 0; } catch (e) {}
+    if (oceanAudio) {
+      try { oceanAudio.currentTime = 0; } catch (e) {}
+    }
   }
 
   function goToMain() {
@@ -394,20 +423,19 @@
 
     resetSequence();
 
-    // The intro may use its remembered soundtrack preference; site videos stay silent.
+    // Safari-safe: every replay begins muted. A remembered preference only
+    // makes the sound control pulse; audible playback still needs a fresh tap.
     wantSound = loadSoundPref();
-    if (wantSound) {
-      video.removeAttribute('muted');
-      video.defaultMuted = false;
-      video.muted = false;
-      video.volume = 1;
-    } else {
-      video.setAttribute('muted', '');
-      video.defaultMuted = true;
-      video.muted = true;
+    video.setAttribute('muted', '');
+    video.defaultMuted = true;
+    video.muted = true;
+    if (oceanAudio) {
+      try { oceanAudio.pause(); } catch (e) {}
+      try { oceanAudio.currentTime = 0; } catch (e) {}
     }
     reflectSoundUi();
     playFromStart();
+    if (wantSound) showSoundHint();
   }
 
   /* ======================================================================
@@ -501,10 +529,8 @@
     if (leaving || onMain) return;
     if (event.target.closest('#soundToggle, #tapStart, #skipIntro')) return;
 
-    if (!audioUnlocked) {
-      enableSound();
-      resetSequence();
-      playFromStart();
+    if (!oceanAudio || oceanAudio.paused) {
+      startWithSoundFromGesture();
     } else {
       nudgePlay();
     }
@@ -512,20 +538,36 @@
 
   /* --- explicit sound toggle -------------------------------------------- */
   if (soundToggle) {
-    soundToggle.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
+    var lastSoundTouch = 0;
+    function toggleSoundFromGesture(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
 
-      if (video.muted) {
-        enableSound();
-        // Replay from 0:00 so sound and the cinematic intro always begin together.
-        resetSequence();
-        playFromStart();
+      if (!oceanAudio || oceanAudio.paused || !wantSound) {
+        startWithSoundFromGesture();
       } else {
         wantSound = false;
         saveSoundPref(false);
         muteSound();
       }
+    }
+
+    /* touchend is the most direct iPhone path. Prevent its synthetic click from
+       toggling the sound straight back off; desktop and keyboard keep click. */
+    soundToggle.addEventListener('touchend', function (event) {
+      lastSoundTouch = Date.now();
+      toggleSoundFromGesture(event);
+    }, {passive:false});
+
+    soundToggle.addEventListener('click', function (event) {
+      if (Date.now() - lastSoundTouch < 700) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      toggleSoundFromGesture(event);
     });
   }
 
@@ -534,9 +576,7 @@
     tapStartBtn.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
-      enableSound();
-      resetSequence();
-      playFromStart();
+      startWithSoundFromGesture();
     });
   }
 
@@ -553,19 +593,27 @@
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       try { video.pause(); } catch (e) {}
+      if (oceanAudio) try { oceanAudio.pause(); } catch (e) {}
     } else if (onMain) {
       // the platform hero is a slideshow now — CSS animations pause themselves
     } else if (!leaving && video.paused) {
       var p = video.play();
       if (p && typeof p.catch === 'function') p.catch(function () {});
+      if (oceanAudio && wantSound && audioUnlocked) {
+        var ap = oceanAudio.play();
+        if (ap && typeof ap.catch === 'function') ap.catch(function () { reflectSoundUi(); });
+      }
     }
   });
 
   /* --- restoring from the bfcache ---------------------------------------- */
   window.addEventListener('pageshow', function (event) {
+    if (typeof window.onlyoneCheckBuild === 'function') window.onlyoneCheckBuild();
     if (event.persisted && !onMain) {
+      if (oceanAudio) try { oceanAudio.pause(); } catch (e) {}
       resetSequence();
       playFromStart();
+      if (loadSoundPref()) showSoundHint();
     }
   });
 
@@ -583,24 +631,24 @@
 
   video.playsInline = true;
 
-  // Autoplay starts browser-safe. A saved preference may be honoured on
-  // browsers that allow it; iOS falls back to muted and waits for a gesture.
+  // Autoplay is always muted on every browser. iOS then gets the soundtrack
+  // from the separate audio element only after a real user tap.
   wantSound = loadSoundPref();
-  if (wantSound) {
-    video.removeAttribute('muted');
-    video.defaultMuted = false;
-    video.muted = false;
-    video.volume = 1;
-  } else {
-    video.setAttribute('muted', '');
-    video.defaultMuted = true;
-    video.muted = true;
+  video.setAttribute('muted', '');
+  video.defaultMuted = true;
+  video.muted = true;
+  if (oceanAudio) {
+    try { oceanAudio.pause(); } catch (e) {}
+    try { oceanAudio.currentTime = 0; } catch (e) {}
+    oceanAudio.addEventListener('play', reflectSoundUi);
+    oceanAudio.addEventListener('pause', reflectSoundUi);
+    oceanAudio.addEventListener('ended', reflectSoundUi);
   }
   reflectSoundUi();
 
   playFromStart();
 
-  // Give the video a moment to settle, then nudge — only if still silent.
+  // Give the video a moment to settle, then point gently at the sound control.
   setTimeout(showSoundHint, 1400);
   ['click','touchend'].forEach(function (ev) {
     intro.addEventListener(ev, hideSoundHint, { once: true, capture: true });
@@ -829,7 +877,7 @@
       guests:'Reisende', searchBtn:'Unterkünfte suchen', recommended:'Empfohlen', all:'Alle',
       experiences:'Erlebnisse',
       focusExcursions:'Ausflüge & Erlebnisse', focusExcursionsSub:'Die besten Ideen für deine Reise – von Kappadokien bis Ephesos.',
-      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Gruppenreisen, Event-Momente und besondere Ausflüge in Bewegung.',
+      vipMoments:'ONLYONE in Bewegung', vipMomentsSub:'Yacht-Momente, besondere Ausflüge, Events, Gruppenreisen und VIP-Empfang in Bewegung.',
       vipServices:'VIP-Services', vipServicesSub:'Transfer und Anreise organisieren wir passend zur Reise.',
       destinationsShort:'Destinationen', staysShort:'Unterkünfte entdecken',
       travelWays:'Wie möchtest du reisen?', destinations:'Destinationen', selectedExperiences:'Ausgewählte Erlebnisse',
@@ -967,7 +1015,7 @@
       guests:'Guests', searchBtn:'Search stays', recommended:'Recommended', all:'All',
       experiences:'Experiences',
       focusExcursions:'Excursions & experiences', focusExcursionsSub:'The best ideas for your trip — from Cappadocia to Ephesus.',
-      vipMoments:'ONLYONE in motion', vipMomentsSub:'Group journeys, private events and memorable excursions brought to life.',
+      vipMoments:'ONLYONE in motion', vipMomentsSub:'Yacht moments, memorable excursions, private events, group journeys and VIP welcomes brought to life.',
       vipServices:'VIP services', vipServicesSub:'Transfer and arrival arranged around your trip.',
       destinationsShort:'Destinations', staysShort:'Discover stays',
       travelWays:'How would you like to travel?', destinations:'Destinations', selectedExperiences:'Selected experiences',
@@ -1143,16 +1191,16 @@
      else and — same rule as hotels — carrying no price. --- */
   const EXC_IMG='./images/excursions/';
   const EXCURSIONS=[
-    {id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
-     n:{ru:'Памуккале и Хиераполис',de:'Pamukkale & Hierapolis',en:'Pamukkale & Hierapolis'},
-     d:{ru:'Белоснежные травертиновые террасы с термальной водой и античный город над ними.',
-        de:'Schneeweiße Kalksinterterrassen mit Thermalwasser und die antike Stadt darüber.',
-        en:'Snow-white travertine terraces of thermal water and the ancient city above them.'}},
     {id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
      d:{ru:'Долины сказочных дымоходов, пещерные церкви и полёт на воздушном шаре на рассвете.',
         de:'Täler voller Feenkamine, Höhlenkirchen und eine Ballonfahrt bei Sonnenaufgang.',
         en:'Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.'}},
+    {id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+     n:{ru:'Памуккале и Хиераполис',de:'Pamukkale & Hierapolis',en:'Pamukkale & Hierapolis'},
+     d:{ru:'Белоснежные травертиновые террасы с термальной водой и античный город над ними.',
+        de:'Schneeweiße Kalksinterterrassen mit Thermalwasser und die antike Stadt darüber.',
+        en:'Snow-white travertine terraces of thermal water and the ancient city above them.'}},
     {id:'ephesus', img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Эфес',de:'Ephesos',en:'Ephesus'},
      d:{ru:'Мраморные улицы, библиотека Цельса и один из крупнейших античных театров.',
@@ -1741,18 +1789,26 @@
      and the file is lighter than the intro video at the same size and length.
      -------------------------------------------------------------------- */
   const CLIPS=[
-    { id:'groups',
-      src:'./video/onlyone-groups-cappadocia-v1.mp4',
-      poster:'./images/video-posters/groups-cappadocia.webp',
-      eyebrow:'groupsEyebrow', title:'groupsTitle', body:'groupsBody' },
-    { id:'events',
-      src:'./video/onlyone-event-dinner-v1.mp4',
-      poster:'./images/video-posters/event-dinner.webp',
-      eyebrow:'eventEyebrow', title:'eventTitle', body:'eventBody' },
+    { id:'yacht',
+      src:'./video/onlyone-yacht-tour-v2.mp4',
+      poster:'./images/yacht-tour-poster.webp',
+      eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
     { id:'pamukkale',
       src:'./video/onlyone-pamukkale-v1.mp4',
       poster:'./images/video-posters/pamukkale-tour.webp',
       eyebrow:'pamukkaleEyebrow', title:'pamukkaleTitle', body:'pamukkaleBody' },
+    { id:'events',
+      src:'./video/onlyone-event-dinner-v1.mp4',
+      poster:'./images/video-posters/event-dinner.webp',
+      eyebrow:'eventEyebrow', title:'eventTitle', body:'eventBody' },
+    { id:'groups',
+      src:'./video/onlyone-groups-cappadocia-v1.mp4',
+      poster:'./images/video-posters/groups-cappadocia.webp',
+      eyebrow:'groupsEyebrow', title:'groupsTitle', body:'groupsBody' },
+    { id:'welcome',
+      src:'./video/onlyone-vip-welcome-v3.mp4',
+      poster:'./images/vip-welcome-poster-v2.webp',
+      eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
   ];
   function clipBand(at){
     /* The whole band is the target, not a small link in the corner: on a phone
