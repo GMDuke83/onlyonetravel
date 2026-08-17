@@ -62,6 +62,17 @@
     return storedLanguage() || deviceLanguage();
   }
 
+  /* Public shared resolver. The platform lives in a separate IIFE, so the
+     language service must cross that scope boundary explicitly. */
+  window.ONLYONE_LANGUAGE = {
+    STATE_KEY: LANGUAGE_STATE_KEY,
+    SUPPORTED: SUPPORTED_LANGS.slice(),
+    normalize: normalizedLanguage,
+    stored: storedLanguage,
+    device: deviceLanguage,
+    resolve: resolveLanguage
+  };
+
   /* ---- configuration ---------------------------------------------------- */
   var COUNTDOWN_START_AT = 3.0;   // seconds of playback before the countdown
   var COUNTDOWN_FROM     = 3;     // 3 · 2 · 1
@@ -461,6 +472,18 @@
       onMain = true;
       main.classList.add('is-active');
       main.setAttribute('aria-hidden', 'false');
+
+      /* Do not aria-hide an element that still contains keyboard focus.
+         Safari/Chromium both warn about this and assistive tech can lose its
+         focus anchor. Move focus to the now-visible main region first. */
+      try {
+        if (intro.contains(document.activeElement)) {
+          if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+          main.setAttribute('tabindex', '-1');
+          main.focus({preventScroll:true});
+        }
+      } catch (e) {}
+
       intro.classList.add('is-leaving');
       intro.setAttribute('aria-hidden', 'true');
 
@@ -1427,13 +1450,25 @@
   /* ====================================================================
      3 · State
      ==================================================================== */
-  const KEY=LANGUAGE_STATE_KEY;
+  const LANGUAGE = window.ONLYONE_LANGUAGE || {
+    STATE_KEY:'onlyone.state.v1',
+    SUPPORTED:['de','en','ru'],
+    device:function(){
+      const list=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);
+      for(const tag of list){
+        const base=String(tag||'').toLowerCase().replace(/_/g,'-').split('-')[0];
+        if(['de','en','ru'].includes(base)) return base;
+      }
+      return 'en';
+    }
+  };
+  const KEY=LANGUAGE.STATE_KEY;
 
   /* Shared with the intro: the device language is used until the visitor makes
      an explicit choice. The choice remains stored and therefore wins on every
      later visit. */
-  const SUPPORTED = SUPPORTED_LANGS.slice();
-  function detectLang(){ return deviceLanguage(); }
+  const SUPPORTED = LANGUAGE.SUPPORTED.slice();
+  function detectLang(){ return LANGUAGE.device(); }
 
   const DEF={lang:null,favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
              search:{from:'',to:'',adults:2,children:0}};
