@@ -13,7 +13,8 @@
    -----
    The intro video always autoplays muted. The original ocean soundtrack is
    mirrored into a separate <audio> element so iOS Safari can start it directly
-   inside a real user gesture. All videos inside the website remain silent.
+   from the explicit sound control. The intro itself needs no start button in
+   the normal path. All videos inside the website remain silent.
    ========================================================================== */
 
 (function () {
@@ -25,8 +26,8 @@
   var COUNTDOWN_STEP_MS  = 1000;
   var END_TITLE_HOLD_MS  = 1800;  // pause on "Your Journey Begins Now"
   var FLASH_MS           = 380;
-  var AUTOPLAY_PROBE_MS  = 1800;
-  var STALL_OFFER_HELP_S = 4;     // no progress this long → offer a start button
+  var AUTOPLAY_PROBE_MS  = 1200;
+  var STALL_OFFER_HELP_S = 7;     // manual fallback only after a real autoplay failure
   /* Only counts while the video is provably dead — nothing decoded and nothing
      arriving. A slow download resets it and a blocked autoplay never reaches
      it, so this can stay short: a visitor whose file will never play should not
@@ -121,6 +122,7 @@
   var probeTimer   = null;
   var stallTimer   = null;
   var stallSeconds = 0;
+  var autoplayFallbackReady = false; // keep the normal intro completely button-free
 
   /* ======================================================================
      Helpers
@@ -253,7 +255,7 @@
      never decode on this device, so move on rather than strand anyone. */
   function giveUpOnVideo() {
     if (leaving || onMain || seqStarted) return;
-    showTapStart();
+    showTapStart(true);
     stopStallWatchdog();
     setTimeout(function () {
       if (!seqStarted && !leaving && !onMain) startSequence();
@@ -349,6 +351,7 @@
     if (countdown)  countdown.classList.remove('is-in', 'is-ticking');
     if (countValue) countValue.textContent = String(COUNTDOWN_FROM);
     if (tapStart)   tapStart.classList.remove('is-in');
+    autoplayFallbackReady = false;
   }
 
   function keepIntroRolling() {
@@ -503,14 +506,20 @@
             retry.catch(function () { showTapStart(); });
           }
         } else {
-          showTapStart();
+          // A first autoplay rejection on iOS is not yet a reason to put a
+          // button over the film. canplay/pageshow/visibility and the probe
+          // below keep retrying; the button is a late fallback only.
+          setTimeout(nudgePlay, 220);
         }
       });
     }
   }
 
-  function showTapStart() {
+  function showTapStart(force) {
     if (leaving || onMain) return;
+    // The normal experience has no start button. Only expose it after the
+    // autoplay grace period, or immediately for a hard media error.
+    if (!force && !autoplayFallbackReady) return;
     // never offer a manual start for something that is already running
     if (!video.paused && video.readyState >= 3) return;
     if (tapStart) tapStart.classList.add('is-in');
@@ -539,6 +548,7 @@
   });
 
   video.addEventListener('playing', function () {
+    autoplayFallbackReady = false;
     if (tapStart) tapStart.classList.remove('is-in');
   });
 
@@ -567,16 +577,36 @@
   var heroSource = video.querySelector('source');
   if (heroSource) heroSource.addEventListener('error', giveUpOnVideo);
 
+  /* --- invisible autoplay unlock -----------------------------------------
+     If iOS refuses muted autoplay, a normal first touch anywhere on the intro
+     is enough to resume the already-loaded muted film. No start button is
+     needed for that path. The dedicated sound button still owns audio. */
+  function resumeMutedFromGesture(event) {
+    if (leaving || onMain || !video.paused || video.currentTime > 0.15) return;
+    if (event && event.target && event.target.closest && event.target.closest('#soundToggle, #skipIntro, #tapStart')) return;
+    video.setAttribute('muted','');
+    video.defaultMuted = true;
+    video.muted = true;
+    var rp = video.play();
+    if (rp && typeof rp.then === 'function') {
+      rp.then(hideTapStart).catch(function(){});
+    }
+  }
+  intro.addEventListener('touchend', resumeMutedFromGesture, {passive:true});
+  intro.addEventListener('pointerup', resumeMutedFromGesture, {passive:true});
+
   /* --- first tap on the hero: unlock sound, replay with the ocean -------- */
   intro.addEventListener('click', function (event) {
     if (leaving || onMain) return;
     if (event.target.closest('#soundToggle, #tapStart, #skipIntro')) return;
 
-    if (!oceanAudio || oceanAudio.paused) {
-      startWithSoundFromGesture();
-    } else {
-      nudgePlay();
+    // If autoplay was blocked, use this gesture only to resume the muted film;
+    // do not restart it from zero. Audio remains an explicit sound-button action.
+    if (video.paused && video.currentTime < 0.15) {
+      resumeMutedFromGesture(event);
+      return;
     }
+    nudgePlay();
   });
 
   /* --- explicit sound toggle -------------------------------------------- */
@@ -697,8 +727,10 @@
     intro.addEventListener(ev, hideSoundHint, { once: true, capture: true });
   });
 
-  // If autoplay never got going, offer the explicit start button.
+  // Normal path: no start button at all. If autoplay has still not begun after
+  // a short 1.2 s grace period, expose the fallback immediately so nobody waits.
   probeTimer = setTimeout(function () {
+    autoplayFallbackReady = true;
     if (video.paused && video.currentTime < 0.15) showTapStart();
   }, AUTOPLAY_PROBE_MS);
 
