@@ -1,3 +1,6 @@
 {
-  "build": "20260817-1924-motion5-r11"
+  "version": "R43",
+  "date": "2026-08-18",
+  "label": "r43-mobile",
+  "build": "20260818-customer-home-r43"
 }

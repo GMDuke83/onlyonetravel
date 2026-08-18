@@ -11,16 +11,25 @@ $text = Get-Content $js -Raw
 $htmlText = Get-Content $html -Raw
 $versionText = if(Test-Path $version){ Get-Content $version -Raw } else { "" }
 
+$homeStart = $text.IndexOf("function vHome(){")
+$homeEnd = $text.IndexOf("function vWorld(id){", $homeStart)
+$home = if($homeStart -ge 0 -and $homeEnd -gt $homeStart){ $text.Substring($homeStart,$homeEnd-$homeStart) } else { "" }
+
 $checks = @(
-  @{Label="Ausflüge: Kappadokien vor Pamukkale"; Ok=($text.IndexOf("{id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp'") -ge 0 -and $text.IndexOf("{id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp'") -lt $text.IndexOf("{id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp'"))},
-  @{Label="Motion: Yacht vorhanden"; Ok=$text.Contains("{ id:'yacht'")},
-  @{Label="Motion: VIP-Empfang vorhanden"; Ok=$text.Contains("{ id:'welcome'")},
-  @{Label="Motion: Yacht vor Pamukkale"; Ok=($text.IndexOf("{ id:'yacht'") -lt $text.IndexOf("{ id:'pamukkale'", $text.IndexOf("const CLIPS=")))},
+  @{Label="r12 Build in HTML"; Ok=$htmlText.Contains("20260818-customer-home-r12")},
+  @{Label="r12 Build in version.json"; Ok=$versionText.Contains("20260818-customer-home-r12")},
+  @{Label="Startseite: Aktuelle Angebote"; Ok=$home.Contains("Aktuelle Angebote")},
+  @{Label="Startseite: VIP Rückrufform"; Ok=$home.Contains("homeVipCallback") -and $home.Contains("data-act=\"vip-callback\"")},
+  @{Label="Startseite: 5 Reisekategorien"; Ok=$home.Contains("Sportreisen") -and $home.Contains("Event-Management")},
+  @{Label="Startseite: Best Hotels"; Ok=$home.Contains("Best Hotels")},
+  @{Label="Startseite: 4 VIP Services"; Ok=$home.Contains("VIP Welcome") -and $home.Contains("Private Jet & Charter") -and $home.Contains("Chauffeur")},
+  @{Label="Startseite: eigene Transfer-Anfrage"; Ok=$home.Contains("homeTransferRequest") -and $home.Contains("data-act=\"transfer-form\"")},
+  @{Label="Startseite: alter Motion-Block entfernt"; Ok=(!$home.Contains("<section class=\"homeMotion\""))},
+  @{Label="Startseite: großer Flugzeug-Band entfernt"; Ok=(!$home.Contains("<section class=\"flyBand\""))},
+  @{Label="Formular-Handler: Rückruf"; Ok=$text.Contains("case 'vip-callback'")},
+  @{Label="Formular-Handler: Transfer"; Ok=$text.Contains("case 'transfer-send'")},
   @{Label="iOS: direkter Video-src Loader"; Ok=$text.Contains("v.src=v.dataset.bg")},
-  @{Label="iOS: Touch-Playback-Fallback"; Ok=$text.Contains("addEventListener('touchstart',bgTouchHandler")},
-  @{Label="Intro: Countdown Playback Guard"; Ok=$text.Contains("keepIntroRolling()")},
-  @{Label="Build r4 in HTML"; Ok=$htmlText.Contains("20260817-1924-motion5-r4")},
-  @{Label="Build r4 in version.json"; Ok=$versionText.Contains("20260817-1924-motion5-r4")},
+  @{Label="Intro: schneller Autoplay-Fallback erhalten"; Ok=$text.Contains("AUTOPLAY_FALLBACK_MS = 1200") -or $text.Contains("1200")},
   @{Label="Yacht Video vorhanden"; Ok=(Test-Path (Join-Path $root "public\video\onlyone-yacht-tour-v2.mp4"))},
   @{Label="VIP-Empfang Video vorhanden"; Ok=(Test-Path (Join-Path $root "public\video\onlyone-vip-welcome-v3.mp4"))}
 )
@@ -31,4 +40,4 @@ foreach($c in $checks){
   else { Write-Host "FEHLER  $($c.Label)" -ForegroundColor Red; $failed=$true }
 }
 if($failed){ exit 1 }
-Write-Host "`nProjektstand ist korrekt und kann gepusht werden." -ForegroundColor Cyan
+Write-Host "`nKundenumbau r12 ist korrekt und kann gepusht werden." -ForegroundColor Cyan

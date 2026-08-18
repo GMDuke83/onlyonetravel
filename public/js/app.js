@@ -68,7 +68,15 @@
     ru: { kicker:'Это не просто поездка',
           h:'Это твоё<br>Only One<em class="headline__script">Journey</em>',
           endT:'Твоё путешествие<em>начинается сейчас</em>',
-          skip:'Пропустить', start:'Начать путешествие', soundOn:'Включить шум моря', soundOff:'Выключить шум моря' }
+          skip:'Пропустить', start:'Начать путешествие', soundOn:'Включить шум моря', soundOff:'Выключить шум моря' },
+    tr: { kicker:'Bu sadece bir seyahat değil',
+          h:'Bu senin<br>Only One<em class="headline__script">Journey</em>',
+          endT:'Seyahatin<em>şimdi başlıyor</em>',
+          skip:'Atla', start:'Seyahati başlat', soundOn:'Deniz sesini aç', soundOff:'Deniz sesini kapat' },
+    uk: { kicker:'Це не просто подорож',
+          h:'Це твоя<br>Only One<em class="headline__script">Journey</em>',
+          endT:'Твоя подорож<em>починається зараз</em>',
+          skip:'Пропустити', start:'Почати подорож', soundOn:'Увімкнути шум моря', soundOff:'Вимкнути шум моря' }
   };
   function introLang(){
     try {
@@ -83,7 +91,7 @@
         if (INTRO_I18N[base]) return base;
       }
     } catch (e) {}
-    return 'en';
+    return 'ru';
   }
   (function applyIntroLang(){
     var L = INTRO_I18N[introLang()];
@@ -1177,8 +1185,16 @@
       transferIncl:'Transfer included...',
     }
   };
+  // R43: Turkish and Ukrainian + native-language copy. English remains a safety fallback.
+  I18N.tr = Object.assign({}, I18N.en, {"deckHead":"Sizin için ne yapıyoruz","deck1Eyebrow":"VIP hizmeti","deck1Title":"Tek iletişim noktası","deck1Body":"Karşılama, transfer, masa, doktor — tüm seyahat boyunca tek numara.","deck2Eyebrow":"Konaklama","deck2Title":"Sadece bildiğimiz adresler","deck2Body":"Her tesisi kendimiz gördük — aksi halde listemizde yer almaz.","deck3Eyebrow":"Özel anlar","deck3Title":"Aklınızda kalan akşamlar","deck3Body":"Mekân, masa ve zamanlama — sakin bir yemekten büyük bir kutlamaya kadar.","kind":"Konaklama türü","yourContact":"İletişim kişiniz","noThreadYet":"Bir talep gönderdikten sonra seyahatinizle ilgilenen kişiye doğrudan iletişim hattınız burada görünür.","startRequest":"Konaklamaları keşfet","writeMsg":"Mesaj yaz","send":"Gönder","msgSent":"Mesaj gönderildi","replyTo":"Müşteriye yanıtla","threadFor":"Talep","you":"Siz","team":"ONLYONE ekibi","noMessages":"Henüz mesaj yok","newMsg":"Yeni mesaj","navConcierge":"VIP Asistan","navVip":"VIP geziler","conciergeTitle":"Kişisel VIP asistanınız","conciergeRole":"ONLYONE VIP Asistan · TÜRKİYE","conciergeLead":"İlk sorudan eve dönüşünüze kadar tek bir kişi seyahatinize eşlik eder.","cDo1":"İsteklerinize göre seçilen konaklamalar","cDo2":"Bağlayıcı olmayan kişisel teklif","cDo3":"Transferler, masalar, geziler","cDo4":"Seyahat boyunca ulaşılabilir","callNow":"Ara","writeWa":"WhatsApp’tan yaz","writeMail":"E-posta yaz","hours":"Her gün 08:00 – 22:00 yerel saat","excursions":"Geziler","excSub":"Otelin ötesinde","excAll":"Tüm geziler","excInterest":"İlgilendiğiniz geziler","excNote":"Geziler otel teklifiyle birlikte planlanır.","addToReq":"Talebime ekle","excAdded":"Talebinize eklendi","duration":"Süre","heroEyebrow":"Türkiye","heroScript":"Türkiye","heroTitle":"En seçkin adresler.","heroSub":"Nasıl seyahat etmek istediğinizi söyleyin — gerisini biz halledelim.","heroCta":"VIP asistanla başlayın","discover":"Konaklamaları keşfet","trust1":"Özenle seçilmiş konaklamalar","trust2":"Kişisel danışmanlık","trust3":"Kişiye özel teklifler","navHome":"Ana sayfa","navSearch":"Ara","navMap":"Harita","navFav":"Favoriler","navTrips":"Seyahatim","where":"Nereye?","wherePh":"Bölge seçin","dates":"Seyahat tarihleri","datesPh":"Tarih seçin","guests":"Misafirler","searchBtn":"Konaklama ara","recommended":"Önerilen","all":"Tümü","experiences":"Deneyimler","focusExcursions":"Geziler ve deneyimler","focusExcursionsSub":"Kapadokya’dan Efes’e seyahatiniz için en iyi fikirler.","vipMoments":"ONLYONE hareket halinde","vipMomentsSub":"Yat anları, özel geziler, etkinlikler, grup seyahatleri ve VIP karşılamalar.","vipServices":"VIP hizmetleri","vipServicesSub":"Transfer ve karşılama seyahatinize göre organize edilir.","destinationsShort":"Destinasyonlar","staysShort":"Konaklama keşfet","travelWays":"Nasıl seyahat etmek istersiniz?","destinations":"Destinasyonlar","selectedExperiences":"Seçili deneyimler","handpicked":"Sizin için seçildi","curatedOffers":"Seçili teklifler","curatedOffersSub":"Özel bir seyahat için özenle seçilmiş beş adres.","exploreSelf":"Kendiniz keşfedin","askVip":"VIP asistanınıza sorun","allExperiences":"Tüm deneyimler","planThisTrip":"Bu seyahati planla","noCatalog":"Hazır katalog paketleri yok — seyahati isteklerinize göre şekillendiriyoruz.","vipHead":"Sadece seyahat rezervasyonu<br>yapmaktan fazlasını yapıyoruz","vip1":"VIP hizmeti","vip1t":"İlk sorudan eve dönüşünüze kadar seyahatinizi tek kişi yönetir.","vip2":"Bildiğimiz adresler","vip2t":"Yalnızca kendimizin deneyimlediği yerler. Katalogdan rastgele seçim yok.","vipX":"Özel deneyimler","vipXt":"Yatlar, helikopterler, gastronomi ve özel turlar — zevkinize göre.","vip3":"VIP asistan her zaman ulaşılabilir","vip3t":"Masa, transfer, doktor — siz seyahatteyken telefondayız.","conciergeName":"Maria Grychko","conciergeMark":"MG","flyEyebrow":"Ulaşım","flyTitle":"Aktarmasız<br>varış","flySpecA":"Uçuş ve transfer","flySpecB":"7/24","flyBody":"Uçuş, varış havalimanından özel transfer ve çıkışta karşılama. Nereden uçtuğunuzu söyleyin — gerisini VIP asistanınız halleder.","flyCta":"VIP asistanınıza sorun","carEyebrow":"Transfer","carTitle":"Aracınız<br>hazır","carWord":"VIP TRANSFER","welcomeEyebrow":"Varış","welcomeTitle":"VIP karşılama","welcomeBody":"Varış havalimanında kişisel karşılama — isim tabelası, kısa yol, sıra yok.","yachtEyebrow":"Özel","yachtTitle":"Yat turu","yachtBody":"Sadece size özel tekne — rota, koylar ve mutfak tamamen isteğinize göre.","groupsEyebrow":"Grup seyahatleri","groupsTitle":"Kapadokya grup seyahati","groupsBody":"Küçük gruplar, özenli rehberlik ve ortak anlar — kitle turizmi olmadan premium bir grup deneyimi.","eventEyebrow":"Özel gün","eventTitle":"Özel akşam yemeği etkinlikleri","eventBody":"Atmosferden masa detaylarına kadar kişisel olarak planlanan zarif bir akşam.","pamukkaleEyebrow":"Gezi","pamukkaleTitle":"Pamukkale gezisi","pamukkaleBody":"Pamukkale’nin beyaz travertenlerine sakin ve konforlu premium gezi.","featuredOffer":"ONLYONE SEÇİMİ","featuredMeta":"Özel plaj · talep üzerine VIP transfer","moreSelected":"Diğer seçili teklifler","finalCtaEyebrow":"ONLYONE · VIP","finalCtaTitle":"Bize sadece nasıl seyahat etmek istediğinizi söyleyin.","finalCtaBody":"VIP asistanınız konaklama, transfer ve deneyimleri tek bir kişisel seyahatte birleştirir.","finalCtaButton":"VIP asistanla başlayın","blockMore":"Daha fazla bilgi","blockHow":"Nasıl çalışır","blockStep1":"Nasıl seyahat etmek istediğinizi söyleyin.","blockStep2":"VIP asistanınız tam bu seyahat için size özel bir teklif hazırlar.","blockStep3":"Siz onaylayın — gerisini biz halledelim.","blockAskText":"Hazır paketlerimiz yok: her teklif size özel hazırlanır. VIP asistanınıza yazın, biz hazırlayalım.","carSpecA":"Özel ve gizli","carSpecB":"Kapıdan kapıya","carBody":"Şoförlü araç sizi varış havalimanında karşılar ve konaklamanızın kapısına kadar götürür — sıra ve aktarma yok.","regions":"Bölgeler","allRegions":"Tüm bölgeler","hotels":"konaklama","hotel":"Konaklama","filters":"Filtreler","apply":"Uygula","reset":"Sıfırla","results":"sonuç","category":"Kategori","holidayType":"Tatil türü","amenities":"Olanaklar","rating":"Puan","beachDist":"Plaj mesafesi","board":"Pansiyon","anyRating":"Tümü","from9":"9,0 ve üzeri","from85":"8,5 ve üzeri","from8":"8,0 ve üzeri","viewHotel":"Görüntüle","description":"Açıklama","location":"Konum","rooms":"Odalar","reviews":"yorum","policies":"Konaklama kuralları","map":"Harita","requestRoom":"Bu odayı talep et","interested":"Bu konaklama ilginizi çekiyor mu?","requestOffer":"Teklif iste","nonBinding":"Bağlayıcı değil","step":"Adım","of":"/","next":"İleri","back":"Geri","s1":"Seyahat tarihleri","s2":"Misafirler","s3":"Oda","s4":"İstekler","s5":"İletişim bilgileri","s6":"Özet","arrival":"Giriş","departure":"Çıkış","adults":"Yetişkinler","children":"Çocuklar","childAge":"Çocuk yaşı","roomWish":"Tercih edilen oda kategorisi","notSure":"Henüz emin değilim","wSea":"Deniz manzarası","wQuiet":"Sessiz oda","wTransfer":"Havalimanı transferi","wCot":"Bebek yatağı","wHoney":"Balayı","wBirthday":"Doğum günü","wAccess":"Engelsiz erişim","otherWishes":"Diğer istekler","firstName":"Ad","lastName":"Soyad","phone":"Telefon","email":"E-posta","whatsapp":"WhatsApp (isteğe bağlı)","sendRequest":"Bağlayıcı olmayan talep gönder","reqSent":"Talep başarıyla gönderildi","reqNo":"Talep numarası","reqTeamText":"Seyahat ekibimiz talebinizi inceliyor ve size özel bir teklif hazırlayacak.","myTrips":"Seyahatlerim","myFav":"Favori oteller","noTrips":"Henüz talebiniz yok","noFav":"Henüz favori otel eklemediniz","details":"Detaylar","viewOffer":"Teklifi görüntüle","yourOffer":"Kişisel teklifiniz","total":"Toplam fiyat","nights":"gece","acceptOffer":"Teklifi kabul et","askBack":"Soru sor","payNow":"Şimdi güvenli öde","paid":"Ödendi","validUntil":"Geçerlilik tarihi","stNew":"Talep alındı","stCheck":"İnceleniyor","stOffer":"Teklif hazırlandı","stAccepted":"Müşteri onayladı","stPay":"Ödeme bekleniyor","stPaid":"Ödendi","stConfirmed":"Rezervasyon onaylandı","menu":"Menü","mContact":"İletişim","mLang":"Dil","mStaff":"Personel girişi","mIntro":"Girişi izle","compare":"Karşılaştır","staffArea":"Personel alanı","dashboard":"Kontrol paneli","requests":"Talepler","bookings":"Rezervasyonlar","customers":"Müşteriler","more":"Daha fazla","today":"Bugün","total_":"toplam","newReq":"Yeni talepler","openOffers":"Açık teklifler","waitCust":"Müşteri bekleniyor","payOpen":"Ödeme bekleniyor","newBook":"Yeni rezervasyonlar","openReq":"Açık talep","createOffer":"Teklif oluştur","sellPrice":"Satış fiyatı","currency":"Para birimi","internalNote":"Dahili not","custInfo":"Müşteri bilgileri","sendOffer":"Teklifi gönder","createPayLink":"Ödeme bağlantısı oluştur","payLinkDone":"Ödeme bağlantısı oluşturuldu","copyLink":"Bağlantıyı kopyala","sendWa":"WhatsApp ile gönder","guestData":"Müşteri bilgileri","period":"Dönem","roomReq":"Oda tercihi","custWishes":"Müşteri istekleri","staffOnly":"Fiyatlar yalnızca personel tarafından görülebilir","backToCust":"Misafir alanına dön","confirmHotel":"Onayı kaydet","tripConfirmed":"Seyahat onaylandı","offerSentWait":"Teklif gönderildi. Müşteri bekleniyor.","demoPay":"Demo ödeme","payDemoNote":"Yalnızca gösterim amaçlıdır. Gerçek ödeme alınmaz.","payNowBtn":"Öde (demo)","cardNo":"Kart numarası","login":"Giriş yap","staffLogin":"Personel girişi","loginNote":"Demo erişim — herhangi bir isim girin.","yourName":"Adınız","addFav":"Favorilere eklendi","remFav":"Favorilerden çıkarıldı","offerSent":"Teklif müşteriye gönderildi","offerAccepted":"Teklif kabul edildi","linkCopied":"Bağlantı kopyalandı","paidOk":"Ödeme alındı","hotelConfirmed":"Konaklama rezervasyonu onayladı","questionSent":"Soru ekibe gönderildi","shared":"Bağlantı kopyalandı","adultsShort":"yet.","childrenShort":"çoc.","sqm":"m²","persons":"misafir","yrs":"yaş","exceptional":"Olağanüstü","wonderful":"Harika","veryGood":"Çok iyi","selectRegion":"Bölge seç","done":"Tamam","required":"Lütfen zorunlu alanları doldurun","contactUs":"İletişim","contactTxt":"Ekibimiz aynı gün yanıt verir.","hotelsIn":"Konaklamalar:","selHotels":"seçili konaklama","noResults":"Eşleşme yok","tryReset":"Filtreleri değiştirmeyi deneyin","freeCancel":"Ücretsiz iptal","onRequest":"talep üzerine","onBeach":"sahilde","noPricesNote":"Fiyat gösterilmez — size özel teklif alırsınız.","noInternalPrices":"Dahili alış fiyatları saklanmaz — fiyat yalnızca teklif oluşturulduğunda belirlenir.","transferIncl":"Transfer dahil..."});
+  I18N.uk = Object.assign({}, I18N.en, {"deckHead":"Що ми робимо для вас","deck1Eyebrow":"VIP-сервіс","deck1Title":"Одна контактна особа","deck1Body":"Зустріч, трансфер, столик, лікар — один номер на всю подорож.","deck2Eyebrow":"Проживання","deck2Title":"Лише перевірені адреси","deck2Body":"Ми особисто бачили кожен об’єкт — інакше його немає в нашій добірці.","deck3Eyebrow":"Особливі події","deck3Title":"Вечори, що запам’ятовуються","deck3Body":"Місце, стіл і таймінг — від тихої вечері до великого святкування.","kind":"Тип проживання","yourContact":"Ваш контакт","noThreadYet":"Після надсилання запиту тут з’явиться прямий зв’язок із людиною, яка супроводжує вашу подорож.","startRequest":"Переглянути проживання","writeMsg":"Написати повідомлення","send":"Надіслати","msgSent":"Повідомлення надіслано","replyTo":"Відповісти клієнту","threadFor":"Запит","you":"Ви","team":"Команда ONLYONE","noMessages":"Повідомлень ще немає","newMsg":"Нове повідомлення","navConcierge":"VIP-асистент","navVip":"VIP-екскурсії","conciergeTitle":"Ваш персональний VIP-асистент","conciergeRole":"ONLYONE VIP-асистент · ТУРЕЧЧИНА","conciergeLead":"Одна людина супроводжує вашу подорож — від першого запитання до повернення додому.","cDo1":"Проживання, підібране за вашими побажаннями","cDo2":"Індивідуальна пропозиція без зобов’язань","cDo3":"Трансфери, столики, екскурсії","cDo4":"На зв’язку під час подорожі","callNow":"Зателефонувати","writeWa":"Написати у WhatsApp","writeMail":"Написати e-mail","hours":"Щодня 08:00 – 22:00 за місцевим часом","excursions":"Екскурсії","excSub":"Більше, ніж готель","excAll":"Усі екскурсії","excInterest":"Екскурсії, які вас цікавлять","excNote":"Екскурсії узгоджуються разом із пропозицією готелю.","addToReq":"Додати до мого запиту","excAdded":"Додано до вашого запиту","duration":"Тривалість","heroEyebrow":"Туреччина","heroScript":"Туреччина","heroTitle":"Найкращі адреси.","heroSub":"Розкажіть, як ви любите подорожувати — про решту подбаємо ми.","heroCta":"Почати з VIP-асистентом","discover":"Підібрати проживання","trust1":"Ретельно відібране проживання","trust2":"Персональна консультація","trust3":"Індивідуальні пропозиції","navHome":"Головна","navSearch":"Пошук","navMap":"Карта","navFav":"Обране","navTrips":"Моя подорож","where":"Куди?","wherePh":"Оберіть регіон","dates":"Дати подорожі","datesPh":"Оберіть дати","guests":"Гості","searchBtn":"Знайти проживання","recommended":"Рекомендуємо","all":"Усі","experiences":"Враження","focusExcursions":"Екскурсії та враження","focusExcursionsSub":"Найкращі ідеї для вашої подорожі — від Каппадокії до Ефеса.","vipMoments":"ONLYONE у русі","vipMomentsSub":"Яхти, особливі екскурсії, приватні події, групові подорожі та VIP-зустрічі.","vipServices":"VIP-сервіси","vipServicesSub":"Трансфер і зустріч організуємо під вашу подорож.","destinationsShort":"Напрямки","staysShort":"Підібрати проживання","travelWays":"Як ви хочете подорожувати?","destinations":"Напрямки","selectedExperiences":"Обрані враження","handpicked":"Відібрано для вас","curatedOffers":"Обрані пропозиції","curatedOffersSub":"П’ять ретельно відібраних адрес для особливої подорожі.","exploreSelf":"Дослідити самостійно","askVip":"Запитати VIP-асистента","allExperiences":"Усі враження","planThisTrip":"Спланувати цю подорож","noCatalog":"Без каталогів і стандартних пакетів — ми формуємо подорож під ваші побажання.","vipHead":"Ми робимо більше,<br>ніж просто бронюємо подорожі","vip1":"VIP-сервіс","vip1t":"Одна людина веде вашу подорож — від першого запитання до повернення додому.","vip2":"Адреси, які ми знаємо","vip2t":"Лише місця, які ми перевірили особисто. Нічого випадкового з каталогу.","vipX":"Ексклюзивні враження","vipXt":"Яхти, гелікоптери, гастрономія та приватні тури — на ваш смак.","vip3":"VIP-асистент на зв’язку","vip3t":"Столик, трансфер, лікар — поки ви подорожуєте, ми на зв’язку.","conciergeName":"Maria Grychko","conciergeMark":"MG","flyEyebrow":"Дорога","flyTitle":"Прибуття<br>без зайвих пересадок","flySpecA":"Переліт і трансфер","flySpecB":"Цілодобово","flyBody":"Переліт, приватний трансфер з аеропорту призначення та зустріч біля виходу. Скажіть, звідки летите — решту організує ваш VIP-асистент.","flyCta":"Запитати VIP-асистента","carEyebrow":"Трансфер","carTitle":"Ваш автомобіль<br>уже чекає","carWord":"VIP ТРАНСФЕР","welcomeEyebrow":"Прибуття","welcomeTitle":"VIP-зустріч","welcomeBody":"Особиста зустріч в аеропорту призначення — табличка з ім’ям, короткий шлях, без черг.","yachtEyebrow":"Ексклюзив","yachtTitle":"Яхт-тур","yachtBody":"Яхта лише для вас — маршрут, бухти й кухня саме за вашими побажаннями.","groupsEyebrow":"Групові подорожі","groupsTitle":"Групова подорож до Каппадокії","groupsBody":"Невеликі групи, продуманий супровід і спільні враження — преміальний формат без масового туризму.","eventEyebrow":"Особлива подія","eventTitle":"Приватна вечеря","eventBody":"Елегантний вечір, персонально організований від атмосфери до кожної деталі столу.","pamukkaleEyebrow":"Екскурсія","pamukkaleTitle":"Екскурсія до Памуккале","pamukkaleBody":"Спокійна преміальна екскурсія до білих травертинів Памуккале — комфортно й без поспіху.","featuredOffer":"ВИБІР ONLYONE","featuredMeta":"Приватний пляж · VIP-трансфер за запитом","moreSelected":"Інші обрані пропозиції","finalCtaEyebrow":"ONLYONE · VIP","finalCtaTitle":"Просто розкажіть, як ви хочете подорожувати.","finalCtaBody":"Ваш VIP-асистент об’єднає проживання, трансфери та враження в одну персональну подорож.","finalCtaButton":"Почати з VIP-асистентом","blockMore":"Детальніше","blockHow":"Як це працює","blockStep1":"Розкажіть, як ви хочете подорожувати.","blockStep2":"Ваш VIP-асистент підготує пропозицію саме для цієї подорожі.","blockStep3":"Ви підтверджуєте — решту беремо на себе.","blockAskText":"Готових пакетів немає: кожна пропозиція створюється для вас. Напишіть VIP-асистенту — і ми все підготуємо.","carSpecA":"Приватно й конфіденційно","carSpecB":"Від дверей до дверей","carBody":"Автомобіль із водієм зустріне вас в аеропорту призначення та довезе до дверей проживання — без черг і пересадок.","regions":"Регіони","allRegions":"Усі регіони","hotels":"варіантів","hotel":"Проживання","filters":"Фільтри","apply":"Застосувати","reset":"Скинути","results":"результатів","category":"Категорія","holidayType":"Тип відпочинку","amenities":"Зручності","rating":"Оцінка","beachDist":"Відстань до пляжу","board":"Харчування","anyRating":"Будь-яка","from9":"від 9,0","from85":"від 8,5","from8":"від 8,0","viewHotel":"Переглянути","description":"Опис","location":"Розташування","rooms":"Номери","reviews":"відгуків","policies":"Правила проживання","map":"Карта","requestRoom":"Запросити цей номер","interested":"Цікавить це проживання?","requestOffer":"Запросити пропозицію","nonBinding":"Без зобов’язань","step":"Крок","of":"з","next":"Далі","back":"Назад","s1":"Дати подорожі","s2":"Гості","s3":"Номер","s4":"Побажання","s5":"Контактні дані","s6":"Огляд","arrival":"Заїзд","departure":"Виїзд","adults":"Дорослі","children":"Діти","childAge":"Вік дитини","roomWish":"Бажана категорія номера","notSure":"Ще не визначився/лась","wSea":"Вид на море","wQuiet":"Тихий номер","wTransfer":"Трансфер з аеропорту","wCot":"Дитяче ліжечко","wHoney":"Медовий місяць","wBirthday":"День народження","wAccess":"Безбар’єрний доступ","otherWishes":"Інші побажання","firstName":"Ім’я","lastName":"Прізвище","phone":"Телефон","email":"E-mail","whatsapp":"WhatsApp (необов’язково)","sendRequest":"Надіслати запит без зобов’язань","reqSent":"Запит успішно надіслано","reqNo":"Номер запиту","reqTeamText":"Наша команда опрацює ваш запит і підготує індивідуальну пропозицію.","myTrips":"Мої подорожі","myFav":"Обрані готелі","noTrips":"У вас ще немає запитів","noFav":"Ви ще не додали готелі до обраного","details":"Деталі","viewOffer":"Переглянути пропозицію","yourOffer":"Ваша персональна пропозиція","total":"Загальна вартість","nights":"ночей","acceptOffer":"Прийняти пропозицію","askBack":"Поставити запитання","payNow":"Безпечно оплатити зараз","paid":"Оплачено","validUntil":"Дійсно до","stNew":"Запит отримано","stCheck":"На перевірці","stOffer":"Пропозицію підготовлено","stAccepted":"Клієнт підтвердив","stPay":"Очікується оплата","stPaid":"Оплачено","stConfirmed":"Бронювання підтверджено","menu":"Меню","mContact":"Контакти","mLang":"Мова","mStaff":"Вхід для співробітників","mIntro":"Переглянути заставку","compare":"Порівняти","staffArea":"Зона співробітників","dashboard":"Панель","requests":"Запити","bookings":"Бронювання","customers":"Клієнти","more":"Більше","today":"Сьогодні","total_":"усього","newReq":"Нові запити","openOffers":"Відкриті пропозиції","waitCust":"Очікуємо клієнта","payOpen":"Очікується оплата","newBook":"Нові бронювання","openReq":"Відкритий запит","createOffer":"Створити пропозицію","sellPrice":"Ціна продажу","currency":"Валюта","internalNote":"Внутрішня примітка","custInfo":"Інформація про клієнта","sendOffer":"Надіслати пропозицію","createPayLink":"Створити посилання на оплату","payLinkDone":"Посилання на оплату створено","copyLink":"Копіювати посилання","sendWa":"Надіслати через WhatsApp","guestData":"Дані клієнта","period":"Період","roomReq":"Побажання щодо номера","custWishes":"Побажання клієнта","staffOnly":"Ціни видно лише співробітникам","backToCust":"Повернутися до гостьової зони","confirmHotel":"Зафіксувати підтвердження","tripConfirmed":"Подорож підтверджено","offerSentWait":"Пропозицію надіслано. Очікуємо клієнта.","demoPay":"Демо-оплата","payDemoNote":"Лише демонстрація. Реальна оплата не проводиться.","payNowBtn":"Оплатити (демо)","cardNo":"Номер картки","login":"Увійти","staffLogin":"Вхід для співробітників","loginNote":"Демо-доступ — введіть будь-яке ім’я.","yourName":"Ваше ім’я","addFav":"Додано до обраного","remFav":"Видалено з обраного","offerSent":"Пропозицію надіслано клієнту","offerAccepted":"Пропозицію прийнято","linkCopied":"Посилання скопійовано","paidOk":"Оплату отримано","hotelConfirmed":"Об’єкт підтвердив бронювання","questionSent":"Запитання надіслано команді","shared":"Посилання скопійовано","adultsShort":"дор.","childrenShort":"діт.","sqm":"м²","persons":"гостей","yrs":"р.","exceptional":"Винятково","wonderful":"Чудово","veryGood":"Дуже добре","selectRegion":"Оберіть регіон","done":"Готово","required":"Будь ласка, заповніть обов’язкові поля","contactUs":"Контакти","contactTxt":"Наша команда відповідає того ж дня.","hotelsIn":"Проживання в","selHotels":"обраних варіантів","noResults":"Нічого не знайдено","tryReset":"Спробуйте змінити фільтри","freeCancel":"Безкоштовне скасування","onRequest":"за запитом","onBeach":"на пляжі","noPricesNote":"Ціни не показуємо — ви отримаєте індивідуальну пропозицію.","noInternalPrices":"Внутрішні закупівельні ціни не зберігаються — ціна з’являється лише під час створення пропозиції.","transferIncl":"Трансфер включено..."});
+  const EXTRA_TEXT = {tr:{"CURRENT":"GÜNCEL","Cappadocia · balloon season":"Kapadokya · balon sezonu","Themed journey · on request":"Tematik seyahat · talep üzerine","Event management":"Etkinlik yönetimi","Private events · venue · organisation":"Özel etkinlikler · mekân · organizasyon","GROUP":"GRUP","Sports & group events":"Spor ve grup etkinlikleri","Teams · tournaments · special journeys":"Takımlar · turnuvalar · özel seyahatler","Private yacht day":"Özel yat günü","Route & yacht tailored":"Rota ve yat size özel","ESCAPE":"KAÇAMAK","Private Beach Escape":"Özel Plaj Kaçamağı","Beach club · sunset · relax":"Beach club · gün batımı · dinlenme","TOUR":"TUR","Pamukkale · private day":"Pamukkale · özel gün","Private · no online price":"Özel · online fiyat yok","Super Deal · Resort Escape":"Özel Fırsat · Resort Kaçamağı","Large private seaside escape · on request":"Deniz kenarında özel tatil · talep üzerine","Villas":"Villalar","Private · individual":"Özel · kişisel","Beach resorts":"Sahil resortları","Sea · sun · escape":"Deniz · güneş · dinlenme","Group tours":"Grup turları","Themed journeys":"Tematik seyahatler","Sports journeys":"Spor seyahatleri","Active · nature · sea":"Aktif · doğa · deniz","Events · groups · private occasions":"Etkinlikler · gruplar · özel günler","ARRIVAL":"VARIŞ","VIP Welcome":"VIP Karşılama","Personal airport welcome and assistance.":"Havalimanında kişisel karşılama ve eşlik.","Business Van":"Business Van","Comfortable pickup for families, teams or small groups.":"Aileler, ekipler veya küçük gruplar için konforlu karşılama.","AIR":"HAVA","Helicopter Transfer":"Helikopter Transferi","Premium welcome and fast transfer by air.":"Premium karşılama ve hızlı hava transferi.","Antalya · Private Day":"Antalya · Özel Gün","Up to 10 guests · route on request":"10 misafire kadar · rota talep üzerine","Kemer · Bays & Swimming":"Kemer · Koylar ve Yüzme","Half day or full day":"Yarım gün veya tam gün","Fethiye · Blue Route":"Fethiye · Mavi Rota","Private yacht · tailored route":"Özel yat · kişisel rota","Bodrum · Sunset Cruise":"Bodrum · Gün Batımı Turu","Sunset · dinner on request":"Gün batımı · talep üzerine akşam yemeği","Current offers":"Güncel teklifler","Offers, tours and special recommendations — what matters right now.":"Fırsatlar, turlar ve özel öneriler — şu anda öne çıkanlar.","Super Deal":"Özel Fırsat","The big offer of the month — presented larger with more breathing room.":"Ayın büyük fırsatı — daha fazla alan ve daha güçlü vurgu.","View":"Görüntüle","VIP enquiry":"VIP talebi","VIP assistant on call":"VIP asistanınız hazır","Leave your name and phone number — your VIP assistant will call you personally.":"Adınızı ve telefonunuzu bırakın — VIP asistanınız sizinle kişisel olarak iletişime geçsin.","Name":"İsim","Your name":"Adınız","Phone":"Telefon","Send request":"Talep gönder","No obligation. Your number is used only for this request.":"Bağlayıcı değildir. Numaranız yalnızca bu talep için kullanılır.","How would you like to travel?":"Nasıl seyahat etmek istersiniz?","Five travel worlds for different ways to explore.":"Farklı seyahat tarzları için beş dünya.","Hotels selected by us for an exceptional journey.":"Özel bir seyahat için bizim seçtiğimiz oteller.","Private beach · VIP transfer on request":"Özel plaj · talep üzerine VIP transfer","Yacht tours":"Yat turları","Choose the style — we tailor the yacht, route and details personally.":"Tarzınızı seçin — yatı, rotayı ve detayları size özel planlayalım.","All yachts":"Tüm yatlar","Yacht in motion":"Hareket halindeki yat","Video · private routes":"Video · özel rotalar","Enquire":"Talep et","VIP Welcome & Arrival":"VIP Karşılama ve Varış","Personal welcome, business van and helicopter transfer — arranged individually.":"Kişisel karşılama, business van ve helikopter transferi — size özel organize edilir.","Learn more":"Daha fazla bilgi","Your journey begins before you land.":"Seyahatiniz daha inmeden başlar.","Flight, VIP welcome and transfer — personally arranged as one journey.":"Uçuş, VIP karşılama ve transfer — tek bir seyahat olarak kişisel şekilde organize edilir.","Arrange a flight":"Uçuş organize et","Your car is already waiting":"Aracınız zaten hazır","A short request — your VIP assistant confirms the details personally.":"Kısa bir talep — VIP asistanınız detayları sizinle kişisel olarak netleştirir.","Personal welcome":"Kişisel karşılama","No online prices":"Online fiyat yok","One contact":"Tek iletişim","Your VIP assistant<br>is here.":"VIP asistanınız<br>yanınızda.","Personal attention. Complete discretion. Impeccable service 24/7.":"Kişisel ilgi. Tam gizlilik. 7/24 kusursuz hizmet.","Quick contact":"Hızlı iletişim","Send your name and phone number — your VIP assistant will contact you personally.":"Adınızı ve telefonunuzu gönderin — VIP asistanınız sizinle kişisel olarak iletişime geçsin.","Send":"Gönder","VIP Transfer":"VIP Transfer","Start with a short request, then add details. Leave the key data and our team will confirm the right vehicle.":"Önce kısa bir talep gönderin, detayları sonra ekleyin. Temel bilgileri bırakın; ekibimiz uygun aracı teyit eder.","Pickup":"Alış noktası","Airport, hotel ...":"Havalimanı, otel ...","Destination":"Varış noktası","Hotel, villa ...":"Otel, villa ...","Date":"Tarih","Time":"Saat","Guests":"Misafirler","Flight number":"Uçuş numarası","Luggage":"Bagaj","2 suitcases":"2 valiz","Child seat":"Çocuk koltuğu","Not needed":"Gerekli değil","Baby":"Bebek","Child":"Çocuk","Note":"Not","For example: meet & greet, sign, lots of luggage":"Örneğin: karşılama, tabela, fazla bagaj","Send transfer request":"Transfer talebi gönder","Please enter name and phone":"Lütfen isim ve telefon girin","Thank you. Your VIP assistant will contact you personally.":"Teşekkürler. VIP asistanınız sizinle kişisel olarak iletişime geçecek.","Thank you. Your VIP assistant will confirm the transfer details personally.":"Teşekkürler. VIP asistanınız transfer detaylarını sizinle kişisel olarak netleştirecek.","Please complete the required fields":"Lütfen zorunlu alanları doldurun","Detailed transfer request sent":"Detaylı transfer talebi gönderildi","Alanya":"Alanya","Belek":"Belek","Kemer":"Kemer","Konyaaltı":"Konyaaltı","Lara":"Lara","Side":"Side","Antalya City":"Antalya Merkez","Old town & harbour":"Eski şehir ve marina","Pebble beach below the mountains":"Dağların eteklerinde çakıl plaj","Sand beach & resorts":"Kum plaj ve resortlar","Golf & pine forest":"Golf ve çam ormanları","Taurus meets the sea":"Toroslar denizle buluşuyor","Antiquity & beach":"Antik kent ve plaj","Castle above the bay":"Koyun üzerinde kale","Luxury":"Lüks","Family":"Aile","Adults only":"Sadece yetişkinler","Golf":"Golf","Beach":"Plaj","Wellness":"Wellness","Boutique":"Butik","City":"Şehir","All inclusive":"Her şey dahil","Private beach":"Özel plaj","Pool":"Havuz","Spa":"Spa","Kids club":"Çocuk kulübü","Sea view":"Deniz manzarası","Transfer":"Transfer","Restaurant":"Restoran","Fitness":"Fitness","Aquapark":"Aquapark","Resort":"Resort","Hotel":"Otel","Boutique hotel":"Butik otel","Apartment":"Daire","Residence":"Rezidans","Villa":"Villa","Breakfast":"Kahvaltı","Half board":"Yarım pansiyon","Ultra all inclusive":"Ultra her şey dahil","Deluxe Sea View":"Deluxe Deniz Manzaralı","1 king bed":"1 king yatak","Family Suite":"Aile Süiti","2 bedrooms":"2 yatak odası","Swim-up Room":"Havuza Direkt Erişimli Oda","Garden Villa":"Bahçe Villası","Sea View Villa":"Deniz Manzaralı Villa","3 bedrooms":"3 yatak odası","Classic Room":"Klasik Oda","1 double bed":"1 çift kişilik yatak","Terrace Room":"Teraslı Oda","Balcony":"Balkon","Kids area":"Çocuk alanı","Private pool":"Özel havuz","Terrace":"Teras","Half or full day":"Yarım veya tam gün","Private yacht tours":"Özel yat turları","Antalya, Kemer, Fethiye or Bodrum — we tailor the yacht, bays, route and details of the day personally.":"Antalya, Kemer, Fethiye veya Bodrum — yatı, koyları, rotayı ve günün detaylarını size özel planlıyoruz.","2 days":"2 gün","Cappadocia":"Kapadokya","Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.":"Peri bacaları vadileri, kaya kiliseleri ve gün doğumunda balon uçuşu.","1 day":"1 gün","Pamukkale & Hierapolis":"Pamukkale ve Hierapolis","Snow-white travertine terraces of thermal water and the ancient city above them.":"Bembeyaz termal travertenler ve üzerindeki antik kent.","Ephesus":"Efes","Marble streets, the Library of Celsus and one of the largest ancient theatres.":"Mermer caddeler, Celsus Kütüphanesi ve antik dünyanın en büyük tiyatrolarından biri.","Ölüdeniz — Blue Lagoon":"Ölüdeniz — Mavi Lagün","A turquoise lagoon, Belcekiz beach and paragliding from Mount Babadag.":"Turkuaz lagün, Belcekız Plajı ve Babadağ’dan yamaç paraşütü.","Istanbul":"İstanbul","The Bosphorus, Hagia Sophia and the Grand Bazaar — a short flight from Antalya.":"Boğaz, Ayasofya ve Kapalıçarşı — Antalya’dan kısa bir uçuşla.","Always reachable":"Her zaman ulaşılabilir","One line, one person — 24/7":"Tek hat, tek kişi — 7/24","Tailor-made":"Size özel","Offers without a booking form":"Rezervasyon formu olmadan teklifler","With you there":"Yanınızda","Transfers, tables, excursions":"Transferler, masalar, geziler","Seaside resorts where beach, service and calm genuinely belong together.":"Plaj, hizmet ve huzurun gerçekten bir araya geldiği sahil resortları.","Private · individual · exceptional":"Özel · kişisel · ayrıcalıklı","Private villas with pools, views and space entirely your own.":"Havuzlu, manzaralı ve tamamen size ait alan sunan özel villalar.","Thoughtful journeys for small groups — culture, nature, gastronomy and special themes.":"Küçük gruplar için özenle planlanan kültür, doğa, gastronomi ve tematik seyahatler.","Events · incentives · private occasions":"Etkinlikler · incentive · özel günler","From venue and transfers to dinner and programme — one team coordinates the entire occasion.":"Mekândan transfere, akşam yemeğinden programa kadar tüm organizasyonu tek ekip yönetir.","Antalya":"Antalya","Turkish Riviera":"Türk Rivierası","Sea, mountains, old town and a broad choice of resorts from Kemer to Alanya.":"Deniz, dağlar, eski şehir ve Kemer’den Alanya’ya geniş resort seçeneği.","Bodrum":"Bodrum","Aegean elegance":"Ege zarafeti","White houses, marinas, private bays and the stylish Turkish Aegean.":"Beyaz evler, marinalar, özel koylar ve şık Türk Egesi.","Fethiye & Ölüdeniz":"Fethiye ve Ölüdeniz","Pure nature":"Saf doğa","Blue lagoons, bays, yachts and mountain scenery along the Lycian coast.":"Likya kıyısında mavi lagünler, koylar, yatlar ve dağ manzaraları.","Culture & history":"Kültür ve tarih","The Bosphorus, gastronomy, history and contemporary city energy.":"Boğaz, gastronomi, tarih ve modern şehir enerjisi.","Magical landscapes":"Büyülü manzaralar","Rock valleys, cave hotels and sunrise among hot-air balloons.":"Kaya vadileri, mağara oteller ve balonların arasında gün doğumu.","Çeşme & Alaçatı":"Çeşme ve Alaçatı","Relaxed & stylish":"Rahat ve şık","Aegean beaches, boutique hotels, restaurants and Alaçatı atmosphere.":"Ege plajları, butik oteller, restoranlar ve Alaçatı atmosferi.","Private yacht tour":"Özel yat turu","A day on the sea":"Denizde bir gün","Pamukkale":"Pamukkale","Explore the thermal terraces":"Termal travertenleri keşfedin","Ancient sites":"Antik kentler","Discover history":"Tarihi keşfedin","Luxurious resort between the Taurus mountains and the Mediterranean.":"Toros Dağları ile Akdeniz arasında lüks resort.","Expansive resort in the pine forest with golf courses.":"Çam ormanında golf sahalarıyla geniş resort.","A small house by the pebble beach of Konyaaltı.":"Konyaaltı çakıl plajı yanında küçük bir otel.","Resort on the Lara sand beach with a large spa.":"Lara kum plajında büyük spa merkezli resort.","A historic house in the old town by the yacht harbour.":"Yat limanı yakınındaki eski şehirde tarihi konak.","Resort within walking distance of the ancient theatre of Side.":"Side antik tiyatrosuna yürüme mesafesinde resort.","Rooms with terraces facing the Alanya castle.":"Alanya Kalesi manzaralı teraslı odalar.","Top-tier golf resort with an extensive spa.":"Geniş spa alanına sahip üst düzey golf resortu.","Individual villas with private pools above the bay.":"Koyun üzerinde özel havuzlu bağımsız villalar.","Family hotel opposite Konyaaltı beach.":"Konyaaltı Plajı karşısında aile oteli.","Large resort with an aquapark right on the beach.":"Sahilde büyük aquaparklı resort.","A classic all-inclusive resort by the sea.":"Deniz kenarında klasik her şey dahil resort.","Quiet suites in the lanes of Kaleiçi.":"Kaleiçi sokaklarında sakin süitler.","A small hotel for golfers among the pines.":"Çamlar arasında golf severler için küçük otel.","Right on the famous Cleopatra beach.":"Ünlü Kleopatra Plajı’nın hemen üzerinde.","A secluded house in the Adrasan bay.":"Adrasan koyunda sakin ve izole bir konaklama.","Resort with wide terraces above the sea.":"Denizin üzerinde geniş teraslı resort.","A modern boutique hotel by the new marina.":"Yeni marina yanında modern butik otel.","Villas in orange groves near Side.":"Side yakınında portakal bahçeleri içinde villalar.","A hotel on the cliff with a panorama of the bay.":"Körfez panoramalı falez üzerinde otel.","Resort with a large aquapark for families.":"Aileler için büyük aquaparklı resort.","Close to ancient Olympos and the beach.":"Antik Olympos ve plaja yakın.","Hillside villas overlooking the bay.":"Körfez manzaralı yamaç villaları.","An adults-only spa retreat.":"Sadece yetişkinlere özel spa kaçamağı."},uk:{"CURRENT":"АКТУАЛЬНО","Cappadocia · balloon season":"Каппадокія · сезон повітряних куль","Themed journey · on request":"Тематична подорож · за запитом","Event management":"Івент-менеджмент","Private events · venue · organisation":"Приватні події · локація · організація","GROUP":"ГРУПА","Sports & group events":"Спорт і групові заходи","Teams · tournaments · special journeys":"Команди · турніри · особливі подорожі","Private yacht day":"Приватний день на яхті","Route & yacht tailored":"Маршрут і яхта індивідуально","ESCAPE":"ВІДПОЧИНОК","Private Beach Escape":"Приватний пляжний відпочинок","Beach club · sunset · relax":"Пляжний клуб · захід сонця · релакс","TOUR":"ТУР","Pamukkale · private day":"Памуккале · приватний день","Private · no online price":"Індивідуально · без ціни онлайн","Super Deal · Resort Escape":"Спецпропозиція · Resort Escape","Large private seaside escape · on request":"Великий приватний відпочинок біля моря · за запитом","Villas":"Вілли","Private · individual":"Приватно · індивідуально","Beach resorts":"Пляжні курорти","Sea · sun · escape":"Море · сонце · відпочинок","Group tours":"Групові тури","Themed journeys":"Тематичні подорожі","Sports journeys":"Спортивні подорожі","Active · nature · sea":"Активно · природа · море","Events · groups · private occasions":"Події · групи · приватні свята","ARRIVAL":"ПРИБУТТЯ","VIP Welcome":"VIP-зустріч","Personal airport welcome and assistance.":"Особиста зустріч в аеропорту та супровід.","Business Van":"Business Van","Comfortable pickup for families, teams or small groups.":"Комфортна зустріч для сімей, команд або невеликих груп.","AIR":"ПОВІТРЯ","Helicopter Transfer":"Трансфер гелікоптером","Premium welcome and fast transfer by air.":"Преміальна зустріч і швидкий повітряний трансфер.","Antalya · Private Day":"Анталья · приватний день","Up to 10 guests · route on request":"До 10 гостей · маршрут за запитом","Kemer · Bays & Swimming":"Кемер · бухти та купання","Half day or full day":"Пів дня або цілий день","Fethiye · Blue Route":"Фетхіє · Блакитний маршрут","Private yacht · tailored route":"Приватна яхта · індивідуальний маршрут","Bodrum · Sunset Cruise":"Бодрум · круїз на заході сонця","Sunset · dinner on request":"Захід сонця · вечеря за запитом","Current offers":"Актуальні пропозиції","Offers, tours and special recommendations — what matters right now.":"Пропозиції, тури та особливі рекомендації — те, що актуально саме зараз.","Super Deal":"Спецпропозиція","The big offer of the month — presented larger with more breathing room.":"Головна пропозиція місяця — більше простору й сильніший акцент.","View":"Переглянути","VIP enquiry":"VIP-запит","VIP assistant on call":"VIP-асистент на зв’язку","Leave your name and phone number — your VIP assistant will call you personally.":"Залиште ім’я та номер телефону — ваш VIP-асистент зв’яжеться з вами особисто.","Name":"Ім’я","Your name":"Ваше ім’я","Phone":"Телефон","Send request":"Надіслати запит","No obligation. Your number is used only for this request.":"Без зобов’язань. Номер використовується лише для цього запиту.","How would you like to travel?":"Як ви хочете подорожувати?","Five travel worlds for different ways to explore.":"П’ять форматів подорожі для різного ритму відпочинку.","Hotels selected by us for an exceptional journey.":"Відібрані нами готелі для особливої подорожі.","Private beach · VIP transfer on request":"Приватний пляж · VIP-трансфер за запитом","Yacht tours":"Яхт-тури","Choose the style — we tailor the yacht, route and details personally.":"Оберіть формат — яхту, маршрут і деталі ми підберемо персонально.","All yachts":"Усі яхти","Yacht in motion":"Яхта в русі","Video · private routes":"Відео · приватні маршрути","Enquire":"Запитати","VIP Welcome & Arrival":"VIP-зустріч і прибуття","Personal welcome, business van and helicopter transfer — arranged individually.":"Особиста зустріч, business van і трансфер гелікоптером — усе організується індивідуально.","Learn more":"Детальніше","Your journey begins before you land.":"Ваша подорож починається ще до посадки.","Flight, VIP welcome and transfer — personally arranged as one journey.":"Переліт, VIP-зустріч і трансфер — персонально організовані як одна подорож.","Arrange a flight":"Організувати переліт","Your car is already waiting":"Ваш автомобіль уже чекає","A short request — your VIP assistant confirms the details personally.":"Короткий запит — ваш VIP-асистент особисто уточнить деталі.","Personal welcome":"Особиста зустріч","No online prices":"Без цін онлайн","One contact":"Одна контактна особа","Your VIP assistant<br>is here.":"Ваш VIP-асистент<br>поруч.","Personal attention. Complete discretion. Impeccable service 24/7.":"Персональний підхід. Повна конфіденційність. Бездоганний сервіс 24/7.","Quick contact":"Швидкий зв’язок","Send your name and phone number — your VIP assistant will contact you personally.":"Надішліть ім’я та номер телефону — VIP-асистент зв’яжеться з вами особисто.","Send":"Надіслати","VIP Transfer":"VIP-трансфер","Start with a short request, then add details. Leave the key data and our team will confirm the right vehicle.":"Почніть із короткого запиту, а деталі додайте потім. Залиште основні дані — команда підтвердить відповідний автомобіль.","Pickup":"Місце подачі","Airport, hotel ...":"Аеропорт, готель ...","Destination":"Куди","Hotel, villa ...":"Готель, вілла ...","Date":"Дата","Time":"Час","Guests":"Гості","Flight number":"Номер рейсу","Luggage":"Багаж","2 suitcases":"2 валізи","Child seat":"Дитяче крісло","Not needed":"Не потрібно","Baby":"Немовля","Child":"Дитина","Note":"Примітка","For example: meet & greet, sign, lots of luggage":"Наприклад: зустріч біля виходу, табличка, багато багажу","Send transfer request":"Надіслати запит на трансфер","Please enter name and phone":"Введіть ім’я та телефон","Thank you. Your VIP assistant will contact you personally.":"Дякуємо. VIP-асистент зв’яжеться з вами особисто.","Thank you. Your VIP assistant will confirm the transfer details personally.":"Дякуємо. VIP-асистент особисто уточнить деталі трансферу.","Please complete the required fields":"Заповніть обов’язкові поля","Detailed transfer request sent":"Детальний запит на трансфер надіслано","Alanya":"Аланія","Belek":"Белек","Kemer":"Кемер","Konyaaltı":"Коньяалти","Lara":"Лара","Side":"Сіде","Antalya City":"Анталья","Old town & harbour":"Старе місто та гавань","Pebble beach below the mountains":"Гальковий пляж біля гір","Sand beach & resorts":"Піщаний пляж і курорти","Golf & pine forest":"Гольф і соснові ліси","Taurus meets the sea":"Таврські гори зустрічаються з морем","Antiquity & beach":"Античність і пляж","Castle above the bay":"Фортеця над бухтою","Luxury":"Люкс","Family":"Для сімей","Adults only":"Лише для дорослих","Golf":"Гольф","Beach":"Пляж","Wellness":"Wellness","Boutique":"Бутик","City":"Місто","All inclusive":"Все включено","Private beach":"Приватний пляж","Pool":"Басейн","Spa":"Спа","Kids club":"Дитячий клуб","Sea view":"Вид на море","Transfer":"Трансфер","Restaurant":"Ресторан","Fitness":"Фітнес","Aquapark":"Аквапарк","Resort":"Курорт","Hotel":"Готель","Boutique hotel":"Бутик-готель","Apartment":"Апартаменти","Residence":"Резиденція","Villa":"Вілла","Breakfast":"Сніданок","Half board":"Напівпансіон","Ultra all inclusive":"Ультра все включено","Deluxe Sea View":"Deluxe з видом на море","1 king bed":"1 ліжко king-size","Family Suite":"Сімейний люкс","2 bedrooms":"2 спальні","Swim-up Room":"Номер із виходом до басейну","Garden Villa":"Вілла з садом","Sea View Villa":"Вілла з видом на море","3 bedrooms":"3 спальні","Classic Room":"Класичний номер","1 double bed":"1 двоспальне ліжко","Terrace Room":"Номер із терасою","Balcony":"Балкон","Kids area":"Дитяча зона","Private pool":"Приватний басейн","Terrace":"Тераса","Half or full day":"Пів дня або цілий день","Private yacht tours":"Приватні яхт-тури","Antalya, Kemer, Fethiye or Bodrum — we tailor the yacht, bays, route and details of the day personally.":"Анталья, Кемер, Фетхіє або Бодрум — яхту, бухти, маршрут і деталі дня ми підбираємо персонально.","2 days":"2 дні","Cappadocia":"Каппадокія","Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.":"Долини казкових скель, печерні церкви та політ на повітряній кулі на світанку.","1 day":"1 день","Pamukkale & Hierapolis":"Памуккале та Ієраполіс","Snow-white travertine terraces of thermal water and the ancient city above them.":"Білосніжні травертинові тераси термальної води та античне місто над ними.","Ephesus":"Ефес","Marble streets, the Library of Celsus and one of the largest ancient theatres.":"Мармурові вулиці, бібліотека Цельса та один із найбільших античних театрів.","Ölüdeniz — Blue Lagoon":"Олюденіз — Блакитна лагуна","A turquoise lagoon, Belcekiz beach and paragliding from Mount Babadag.":"Бірюзова лагуна, пляж Бельджекіз і параглайдинг із гори Бабадаг.","Istanbul":"Стамбул","The Bosphorus, Hagia Sophia and the Grand Bazaar — a short flight from Antalya.":"Босфор, Айя-Софія та Гранд-базар — короткий переліт з Антальї.","Always reachable":"Завжди на зв’язку","One line, one person — 24/7":"Одна лінія, одна людина — 24/7","Tailor-made":"Індивідуально","Offers without a booking form":"Пропозиції без стандартної форми бронювання","With you there":"Поруч із вами","Transfers, tables, excursions":"Трансфери, столики, екскурсії","Seaside resorts where beach, service and calm genuinely belong together.":"Морські курорти, де пляж, сервіс і спокій справді поєднуються.","Private · individual · exceptional":"Приватно · індивідуально · особливо","Private villas with pools, views and space entirely your own.":"Приватні вілли з басейнами, краєвидами та простором лише для вас.","Thoughtful journeys for small groups — culture, nature, gastronomy and special themes.":"Продумані подорожі для малих груп — культура, природа, гастрономія та особливі теми.","Events · incentives · private occasions":"Події · incentive · приватні свята","From venue and transfers to dinner and programme — one team coordinates the entire occasion.":"Від локації та трансферів до вечері й програми — одна команда координує всю подію.","Antalya":"Анталья","Turkish Riviera":"Турецька Рив’єра","Sea, mountains, old town and a broad choice of resorts from Kemer to Alanya.":"Море, гори, старе місто та широкий вибір курортів від Кемера до Аланії.","Bodrum":"Бодрум","Aegean elegance":"Егейська елегантність","White houses, marinas, private bays and the stylish Turkish Aegean.":"Білі будинки, марини, приватні бухти та стильне турецьке Егейське узбережжя.","Fethiye & Ölüdeniz":"Фетхіє та Олюденіз","Pure nature":"Чиста природа","Blue lagoons, bays, yachts and mountain scenery along the Lycian coast.":"Блакитні лагуни, бухти, яхти та гірські пейзажі Лікійського узбережжя.","Culture & history":"Культура та історія","The Bosphorus, gastronomy, history and contemporary city energy.":"Босфор, гастрономія, історія та сучасна енергія міста.","Magical landscapes":"Магічні пейзажі","Rock valleys, cave hotels and sunrise among hot-air balloons.":"Скелясті долини, печерні готелі та світанок серед повітряних куль.","Çeşme & Alaçatı":"Чешме та Алачати","Relaxed & stylish":"Невимушено та стильно","Aegean beaches, boutique hotels, restaurants and Alaçatı atmosphere.":"Егейські пляжі, бутик-готелі, ресторани та атмосфера Алачати.","Private yacht tour":"Приватний яхт-тур","A day on the sea":"День у морі","Pamukkale":"Памуккале","Explore the thermal terraces":"Відкрийте термальні тераси","Ancient sites":"Античні пам’ятки","Discover history":"Відкрийте історію","Luxurious resort between the Taurus mountains and the Mediterranean.":"Розкішний курорт між Таврськими горами та Середземним морем.","Expansive resort in the pine forest with golf courses.":"Просторий курорт у сосновому лісі з гольф-полями.","A small house by the pebble beach of Konyaaltı.":"Невеликий готель біля галькового пляжу Коньяалти.","Resort on the Lara sand beach with a large spa.":"Курорт на піщаному пляжі Лара з великим спа.","A historic house in the old town by the yacht harbour.":"Історичний будинок у старому місті біля яхтової гавані.","Resort within walking distance of the ancient theatre of Side.":"Курорт у пішій доступності від античного театру Сіде.","Rooms with terraces facing the Alanya castle.":"Номери з терасами та видом на фортецю Аланії.","Top-tier golf resort with an extensive spa.":"Гольф-курорт високого рівня з великим спа.","Individual villas with private pools above the bay.":"Окремі вілли з приватними басейнами над бухтою.","Family hotel opposite Konyaaltı beach.":"Сімейний готель навпроти пляжу Коньяалти.","Large resort with an aquapark right on the beach.":"Великий курорт з аквапарком просто на пляжі.","A classic all-inclusive resort by the sea.":"Класичний all-inclusive курорт біля моря.","Quiet suites in the lanes of Kaleiçi.":"Тихі люкси у провулках Калеїчі.","A small hotel for golfers among the pines.":"Невеликий готель для гольфістів серед сосен.","Right on the famous Cleopatra beach.":"Прямо на знаменитому пляжі Клеопатри.","A secluded house in the Adrasan bay.":"Відокремлений готель у бухті Адрасан.","Resort with wide terraces above the sea.":"Курорт із просторими терасами над морем.","A modern boutique hotel by the new marina.":"Сучасний бутик-готель біля нової марини.","Villas in orange groves near Side.":"Вілли в апельсинових садах біля Сіде.","A hotel on the cliff with a panorama of the bay.":"Готель на скелі з панорамою бухти.","Resort with a large aquapark for families.":"Курорт із великим аквапарком для сімей.","Close to ancient Olympos and the beach.":"Поруч з античним Олімпосом і пляжем.","Hillside villas overlooking the bay.":"Вілли на схилі з видом на бухту.","An adults-only spa retreat.":"Спа-відпочинок лише для дорослих."}};
+  const localizeExtra = en => ((EXTRA_TEXT[LANG] && EXTRA_TEXT[LANG][en]) || en);
+  const loc = obj => { if(!obj) return ''; if(obj[LANG]) return obj[LANG]; if((LANG==='tr'||LANG==='uk') && obj.en) return localizeExtra(obj.en); return obj.en || obj.ru || obj.de || ''; };
+
   let LANG = 'ru';
   const t = k => (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k;
+  const hx = (ru,de,en) => LANG==='ru'?ru:(LANG==='de'?de:(LANG==='tr'?localizeExtra(en):(LANG==='uk'?localizeExtra(en):en)));
 
   /* ====================================================================
      2 · Regions & hotels — PUBLIC data, no prices anywhere
@@ -1193,7 +1209,7 @@
     {id:'side',     name:{ru:'Сиде',      de:'Side',         en:'Side'},         tag:{ru:'Античность и пляж',de:'Antike & Strand',en:'Antiquity & beach'}, img:IMG+'region-side.webp', x:79,y:30},
     {id:'alanya',   name:{ru:'Аланья',    de:'Alanya',       en:'Alanya'},       tag:{ru:'Крепость над бухтой',de:'Burg über der Bucht',en:'Castle above the bay'}, img:IMG+'region-alanya.webp', x:90,y:22},
   ];
-  const regionName = id => { const r=REGIONS.find(x=>x.id===id); return r ? (r.name[LANG]||r.name.en) : id; };
+  const regionName = id => { const r=REGIONS.find(x=>x.id===id); return r ? (loc(r.name)) : id; };
 
   const TYPES=[
     {id:'luxury',  l:{ru:'Люкс',de:'Luxus',en:'Luxury'}},
@@ -1236,7 +1252,7 @@
     {id:'ai', l:{ru:'Всё включено',de:'All Inclusive',en:'All inclusive'}},
     {id:'uai',l:{ru:'Ультра всё включено',de:'Ultra All Inclusive',en:'Ultra all inclusive'}},
   ];
-  const label=(arr,id)=>{const x=arr.find(a=>a.id===id);return x?(x.l[LANG]||x.l.en):id;};
+  const label=(arr,id)=>{const x=arr.find(a=>a.id===id);return x?(loc(x.l)):id;};
 
   const ROOMSETS={
     resort:[
@@ -1266,6 +1282,11 @@
      else and — same rule as hotels — carrying no price. --- */
   const EXC_IMG='./images/excursions/';
   const EXCURSIONS=[
+    {id:'yacht-tour', img:'./images/yacht-tour-poster.webp', dur:{ru:'Полдня или 1 день',de:'Halber oder ganzer Tag',en:'Half or full day'},
+     n:{ru:'Приватные яхт-туры',de:'Private Yachttouren',en:'Private yacht tours'},
+     d:{ru:'Анталья, Кемер, Фетхие или Бодрум — яхту, бухты, маршрут и детали дня мы подберём персонально.',
+        de:'Antalya, Kemer, Fethiye oder Bodrum – Yacht, Buchten, Route und Tagesablauf stellen wir persönlich zusammen.',
+        en:'Antalya, Kemer, Fethiye or Bodrum — we tailor the yacht, bays, route and details of the day personally.'}},
     {id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
      d:{ru:'Долины сказочных дымоходов, пещерные церкви и полёт на воздушном шаре на рассвете.',
@@ -1432,7 +1453,8 @@
   /* The language follows the device unless the visitor picks one. `lang` stays
      null until they do, so an explicit choice always wins and a guess never
      hardens into a setting. */
-  const SUPPORTED = ['de','en','ru'];
+  const SUPPORTED = ['de','en','tr','uk','ru'];
+  const LANGUAGE_NAMES={de:'Deutsch',en:'English',tr:'Türkçe',uk:'Українська',ru:'Русский'};
   function detectLang(){
     var list = [];
     try {
@@ -1440,14 +1462,15 @@
       else if (navigator.language) list = [navigator.language];
     } catch (e) {}
     for (var i = 0; i < list.length; i++) {
-      var tag = String(list[i] || '').toLowerCase();
+      var tag = String(list[i] || '').trim().toLowerCase().replace('_','-');
       var base = tag.split('-')[0];
+      if (base === 'ua') base = 'uk';
       if (SUPPORTED.indexOf(base) > -1) return base;
     }
-    return 'en';
+    return 'ru';
   }
 
-  const DEF={lang:null,favorites:[],requests:[],seq:127,staff:null,pendingExc:[],
+  const DEF={lang:null,favorites:[],requests:[],leads:[],seq:127,staff:null,pendingExc:[],
              search:{from:'',to:'',adults:2,children:0}};
   let S=load();
   function load(){
@@ -1457,6 +1480,12 @@
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
   LANG = S.lang || detectLang();
   document.documentElement.lang=LANG;
+  document.documentElement.dataset.lang=LANG;
+  try{
+    document.title = hx('ONLYONE · Путешествия по Турции','ONLYONE · Reisen in der Türkei','ONLYONE · Luxury Travel in Türkiye');
+    const md=document.querySelector('meta[name="description"]');
+    if(md) md.content=hx('Индивидуальные путешествия по Турции, проверенные отели и персональный VIP-ассистент.','Individuelle Reisen in der Türkei, ausgewählte Hotels und persönlicher VIP-Assistent.','Tailored travel in Türkiye, handpicked stays and a personal VIP assistant.');
+  }catch(e){}
 
   const FLOW=['new','review','offer','accepted','payopen','paid','confirmed'];
   const STATUS_LABEL={new:'stNew',review:'stCheck',offer:'stOffer',accepted:'stAccepted',payopen:'stPay',paid:'stPaid',confirmed:'stConfirmed'};
@@ -1484,7 +1513,7 @@
   function today(o){const d=new Date();d.setDate(d.getDate()+(o||0));return d.toISOString().slice(0,10);}
   function money(v,c){
     const n=Number(v)||0;
-    const loc=LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB';
+    const loc=LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':LANG==='tr'?'tr-TR':LANG==='uk'?'uk-UA':'en-GB';
     return `${n.toLocaleString(loc,{minimumFractionDigits:0,maximumFractionDigits:2})} ${c||'EUR'}`;
   }
   let toastTimer;
@@ -1524,6 +1553,7 @@
     diamond:'<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18"/><path d="M9.5 4 7.5 9l4.5 11 4.5-11-2-5"/>',
     keyhouse:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><circle cx="12" cy="12.6" r="1.7"/><path d="M12 14.3V17"/>',
     yacht:'<path d="M4 16.5h15.5l-1.9 3.2a1.6 1.6 0 0 1-1.4.8H7a1.6 1.6 0 0 1-1.4-.8z"/><path d="M11.4 14.4V4.2l6.9 8.1a1 1 0 0 1-.8 1.6z"/><path d="M9.4 14.4V8l-3.6 5.1a.8.8 0 0 0 .7 1.3z"/>',
+    car:'<path d="M4.2 14.2 5.8 9.6a2 2 0 0 1 1.9-1.4h8.6a2 2 0 0 1 1.9 1.4l1.6 4.6"/><path d="M3.5 14.2h17v3.9a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><circle cx="7.1" cy="16.8" r="1.25"/><circle cx="16.9" cy="16.8" r="1.25"/><path d="M6.3 12.2h11.4M8 8.2 9 5.7h6l1 2.5"/>',
     headset:'<path d="M5 13v-1a7 7 0 0 1 14 0v1"/><path d="M5 13h2.2v4.4H5.6A1.6 1.6 0 0 1 4 15.8V13z"/><path d="M19 13h-2.2v4.4h1.6A1.6 1.6 0 0 0 20 15.8V13z"/><path d="M17.2 17.8v.4a2.4 2.4 0 0 1-2.4 2.4h-1.6"/>',
     globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
   };
@@ -1705,7 +1735,7 @@
         <div class="card__loc">${esc(label(KINDS,h.kind))} · ${esc(regionName(h.region))}${h.beach===0?' · '+esc(t('onBeach')):''}</div>
         <div class="score"><b>${fmtNum(h.rating)}</b><span>${rateWord(h.rating)}</span></div>
         <div class="traits">${traits.join('<i>·</i>')}</div>
-        <p class="card__desc">${esc(h.desc[LANG]||h.desc.en)}</p>
+        <p class="card__desc">${esc(loc(h.desc))}</p>
       </div>
     </article>`;
   }
@@ -1713,12 +1743,12 @@
   function excCard(e){
     return `<article class="card fade-up" data-exc="${e.id}" role="button" tabindex="0">
       <div class="card__media" style="aspect-ratio:16/10">
-        <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="lazy" decoding="async">
+        <img src="${e.img}" alt="${esc(loc(e.n))}" loading="lazy" decoding="async">
       </div>
       <div class="card__body">
-        <div class="card__loc" style="color:var(--gold)">${esc(e.dur[LANG]||e.dur.en)}</div>
-        <h3 class="card__name">${esc(e.n[LANG]||e.n.en)}</h3>
-        <p class="card__desc">${esc(e.d[LANG]||e.d.en)}</p>
+        <div class="card__loc" style="color:var(--gold)">${esc(loc(e.dur))}</div>
+        <h3 class="card__name">${esc(loc(e.n))}</h3>
+        <p class="card__desc">${esc(loc(e.d))}</p>
       </div>
     </article>`;
   }
@@ -1864,10 +1894,6 @@
      and the file is lighter than the intro video at the same size and length.
      -------------------------------------------------------------------- */
   const CLIPS=[
-    { id:'yacht',
-      src:'./video/onlyone-yacht-tour-v2.mp4',
-      poster:'./images/yacht-tour-poster.webp',
-      eyebrow:'yachtEyebrow', title:'yachtTitle', body:'yachtBody' },
     { id:'pamukkale',
       src:'./video/onlyone-pamukkale-v1.mp4',
       poster:'./images/video-posters/pamukkale-tour.webp',
@@ -1882,7 +1908,7 @@
       eyebrow:'groupsEyebrow', title:'groupsTitle', body:'groupsBody' },
     { id:'welcome',
       src:'./video/onlyone-vip-welcome-v3.mp4',
-      poster:'./images/vip-welcome-poster-v2.webp',
+      poster:'./images/r18/transfer-airport.webp',
       eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
   ];
   function clipBand(at){
@@ -1929,7 +1955,7 @@
   const BLOCKS={
     welcome:{ img:'./images/vip-welcome-poster-v2.webp', vid:'./video/onlyone-vip-welcome-v3.mp4',
               eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
-    yacht:  { img:'./images/yacht-tour-poster.webp',     vid:'./video/onlyone-yacht-tour-v2.mp4',
+    yacht:  { img:'./images/yacht-tour-poster.webp',
               eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody'   },
     groups: { img:'./images/video-posters/groups-cappadocia.webp', vid:'./video/onlyone-groups-cappadocia-v1.mp4',
               eyebrow:'groupsEyebrow',  title:'groupsTitle', body:'groupsBody' },
@@ -1939,7 +1965,7 @@
               eyebrow:'pamukkaleEyebrow', title:'pamukkaleTitle', body:'pamukkaleBody' },
     transfer:{word:true, eyebrow:'carEyebrow', title:'carTitle', body:'carBody',
               specA:'carSpecA', specB:'carSpecB' },
-    flight: { img:'./images/3d/plane-top.webp', plane:true,
+    flight: { img:'./images/r18/transfer-heli.webp', plane:true,
               eyebrow:'flyEyebrow', title:'flyTitle', body:'flyBody',
               specA:'flySpecA', specB:'flySpecB' },
   };
@@ -2050,188 +2076,195 @@
 
   function vHome(){
     const curated=PUBLIC_HOTELS.slice().sort((a,b)=>b.rating-a.rating).slice(0,5);
-    const featured=curated[0];
-    const curatedRest=curated.slice(1);
+    const featured=curated[0], curatedRest=curated.slice(1);
+
+    const promos=[
+      {img:'./images/excursions/exc-cappadocia.webp',tag:hx('АКТУАЛЬНО','AKTUELL','CURRENT'),title:hx('Каппадокия · сезон воздушных шаров','Kappadokien · Ballonsaison','Cappadocia · balloon season'),meta:hx('Тематическое путешествие · по запросу','Themenreise · auf Anfrage','Themed journey · on request'),attr:'data-exc="cappadocia"'},
+      {img:'./images/promos-r14/event-management.webp',tag:'EVENT',title:hx('Event-менеджмент','Event-Management','Event management'),meta:hx('Частные события · площадка · организация','Private Events · Location · Organisation','Private events · venue · organisation'),attr:'data-world="event-management"'},
+      {img:'./images/promos-r14/sport-group-events.webp',tag:hx('ГРУППА','GRUPPE','GROUP'),title:hx('Спорт и групповые мероприятия','Sport & Gruppenveranstaltungen','Sports & group events'),meta:hx('Команды · турниры · особые поездки','Teams · Turniere · besondere Reisen','Teams · tournaments · special journeys'),attr:'data-world="group-tours"'},
+      {img:'./images/yacht-tour-poster.webp',tag:'SPECIAL',title:hx('Приватный день на яхте','Privater Tag auf der Yacht','Private yacht day'),meta:hx('Маршрут и яхта индивидуально','Route & Yacht individuell','Route & yacht tailored'),attr:'data-block="yacht"'},
+      {img:'./images/r18/promo-private-beach.webp',tag:hx('ESCAPE','ESCAPE','ESCAPE'),title:hx('Private Beach Escape','Private Beach Escape','Private Beach Escape'),meta:hx('Пляжный клуб · закат · релакс','Beach Club · Sunset · Relax','Beach club · sunset · relax'),attr:'data-go="concierge"'},
+      {img:'./images/excursions/exc-pamukkale.webp',tag:hx('ТУР','TOUR','TOUR'),title:hx('Памуккале · приватный день','Pamukkale · Private Day','Pamukkale · private day'),meta:hx('Индивидуально · без цены на сайте','Individuell · ohne Onlinepreis','Private · no online price'),attr:'data-exc="pamukkale"'}
+    ];
+
+    const superDeal={img:'./images/r18/super-deal-resort.webp',title:hx('Super Deal · Resort Escape','Super Deal · Resort Escape','Super Deal · Resort Escape'),meta:hx('Большой приватный отдых у моря · по запросу','Großer privater Erholungsaufenthalt am Meer · auf Anfrage','Large private seaside escape · on request'),attr:'data-go="search"'};
+
+    const categories=[
+      {img:'./images/worlds/villas.webp',title:hx('Виллы','Villen','Villas'),meta:hx('Приватно · индивидуально','Privat · individuell','Private · individual'),attr:'data-world="villas"'},
+      {img:'./images/worlds/beach.webp',title:hx('Пляжные курорты','Strandresorts','Beach resorts'),meta:hx('Море · солнце · отдых','Meer · Sonne · Erholung','Sea · sun · escape'),attr:'data-world="beach"'},
+      {img:'./images/worlds-r13/group-events.webp',title:hx('Групповые туры','Gruppenreisen','Group tours'),meta:hx('Тематические путешествия','Thematische Reisen','Themed journeys'),attr:'data-world="group-tours"'},
+      {img:'./images/r20/sport-travel-banner.webp',title:hx('Спортивные туры','Sportreisen','Sports journeys'),meta:hx('Активно · природа · море','Aktiv · Natur · Meer','Active · nature · sea'),attr:'data-go="excursions"'},
+      {img:'./images/worlds-r13/event-management.webp',title:hx('Event-менеджмент','Event-Management','Event management'),meta:hx('События · группы · частные праздники','Events · Gruppen · private Anlässe','Events · groups · private occasions'),attr:'data-world="event-management"'}
+    ];
+
+    const vipServices=[
+      {img:'./images/vip-welcome-poster-v2.webp',video:'./video/onlyone-vip-welcome-v3.mp4',ey:hx('ПРИБЫТИЕ','ANKUNFT','ARRIVAL'),title:hx('VIP-приём','VIP-Empfang','VIP Welcome'),body:hx('Личная встреча в аэропорту и сопровождение.','Persönlicher Empfang am Flughafen und Begleitung.','Personal airport welcome and assistance.'),attr:'data-block="welcome"',featured:true},
+      {img:'./images/r18/transfer-van.webp',ey:hx('ГРУППА','GRUPPE','GROUP'),title:hx('Business Van','Business Van','Business Van'),body:hx('Комфортная встреча для семьи, команды или небольшой группы.','Komfortable Abholung für Familie, Team oder kleine Gruppe.','Comfortable pickup for families, teams or small groups.'),attr:'data-block="transfer"'},
+      {img:'./images/r18/transfer-heli.webp',ey:hx('ВОЗДУХ','LUFT','AIR'),title:hx('Helicopter Transfer','Helikopter-Transfer','Helicopter Transfer'),body:hx('Премиальная встреча и быстрый трансфер по воздуху.','Premium-Empfang und schneller Transfer aus der Luft.','Premium welcome and fast transfer by air.'),attr:'data-block="flight"'}
+    ];
+
+    const yachtChoices=[
+      {img:'./images/r21/yacht-card-1.webp',title:hx('Анталья · приватный день','Antalya · Private Day','Antalya · Private Day'),meta:hx('До 10 гостей · маршрут по запросу','Bis 10 Gäste · Route auf Anfrage','Up to 10 guests · route on request')},
+      {img:'./images/r21/yacht-card-2.webp',title:hx('Кемер · бухты и купание','Kemer · Buchten & Baden','Kemer · Bays & Swimming'),meta:hx('Полдня или целый день','Halber oder ganzer Tag','Half day or full day')},
+      {img:'./images/r21/yacht-card-3.webp',title:hx('Фетхие · Blue Route','Fethiye · Blue Route','Fethiye · Blue Route'),meta:hx('Приватная яхта · индивидуальный маршрут','Private Yacht · individuelle Route','Private yacht · tailored route')},
+      {img:'./images/r21/yacht-card-4.webp',title:hx('Бодрум · Sunset Cruise','Bodrum · Sunset Cruise','Bodrum · Sunset Cruise'),meta:hx('Закат · ужин по запросу','Sunset · Dinner auf Anfrage','Sunset · dinner on request')}
+    ];
+
+
+
     return `${appbar({over:true})}
     <section class="pHero">
       ${heroSlides()}
-      <div class="pHero__scrim"></div>
-      <div class="pHero__glassLayer" aria-hidden="true"></div>
+      <div class="pHero__scrim"></div><div class="pHero__glassLayer" aria-hidden="true"></div>
       <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
-      <div class="pHero__body">
-        <h1 class="pHero__title">${t('heroTitle')}</h1>
-        <p class="pHero__sub">${t('heroSub')}</p>
-        <button class="pHero__cta" type="button" data-go="concierge">${t('heroCta')}${icon('chev')}</button>
+      <div class="pHero__body"><h1 class="pHero__title">${t('heroTitle')}</h1><p class="pHero__sub">${t('heroSub')}</p>
+        <button class="pHero__cta" type="button" data-go="concierge">${t('heroCta')}${icon('chev')}</button></div>
+    </section>
+
+    <section class="homePromos">
+      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('СЕЙЧАС','AKTUELL','NOW')}</div>
+        <h2>${hx('Актуальные предложения','Aktuelle Angebote','Current offers')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Скидки, туры и особенные предложения — то, что актуально прямо сейчас.','Aktionen, Touren und besondere Empfehlungen – was gerade aktuell ist.','Offers, tours and special recommendations — what matters right now.')}</p>
+      </div><button class="homeTextLink" type="button" data-go="search">${t('all')}</button></div>
+      <div class="homePromos__rail">${promos.map((p,i)=>`<button class="homePromoCard" type="button" ${p.attr}>
+        <img src="${p.img}" alt="${esc(p.title)}" loading="${i<2?'eager':'lazy'}" decoding="async" fetchpriority="${i===0?'high':'low'}">
+        <span class="homePromoCard__shade"></span><span class="homePromoCard__copy"><i>${esc(p.tag)}</i><b>${esc(p.title)}</b><em>${esc(p.meta)}</em><span>${icon('chev')}</span></span>
+      </button>`).join('')}</div>
+    </section>
+
+    <section class="homeSuperDeal">
+      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('СПЕЦПРЕДЛОЖЕНИЕ','TOP-ANGEBOT','SUPER DEAL')}</div>
+        <h2>${hx('Спецпредложение','Top-Angebot','Super Deal')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Крупное предложение месяца — более высокий акцент и больше пространства.','Das große Angebot des Monats – mit mehr Höhe und mehr Raum inszeniert.','The big offer of the month — presented larger with more breathing room.')}</p>
+      </div><button class="homeTextLink" type="button" ${superDeal.attr}>${hx('Смотреть','Ansehen','View')}</button></div>
+      <button class="homeSuperDealCard" type="button" ${superDeal.attr}>
+        <img src="${superDeal.img}" alt="${esc(superDeal.title)}" loading="lazy" decoding="async">
+        <span class="homeSuperDealCard__shade"></span>
+        <span class="homeSuperDealCard__copy"><i>ONLYONE · ${hx('СПЕЦПРЕДЛОЖЕНИЕ','TOP-ANGEBOT','SUPER DEAL')}</i><b>${esc(superDeal.title)}</b><em>${esc(superDeal.meta)}</em><span>${hx('VIP-запрос','VIP-Anfrage','VIP enquiry')}${icon('chev')}</span></span>
+      </button>
+    </section>
+
+    <section class="homeVipCallback">
+      <div class="homeVipCallback__icon" aria-hidden="true">${icon('headset')}</div>
+      <div class="homeVipCallback__head"><div class="eyebrow">ONLYONE · VIP</div><h2>${hx('VIP-ассистент на связи','VIP-Assistent auf Abruf','VIP assistant on call')}</h2>
+        <p>${hx('Оставьте имя и телефон — ваш VIP-ассистент свяжется с вами лично.','Name und Telefonnummer hinterlassen – dein VIP-Assistent ruft persönlich zurück.','Leave your name and phone number — your VIP assistant will call you personally.')}</p></div>
+      <div class="homeVipCallback__form vipLeadForm" data-vip-lead-form>
+        <label><span>${hx('Имя','Name','Name')}</span><input data-vip-name type="text" autocomplete="name" placeholder="${hx('Ваше имя','Ihr Name','Your name')}"></label>
+        <label><span>${hx('Телефон','Telefon','Phone')}</span><input data-vip-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
+        <button type="button" data-act="vip-callback" data-source="home-vip">${hx('Отправить запрос','Anfrage senden','Send request')}${icon('chev')}</button>
+        <small>${hx('Без обязательств. Мы используем номер только для связи по вашему запросу.','Unverbindlich. Die Nummer wird nur für diese Anfrage verwendet.','No obligation. Your number is used only for this request.')}</small>
       </div>
     </section>
 
-    <section class="travelWorlds travelWorlds--focus">
-      <div class="homeEditorialHead">
-        <div class="eyebrow">ONLYONE · TÜRKİYE</div>
-        <h2>${t('travelWays')}</h2>
-      </div>
-      <div class="travelWorlds__rail">
-        ${EXPERIENCES.map(x=>`<button class="travelWorld" data-world="${x.id}">
-          <img src="${x.img}" alt="${esc(x.n[LANG]||x.n.en)}" loading="eager" decoding="async" fetchpriority="auto">
-          <span class="travelWorld__shade"></span>
-          <span class="travelWorld__copy">
-            <b>${esc(x.n[LANG]||x.n.en)}</b>
-            <i>${esc(x.s[LANG]||x.s.en)}</i>
-            <span>${icon('chev')}</span>
-          </span>
-        </button>`).join('')}
-      </div>
+    <section class="travelWorlds travelWorlds--customer">
+      <div class="homeEditorialHead homeEditorialHead--dark"><div class="eyebrow">ONLYONE · ${hx('ТУРЦИЯ','TÜRKEI','TÜRKİYE')}</div>
+        <h2>${hx('Как вы хотите путешествовать?','Wie möchtest du reisen?','How would you like to travel?')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Пять направлений для разного ритма путешествия.','Fünf Reisewelten für unterschiedliche Wünsche.','Five travel worlds for different ways to explore.')}</p></div>
+      <div class="travelWorlds__rail">${categories.map((x,i)=>`<button class="travelWorld" type="button" ${x.attr}>
+        <img src="${x.img}" alt="${esc(x.title)}" loading="${i<2?'eager':'lazy'}" decoding="async" fetchpriority="low">
+        <span class="travelWorld__shade"></span><span class="travelWorld__copy"><b>${esc(x.title)}</b><i>${esc(x.meta)}</i><span>${icon('chev')}</span></span>
+      </button>`).join('')}</div>
     </section>
 
-    <section class="homeVipFocus">
-      <div class="homeVipFocus__icon" aria-hidden="true">${icon('headset')}</div>
-      <div class="homeVipFocus__copy">
-        <div class="eyebrow">ONLYONE · VIP</div>
-        <h2>${t('vip3')}</h2>
-        <p>${t('vip3t')}</p>
-      </div>
-      <button class="homeVipFocus__cta" type="button" data-go="concierge">${t('askVip')}${icon('chev')}</button>
+    <section class="homeOffers homeBestHotels">
+      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('ОТБРАНО','AUSGEWÄHLT','SELECTED')}</div><h2>${hx('Лучшие отели','Beste Hotels','Best Hotels')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Отобранные нами отели для особенного путешествия.','Von uns ausgewählte Hotels für eine besondere Reise.','Hotels selected by us for an exceptional journey.')}</p>
+      </div><button class="homeTextLink" type="button" data-go="search">${t('all')}</button></div>
+      ${featured?`<article class="homeOfferCard homeOfferCard--featured" data-hotel="${featured.id}" role="button" tabindex="0"><div class="homeOfferCard__media">
+        <img src="${featured.imgs[0]}" alt="${esc(featured.name)}" loading="lazy" decoding="async"><span class="homeOfferCard__shade"></span><span class="homeOfferCard__badge">${hx('ВЫБОР ONLYONE','ONLYONE AUSWAHL','ONLYONE CHOICE')}</span>
+        <button class="homeOfferCard__fav${isFav(featured.id)?' is-on':''}" data-act="fav" data-id="${featured.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
+        <span class="homeOfferCard__copy"><span class="stars">${stars(featured.stars)}</span><b>${esc(featured.name)}</b><i>${esc(regionName(featured.region))} · ${fmtNum(featured.rating)}</i>
+          <em>${hx('Приватный пляж · VIP-трансфер по запросу','Privatstrand · VIP-Transfer auf Anfrage','Private beach · VIP transfer on request')}</em></span>
+      </div></article>`:''}
+      <div class="homeOfferGrid" aria-label="${hx('Лучшие отели','Beste Hotels','Best Hotels')}">${curatedRest.map(h=>`<article class="homeOfferCard homeOfferCard--small" data-hotel="${h.id}" role="button" tabindex="0"><div class="homeOfferCard__media">
+        <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="lazy" decoding="async"><span class="homeOfferCard__shade"></span>
+        <button class="homeOfferCard__fav${isFav(h.id)?' is-on':''}" data-act="fav" data-id="${h.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
+        <span class="homeOfferCard__copy"><span class="stars">${stars(h.stars)}</span><b>${esc(h.name)}</b><i>${esc(regionName(h.region))} · ${fmtNum(h.rating)}</i></span>
+      </div></article>`).join('')}</div>
     </section>
 
-    <section class="homeExcFocus">
-      <div class="homeEditorialHead homeEditorialHead--row">
-        <div><div class="eyebrow">ONLYONE · TÜRKİYE</div><h2>${t('focusExcursions')}</h2><p class="homeEditorialHead__sub">${t('focusExcursionsSub')}</p></div>
-        <button class="homeTextLink" data-go="excursions">${t('all')}</button>
-      </div>
-      <div class="homeExcFocus__rail">
-        ${EXCURSIONS.map(e=>`<button class="homeExcCard" data-exc="${e.id}">
-          <img src="${e.img}" alt="${esc(e.n[LANG]||e.n.en)}" loading="eager" decoding="async" fetchpriority="low">
-          <span class="homeExcCard__shade"></span>
-          <span class="homeExcCard__copy"><b>${esc(e.n[LANG]||e.n.en)}</b><i>${esc(e.dur[LANG]||e.dur.en)}</i><span>${icon('chev')}</span></span>
-        </button>`).join('')}
-      </div>
-    </section>
-
-    <section class="homeOffers">
-      <div class="homeEditorialHead homeEditorialHead--row">
-        <div>
-          <div class="eyebrow">ONLYONE · SELECTED</div>
-          <h2>${t('curatedOffers')}</h2>
-          <p class="homeEditorialHead__sub">${t('curatedOffersSub')}</p>
-        </div>
-        <button class="homeTextLink" type="button" data-go="search">${t('all')}</button>
-      </div>
-      ${featured?`<article class="homeOfferCard homeOfferCard--featured" data-hotel="${featured.id}" role="button" tabindex="0">
-        <div class="homeOfferCard__media">
-          <img src="${featured.imgs[0]}" alt="${esc(featured.name)}" loading="eager" decoding="async" fetchpriority="low">
-          <span class="homeOfferCard__shade"></span>
-          <span class="homeOfferCard__badge">${t('featuredOffer')}</span>
-          <button class="homeOfferCard__fav${isFav(featured.id)?' is-on':''}" data-act="fav" data-id="${featured.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
-          <span class="homeOfferCard__copy">
-            <span class="stars">${stars(featured.stars)}</span>
-            <b>${esc(featured.name)}</b>
-            <i>${esc(regionName(featured.region))} · ${fmtNum(featured.rating)}</i>
-            <em>${t('featuredMeta')}</em>
-          </span>
-        </div>
-      </article>`:''}
-      <div class="homeOfferGrid" aria-label="${esc(t('moreSelected'))}">
-        ${curatedRest.map(h=>`<article class="homeOfferCard homeOfferCard--small" data-hotel="${h.id}" role="button" tabindex="0">
-          <div class="homeOfferCard__media">
-            <img src="${h.imgs[0]}" alt="${esc(h.name)}" loading="eager" decoding="async" fetchpriority="low">
-            <span class="homeOfferCard__shade"></span>
-            <button class="homeOfferCard__fav${isFav(h.id)?' is-on':''}" data-act="fav" data-id="${h.id}" aria-label="${t('myFav')}">${icon('heart')}</button>
-            <span class="homeOfferCard__copy">
-              <span class="stars">${stars(h.stars)}</span>
-              <b>${esc(h.name)}</b>
-              <i>${esc(regionName(h.region))} · ${fmtNum(h.rating)}</i>
-            </span>
-          </div>
-        </article>`).join('')}
-      </div>
-    </section>
-
-    <section class="homeMotion">
-      <div class="homeEditorialHead homeEditorialHead--dark">
-        <div class="eyebrow">ONLYONE · VIDEO</div>
-        <h2>${t('vipMoments')}</h2>
-        <p class="homeEditorialHead__sub">${t('vipMomentsSub')}</p>
-      </div>
-      <div class="homeMotion__rail">
-        ${CLIPS.map(c=>`<button class="homeMotionCard" type="button" data-block="${c.id}" aria-label="${esc(t(c.title))}">
-          <img src="${c.poster}" alt="" loading="eager" decoding="async" fetchpriority="low">
-          ${bgVideo(c.src,c.poster,'homeMotionCard__video')}
-          <span class="homeMotionCard__shade"></span>
-          <span class="homeMotionCard__copy"><div class="eyebrow">${t(c.eyebrow)}</div><b>${t(c.title)}</b><p>${t(c.body)}</p><i>${t('blockMore')}${icon('chev')}</i></span>
-        </button>`).join('')}
-      </div>
-    </section>
-
-    <section class="homeServiceSlim">
-      <div class="homeEditorialHead">
-        <div class="eyebrow">ONLYONE · VIP</div>
-        <h2>${t('vipServices')}</h2>
-        <p class="homeEditorialHead__sub">${t('vipServicesSub')}</p>
-      </div>
-      <div class="homeServiceSlim__grid">
-        <button class="homeServiceCard homeServiceCard--transfer" data-block="transfer">
-          <span class="homeServiceCard__word">${esc(t('carWord'))}</span>
-          <span class="homeServiceCard__copy"><b>${t('carTitle').replace(/<br\s*\/?>/g,' ')}</b><i>${t('blockMore')}${icon('chev')}</i></span>
-        </button>
-      </div>
-    </section>
-
-    <section class="flyBand">
-      ${sky([
-        [ 26,   4,  36,  -5,  .42, 1.3,  -8, 1.00, 1.05, 1],
-        [ 22,  66,  32, -21,  .38, 1.4,   9, 1.00, 1.05, 3],
-        [ 30, -10,  30, -13,  .46, 1.1, -12, 1.00, 1.07, 2],
-        [ 25,  44,  34, -27,  .40, 1.2,   6, 1.00, 1.06, 4],
-        [ 40, -16,  21,  -3,  .62,  .6, -26, 1.00, 1.16, 1],
-        [ 36,  62,  23, -16,  .58,  .6,  30, 1.00, 1.14, 3],
-        [ 46,  22,  19, -11,  .60,  .5,  10, 1.00, 1.18, 2],
-      ],'far')}
-      <div class="flyBand__head">
-        <div class="eyebrow">${t('flyEyebrow')}</div>
-        <h2 class="flyBand__title">${t('flyTitle')}</h2>
-      </div>
-      <div class="flyBand__plane" aria-hidden="true">
-        <span class="flyTrail">
-          ${[[15,63],[24,59],[33,55],[42,52],[58,52],[67,55],[76,59],[85,63]]
-            .map(([x,y],i)=>`<i style="left:${x}%;top:${y}%;--d:${(i%4)*0.55+(i>3?0.28:0)}s;--t:${2.4+(i%3)*0.35}s;--h:${16+(i%3)*7}%"></i>`).join('')}
+    <section class="homeYachts">
+      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('ЯХТЫ','YACHTEN','YACHTS')}</div>
+        <h2>${hx('Яхт-туры','Yachttouren','Yacht tours')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Выберите формат — яхту, маршрут и детали мы подберём персонально.','Wähle den Stil – Yacht, Route und Details stellen wir persönlich zusammen.','Choose the style — we tailor the yacht, route and details personally.')}</p>
+      </div><button class="homeTextLink" type="button" data-block="yacht">${hx('Все яхты','Alle Yachten','All yachts')}</button></div>
+      <button class="homeYachtHero" type="button" data-block="yacht">
+        <span class="homeYachtHero__media">
+          <img src="./images/yacht-tour-poster.webp" alt="${hx('Яхта в движении','Yacht in Bewegung','Yacht in motion')}" loading="lazy" decoding="async">
+          <video class="homeYachtHero__video" muted autoplay loop playsinline webkit-playsinline preload="metadata" poster="./images/yacht-tour-poster.webp" disablepictureinpicture disableremoteplayback aria-hidden="true"><source src="./video/onlyone-yacht-tour-v2.mp4" type="video/mp4"></video>
+          <span class="homeYachtHero__shade"></span>
+          <span class="homeYachtHero__copy"><i>ONLYONE · ${hx('ЯХТЕННЫЙ ОПЫТ','YACHT-ERLEBNIS','YACHT EXPERIENCE')}</i><b>${hx('Яхта в движении','Yacht in Bewegung','Yacht in motion')}</b><em>${hx('Видео · приватные маршруты','Video · private Routen','Video · private routes')}</em></span>
         </span>
-        <img src="./images/3d/plane-top.webp" alt="" loading="eager" decoding="async" fetchpriority="low" width="900" height="1111">
+      </button>
+      <div class="homeYachts__rail">${yachtChoices.map((y,i)=>`<button class="homeYachtCard" type="button" data-block="yacht">
+        <span class="homeYachtCard__media"><img src="${y.img}" alt="${esc(y.title)}" loading="lazy" decoding="async"><span class="homeYachtCard__shade"></span></span>
+        <span class="homeYachtCard__copy"><i>ONLYONE · ${hx('ЯХТА','YACHT','YACHT')}</i><b>${esc(y.title)}</b><em>${esc(y.meta)}</em><span>${hx('Запросить','Anfragen','Enquire')}${icon('chev')}</span></span>
+      </button>`).join('')}</div>
+    </section>
+
+    <section class="homeVipServices">
+      <div class="homeEditorialHead homeEditorialHead--dark"><div class="eyebrow">ONLYONE · ${hx('VIP-СЕРВИСЫ','VIP-SERVICES','VIP SERVICES')}</div>
+        <h2>${hx('VIP-приём и встреча','VIP-Empfang & Ankunft','VIP Welcome & Arrival')}</h2>
+        <p class="homeEditorialHead__sub">${hx('Личная встреча, Business Van и Helicopter Transfer — всё организуется персонально.','Persönlicher Empfang, Business Van und Helikopter-Transfer – individuell organisiert.','Personal welcome, business van and helicopter transfer — arranged individually.')}</p></div>
+      <div class="homeVipServices__rail">${vipServices.map(s=>`<button class="vipServiceCard${s.featured?' vipServiceCard--featured':''}${s.video?' vipServiceCard--video':''}" type="button" ${s.attr}>
+        <img src="${s.img}" alt="" loading="lazy" decoding="async">${s.video?`<video class="vipServiceCard__video" muted autoplay loop playsinline webkit-playsinline preload="metadata" poster="${s.img}" disablepictureinpicture disableremoteplayback aria-hidden="true"><source src="${s.video}" type="video/mp4"></video>`:''}<span class="vipServiceCard__shade"></span>
+        <span class="vipServiceCard__copy"><i>${esc(s.ey)}</i><b>${esc(s.title)}</b><p>${esc(s.body)}</p><em>${hx('Подробнее','Mehr erfahren','Learn more')}${icon('chev')}</em></span>
+      </button>`).join('')}</div>
+    </section>
+
+    <section class="homeAviationFinal homeAviationFinal--transferHero">
+      ${sky([[30,-4,42,-8,.26,1.1,24,.76,1.02,1],[22,62,36,-20,.22,1.6,-20,.72,1.03,2],[18,34,31,-28,.18,2.0,14,.70,1.05,3]],'far')}
+      ${sky([[44,-8,26,-5,.34,2.2,38,.94,1.16,3],[40,56,23,-13,.31,2.6,-30,.92,1.14,4],[32,18,20,-21,.28,2.9,42,.90,1.18,2]],'near')}
+      <div class="homeAviationFinal__copy"><div class="eyebrow">ONLYONE · ${hx('ЧАСТНАЯ АВИАЦИЯ','PRIVATE AVIATION','PRIVATE AVIATION')}</div>
+        <h2>${hx('Ваше путешествие начинается ещё до посадки.','Deine Reise beginnt schon vor der Landung.','Your journey begins before you land.')}</h2>
+        <p>${hx('Перелёт, VIP-приём и трансфер — одна персональная организация от ONLYONE.','Flug, VIP-Empfang und Transfer – persönlich aus einer Hand organisiert.','Flight, VIP welcome and transfer — personally arranged as one journey.')}</p>
+        <button type="button" data-block="flight">${hx('Организовать перелёт','Flug organisieren','Arrange a flight')}${icon('chev')}</button>
       </div>
-      ${sky([
-        [ 82, -30, 10.5, -2,  .42, 2.2, -46, 1.06, 1.34, 4],
-        [ 70,  46, 13.5, -7,  .34, 2.6,  50, 1.06, 1.28, 4],
-        [ 60, -12, 16.0,-11,  .28, 3.0, -34, 1.06, 1.24, 1],
-      ],'near')}
-      <div class="flyTicker" aria-hidden="true">
-        ${(()=>{ const half=[...REGIONS.map(r=>r.name[LANG]||r.name.en),
-                             ...EXCURSIONS.map(e=>e.n[LANG]||e.n.en)]
-                   .map(n=>`<span>${esc(n)}</span><i>✦</i>`).join('');
-                 return `<div class="flyTicker__row"><div class="flyTicker__half">${half}</div><div class="flyTicker__half">${half}</div></div>`; })()}
-      </div>
-      <div class="flyBand__card">
-        <div class="flyBand__spec"><span>${t('flySpecA')}</span><span>${t('flySpecB')}</span></div>
-        <p>${t('flyBody')}</p>
-        <div class="flyBand__acts">
-          <button class="btn btn--primary btn--sm" data-go="concierge">${t('flyCta')}</button>
-          <button class="linkMore" type="button" data-block="flight">${t('blockMore')}${icon('chev')}</button>
+      <div class="homeAviationFinal__plane" aria-hidden="true"><span class="flyTrail homeAviationFinal__trail"><i style="left:42.5%;top:15%;--h:58%;--t:2.5s;--d:-.2s"></i><i style="left:46.5%;top:16%;--h:64%;--t:2.8s;--d:-1.0s"></i><i style="left:50.5%;top:17%;--h:68%;--t:2.4s;--d:-1.6s"></i><i style="left:54.5%;top:16%;--h:64%;--t:2.9s;--d:-.7s"></i><i style="left:58.5%;top:15%;--h:58%;--t:2.6s;--d:-1.3s"></i></span><img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async"></div>
+    </section>
+
+    <section class="homeTransferRequest homeTransferRequest--tile">
+      <div class="homeTransferTile">
+        <div class="homeTransferTile__top">
+          <div class="homeTransferTile__mark" aria-hidden="true">${icon('car')}</div>
+          <div class="homeTransferTile__route" aria-hidden="true"><span></span><i></i><span></span></div>
+          <div class="homeTransferTile__status">24/7</div>
+        </div>
+        <div class="homeTransferRequest__copy"><div class="eyebrow">ONLY ONE TRAVEL · VIP TRANSFER</div>
+          <h2>${hx('Машина уже ждёт','Das Fahrzeug wartet bereits','Your car is already waiting')}</h2>
+          <p>${hx('Короткая заявка — ваш VIP-ассистент уточнит детали лично.','Kurze Anfrage – dein VIP-Assistent klärt die Details persönlich.','A short request — your VIP assistant confirms the details personally.')}</p>
+          <div class="homeTransferTile__perks">
+            <span>${hx('Личная встреча','Persönlicher Empfang','Personal welcome')}</span>
+            <span>${hx('Без цен онлайн','Keine Online-Preise','No online prices')}</span>
+            <span>${hx('Один контакт','Ein Ansprechpartner','One contact')}</span>
+          </div>
+          <div class="homeTransferQuick">
+            <label><span>${hx('Имя','Name','Name')}</span><input id="trQuickName" autocomplete="name" placeholder="${hx('Ваше имя','Ihr Name','Your name')}"></label>
+            <label><span>${hx('Телефон','Telefon','Phone')}</span><input id="trQuickPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
+            <button type="button" data-act="transfer-quick-send">${hx('Отправить запрос','Anfrage senden','Send request')}${icon('chev')}</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="homeSecondaryLinks">
-      <button type="button" data-go="destinations">${t('destinationsShort')}${icon('chev')}</button>
-      <button type="button" data-go="search">${t('staysShort')}${icon('chev')}</button>
-    </section>
 
-    <section class="homeFinalCta">
-      <div class="eyebrow">${t('finalCtaEyebrow')}</div>
-      <h2>${t('finalCtaTitle')}</h2>
-      <p>${t('finalCtaBody')}</p>
-      <button type="button" data-go="concierge">${t('finalCtaButton')}${icon('chev')}</button>
-    </section>
 
-    <div class="pageBottom"></div>
-    ${tabbar('home')}`;
+    <section class="homeFinalCta homeFinalCta--customer homeFinalCta--last" aria-label="VIP assistant">
+      <div class="homeFinalCta__media" aria-hidden="true">
+        <img src="./images/r34/vip-assistant-final-9x16.webp" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="homeFinalCta__panel">
+        <div class="eyebrow">ONLYONE · VIP</div>
+        <h2 class="homeFinalCta__title">${hx('Ваш VIP-<br>ассистент<br>рядом.','Ihr VIP-Assistent<br>ist für Sie da.','Your VIP assistant<br>is here.')}</h2>
+        <p>${hx('Личный подход. Полная конфиденциальность. Безупречный сервис 24/7.','Persönliche Betreuung. Volle Diskretion. Erstklassiger Service rund um die Uhr.','Personal attention. Complete discretion. Impeccable service 24/7.')}</p>
+        <div class="vipLeadForm vipLeadForm--final" data-vip-lead-form>
+          <label><span>${hx('Имя','Name','Name')}</span><input data-vip-name type="text" autocomplete="name" placeholder="${hx('Ваше имя','Ihr Name','Your name')}"></label>
+          <label><span>${hx('Телефон','Telefon','Phone')}</span><input data-vip-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
+          <button type="button" data-act="vip-callback" data-source="final-vip">${hx('Отправить запрос','Anfrage senden','Send request')}${icon('chev')}</button>
+        </div>
+      </div>
+    </section>
+    <div class="pageBottom"></div>${tabbar('home')}`;
   }
 
   function vWorld(id){
@@ -2239,35 +2272,35 @@
     let related=[];
     if(x.go.type)related=PUBLIC_HOTELS.filter(h=>h.types.indexOf(x.go.type)>-1).sort((a,b)=>b.rating-a.rating).slice(0,3);
     if(x.go.kind)related=PUBLIC_HOTELS.filter(h=>h.kind===x.go.kind).sort((a,b)=>b.rating-a.rating).slice(0,3);
-    return `${appbar({back:true,title:x.n[LANG]||x.n.en})}
+    return `${appbar({back:true,title:loc(x.n)})}
       <section class="storyHero">
-        <img src="${x.img}" alt="${esc(x.n[LANG]||x.n.en)}">
+        <img src="${x.img}" alt="${esc(loc(x.n))}">
         <span class="storyHero__shade"></span>
-        <div class="storyHero__copy"><div class="eyebrow">ONLYONE · TÜRKİYE</div><h1>${esc(x.n[LANG]||x.n.en)}</h1><p>${esc(x.s[LANG]||x.s.en)}</p></div>
+        <div class="storyHero__copy"><div class="eyebrow">ONLYONE · ${hx('ТУРЦИЯ','TÜRKEI','TÜRKİYE')}</div><h1>${esc(loc(x.n))}</h1><p>${esc(loc(x.s))}</p></div>
       </section>
       <section class="storyIntro">
-        <p>${esc(x.lead[LANG]||x.lead.en)}</p>
+        <p>${esc(loc(x.lead))}</p>
         <div class="storyActions">
           <button class="btn btn--primary" data-world-explore="${x.id}">${t('exploreSelf')}</button>
           <button class="btn btn--ghost" data-go="concierge">${t('askVip')}</button>
         </div>
       </section>
       ${related.length?`<div class="wrap storyRelated"><div class="section__head"><h2 class="h-lg">${t('handpicked')}</h2></div><div class="cardList">${related.map(hotelCard).join('')}</div></div>`:''}
-      ${x.id==='group-tours'?`<section class="storyTiles">${EXCURSIONS.slice(0,4).map(e=>`<button class="storyTile" data-exc="${e.id}"><img src="${e.img}" alt=""><span><b>${esc(e.n[LANG]||e.n.en)}</b><i>${esc(e.dur[LANG]||e.dur.en)}</i></span></button>`).join('')}</section>`:''}
-      ${x.id==='event-management'?`<section class="eventPromise"><div class="eyebrow">ONLYONE EVENTS</div><h2>Location · Transfer · Dinner · Programm</h2><p>${esc(x.lead[LANG]||x.lead.en)}</p><button class="btn btn--gold" data-go="concierge">${t('planThisTrip')}</button></section>`:''}
+      ${x.id==='group-tours'?`<section class="storyTiles">${EXCURSIONS.slice(0,4).map(e=>`<button class="storyTile" data-exc="${e.id}"><img src="${e.img}" alt=""><span><b>${esc(loc(e.n))}</b><i>${esc(loc(e.dur))}</i></span></button>`).join('')}</section>`:''}
+      ${x.id==='event-management'?`<section class="eventPromise"><div class="eyebrow">ONLYONE · ${hx('СОБЫТИЯ','EVENTS','EVENTS')}</div><h2>${hx('Локация · трансфер · ужин · программа','Location · Transfer · Dinner · Programm','Venue · transfer · dinner · programme')}</h2><p>${esc(loc(x.lead))}</p><button class="btn btn--gold" data-go="concierge">${t('planThisTrip')}</button></section>`:''}
       <div class="pageBottom"></div>${tabbar('home')}`;
   }
 
   function vDestination(id){
     const d=DESTINATIONS.find(x=>x.id===id);if(!d)return vHome();
     const related=d.regions?PUBLIC_HOTELS.filter(h=>d.regions.indexOf(h.region)>-1).sort((a,b)=>b.rating-a.rating).slice(0,3):[];
-    return `${appbar({back:true,title:d.n[LANG]||d.n.en})}
+    return `${appbar({back:true,title:loc(d.n)})}
       <section class="storyHero storyHero--destination">
-        <img src="${d.img}" alt="${esc(d.n[LANG]||d.n.en)}">
+        <img src="${d.img}" alt="${esc(loc(d.n))}">
         <span class="storyHero__shade"></span>
-        <div class="storyHero__copy"><div class="eyebrow">TÜRKİYE</div><h1>${esc(d.n[LANG]||d.n.en)}</h1><p>${esc(d.s[LANG]||d.s.en)}</p></div>
+        <div class="storyHero__copy"><div class="eyebrow">${hx('ТУРЦИЯ','TÜRKEI','TÜRKİYE')}</div><h1>${esc(loc(d.n))}</h1><p>${esc(loc(d.s))}</p></div>
       </section>
-      <section class="storyIntro"><p>${esc(d.d[LANG]||d.d.en)}</p><p class="storyIntro__muted">${t('noCatalog')}</p>
+      <section class="storyIntro"><p>${esc(loc(d.d))}</p><p class="storyIntro__muted">${t('noCatalog')}</p>
         <div class="storyActions"><button class="btn btn--gold" data-go="concierge">${t('planThisTrip')}</button>${related.length?`<button class="btn btn--ghost" data-dest-search="${d.id}">${t('exploreSelf')}</button>`:''}</div>
       </section>
       ${related.length?`<div class="wrap storyRelated"><div class="section__head"><h2 class="h-lg">${t('handpicked')}</h2></div><div class="cardList">${related.map(hotelCard).join('')}</div></div>`:''}
@@ -2278,15 +2311,15 @@
     return `${appbar({back:true,title:t('destinations')})}
       <section class="destinationIndex">
         <div class="destinationIndex__intro">
-          <div class="eyebrow">ONLYONE · TÜRKİYE</div>
+          <div class="eyebrow">ONLYONE · ${hx('ТУРЦИЯ','TÜRKEI','TÜRKİYE')}</div>
           <h1>${t('destinations')}</h1>
           <p>${t('noCatalog')}</p>
         </div>
         <div class="destinationIndex__grid">
           ${DESTINATIONS.map(d=>`<button class="destinationIndex__card" data-dest="${d.id}">
-            <img src="${d.img}" alt="${esc(d.n[LANG]||d.n.en)}" loading="lazy" decoding="async">
+            <img src="${d.img}" alt="${esc(loc(d.n))}" loading="lazy" decoding="async">
             <span class="destinationIndex__shade"></span>
-            <span class="destinationIndex__copy"><b>${esc(d.n[LANG]||d.n.en)}</b><i>${esc(d.s[LANG]||d.s.en)}</i></span>
+            <span class="destinationIndex__copy"><b>${esc(loc(d.n))}</b><i>${esc(loc(d.s))}</i></span>
           </button>`).join('')}
         </div>
       </section>
@@ -2332,7 +2365,7 @@
       <div class="section" style="margin-top:20px">
         <div class="chips">
           <button class="chip${!FILTER.region?' is-on':''}" data-fregion="">${t('allRegions')}</button>
-          ${REGIONS.map(r=>`<button class="chip${FILTER.region===r.id?' is-on':''}" data-fregion="${r.id}">${esc(r.name[LANG]||r.name.en)}</button>`).join('')}
+          ${REGIONS.map(r=>`<button class="chip${FILTER.region===r.id?' is-on':''}" data-fregion="${r.id}">${esc(loc(r.name))}</button>`).join('')}
         </div>
       </div>
 
@@ -2372,7 +2405,7 @@
     </div>
 
     <section class="detailSec"><h3 class="h-md">${t('description')}</h3>
-      <p class="muted" style="font-size:13.5px;line-height:1.6;margin:9px 0 0">${esc(h.desc[LANG]||h.desc.en)}</p></section>
+      <p class="muted" style="font-size:13.5px;line-height:1.6;margin:9px 0 0">${esc(loc(h.desc))}</p></section>
 
     <section class="detailSec"><h3 class="h-md" style="margin-bottom:13px">${t('amenities')}</h3>
       <div class="amen">${h.amen.map(a=>`<div>${icon('check')}<span>${esc(label(AMEN,a))}</span></div>`).join('')}</div>
@@ -2382,8 +2415,8 @@
 
     <section class="detailSec"><h3 class="h-md">${t('rooms')}</h3>
       ${h.rooms.map(r=>`<div class="roomCard">
-        <h4>${esc(r.n[LANG]||r.n.en)}</h4>
-        <div class="muted tiny" style="margin-top:5px">${r.ad} ${t('persons')} · ${esc(r.bed[LANG]||r.bed.en)} · ${r.sz} ${t('sqm')}</div>
+        <h4>${esc(loc(r.n))}</h4>
+        <div class="muted tiny" style="margin-top:5px">${r.ad} ${t('persons')} · ${esc(loc(r.bed))} · ${r.sz} ${t('sqm')}</div>
         <div class="amen" style="margin-top:11px">${r.f.map(f=>`<div>${icon('check')}<span>${esc((ROOMFEAT[f]||{})[LANG]||f)}</span></div>`).join('')}</div>
         <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:13px" data-act="req" data-id="${h.id}" data-room="${r.id}">${t('requestRoom')}</button>
       </div>`).join('')}
@@ -2445,7 +2478,7 @@
       body=`<div class="field"><label class="label">${t('roomWish')}</label>
         ${h.rooms.map(r=>`<button class="check${W.roomId===r.id?' is-on':''}" data-wroom="${r.id}">
           <span class="check__box">${icon('check')}</span>
-          <span><b style="font-weight:600">${esc(r.n[LANG]||r.n.en)}</b><br>
+          <span><b style="font-weight:600">${esc(loc(r.n))}</b><br>
           <span class="muted tiny">${r.ad} ${t('persons')} · ${r.sz} ${t('sqm')}</span></span></button>`).join('')}
         <button class="check${W.roomId===''?' is-on':''}" data-wroom="">
           <span class="check__box">${icon('check')}</span><span>${t('notSure')}</span></button></div>`;
@@ -2456,7 +2489,7 @@
         <div class="field"><label class="label">${t('excInterest')}</label>
         ${EXCURSIONS.map(e=>`<button class="check${W.excursions.indexOf(e.id)>-1?' is-on':''}" data-wexc="${e.id}">
           <span class="check__box">${icon('check')}</span>
-          <span>${esc(e.n[LANG]||e.n.en)}<span class="muted tiny"> · ${esc(e.dur[LANG]||e.dur.en)}</span></span></button>`).join('')}
+          <span>${esc(loc(e.n))}<span class="muted tiny"> · ${esc(loc(e.dur))}</span></span></button>`).join('')}
         <p class="muted mini" style="margin-top:8px">${t('excNote')}</p></div>
         <div class="field"><label class="label">${t('otherWishes')}</label>
         <textarea class="input" id="wNote">${esc(W.note)}</textarea></div>`;
@@ -2475,9 +2508,9 @@
         <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(W.from)} – ${fmtDate(W.to)}<br>
           <span class="muted tiny">${nights(W.from,W.to)} ${t('nights')}</span></b></div>
         <div class="kv"><span class="muted">${t('guests')}</span><b>${W.adults} ${t('adultsShort')}${W.children?` · ${W.children} ${t('childrenShort')}`:''}</b></div>
-        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(loc(room.n)):t('notSure')}</b></div>
         ${W.wishes.length?`<div class="kv"><span class="muted">${t('custWishes')}</span><b>${W.wishes.map(k=>t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])).join('<br>')}</b></div>`:''}
-        ${W.excursions.length?`<div class="kv"><span class="muted">${t('excursions')}</span><b>${W.excursions.map(id=>{const e=excursion(id);return esc(e?(e.n[LANG]||e.n.en):id);}).join('<br>')}</b></div>`:''}
+        ${W.excursions.length?`<div class="kv"><span class="muted">${t('excursions')}</span><b>${W.excursions.map(id=>{const e=excursion(id);return esc(e?(loc(e.n)):id);}).join('<br>')}</b></div>`:''}
         ${W.note?`<div class="kv"><span class="muted">${t('otherWishes')}</span><b>${esc(W.note)}</b></div>`:''}
         <div class="kv"><span class="muted">${t('email')}</span><b>${esc(W.email)}</b></div>
       </div>
@@ -2550,7 +2583,7 @@
       const who = m.from==='guest' ? t('you') : t('team');
       return `<div class="msg ${mine?'is-mine':''}">
         <div class="msg__b">${esc(m.text)}</div>
-        <div class="msg__m">${mine?'':esc(who)+' · '}${new Date(m.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+        <div class="msg__m">${mine?'':esc(who)+' · '}${new Date(m.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':LANG==='tr'?'tr-TR':LANG==='uk'?'uk-UA':'en-GB',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
       </div>`;}).join('')}</div>`;
   }
 
@@ -2566,7 +2599,7 @@
       return `<div class="tl ${done?'is-done':now?'is-now':'is-pending'}">
         <span class="tl__dot"></span>
         <div><div class="tl__t">${t(STATUS_LABEL[s])}</div>
-        ${h?`<div class="tl__d">${new Date(h.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':'en-GB')}</div>`:''}</div></div>`;
+        ${h?`<div class="tl__d">${new Date(h.at).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':LANG==='tr'?'tr-TR':LANG==='uk'?'uk-UA':'en-GB')}</div>`:''}</div></div>`;
     }).join('')}</div>`;
   }
 
@@ -2636,14 +2669,14 @@
           <div class="kv" style="margin-top:12px"><span class="muted">${t('period')}</span>
             <b>${fmtDate(r.from)} – ${fmtDate(r.to)}<br><span class="muted tiny">${nights(r.from,r.to)} ${t('nights')}</span></b></div>
           <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}`:''}</b></div>
-          <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+          <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(loc(room.n)):t('notSure')}</b></div>
         </div>
       </div>
 
       ${showOffer?`
       <div class="priceBox fade-up">
         <div class="lbl">${t('yourOffer')}</div>
-        <div style="margin-top:12px;font-size:14px;opacity:.9">${esc(h.name)}${room?` · ${esc(room.n[LANG]||room.n.en)}`:''}</div>
+        <div style="margin-top:12px;font-size:14px;opacity:.9">${esc(h.name)}${room?` · ${esc(loc(room.n))}`:''}</div>
         <div style="font-size:12.5px;opacity:.75;margin-top:4px">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${nights(r.from,r.to)} ${t('nights')}</div>
         <div style="margin-top:16px" class="lbl">${t('total')}</div>
         <div class="amt">${money(r.offer.price,r.offer.currency)}</div>
@@ -2694,6 +2727,16 @@
         </div>
       </div>
 
+      <section class="concQuickLead">
+        <h2>${hx('Быстрая связь','Schneller Kontakt','Quick contact')}</h2>
+        <p>${hx('Оставьте имя и телефон — VIP-ассистент свяжется с вами лично.','Name und Telefonnummer senden – Ihr VIP-Assistent meldet sich persönlich.','Send your name and phone number — your VIP assistant will contact you personally.')}</p>
+        <div class="vipLeadForm vipLeadForm--concierge" data-vip-lead-form>
+          <label><span>${hx('Имя','Name','Name')}</span><input data-vip-name type="text" autocomplete="name" placeholder="${hx('Ваше имя','Ihr Name','Your name')}"></label>
+          <label><span>${hx('Телефон','Telefon','Phone')}</span><input data-vip-phone type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
+          <button type="button" data-act="vip-callback" data-source="concierge">${hx('Отправить','Absenden','Send')}${icon('chev')}</button>
+        </div>
+      </section>
+
       ${r ? `
       <div class="threadHead">
         <span class="muted mini">${t('threadFor')} ${r.code}</span>
@@ -2722,8 +2765,8 @@
         <span class="expBand__zoom"><span class="expBand__ph" style="--pd:${(i%3)*-9}s"><img src="${x.img}" alt="" loading="lazy" decoding="async"></span></span>
         <span class="expBand__scrim"></span>
         <span class="expBand__txt">
-          <b>${esc(x.n[LANG]||x.n.en)}</b>
-          <i>${esc(x.s[LANG]||x.s.en)}</i>
+          <b>${esc(loc(x.n))}</b>
+          <i>${esc(loc(x.s))}</i>
         </span>
       </div>`).join('')}
     </section>
@@ -2745,7 +2788,7 @@
         ${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${4+i*11} ${74+((i%3)*5)} q 5 -3 10 0" fill="none" stroke="rgba(87,198,212,.20)" stroke-width=".6" vector-effect="non-scaling-stroke"/>`).join('')}
       </svg>
       ${REGIONS.map(r=>`<button class="pin" style="left:${r.x}%;top:${r.y}%" data-mregion="${r.id}">
-        <span class="pin__b">${esc(r.name[LANG]||r.name.en)}<b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></span>
+        <span class="pin__b">${esc(loc(r.name))}<b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></span>
         <span class="pin__n"></span></button>`).join('')}
     </div>
     ${tabbar('map')}`;
@@ -2852,12 +2895,12 @@
         <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(r.from)} – ${fmtDate(r.to)}<br>
           <span class="muted tiny">${nights(r.from,r.to)} ${t('nights')}</span></b></div>
         <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}${r.childAges.length?' ('+r.childAges.join(', ')+')':''}`:''}</b></div>
-        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(room.n[LANG]||room.n.en):t('notSure')}</b></div>
+        <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(loc(room.n)):t('notSure')}</b></div>
       </div>
       ${(r.excursions&&r.excursions.length)?`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('excursions')}</div>
         <div class="badges" style="margin-top:9px">${r.excursions.map(id=>{const e=excursion(id);
-          return `<span class="badge badge--gold">${esc(e?(e.n[LANG]||e.n.en):id)}</span>`;}).join('')}</div></div>`:''}
+          return `<span class="badge badge--gold">${esc(e?(loc(e.n)):id)}</span>`;}).join('')}</div></div>`:''}
       ${(r.wishes.length||r.note)?`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('custWishes')}</div>
         <div class="badges" style="margin-top:9px">${r.wishes.map(k=>`<span class="badge">${t((WISHKEYS.find(w=>w[0]===k)||[,''])[1])}</span>`).join('')}</div>
@@ -2926,7 +2969,7 @@
     <div class="wrap" style="padding-top:14px">
       <div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotels')}</div>
-        ${REGIONS.map(r=>`<div class="kv"><span>${esc(r.name[LANG]||r.name.en)}</span><b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></div>`).join('')}
+        ${REGIONS.map(r=>`<div class="kv"><span>${esc(loc(r.name))}</span><b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></div>`).join('')}
       </div>
       <div class="noteBox">${t('noInternalPrices')}</div>
       <div style="margin-top:14px"><button class="btn btn--ghost" data-act="logout">${t('backToCust')}</button></div>
@@ -2943,6 +2986,36 @@
     return `<video class="bgVideo ${cls||''}" muted autoplay loop playsinline webkit-playsinline
       preload="none" poster="${poster}" data-bg="${src}"
       disablepictureinpicture disableremoteplayback aria-hidden="true"></video>`;
+  }
+
+  /* Muted inline autoplay for iOS Safari + Android Chrome.
+     Browsers may still suspend autoplay in Low Power/Data Saver modes, so a
+     first user gesture retries playback without showing a blocking button. */
+  let inlineAutoplayHooksArmed=false;
+  function ensureInlineAutoplay(root){
+    if(!root)return;
+    const vids=$$('video[autoplay]:not([data-bg])',root);
+    vids.forEach(v=>{
+      v.muted=true;
+      v.defaultMuted=true;
+      v.playsInline=true;
+      v.setAttribute('autoplay','');
+      v.setAttribute('muted','');
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      const p=v.play();
+      if(p&&p.catch)p.catch(()=>{ v.dataset.autoplayBlocked='1'; });
+    });
+  }
+  function armInlineAutoplay(root){
+    ensureInlineAutoplay(root);
+    if(inlineAutoplayHooksArmed)return;
+    inlineAutoplayHooksArmed=true;
+    const retry=()=>{ const app=$('#app'); if(app)ensureInlineAutoplay(app); };
+    window.addEventListener('pageshow',retry,{passive:true});
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden)retry(); });
+    document.addEventListener('touchstart',retry,{passive:true,capture:true});
+    document.addEventListener('pointerdown',retry,{passive:true,capture:true});
   }
 
   let bgScroller=null, bgScrollHandler=null, bgTouchHandler=null,
@@ -3040,7 +3113,7 @@
   function armLivingImages(){
     if(livingImagesObserver){ livingImagesObserver.disconnect(); livingImagesObserver=null; }
     const root=$('#app'); if(!root) return;
-    const targets=$$('.travelWorld,.homeExcCard,.destinationHome__card,.homeExperience,.homeOfferCard,.featureCard,.vipDeck__frame,.homeConcierge',root);
+    const targets=$$('.travelWorld,.homePromoCard,.vipServiceCard,.homeExcCard,.destinationHome__card,.homeExperience,.homeOfferCard,.featureCard,.vipDeck__frame,.homeConcierge,.homeFinalCta__media',root);
     if(!targets.length) return;
     if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
       targets.forEach(el=>el.classList.remove('is-alive'));
@@ -3108,6 +3181,90 @@
     const triggers=new Set();
     $$('.reveal', root).forEach(el=>triggers.add(el.closest('.rail,.homeMotion__rail,.homeOfferGrid,.homeExcFocus__rail,.travelWorlds__rail') || el));
     triggers.forEach(t=>revealObserver.observe(t));
+  }
+
+  /* Scroll-linked image zoom + typography motion · r42.
+     This replaces the generic looping Ken-Burns movement on ordinary home-page
+     stills with motion that follows the user's actual scroll position. The
+     yacht hero is deliberately excluded: it must keep its complete native 9:16
+     video frame with no crop or artificial zoom. */
+  let scrollFxCleanup=null;
+  function armScrollFx(){
+    if(scrollFxCleanup){ scrollFxCleanup(); scrollFxCleanup=null; }
+    const root=$('#app');
+    if(!root || VIEW.name!=='home') return;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const imageSel=[
+      '.travelWorld img',
+      '.homePromoCard img',
+      '.vipServiceCard>img',
+      '.homeExcCard img',
+      '.destinationHome__card img',
+      '.homeExperience img',
+      '.homeOfferCard__media>img',
+      '.featureCard img',
+      '.vipDeck__frame>img',
+      '.homeConcierge>img',
+      '.homeYachtCard img'
+    ].join(',');
+    const textSel=[
+      '.homeEditorialHead',
+      '.travelWorld__copy',
+      '.homePromoCard__copy',
+      '.homeOfferCard__copy',
+      '.homeYachtHero__copy',
+      '.homeYachtCard__copy',
+      '.vipServiceCard__copy',
+      '.homeServiceCard__copy',
+      '.homeTransferTile__head'
+    ].join(',');
+
+    const images=$$(imageSel,root).filter(el=>!el.closest('.homeYachtHero'));
+    const texts=$$(textSel,root);
+    images.forEach(el=>el.classList.add('scrollZoomImg'));
+    texts.forEach(el=>el.classList.add('scrollTextFx'));
+
+    let raf=0;
+    const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+    const ease=t=>1-Math.pow(1-t,3);
+    const frame=()=>{
+      raf=0;
+      const vh=root.clientHeight||window.innerHeight||800;
+      images.forEach(img=>{
+        const host=img.parentElement||img;
+        const r=host.getBoundingClientRect();
+        if(r.bottom < -80 || r.top > vh+80) return;
+        const c=r.top+r.height*.5;
+        const proximity=1-clamp(Math.abs(c-vh*.5)/(vh*.70));
+        const z=1.018 + proximity*.060;
+        const y=(.42-proximity*.84);
+        img.style.setProperty('--scroll-scale',z.toFixed(4));
+        img.style.setProperty('--scroll-y',y.toFixed(3)+'%');
+      });
+      texts.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(r.bottom < -80 || r.top > vh+100) return;
+        const enter=clamp((vh*.96-r.top)/(vh*.36));
+        const e=ease(enter);
+        el.style.setProperty('--scroll-text-y',((1-e)*20).toFixed(2)+'px');
+        el.style.setProperty('--scroll-text-opacity',(0.46+e*.54).toFixed(3));
+        el.style.setProperty('--scroll-text-scale',(0.982+e*.018).toFixed(4));
+      });
+    };
+    const schedule=()=>{ if(!raf) raf=requestAnimationFrame(frame); };
+    root.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule,{passive:true});
+    schedule();
+    setTimeout(schedule,120);
+    setTimeout(schedule,600);
+    scrollFxCleanup=()=>{
+      root.removeEventListener('scroll',schedule);
+      window.removeEventListener('resize',schedule);
+      if(raf) cancelAnimationFrame(raf);
+      images.forEach(el=>{el.classList.remove('scrollZoomImg');el.style.removeProperty('--scroll-scale');el.style.removeProperty('--scroll-y');});
+      texts.forEach(el=>{el.classList.remove('scrollTextFx');el.style.removeProperty('--scroll-text-y');el.style.removeProperty('--scroll-text-opacity');el.style.removeProperty('--scroll-text-scale');});
+    };
   }
 
   /* Scroll-linked arrival band. The airframe sits between the headline and the
@@ -3255,10 +3412,12 @@
     document.documentElement.lang=LANG;
     if(VIEW.name==='hotel')bindGallery();
     armBgVideos();
+    armInlineAutoplay(a);
     armFlyBand();
     armAppbar();
     armReveals();
     armLivingImages();
+    armScrollFx();
     armDeck();
     if(VIEW.name==='home')fillHeroSlides(); else stopHeroSlides();
   }
@@ -3280,8 +3439,8 @@
     <div class="sheet__body">
       <button class="check${!FILTER.region?' is-on':''}" data-pregion=""><span class="check__box">${icon('check')}</span><span>${t('allRegions')}</span></button>
       ${REGIONS.map(r=>`<button class="check${FILTER.region===r.id?' is-on':''}" data-pregion="${r.id}">
-        <span class="check__box">${icon('check')}</span><span><b style="font-weight:600">${esc(r.name[LANG]||r.name.en)}</b><br>
-        <span class="muted tiny">${esc(r.tag[LANG]||r.tag.en)} · ${PUBLIC_HOTELS.filter(h=>h.region===r.id).length} ${t('hotels')}</span></span></button>`).join('')}
+        <span class="check__box">${icon('check')}</span><span><b style="font-weight:600">${esc(loc(r.name))}</b><br>
+        <span class="muted tiny">${esc(loc(r.tag))} · ${PUBLIC_HOTELS.filter(h=>h.region===r.id).length} ${t('hotels')}</span></span></button>`).join('')}
     </div>`);
   }
   function sheetDates(){
@@ -3322,7 +3481,7 @@
   function sheetFilters(){
     const grp=(title,items,sel,attr)=>`<div class="field"><label class="label">${title}</label>
       <div style="display:flex;flex-wrap:wrap;gap:8px">${items.map(i=>
-        `<button class="chip${sel.indexOf(i.id)>-1?' is-on':''}" data-${attr}="${i.id}">${esc(i.l[LANG]||i.l.en)}</button>`).join('')}</div></div>`;
+        `<button class="chip${sel.indexOf(i.id)>-1?' is-on':''}" data-${attr}="${i.id}">${esc(loc(i.l))}</button>`).join('')}</div></div>`;
     const body=()=>`
       ${grp(t('kind'),KINDS,FILTER.kinds,'fkind')}
       <div class="field"><label class="label">${t('category')}</label>
@@ -3383,7 +3542,7 @@
         `<button class="menuItem" data-mgo="${v}">${icon(ic)}<span>${t(k)}</span><span class="chev">${icon('chev')}</span></button>`).join('')}
         <button class="menuItem" data-mgo="intro">${icon('play')}<span>${t('mIntro')}</span><span class="chev">${icon('chev')}</span></button></div>
       <div class="field"><label class="label">${t('mLang')}</label>
-        <div class="langRow">${SUPPORTED.map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div></div>
+        <div class="langRow">${SUPPORTED.map(l=>`<button class="chip${LANG===l?' is-on':''}" data-lang="${l}" lang="${l}">${LANGUAGE_NAMES[l]}</button>`).join('')}</div></div>
       <div style="margin-top:18px"><button class="btn btn--dark" data-mgo="staff">${icon('lock')}${t('mStaff')}</button></div>
     </div>`);
   }
@@ -3397,6 +3556,26 @@
         <div class="kv"><span class="muted">WhatsApp</span><b>+90 500 000 00 00</b></div>
       </div></div>`);
   }
+  function sheetTransferRequest(prefill={}){
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${hx('VIP трансфер','VIP Transfer','VIP Transfer')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <p class="muted" style="font-size:13.5px;line-height:1.6">${hx('Сначала короткая заявка, затем детали. Оставьте основные данные — команда свяжется с вами и подтвердит автомобиль.','Erst kurz anfragen, dann die Details. Die wichtigsten Daten genügen – unser Team meldet sich und bestätigt das passende Fahrzeug.','Start with a short request, then add details. Leave the key data and our team will confirm the right vehicle.')}</p>
+      <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="trName" autocomplete="name" value="${esc(prefill.name||'')}"></div>
+      <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="trPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..." value="${esc(prefill.phone||'')}"></div>
+      <div class="field"><label class="label">${hx('Откуда','Abholort','Pickup')} *</label><input class="input" id="trFrom" placeholder="${hx('Аэропорт, отель...','Flughafen, Hotel ...','Airport, hotel ...')}" value="${esc(prefill.from||'')}"></div>
+      <div class="field"><label class="label">${hx('Куда','Ziel','Destination')} *</label><input class="input" id="trTo" placeholder="${hx('Отель, вилла...','Hotel, Villa ...','Hotel, villa ...')}" value="${esc(prefill.to||'')}"></div>
+      <div class="grid2"><div class="field"><label class="label">${hx('Дата','Datum','Date')}</label><input class="input" id="trDate" type="date" value="${esc(prefill.date||'')}"></div>
+        <div class="field"><label class="label">${hx('Время','Uhrzeit','Time')}</label><input class="input" id="trTime" type="time" value="${esc(prefill.time||'')}"></div></div>
+      <div class="grid2"><div class="field"><label class="label">${hx('Гости','Personen','Guests')}</label><input class="input" id="trGuests" type="number" inputmode="numeric" min="1" max="20" value="${esc(String(prefill.guests||2))}"></div>
+        <div class="field"><label class="label">${hx('Номер рейса','Flugnummer','Flight number')}</label><input class="input" id="trFlight" placeholder="TK ..." value="${esc(prefill.flight||'')}"></div></div>
+      <div class="grid2"><div class="field"><label class="label">${hx('Багаж','Gepäck','Luggage')}</label><input class="input" id="trLuggage" placeholder="${hx('2 чемодана','2 Koffer','2 suitcases')}" value="${esc(prefill.luggage||'')}"></div>
+        <div class="field"><label class="label">${hx('Детское кресло','Kindersitz','Child seat')}</label><select class="input" id="trSeat"><option value="">${hx('Не нужно','Nicht nötig','Not needed')}</option><option value="baby"${(prefill.seat||'')==='baby'?' selected':''}>${hx('Baby','Baby','Baby')}</option><option value="child"${(prefill.seat||'')==='child'?' selected':''}>${hx('Ребёнок','Kind','Child')}</option></select></div></div>
+      <div class="field"><label class="label">${hx('Комментарий','Hinweis','Note')}</label><input class="input" id="trNotes" placeholder="${hx('Например: встреча у выхода, табличка, много багажа','Zum Beispiel: Meet & Greet, Schild, viel Gepäck','For example: meet & greet, sign, lots of luggage')}" value="${esc(prefill.notes||'')}"></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="transfer-send">${hx('Отправить заявку','Transfer-Anfrage senden','Send transfer request')}</button></div>`);
+  }
+
   function sheetCompare(){
     const list=S.favorites.map(hotel).filter(Boolean);
     const rows=[
@@ -3420,13 +3599,13 @@
   function sheetRegionInfo(id){
     const r=REGIONS.find(x=>x.id===id);
     const n=PUBLIC_HOTELS.filter(h=>h.region===id).length;
-    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(r.name[LANG]||r.name.en)}</h3>
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(loc(r.name))}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
       <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/9"><img src="${r.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <p class="muted" style="font-size:13.5px;margin-top:12px">${esc(r.tag[LANG]||r.tag.en)}</p>
+      <p class="muted" style="font-size:13.5px;margin-top:12px">${esc(loc(r.tag))}</p>
       <p style="font-size:14px;font-weight:600;margin:8px 0 0">${n} ${t('selHotels')}</p>
-      <div style="margin-top:14px"><button class="btn btn--primary" data-act="region-go" data-id="${id}">${t('hotelsIn')} ${esc(r.name[LANG]||r.name.en)}</button></div>
+      <div style="margin-top:14px"><button class="btn btn--primary" data-act="region-go" data-id="${id}">${t('hotelsIn')} ${esc(loc(r.name))}</button></div>
     </div>`);
   }
   function sheetOffer(id){
@@ -3438,7 +3617,7 @@
         <div class="kv" style="margin-top:12px"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
         <div class="kv"><span class="muted">${t('period')}</span><b>${fmtDate(r.from)} – ${fmtDate(r.to)}</b></div>
         <div class="field"><label class="label">${t('rooms')}</label>
-          <select class="input" id="oRoom">${h.rooms.map(x=>`<option value="${x.id}"${r.roomId===x.id?' selected':''}>${esc(x.n[LANG]||x.n.en)}</option>`).join('')}</select></div>
+          <select class="input" id="oRoom">${h.rooms.map(x=>`<option value="${x.id}"${r.roomId===x.id?' selected':''}>${esc(loc(x.n))}</option>`).join('')}</select></div>
         <div class="grid2">
           <div class="field"><label class="label">${t('sellPrice')} *</label>
             <input class="input" id="oPrice" type="number" inputmode="decimal" min="0" step="1" placeholder="2450"></div>
@@ -3453,13 +3632,13 @@
   }
   function sheetExcursion(id){
     const e=excursion(id);if(!e)return;
-    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(e.n[LANG]||e.n.en)}</h3>
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(loc(e.n))}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
       <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/10">
         <img src="${e.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="kv" style="margin-top:12px"><span class="muted">${t('duration')}</span><b>${esc(e.dur[LANG]||e.dur.en)}</b></div>
-      <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(e.d[LANG]||e.d.en)}</p>
+      <div class="kv" style="margin-top:12px"><span class="muted">${t('duration')}</span><b>${esc(loc(e.dur))}</b></div>
+      <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(e.d))}</p>
       <div class="noteBox">${t('excNote')}</div>
     </div>
     <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-add" data-id="${id}">${t('addToReq')}</button></div>`);
@@ -3582,7 +3761,7 @@
     const sq=T.closest('[data-sreq]');
     if(sq){go('s-reqd',sq.dataset.sreq);return;}
     const lg=T.closest('[data-lang]');
-    if(lg){LANG=lg.dataset.lang;S.lang=LANG;document.documentElement.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
+    if(lg){LANG=lg.dataset.lang;S.lang=LANG;document.documentElement.lang=LANG;document.documentElement.dataset.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
 
     /* wizard */
     const w=T.closest('[data-w]');
@@ -3627,6 +3806,31 @@
     if(!a)return;
     const act=a.dataset.act,id=a.dataset.id;
     switch(act){
+      case 'vip-callback': {
+        const form=a.closest('[data-vip-lead-form]');
+        const n=form&&form.querySelector('[data-vip-name]'),p=form&&form.querySelector('[data-vip-phone]');
+        const name=n?n.value.trim():'',phone=p?p.value.trim():'';
+        if(!name||!phone){toast(hx('Введите имя и телефон','Bitte Name und Telefon eingeben','Please enter name and phone'));break;}
+        S.leads=S.leads||[];S.leads.unshift({type:'vip-callback',source:a.dataset.source||'vip',name,phone,createdAt:Date.now()});save();
+        if(n)n.value='';if(p)p.value='';
+        toast(hx('Спасибо. VIP-ассистент свяжется с вами лично.','Danke. Ihr VIP-Assistent meldet sich persönlich.','Thank you. Your VIP assistant will contact you personally.'));break;
+      }
+      case 'transfer-quick-send': {
+        const n=$('#trQuickName'),p=$('#trQuickPhone'),name=(n&&n.value||'').trim(),phone=(p&&p.value||'').trim();
+        if(!name||!phone){toast(hx('Введите имя и телефон','Bitte Name und Telefon eingeben','Please enter name and phone'));break;}
+        S.leads=S.leads||[];S.leads.unshift({type:'transfer-callback',source:'transfer-banner',name,phone,createdAt:Date.now()});save();
+        if(n)n.value='';if(p)p.value='';
+        toast(hx('Спасибо. VIP-ассистент уточнит детали трансфера лично.','Danke. Ihr VIP-Assistent klärt die Transferdetails persönlich.','Thank you. Your VIP assistant will confirm the transfer details personally.'));
+        break;
+      }
+      case 'transfer-form': sheetTransferRequest();break;
+      case 'transfer-send': {
+        const name=(($('#trName')||{}).value||'').trim(),phone=(($('#trPhone')||{}).value||'').trim(),from=(($('#trFrom')||{}).value||'').trim(),to=(($('#trTo')||{}).value||'').trim();
+        if(!name||!phone||!from||!to){toast(hx('Заполните обязательные поля','Bitte Pflichtfelder ausfüllen','Please complete the required fields'));break;}
+        S.leads=S.leads||[];S.leads.unshift({type:'transfer',name,phone,from,to,date:(($('#trDate')||{}).value||''),time:(($('#trTime')||{}).value||''),guests:+((($('#trGuests')||{}).value)||2),flight:(($('#trFlight')||{}).value||''),luggage:(($('#trLuggage')||{}).value||''),seat:(($('#trSeat')||{}).value||''),notes:(($('#trNotes')||{}).value||''),createdAt:Date.now()});save();closeSheet();
+        ['trQuickName','trQuickPhone'].forEach(id=>{const el=$('#'+id);if(el)el.value='';});
+        setTimeout(()=>toast(hx('Подробная заявка на трансфер отправлена','Detaillierte Transfer-Anfrage gesendet','Detailed transfer request sent')),330);break;
+      }
       case 'back': back();break;
       case 'menu': sheetMenu();break;
       case 'share': toast(t('shared'));break;
