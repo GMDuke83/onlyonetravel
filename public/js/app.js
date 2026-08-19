@@ -1455,6 +1455,14 @@
      hardens into a setting. */
   const SUPPORTED = ['de','en','tr','uk','ru'];
   const LANGUAGE_NAMES={de:'Deutsch',en:'English',tr:'Türkçe',uk:'Українська',ru:'Русский'};
+
+  /* Markets where Russian is the second language people actually read. A
+     browser set to one of these gets Russian; everyone else gets English.
+     Falling back to Russian for the whole rest of the world is what handed a
+     French, Dutch or Italian visitor a page in Cyrillic — and, until the click
+     handler was fixed, no way out of it, because the language chips sit in a
+     menu that would not open. */
+  const RU_NEIGHBOURS = ['be','bg','sr','mk','kk','ky','uz','tg','tk','ka','hy','az','mo'];
   function detectLang(){
     var list = [];
     try {
@@ -1466,8 +1474,9 @@
       var base = tag.split('-')[0];
       if (base === 'ua') base = 'uk';
       if (SUPPORTED.indexOf(base) > -1) return base;
+      if (RU_NEIGHBOURS.indexOf(base) > -1) return 'ru';
     }
-    return 'ru';
+    return 'en';
   }
 
   const DEF={lang:null,favorites:[],requests:[],leads:[],seq:127,staff:null,pendingExc:[],
