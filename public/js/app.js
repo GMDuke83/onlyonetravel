@@ -2204,7 +2204,7 @@
       <button class="homeYachtHero" type="button" data-block="yacht">
         <span class="homeYachtHero__media">
           <img src="./images/yacht-tour-poster.webp" alt="${hx('Яхта в движении','Yacht in Bewegung','Yacht in motion')}" loading="lazy" decoding="async">
-          <video class="homeYachtHero__video" muted autoplay loop playsinline webkit-playsinline preload="metadata" poster="./images/yacht-tour-poster.webp" disablepictureinpicture disableremoteplayback aria-hidden="true"><source src="./video/onlyone-yacht-tour-v2.mp4" type="video/mp4"></video>
+          <video class="homeYachtHero__video" muted autoplay loop playsinline webkit-playsinline preload="none" poster="./images/yacht-tour-poster.webp" data-bg="./video/onlyone-yacht-tour-v2.mp4" disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
           <span class="homeYachtHero__shade"></span>
           <span class="homeYachtHero__copy"><i>ONLYONE · ${hx('ЯХТЕННЫЙ ОПЫТ','YACHT-ERLEBNIS','YACHT EXPERIENCE')}</i><b>${hx('Яхта в движении','Yacht in Bewegung','Yacht in motion')}</b><em>${hx('Видео · приватные маршруты','Video · private Routen','Video · private routes')}</em></span>
         </span>
@@ -2220,7 +2220,7 @@
         <h2>${hx('VIP-приём и встреча','VIP-Empfang & Ankunft','VIP Welcome & Arrival')}</h2>
         <p class="homeEditorialHead__sub">${hx('Личная встреча, Business Van и Helicopter Transfer — всё организуется персонально.','Persönlicher Empfang, Business Van und Helikopter-Transfer – individuell organisiert.','Personal welcome, business van and helicopter transfer — arranged individually.')}</p></div>
       <div class="homeVipServices__rail">${vipServices.map(s=>`<button class="vipServiceCard${s.featured?' vipServiceCard--featured':''}${s.video?' vipServiceCard--video':''}" type="button" ${s.attr}>
-        <img src="${s.img}" alt="" loading="lazy" decoding="async">${s.video?`<video class="vipServiceCard__video" muted autoplay loop playsinline webkit-playsinline preload="metadata" poster="${s.img}" disablepictureinpicture disableremoteplayback aria-hidden="true"><source src="${s.video}" type="video/mp4"></video>`:''}<span class="vipServiceCard__shade"></span>
+        <img src="${s.img}" alt="" loading="lazy" decoding="async">${s.video?`<video class="vipServiceCard__video" muted autoplay loop playsinline webkit-playsinline preload="none" poster="${s.img}" data-bg="${s.video}" disablepictureinpicture disableremoteplayback aria-hidden="true"></video>`:''}<span class="vipServiceCard__shade"></span>
         <span class="vipServiceCard__copy"><i>${esc(s.ey)}</i><b>${esc(s.title)}</b><p>${esc(s.body)}</p><em>${hx('Подробнее','Mehr erfahren','Learn more')}${icon('chev')}</em></span>
       </button>`).join('')}</div>
     </section>
