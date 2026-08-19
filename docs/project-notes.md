@@ -925,3 +925,82 @@ Eine manuell gewählte Sprache bleibt im gespeicherten Zustand und hat beim
 nächsten Aufruf Vorrang. Es gibt keine automatische Umleitung ukrainischer oder
 anderer Systemsprachen auf Russisch mehr. Nicht unterstützte Systemsprachen
 fallen aktuell auf Englisch zurück.
+
+---
+
+## Aufräumrunde 19.08.2026 — nach dem ChatGPT-Umbau
+
+Ausgangslage: `main` war um 14 Commits weitergewandert (R13 bis R43, 17./18.08.),
+die Startseite komplett neu gebaut, fünf Sprachen statt drei. Der ältere Stand
+steckt vollständig darin; nichts ging verloren.
+
+### Der Fehler, der alles andere überwog
+
+`document.documentElement.dataset.lang = LANG` setzte `data-lang` auf das
+Wurzelelement. Der Klick-Handler fragte `T.closest('[data-lang]')` — und
+`closest()` läuft bis zum `<html>` hoch. Der Sprachzweig griff damit bei
+**jedem** Klick, setzte die Sprache auf die bereits gewählte und brach mit
+`return` ab.
+
+Unerreichbar war dadurch alles ab diesem Zweig: der Anfrage-Assistent,
+`data-exc`, und der gesamte `data-act`-Schalter mit 36 Aktionen. Kein Formular
+liess sich absenden — VIP-Rückruf, Transfer, Hotelanfrage, Anrufen, WhatsApp.
+Das Menü ging nicht auf, und weil dort die Sprachknöpfe sitzen, konnte niemand
+die Sprache wechseln.
+
+Reparatur: der Zweig sucht `button[data-lang]`, und die überflüssige Kopie am
+`<html>` ist weg. Beides zusammen, damit die Falle nicht zurückkommt.
+
+**Lehre:** ein `closest()`-Selektor in einem delegierten Handler muss so eng
+sein, dass er nur trifft, was er treffen soll. Ein blosses Attribut ist zu weit,
+wenn dasselbe Attribut irgendwo weiter oben im Baum auch vorkommt.
+
+### Sprachen
+
+`detectLang()` endete auf `return 'ru'` — das widersprach dem, was weiter oben in
+diesen Notizen steht. Gemessen an 17 Browsersprachen landeten zwölf auf Russisch
+in kyrillischer Schrift. Jetzt: die russischsprachig geprägten Nachbarmärkte
+(`RU_NEIGHBOURS`) auf Russisch, alles übrige auf Englisch.
+
+Dazu 20 Texte, die Türkisch und Ukrainisch nur auf Englisch erreichten (sie
+gehen über `hx()`/`loc()` und brauchen einen `EXTRA_TEXT`-Eintrag), zwei hart
+im Markup stehende Schlagworte, das russische „Helicopter Transfer", der
+Tippfehler ОТБРАНО → ОТОБРАНО und die Masseinheit „m", die im kyrillischen Satz
+lateinisch stehen blieb.
+
+### Ladegewicht
+
+Yacht- und Empfangsvideo luden vollständig, bevor jemand scrollte. Die neuen
+Abschnitte schrieben `<video preload="metadata"><source>` direkt, statt über
+`bgVideo()` zu gehen. Erste Ansicht: 2757 KB → 1114 KB.
+
+### Entfernt
+
+- der verschachtelte Doppelordner `onlyonetravel/` (125 Dateien, 23,5 MB)
+- 28 lose Release-Notizen an der Wurzel und `VERIFY-BEFORE-PUSH.ps1`
+  (prüfte noch auf die r12-Build-ID und meldete auf gutem Build Fehler)
+- 24 Bilder, die niemand referenziert (1504 KB)
+- `clipBand()` und `vipDeck()` samt Daten, CSS und Übersetzungen — beide wurden
+  seit dem Umbau nirgends mehr aufgerufen. Die drei Slide-Bilder bleiben liegen.
+- ein eingecheckter `__pycache__`-Rest
+
+Repo: 45,6 MB → 20,6 MB.
+
+### Wie abgesichert wurde
+
+Der Kunde hat den optischen Stand ausdrücklich freigegeben, also musste jede
+Änderung pixelgleich sein. Dafür eine Aufnahmereihe über neun Ansichten in fünf
+Sprachen, 267 Bilder. Reproduzierbar wurde sie erst, als jede laufende
+Animation über die Web-Animations-Schnittstelle auf denselben Zeitpunkt gestellt
+und dort angehalten wird — blosses Pausieren erwischt sie an verschiedenen
+Stellen und liess zwei identische Läufe in 169 von 267 Bildern auseinanderlaufen.
+Zusätzlich wird jede Aufnahme so lange wiederholt, bis zwei aufeinanderfolgende
+gleich sind.
+
+Ergebnis: ausser den 17 Stellen, an denen die neuen Übersetzungen stehen, weicht
+kein Pixel ab.
+
+**Was der Pixelvergleich NICHT abdeckt:** die seitlich scrollenden Kachelreihen
+jenseits der ersten zwei Karten, und das Bild eines laufenden Videos — dieser
+Browser hat keinen H.264-Decoder. Beides wurde stattdessen über den Text- bzw.
+Netzwerkweg geprüft.
