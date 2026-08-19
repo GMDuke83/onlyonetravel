@@ -986,6 +986,39 @@ Abschnitte schrieben `<video preload="metadata"><source>` direkt, statt über
 
 Repo: 45,6 MB → 20,6 MB.
 
+### Totes CSS — und warum der zweite Anlauf nötig war
+
+Der erste Versuch war ein Laufzeit-Zensus: jede Regel gegen jeden erreichbaren
+Zustand halten und zählen, was nie trifft. Das Ergebnis war unbrauchbar — es
+erklärte `.menuItem` für tot, obwohl diese Klasse das Menüblatt füllt. Ein
+Rundgang, der eine Stelle verpasst, erklärt sie für tot; das ist die falsche
+Richtung, in die ein solcher Test irren darf.
+
+Der zweite Anlauf fragt nicht mehr „habe ich es gesehen", sondern **„kann diese
+App den Namen überhaupt an ein Element schreiben"**. Vier Wege gibt es dafür:
+`class="…"`, `classList.add/remove/toggle`, `className=` und
+`setAttribute('class',…)`. Was in keinem davon vorkommt, kann keine Regel je
+treffen.
+
+Drei Fallen dabei, alle real aufgetreten:
+
+- **Nachschlagetabellen.** `STATUS_PILL = {new:'pill--new', …}` schreibt sechs
+  Klassennamen, die nirgends in einem `class`-Attribut stehen.
+- **String-Verkettung.** `const hero = v==='concierge' ? ' tab--hero' : ''`.
+- **Berechnete Namen.** `class="flySky flySky--${cls}"` macht `flySky--far` und
+  `flySky--near` lebendig, ohne dass einer der beiden vollständig dasteht.
+
+Ergebnis: 95 von 408 Klassen im Stylesheet sind nicht erzeugbar. 246 Regeln ganz
+entfernt, 14 gekürzt (sie nannten Totes nur in einer Aufzählung), zwei
+verwaiste `@keyframes` dazu. 182 928 → 139 486 Zeichen, ein Viertel weniger.
+Im Skript fielen dieselben Namen aus fünf Selektorlisten und die komplette
+`.flyBand`-Parallaxe.
+
+Nebenbei repariert: `bgRailRoots` suchte die seitlichen Reihen noch unter
+`.homeMotion__rail,.rail` — beide gibt es nicht mehr. Heute stehen die Reihen
+als `.homePromos__rail`, `.homeVipServices__rail`, `.homeYachts__rail` und
+`.travelWorlds__rail` da, und in einer davon sitzt das Empfangsvideo.
+
 ### Wie abgesichert wurde
 
 Der Kunde hat den optischen Stand ausdrücklich freigegeben, also musste jede

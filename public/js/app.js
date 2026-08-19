@@ -2957,7 +2957,7 @@
     bgVisibilityHandler=()=>{ if(!document.hidden)scheduleBgMeasure(); };
     bgScroller.addEventListener('scroll',bgScrollHandler,{passive:true});
     bgScroller.addEventListener('touchstart',bgTouchHandler,{passive:true});
-    bgRailRoots=[...new Set(bgVids.map(v=>v.closest('.homeMotion__rail,.rail')).filter(Boolean))];
+    bgRailRoots=[...new Set(bgVids.map(v=>v.closest('.homePromos__rail,.homeVipServices__rail,.homeYachts__rail,.travelWorlds__rail')).filter(Boolean))];
     bgRailRoots.forEach(r=>r.addEventListener('scroll',bgScrollHandler,{passive:true}));
     window.addEventListener('resize',bgResizeHandler,{passive:true});
     document.addEventListener('visibilitychange',bgVisibilityHandler);
@@ -2973,7 +2973,7 @@
   function armLivingImages(){
     if(livingImagesObserver){ livingImagesObserver.disconnect(); livingImagesObserver=null; }
     const root=$('#app'); if(!root) return;
-    const targets=$$('.travelWorld,.homePromoCard,.vipServiceCard,.homeExcCard,.destinationHome__card,.homeExperience,.homeOfferCard,.featureCard,.homeConcierge,.homeFinalCta__media',root);
+    const targets=$$('.travelWorld,.homePromoCard,.vipServiceCard,.homeOfferCard,.homeFinalCta__media',root);
     if(!targets.length) return;
     if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
       targets.forEach(el=>el.classList.remove('is-alive'));
@@ -2997,9 +2997,8 @@
      other, but a list further down does not inherit a two-second delay from
      everything above it. */
   const REVEAL_SEL = [
-    '.section__head', '.cardList > .card', '.rail > *', '.expBand',
-    '.expBands__head', '.flyBand__head', '.flyBand__card', '.listCard',
-    '.homeVipFocus', '.homeEditorialHead', '.homeMotionCard', '.homeOfferCard', '.homeServiceCard', '.homeSecondaryLinks button', '.homeFinalCta',
+    '.section__head', '.cardList > .card', '.expBand', '.listCard',
+    '.homeEditorialHead', '.homeOfferCard', '.homeFinalCta',
     '.statRow', '.doList', '.person', '.searchCard', '.tl',
   ].join(',');
   let revealObserver=null;
@@ -3039,7 +3038,7 @@
     }, { root, rootMargin:'0px 0px -8% 0px', threshold:0.06 });
 
     const triggers=new Set();
-    $$('.reveal', root).forEach(el=>triggers.add(el.closest('.rail,.homeMotion__rail,.homeOfferGrid,.homeExcFocus__rail,.travelWorlds__rail') || el));
+    $$('.reveal', root).forEach(el=>triggers.add(el.closest('.homeOfferGrid,.homePromos__rail,.homeVipServices__rail,.homeYachts__rail,.travelWorlds__rail') || el));
     triggers.forEach(t=>revealObserver.observe(t));
   }
 
@@ -3059,12 +3058,7 @@
       '.travelWorld img',
       '.homePromoCard img',
       '.vipServiceCard>img',
-      '.homeExcCard img',
-      '.destinationHome__card img',
-      '.homeExperience img',
       '.homeOfferCard__media>img',
-      '.featureCard img',
-      '.homeConcierge>img',
       '.homeYachtCard img'
     ].join(',');
     const textSel=[
@@ -3075,7 +3069,6 @@
       '.homeYachtHero__copy',
       '.homeYachtCard__copy',
       '.vipServiceCard__copy',
-      '.homeServiceCard__copy',
       '.homeTransferTile__head'
     ].join(',');
 
@@ -3167,39 +3160,21 @@
       window.removeEventListener('resize', flyHandler);
       flyScroller = flyHandler = null;
     }
-    const bands=$$('.flyBand');
-    /* Everything that answers to its own position on screen. --s is signed
+    /* Each strip answers to its own position on screen. --s is signed
        (-1 arriving at the bottom, +1 leaving at the top) and drives the
        parallax; --z is how close to the middle it is (0 at either edge, 1 dead
        centre) and drives the zoom. Two properties because a parallax wants a
        direction and a zoom does not. */
-    const strips=$$('.expBand,.vipList');
-    if(!bands.length && !strips.length) return;
+    const strips=$$('.expBand');
+    if(!strips.length) return;
     const scroller=$('#app'); if(!scroller) return;
     let raf=0;
     const update=()=>{
       raf=0;
       const vh=window.innerHeight||1;
-      bands.forEach(band=>{
-      const r=band.getBoundingClientRect();
-      /* 0 as the band's top reaches the bottom of the screen, 1 once its
-         bottom has left the top. */
-      const span=vh+r.height;
-      let p=(vh-r.top)/span;
-      /* The band is the last thing on the page, so the reader runs out of
-         scroll long before that full pass completes — measured, it stopped at
-         0.507 and the aircraft finished half its arc. Normalising against the
-         progress actually reachable at maximum scroll gives back the whole
-         movement, and costs nothing when the band is not last (pMax is then 1). */
-      const maxScroll=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
-      const topAtEnd=(band.offsetTop-maxScroll);
-      const pMax=Math.min(1,Math.max(0.001,(vh-topAtEnd)/span));
-      p=Math.min(1,Math.max(0,p/pMax));
-      band.style.setProperty('--p',p.toFixed(4));
-      });
-      /* Same pass, same frame: the banner photographs drift against their
-         frames. -1 as a band enters at the bottom, +1 as it leaves at the top.
-         Off-screen bands are skipped so the cost stays with what is visible. */
+      /* The banner photographs drift against their frames. -1 as a band
+         enters at the bottom, +1 as it leaves at the top. Off-screen bands are
+         skipped so the cost stays with what is visible. */
       strips.forEach(el=>{
         const r=el.getBoundingClientRect();
         if(r.bottom<-40||r.top>vh+40) return;
@@ -3209,7 +3184,6 @@
       });
     };
     if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
-      bands.forEach(b=>b.style.setProperty('--p','0.5'));   /* parked, no motion */
       strips.forEach(el=>{el.style.setProperty('--s','0');el.style.setProperty('--z','0');});
       return;
     }

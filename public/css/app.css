@@ -158,8 +158,6 @@ svg{
   border:1px solid rgba(216,180,92,.85);
   border-radius:50%;
 }
-.brandMark--sm{ width:26px; height:26px; }
-.brandMark--sm::after{ inset:4px; }
 
 /* ==========================================================================
    INTRO — cinematic hero, exactly one visible viewport height
@@ -841,13 +839,6 @@ svg{
 }
 .pHero__cta svg{width:16px;height:16px;transform:translateY(-.5px)}
 .pHero__cta:active{opacity:.74}
-.pHero__glass{
-  margin-top:22px;padding:15px 0 0;
-  border-top:1px solid rgba(255,255,255,.16);
-}
-.trust{margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
-.trust li{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--txt);list-style:none;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 14px rgba(0,0,0,.5)}
-.trust svg{width:15px;height:15px;flex:0 0 15px;color:var(--gold);stroke-width:2.4}
 
 /* Short phones: keep the hero hierarchy clear without crowding the bottom nav. */
 @media (max-height:720px){
@@ -865,7 +856,6 @@ svg{
 .homeEditorialHead h2{margin:6px 0 0;font-family:var(--display);font-size:28px;line-height:1.06;letter-spacing:-.025em;font-weight:600}
 .homeEditorialHead--row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
 .homeTextLink{border:0;background:none;padding:7px 0;color:var(--gold-ink);font-size:10px;font-weight:650;letter-spacing:.14em;text-transform:uppercase}
-.homeTextLink--light{color:var(--gold-light)}
 
 .travelWorlds{background:#15100c;color:#fff;padding:6px 0 42px;border-top:1px solid rgba(255,255,255,.05)}
 .travelWorlds .eyebrow{color:var(--gold-light)}
@@ -880,43 +870,6 @@ svg{
 .travelWorld__copy i{grid-column:1/2;font-style:normal;color:var(--gold-light);font-size:11px;line-height:1.35;letter-spacing:.07em;text-transform:uppercase}
 .travelWorld__copy>span{grid-column:2;grid-row:1/3;align-self:center;color:var(--gold-light)}
 .travelWorld__copy svg{width:18px;height:18px}
-
-.destinationHome{background:var(--ground-2);padding:6px 0 44px;border-bottom:1px solid var(--hair-soft)}
-.destinationHome__rail{display:flex;gap:13px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal))}
-.destinationHome__rail::-webkit-scrollbar{display:none}
-.destinationHome__card{position:relative;flex:0 0 min(68vw,278px);aspect-ratio:4/5;border:0;border-radius:4px;overflow:hidden;background:var(--ground-3);padding:0;text-align:left;scroll-snap-align:start;box-shadow:0 12px 30px rgba(44,32,20,.08)}
-.destinationHome__card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
-.destinationHome__card:active img{transform:scale(1.035)}
-.destinationHome__shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 44%,rgba(12,9,7,.78) 100%)}
-.destinationHome__copy{position:absolute;left:15px;right:15px;bottom:14px;color:#fff}
-.destinationHome__copy b{display:block;font-family:var(--display);font-size:21px;font-weight:600;line-height:1.08}
-.destinationHome__copy i{display:block;margin-top:5px;font-style:normal;color:rgba(255,255,255,.82);font-size:10.5px;letter-spacing:.06em}
-
-.homeConcierge{position:relative;min-height:540px;overflow:hidden;background:#16100d;color:#fff}
-.homeConcierge>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%}
-.homeConcierge__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,11,8,.15),rgba(15,11,8,.22) 35%,rgba(15,11,8,.88) 100%)}
-.homeConcierge__copy{position:absolute;z-index:1;left:calc(22px + var(--sal));right:calc(22px + var(--sar));bottom:30px}
-.homeConcierge__copy .eyebrow{color:var(--gold-light)}
-.homeConcierge__copy h2{font-family:var(--display);font-size:34px;line-height:1.04;margin:8px 0 0;font-weight:600;letter-spacing:-.025em}
-.homeConcierge__copy p{max-width:31ch;margin:12px 0 0;color:rgba(255,255,255,.84);font-size:13.5px;line-height:1.55}
-.homeConcierge__actions{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
-.homeConcierge__link{display:inline-flex;align-items:center;gap:7px;background:none;border:0;padding:10px 0;color:#fff;font-size:10px;font-weight:650;letter-spacing:.12em;text-transform:uppercase}
-.homeConcierge__link svg{width:15px;height:15px}
-
-.homeStays{padding-top:14px;padding-bottom:34px}
-.homeStays .section{margin-top:0}
-
-.homeExperiences{padding:8px 0 48px;background:linear-gradient(180deg,#17110c,#0f0b08);color:#fff}
-.homeExperiences .eyebrow{color:var(--gold-light)}
-.homeExperiences__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal))}
-.homeExperiences__rail::-webkit-scrollbar{display:none}
-.homeExperience{position:relative;flex:0 0 min(78vw,320px);aspect-ratio:4/3;border:0;border-radius:4px;overflow:hidden;padding:0;background:#211913;text-align:left;scroll-snap-align:start}
-.homeExperience img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .75s var(--ease)}
-.homeExperience:active img{transform:scale(1.04)}
-.homeExperience__shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(12,9,7,.82) 100%)}
-.homeExperience__copy{position:absolute;left:15px;right:15px;bottom:14px;color:#fff}
-.homeExperience__copy b{display:block;font-family:var(--display);font-size:20px;font-weight:600;line-height:1.08}
-.homeExperience__copy i{display:block;margin-top:5px;font-style:normal;color:var(--gold-light);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase}
 
 .homeFinalCta{padding:48px calc(22px + var(--sar)) 54px calc(22px + var(--sal));background:var(--ground-2);text-align:center;border-top:1px solid var(--hair-soft)}
 .homeFinalCta h2{font-family:var(--display);font-size:31px;line-height:1.05;margin:9px 0 0;font-weight:600}
@@ -961,8 +914,7 @@ svg{
 .eventPromise h2{font-family:var(--display);font-size:28px;line-height:1.08;margin:9px 0 0;font-weight:600}
 .eventPromise p{margin:14px 0 22px;color:rgba(255,255,255,.78);font-size:13px;line-height:1.6}
 
-@media (prefers-reduced-motion:reduce){
-  .travelWorld img,.destinationHome__card img,.homeExperience img{transition:none}
+@media (prefers-reduced-motion:reduce){.travelWorld img{transition:none}
 }
 
 /* --- buttons -------------------------------------------------------------- */
@@ -1052,24 +1004,7 @@ svg{
    first child's edge and scrolls the rail by exactly the inline padding, so
    the first card ends up flush against the screen instead of lining up with
    the headings. */
-.rail{
-  display:flex;gap:12px;
-  overflow-x:auto;scrollbar-width:none;
-  overscroll-behavior-x:contain;touch-action:pan-x pan-y;
-  /* No snapping at all. Mandatory yanked every small drag back to the nearest
-     tile — a gentle push on the regions rail pulled Antalya straight back and
-     read as the page fighting the finger. Proximity still did it for short
-     nudges, because a short nudge really is nearest to where it started. A
-     rail is a strip of cards to browse, not a slideshow: it should simply go
-     where it is pushed and stay there. The photo gallery keeps mandatory,
-     where landing on one image at a time is the point. */
-  scroll-padding-inline:20px;
-  margin-inline:-20px;padding-inline:20px;padding-bottom:6px;
-}
-.rail::-webkit-scrollbar{display:none}
-.rail>*{scroll-snap-align:start;flex:0 0 auto}
-.regionCard{width:146px;border-radius:3px;overflow:hidden;position:relative;aspect-ratio:3/4;background:var(--ground-3);border:none;padding:0}
-.regionCard img{width:100%;height:100%;object-fit:cover}
+
 /* --------------------------------------------------------------------------
    Dark glass
 
@@ -1079,142 +1014,9 @@ svg{
    backdrop-filter, where a blur-only panel would be plain glass and the white
    text on it would vanish.
    -------------------------------------------------------------------------- */
-.glassDark{
-  /* Nearly opaque on purpose. The first version dropped to 40% wherever
-     backdrop-filter was supported, on the assumption the blur would darken
-     what showed through — but blurring ivory just gives ivory, so the panel
-     came out mid-grey instead of black. The blur is texture here, not tint. */
-  background:rgba(12,9,6,.88);
-  -webkit-backdrop-filter:blur(16px) saturate(115%);
-  backdrop-filter:blur(16px) saturate(115%);
-  border:1px solid rgba(255,255,255,.10);border-radius:0;
-  color:#fff;
-}
-
-.regionCard__ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,10,0) 40%,rgba(20,15,10,.90) 100%)}
-.regionCard__txt{
-  position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:left;
-  padding:12px 12px 13px;
-  /* the gradient above still does the heavy lifting; this adds the pane */
-  /* .62 measured at brightness 137 over a bright sky — nowhere near black.
-     A translucent pane has to be judged against the lightest photograph it
-     will ever sit on, not against the average one. .80 then measured 15, which
-     is a black bar rather than glass — .66 lands around 35, dark enough to
-     carry white type and still let the photograph through. */
-  background:rgba(10,8,5,.66);
-  -webkit-backdrop-filter:blur(12px) saturate(115%);
-  backdrop-filter:blur(12px) saturate(115%);
-  border-top:1px solid rgba(255,255,255,.12);
-  color:#fff;
-}
-.regionCard__txt b{display:block;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
-.regionCard__txt span{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);margin-top:5px}
 
 /* --- Home destination / excursion showcases ----------------------------- */
-.homeShowcase{
-  position:relative;
-  margin-top:64px;
-  padding:40px 0 46px;
-  overflow:hidden;
-}
-.homeShowcase--regions{
-  background:var(--ground-2);
-  border-top:1px solid var(--hair-soft);
-  border-bottom:1px solid var(--hair-soft);
-}
-.homeShowcase--excursions{
-  margin-top:72px;
-  padding-top:44px;
-  padding-bottom:52px;
-  background:linear-gradient(180deg,#17110C 0%,#0F0B08 100%);
-  color:#fff;
-}
-.homeShowcase__head{
-  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
-  padding:0 calc(20px + var(--sar)) 22px calc(20px + var(--sal));
-}
-.homeShowcase__title{
-  margin:6px 0 0;
-  font-family:var(--display);font-size:29px;line-height:1.08;
-  font-weight:600;letter-spacing:-.03em;
-}
-.homeShowcase__all{
-  flex:0 0 auto;
-  padding:8px 0 7px;
-  border:0;border-bottom:1px solid currentColor;background:none;
-  color:var(--gold-ink);
-  font-size:10px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;
-}
-.homeShowcase--excursions .eyebrow,
-.homeShowcase--excursions .homeShowcase__all{color:var(--gold-light)}
-.featureRail{
-  display:flex;gap:16px;
-  overflow-x:auto;scrollbar-width:none;
-  overscroll-behavior-x:contain;touch-action:pan-x pan-y;
-  scroll-snap-type:x proximity;
-  scroll-padding-inline:20px;
-  margin:0;padding:0 calc(20px + var(--sar)) 6px calc(20px + var(--sal));
-}
-.featureRail::-webkit-scrollbar{display:none}
-.featureCard{
-  position:relative;flex:0 0 auto;overflow:hidden;
-  border:0;border-radius:4px;padding:0;background:var(--ground-3);
-  text-align:left;scroll-snap-align:start;
-  box-shadow:0 12px 32px rgba(36,27,18,.08);
-  isolation:isolate;
-}
-.featureCard--region{
-  width:min(76vw,310px);
-  aspect-ratio:4/5;
-}
-.featureCard--excursion{
-  width:min(86vw,352px);
-  aspect-ratio:16/11;
-  box-shadow:0 18px 42px rgba(0,0,0,.28);
-}
-.featureCard img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transform:scale(1.01);
-  transition:transform .7s var(--ease),filter .35s var(--ease);
-}
-.featureCard:active img{transform:scale(1.035)}
-.featureCard__shade{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(180deg,
-    rgba(12,9,6,.04) 24%,
-    rgba(12,9,6,.20) 54%,
-    rgba(12,9,6,.88) 100%);
-}
-.featureCard__copy{
-  position:absolute;left:0;right:0;bottom:0;z-index:2;
-  padding:28px 20px 20px;color:#fff;
-  text-shadow:0 2px 14px rgba(0,0,0,.38);
-}
-.featureCard__copy b{
-  display:block;
-  font-family:var(--display);font-size:25px;line-height:1.05;
-  font-weight:600;letter-spacing:-.025em;
-}
-.featureCard__copy i{
-  display:block;margin-top:8px;
-  font-style:normal;font-size:11px;line-height:1.45;
-  letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.84);
-}
-.featureCard__copy small{
-  display:block;margin-top:10px;
-  font-size:9.5px;font-weight:650;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--gold-light);
-}
-.featureCard--excursion .featureCard__copy b{font-size:27px}
-.featureCard--excursion .featureCard__copy i{color:var(--gold-light)}
-@media (max-width:360px){
-  .featureCard--region{width:80vw}
-  .featureCard--excursion{width:88vw}
-  .featureCard__copy b{font-size:23px}
-}
-@media (prefers-reduced-motion:reduce){
-  .featureCard img{transition:none}
-}
+
 .chips{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-padding-inline:20px;margin-inline:-20px;padding-inline:20px;padding-bottom:4px}
 .chips::-webkit-scrollbar{display:none}
 .chip{
@@ -1499,9 +1301,8 @@ select.input option{background:#fff;color:var(--txt)}
 /* Rail cards fade only. A horizontal slide inside a horizontally snapping
    scroller means two things moving the same axis at the same time, which is
    the other half of what made this rail feel restless. */
-.rail > .reveal{transform:none}
-@media (prefers-reduced-motion:reduce){
-  .reveal,.rail > .reveal{opacity:1;transform:none;transition:none}
+
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}
 }
 .fade-up{}
 @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.26)}100%{transform:scale(1)}}
@@ -1612,55 +1413,6 @@ select.input option{background:#fff;color:var(--txt)}
    three sentences into a product grid; the point here is that they read as one
    short paragraph about the house.
    -------------------------------------------------------------------------- */
-.vipList{
-  padding:44px 20px 6px;
-  text-align:center;
-  /* Breathes with the scroll: --z is 0 at the edges of the screen and 1 when
-     the block sits in the middle of it, so the panel grows a little as the
-     reader arrives at it and lets go again on the way out. Three per cent —
-     enough to feel, not enough to see type reflow.
-     It grows *up to* its natural size rather than past it. Scaling above 1
-     would push the block wider than the column, and this page has already been
-     bitten once by content that overflows sideways. */
-  transform:scale(calc(1 - (1 - var(--z,1)) * .03));
-  transform-origin:50% 50%;
-  will-change:transform;
-}
-@media (prefers-reduced-motion:reduce){
-  .vipList{transform:none}
-}
-.vipList__head{
-  font-family:var(--display);
-  font-size:clamp(21px,6.2vw,26px);
-  font-weight:600;letter-spacing:-.02em;line-height:1.28;
-  color:var(--txt);margin:0;
-}
-.vipList__rule{
-  display:block;width:46px;height:1px;margin:16px auto 30px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-}
-.vipItem{
-  display:flex;align-items:flex-start;gap:16px;
-  text-align:left;
-  padding:0 2px 24px;
-}
-.vipItem:last-child{padding-bottom:6px}
-.vipItem__ic{
-  flex:0 0 30px;display:grid;place-items:center;
-  color:var(--gold-ink);margin-top:1px;
-}
-.vipItem__ic svg{width:26px;height:26px;stroke-width:1.2}
-.vipItem b{
-  display:block;
-  font-size:11.5px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;
-  color:var(--txt);
-}
-.vipItem p{
-  margin:7px 0 0;
-  font-size:13.5px;line-height:1.6;
-  color:var(--txt-2);
-}
 
 /* --------------------------------------------------------------------------
    Edge light
@@ -1744,14 +1496,6 @@ select.input option{background:#fff;color:var(--txt)}
    frame, and a gradient tuned to one frame fails on the next. */
 
 .expBands{margin-top:44px}
-.expBands--homeTop{margin-top:0}
-.expBands__head{
-  font-family:var(--display);
-  font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--txt);text-align:center;margin:0;
-  padding:26px 20px 28px;background:var(--ground-2);
-  border-top:1px solid var(--hair-soft);
-}
 .expBand{
   display:block;position:relative;width:100%;
   aspect-ratio:16/10;overflow:hidden;
@@ -1843,64 +1587,12 @@ select.input option{background:#fff;color:var(--txt)}
    top or margin is touched, so the phone composites the move instead of
    re-laying out the page on every frame.
    ========================================================================== */
-.flyBand{
-  position:relative;overflow:hidden;
-  /* Height comes from the content plus one reserved gap, not from a fixed svh
-     with space-between: that spread the three blocks to the far corners and
-     left a dead field under the aircraft. The gap below the headline is sized
-     to the object that crosses it, so the aircraft clears the ticker while
-     still cutting through the second line of the title. */
-  padding:44px 20px 30px;
-  display:flex;flex-direction:column;justify-content:flex-start;
-  background:linear-gradient(180deg,var(--ground-2) 0%,var(--ground) 52%,var(--ground-3) 100%);
-  border-top:1px solid var(--hair-soft);
-}
-.flyBand__head{
-  margin-left:20px;margin-right:20px;position:relative;z-index:1;text-align:center}
-.flyBand__title{
-  font-family:var(--display);font-weight:600;
-  font-size:clamp(33px,10vw,44px);line-height:1.03;letter-spacing:-.042em;
-  margin:10px 0 0;color:var(--txt);
-}
+
 /* Two nested transforms, because they answer to different clocks: the wrapper
    follows the scroll (--p), the image inside flies on its own — a slow figure
    of drift, sway and breathing scale that runs whether or not the finger
    moves. One element cannot carry both without them overwriting each other. */
-.flyBand__plane{
-  margin-left:20px;margin-right:20px;
-  position:absolute;z-index:2;
-  /* Level, and no wobble. The banking tilt and the idle flight loop made a
-     photographed aircraft look like a toy being waved about; a jet reads as a
-     jet when it sits straight. What remains is the layer pass — it rises
-     slowly between the headline and the card as you scroll, which is the
-     whole point of the section, with no rotation and no second clock.
 
-     Sized so the wingspan clears the headline instead of burying it. */
-  /* A fixed offset, not a percentage: the band's height is content-driven
-     now, so a percentage moved the aircraft whenever the copy changed. */
-  left:50%;top:128px;
-  width:min(43%,190px);
-  /* The band is the last section again, so the full arc is now reachable and
-     the aircraft climbs its whole travel. At -7svh that put it into the
-     headline at the end of the page — the earlier figure was only safe because
-     the band sat mid-page and never reached --p=1. */
-  transform:
-    translate3d(-50%, calc(var(--p,0) * -3.5svh + 1.5svh), 0)
-    scale(calc(1 + var(--p,0) * .05));
-  will-change:transform;
-  pointer-events:none;
-}
-.flyBand__plane img{
-  display:block;width:100%;height:auto;
-  position:relative;z-index:1;   /* over its own slipstream */
-  /* the supplied artwork carries its own shadow — a second one muddies it */
-  /* A tracking shot holds the aircraft almost still and lets the world move —
-     that is the clouds' job. All this adds is the small amount an aircraft
-     wanders in frame: four pixels of rise, two of sway, over nine seconds. No
-     rotation and no scale. The earlier version banked and breathed, and a
-     tilting, pulsing photograph looked like a toy being waved about. */
-  animation:flyDrift 9s ease-in-out infinite;
-}
 @keyframes flyDrift{
   0%,100%{transform:translate3d(0,0,0)}
   30%    {transform:translate3d(-2px,-4px,0)}
@@ -1949,7 +1641,6 @@ select.input option{background:#fff;color:var(--txt)}
 }
 @media (prefers-reduced-motion:reduce){
   .flySky{display:none}
-  .flyBand__plane img{animation:none}
 }
 
 /* Slipstream behind the wings. Sits under the aircraft, so the lines appear to
@@ -1989,24 +1680,9 @@ select.input option{background:#fff;color:var(--txt)}
    The band still runs dark. It is the rhythm the reference uses — light
    section, dark section, light again — and the flight band below deliberately
    stays light so the two do not merge into one long dark stretch. */
-.carBand{
-  background:
-    radial-gradient(120% 90% at 50% 40%, rgba(58,48,36,.55), transparent 70%),
-    linear-gradient(180deg,#171310 0%,#100D0A 55%,#171310 100%);
-  border-top:1px solid rgba(255,255,255,.07);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  padding-top:52px;padding-bottom:38px;
-}
-.carBand .flyBand__title{color:#fff}
-.carBand .eyebrow{color:var(--gold-light)}
+
 /* On a dark ground the card no longer needs to be a separate slab — a hair
    lighter than the band is enough to read as a pane of glass on it. */
-.carBand .flyBand__card{
-  background:rgba(255,255,255,.07);
-  border-color:rgba(255,255,255,.14);
-  margin-top:36px;
-}
-.carBand .flyBand__title{font-size:clamp(31px,9.4vw,41px)}
 
 /* The lettering. Three things happen to it, on three different clocks:
 
@@ -2019,123 +1695,24 @@ select.input option{background:#fff;color:var(--txt)}
       survive the individual transforms of step 1.
    3. scroll — the whole word grows a few per cent across the band's pass,
       which is what is left of the object crossing the layers. */
-.vipWord{
-  margin:0;
-  display:flex;flex-wrap:wrap;justify-content:center;
-  gap:0 .3em;
-  font-family:var(--display);font-weight:600;
-  /* Sized so the longest of the three languages still fits on one line on a
-     360 px phone, at full scroll zoom, inside the band's own clipping. Russian
-     is the constraint: VIP ТРАНСФЕР measures about 3 % wider than the Latin
-     spelling at the same size. */
-  font-size:clamp(30px,10.2vw,48px);line-height:1.06;
-  letter-spacing:.055em;
-  color:rgba(255,255,255,.94);
-  transform:scale(calc(1 + var(--p,0) * .04));
-  will-change:transform;
-}
+
 /* One group per word, and a group never breaks: a flat row of single glyphs
    wraps between any two of them, which put a lone Р on the second line. */
-.vipWord__w{display:flex;white-space:nowrap}
-.vipWord i{
-  font-style:normal;display:inline-block;
-  animation:vipSheen 5.2s ease-in-out infinite;
-  animation-delay:calc(var(--i,0) * .15s);
-}
-.reveal .vipWord i{opacity:0;transform:translate3d(0,.48em,0)}
-.reveal.is-in .vipWord i{
-  opacity:1;transform:none;
-  transition:opacity .5s var(--ease), transform .66s var(--ease);
-  transition-delay:calc(var(--i,0) * .05s);
-}
-@keyframes vipSheen{
-  0%,64%,100%{color:rgba(255,255,255,.94);text-shadow:none}
-  82%{color:#F7E6BC;text-shadow:0 0 20px rgba(240,208,140,.42)}
-}
-.carBand__line{
-  margin:20px 0 0;
-  font-size:13.5px;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(255,255,255,.62);
-}
-@media (prefers-reduced-motion:reduce){
-  .vipWord{transform:none}
-  .vipWord i{animation:none}
-}
 
 /* The running line under the flight — destinations pass beneath the aircraft.
    The row holds its content twice and travels exactly half its own width, so
    the wrap point lands on an identical pixel and the loop has no seam (same
    trick as the video crossfade, done in layout). */
-.flyTicker{
-  margin-left:20px;margin-right:20px;
-  position:relative;z-index:1;
-  overflow:hidden;
-  /* The reserved gap belongs in the shorthand: as a separate margin-top it was
-     silently wiped by the `margin:0 -20px` that followed it. */
-  margin:var(--gapObj,196px) -20px 0;
-  padding:13px 0;
-  border-top:1px solid var(--hair-soft);
-  border-bottom:1px solid var(--hair-soft);
-  background:rgba(255,255,255,.42);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
-}
-.flyTicker__row{
-  display:flex;
-  width:max-content;
-  animation:tickMove 34s linear infinite;
-}
+
 /* Two identical halves and a shift of exactly -50%: the wrap lands on the
    same pixel. A single row with flex gaps was off by half a gap and jumped. */
-.flyTicker__half{display:flex;align-items:center;gap:18px;padding-right:18px}
-.flyTicker__half span{
-  font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--txt-2);white-space:nowrap;
-}
-.flyTicker__half i{font-style:normal;font-size:9px;color:var(--gold);flex:0 0 auto}
-@keyframes tickMove{to{transform:translate3d(-50%,0,0)}}
-@media (prefers-reduced-motion:reduce){
-  .flyTicker__row{animation:none}
-}
-.flyBand__card{
-  position:relative;z-index:3;width:100%;box-sizing:border-box;
-  margin:22px 0 0;padding:22px 18px 20px;
-  /* Black, not a grey pane. Over an ivory band a 40% wash reads as taupe no
-     matter how much blur sits behind it — the panel has to bring its own
-     darkness. */
-  background:rgba(12,9,6,.88);
-  -webkit-backdrop-filter:blur(16px) saturate(115%);
-  backdrop-filter:blur(16px) saturate(115%);
-  border:1px solid rgba(255,255,255,.10);border-radius:0;
-  color:#fff;
-}
 
-.flyBand__spec{
-  display:flex;justify-content:space-between;gap:12px;
-  padding-bottom:11px;margin-bottom:12px;
-  border-bottom:1px solid var(--hair-soft);
-  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
-  font-weight:600;color:var(--gold-ink);
-}
 /* On the dark card the ivory-ground tones invert. These have to come after the
    rules above, not before — same specificity, so the later one wins, and the
    first attempt at this sat above them and did nothing. */
-.flyBand__card .flyBand__spec{border-bottom-color:rgba(255,255,255,.20);color:var(--gold-light)}
-.flyBand__card .btn--primary{background:rgba(255,255,255,.95);color:#2A2119}
-.flyBand__card p{
-  margin:0 0 16px;font-size:15.5px;line-height:1.55;
-  color:rgba(255,255,255,.86);      /* the card is dark glass */
-}
-@media (prefers-reduced-motion:reduce){
-  .flyBand__plane{will-change:auto}
-}
+
 /* CC BY 4.0 requires the credit to travel with the work, so it lives in the
    menu rather than only in the README. */
-.credit{
-  margin:22px 0 0;font-size:9.5px;line-height:1.6;
-  letter-spacing:.04em;color:var(--txt-3);
-}
-.credit a{color:var(--txt-3)}
 
 /* ==========================================================================
    TEXT OVER IMAGERY
@@ -2160,7 +1737,6 @@ select.input option{background:#fff;color:var(--txt)}
 .confirmOver .muted{
   color:rgba(255,255,255,.86);
 }
-.trust li{color:#fff}
 .pHero__body .eyebrow,
 .bandHero__txt .eyebrow,
 .confirmOver .eyebrow{
@@ -2183,15 +1759,6 @@ select.input option{background:#fff;color:var(--txt)}
 .confirmOver .tl.is-done .tl__dot::after{background:var(--dark-2)}
 .confirmOver .tl.is-now .tl__dot{border-color:var(--gold);box-shadow:0 0 0 4px rgba(216,180,92,.22)}
 .confirmOver .tl::before{background:rgba(255,255,255,.18)}
-
-.flyBand__acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.linkMore{
-  display:inline-flex;align-items:center;gap:5px;
-  background:none;border:0;padding:6px 2px;
-  font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold-light);cursor:pointer;
-}
-.linkMore svg{width:13px;height:13px;stroke-width:2}
 
 .blockHero{
   position:relative;width:100%;
@@ -2274,114 +1841,12 @@ select.input option{background:#fff;color:var(--txt)}
 /* ==========================================================================
    Slim home — categories, excursions and VIP assistance first
    ========================================================================== */
-.travelWorlds--focus{padding-bottom:28px}
+
 .homeEditorialHead__sub{
   margin:8px 0 0;max-width:33ch;font-size:12.5px;line-height:1.55;color:var(--muted);
 }
 .homeEditorialHead--dark{color:#fff}
 .homeEditorialHead--dark .homeEditorialHead__sub{color:rgba(255,255,255,.68)}
-
-.homeVipFocus{
-  margin:0;padding:30px calc(20px + var(--sar)) 32px calc(20px + var(--sal));
-  background:#17110c;color:#fff;
-  border-top:1px solid rgba(222,189,111,.24);border-bottom:1px solid rgba(222,189,111,.24);
-  display:grid;grid-template-columns:52px 1fr;gap:0 16px;align-items:start;min-height:182px;
-}
-.homeVipFocus__icon{
-  width:52px;height:52px;border:1px solid rgba(224,191,116,.62);border-radius:50%;
-  display:grid;place-items:center;color:var(--gold-light);grid-row:1/3;
-}
-.homeVipFocus__icon svg{width:24px;height:24px}
-.homeVipFocus__copy .eyebrow{color:var(--gold-light)}
-.homeVipFocus__copy h2{margin:6px 0 0;font-family:var(--display);font-size:29px;line-height:1.06;font-weight:600}
-.homeVipFocus__copy p{margin:10px 0 0;font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.76);max-width:32ch}
-.homeVipFocus__cta{
-  grid-column:2;margin-top:18px;width:max-content;display:inline-flex;align-items:center;gap:8px;
-  padding:0 0 7px;border:0;border-bottom:1px solid rgba(224,191,116,.72);background:none;color:var(--gold-light);
-  font-size:10.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;
-}
-.homeVipFocus__cta svg{width:14px;height:14px}
-
-.homeExcFocus{padding:34px 0 38px;background:var(--ground-2)}
-.homeExcFocus .homeEditorialHead{padding-bottom:20px}
-.homeExcFocus__rail{
-  display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;
-  padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal));
-}
-.homeExcFocus__rail::-webkit-scrollbar{display:none}
-.homeExcCard{
-  position:relative;flex:0 0 min(78vw,320px);aspect-ratio:4/5;overflow:hidden;border:0;border-radius:4px;
-  padding:0;background:#17110c;text-align:left;scroll-snap-align:start;box-shadow:0 12px 30px rgba(36,27,18,.10);
-}
-.homeExcCard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.015);transition:transform .6s var(--ease)}
-.homeExcCard:active img{transform:scale(1.045)}
-.homeExcCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,10,7,.03) 35%,rgba(15,10,7,.80) 100%)}
-.homeExcCard__copy{position:absolute;left:18px;right:18px;bottom:17px;color:#fff}
-.homeExcCard__copy b{display:block;font-family:var(--display);font-size:23px;line-height:1.1;font-weight:600}
-.homeExcCard__copy i{display:block;margin-top:7px;font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light)}
-.homeExcCard__copy span{position:absolute;right:0;bottom:0;color:var(--gold-light)}
-.homeExcCard__copy span svg{width:17px;height:17px}
-
-.homeMotion{padding:34px 0 38px;background:linear-gradient(180deg,#15100c,#0d0a08);color:#fff}
-.homeMotion__rail{
-  display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;
-  padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal));
-}
-.homeMotion__rail::-webkit-scrollbar{display:none}
-.homeMotionCard{
-  position:relative;flex:0 0 min(72vw,294px);aspect-ratio:4/5;overflow:hidden;border:1px solid rgba(255,255,255,.09);
-  border-radius:4px;padding:0;background:#100d0a;text-align:left;scroll-snap-align:start;
-}
-.homeMotionCard>img,.homeMotionCard__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.homeMotionCard__video{z-index:1}
-.homeMotionCard__shade{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(12,9,7,.08) 28%,rgba(12,9,7,.82) 100%)}
-.homeMotionCard__copy{position:absolute;z-index:3;left:17px;right:17px;bottom:16px;color:#fff}
-.homeMotionCard__copy .eyebrow{color:var(--gold-light)}
-.homeMotionCard__copy b{display:block;margin-top:7px;font-family:var(--display);font-size:22px;line-height:1.12}
-.homeMotionCard__copy i{display:flex;align-items:center;gap:5px;margin-top:9px;font-style:normal;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-light)}
-.homeMotionCard__copy i svg{width:13px;height:13px}
-
-.homeServiceSlim{padding:34px calc(20px + var(--sar)) 38px calc(20px + var(--sal));background:var(--ground-2)}
-.homeServiceSlim .homeEditorialHead{padding:0 0 18px}
-.homeServiceSlim__grid{
-  display:grid;grid-template-columns:1fr;gap:14px;
-  margin-left:calc(-20px - var(--sal));margin-right:calc(-20px - var(--sar));
-}
-.homeServiceCard{
-  position:relative;display:block;width:100%;min-height:198px;overflow:hidden;
-  border:1px solid rgba(191,154,87,.24);border-radius:0;padding:0;background:#14100d;text-align:left;color:#fff;
-}
-.homeServiceCard--transfer{
-  grid-column:1 / -1;
-  background:radial-gradient(circle at 84% 18%,rgba(224,191,116,.24),transparent 46%),linear-gradient(135deg,#16110d 0%,#24180f 48%,#0d0a08 100%);
-}
-.homeServiceCard__word{
-  position:absolute;left:24px;top:18px;font-family:var(--sans);font-size:clamp(27px,8vw,40px);
-  font-weight:250;letter-spacing:.14em;color:rgba(224,191,116,.76);
-}
-.homeServiceCard--flight img{position:absolute;right:-8px;top:-36px;width:56%;height:190%;object-fit:contain;opacity:.88;transform:rotate(7deg)}
-.homeServiceCard--flight:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,9,7,.95) 0%,rgba(12,9,7,.50) 55%,rgba(12,9,7,.10) 100%)}
-.homeServiceCard__copy{position:absolute;z-index:2;left:24px;right:24px;bottom:20px}
-.homeServiceCard__copy b{display:block;max-width:62%;font-family:var(--display);font-size:24px;line-height:1.08}
-.homeServiceCard__copy i{display:flex;align-items:center;gap:6px;margin-top:10px;font-style:normal;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#E0BF74}
-.homeServiceCard__copy i svg{width:12px;height:12px}
-
-.homeSecondaryLinks{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;
-  padding:10px calc(20px + var(--sar)) 36px calc(20px + var(--sal));background:var(--ground-2);
-}
-.homeSecondaryLinks button{
-  min-height:92px;padding:0 18px;border:1px solid rgba(192,160,96,.42);border-radius:4px;
-  background:linear-gradient(180deg,#f9f4ea 0%,#efe5d3 100%);color:#2A2119;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  font-size:12.5px;font-weight:700;letter-spacing:.17em;line-height:1.25;text-transform:uppercase;
-  box-shadow:0 10px 26px rgba(0,0,0,.08);
-}
-.homeSecondaryLinks button svg{width:15px;height:15px;color:#D8B56A}
-
-@media (prefers-reduced-motion:reduce){
-  .homeExcCard img{transition:none}
-}
 
 /* Five curated offers: one feature card, four supporting cards. */
 .homeOffers{padding:34px 0 40px;background:var(--ground)}
@@ -2451,51 +1916,17 @@ select.input option{background:#fff;color:var(--txt)}
 .pHero__cta:active{transform:translateX(2px)}
 
 /* Chapter separators — subtle, not decorative clutter. */
-.travelWorlds,.homeExcFocus,.homeOffers,.homeMotion,.homeServiceSlim,.flyBand,.homeSecondaryLinks,.homeFinalCta{position:relative}
-.homeExcFocus::before,.homeOffers::before,.homeServiceSlim::before,.homeSecondaryLinks::before{
+.travelWorlds,.homeOffers,.homeFinalCta{position:relative}.homeOffers::before{
   content:"";position:absolute;left:20px;right:20px;top:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(181,139,55,.24) 18%,rgba(181,139,55,.24) 82%,transparent);
-}
-.homeMotion::before,.homeFinalCta::before{
+}.homeFinalCta::before{
   content:"";position:absolute;left:0;right:0;top:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(224,191,116,.32),transparent);
 }
 
 /* VIP focus — slightly more breathing room, calm typography. */
-.homeVipFocus{
-  min-height:190px;padding:32px calc(22px + var(--sar)) 34px calc(22px + var(--sal));
-  grid-template-columns:54px 1fr;gap:0 17px;
-  background:linear-gradient(135deg,#18110c 0%,#100c09 70%,#17110c 100%);
-}
-.homeVipFocus__icon{width:54px;height:54px;border-color:rgba(224,191,116,.64);box-shadow:inset 0 0 0 4px rgba(224,191,116,.025)}
-.homeVipFocus__copy h2{font-size:29px;line-height:1.04}
-.homeVipFocus__copy p{font-size:13.5px;line-height:1.62;max-width:34ch}
-.homeVipFocus__cta{margin-top:19px;color:#E6C77E;border-bottom-color:rgba(230,199,126,.76)}
 
 /* ONLYONE in motion — actual 9:16 video, equal cards, seamless poster handoff. */
-.homeMotion{padding:40px 0 44px;background:linear-gradient(180deg,#17100b 0%,#0d0907 54%,#120d09 100%)}
-.homeMotion .homeEditorialHead{padding-bottom:22px}
-.homeMotion__rail{
-  gap:16px;padding:0 calc(20px + var(--sar)) 7px calc(20px + var(--sal));
-  scroll-snap-type:x mandatory;
-}
-.homeMotionCard{
-  flex:0 0 min(80vw,326px);aspect-ratio:9/16;border-radius:5px;
-  border:1px solid rgba(224,191,116,.16);scroll-snap-align:start;
-  box-shadow:0 18px 46px rgba(0,0,0,.24);
-}
-.homeMotionCard>img{z-index:0;transform:scale(1.006)}
-.homeMotionCard__video{
-  z-index:1;opacity:0;transition:opacity .65s ease;
-  background:#100d0a;
-}
-.homeMotionCard__video.is-ready{opacity:1}
-.homeMotionCard__shade{background:linear-gradient(180deg,rgba(12,9,7,.02) 34%,rgba(12,9,7,.16) 54%,rgba(12,9,7,.90) 100%)}
-.homeMotionCard__copy{left:20px;right:20px;bottom:20px}
-.homeMotionCard__copy .eyebrow{font-size:9.5px;letter-spacing:.20em}
-.homeMotionCard__copy b{margin-top:8px;font-size:25px;line-height:1.06}
-.homeMotionCard__copy p{margin:9px 0 0;max-width:28ch;font-size:12px;line-height:1.5;color:rgba(255,255,255,.76)}
-.homeMotionCard__copy i{margin-top:12px;color:#E6C77E}
 
 /* Selected offers — one editorial lead image, four calm supporting choices. */
 .homeOffers{padding:38px 0 44px;background:linear-gradient(180deg,#fcfaf6 0%,#f7f1e8 100%)}
@@ -2522,54 +1953,10 @@ select.input option{background:#fff;color:var(--txt)}
 .homeOfferCard--small .homeOfferCard__copy .stars{font-size:8.5px}
 
 /* VIP services — same materials, same gold, edge-to-edge service language. */
-.homeServiceSlim{padding:40px calc(20px + var(--sar)) 0 calc(20px + var(--sal));background:#f8f3eb}
-.homeServiceSlim .homeEditorialHead{padding:0 0 22px}
-.homeServiceSlim__grid{margin-left:calc(-20px - var(--sal));margin-right:calc(-20px - var(--sar));gap:0}
-.homeServiceCard{min-height:214px;border:0;border-top:1px solid rgba(230,199,126,.18);border-bottom:1px solid rgba(230,199,126,.18);border-radius:0}
-.homeServiceCard--transfer{
-  background:radial-gradient(circle at 82% 15%,rgba(224,191,116,.20),transparent 42%),linear-gradient(135deg,#17100b 0%,#21160e 48%,#0d0907 100%);
-}
-.homeServiceCard__word{left:24px;top:23px;font-size:clamp(30px,8.5vw,42px);color:rgba(230,199,126,.72)}
-.homeServiceCard__copy{left:24px;right:24px;bottom:23px}
-.homeServiceCard__copy b{font-size:25px;max-width:66%}
-.homeServiceCard__copy i{color:#E6C77E}
 
 /* Flight card must truly bleed to the viewport edges despite flyBand padding. */
-.flyBand{padding-left:20px;padding-right:20px}
-.flyBand__card{
-  width:calc(100% + 40px);max-width:none;margin:22px -20px 0;
-  padding:24px 24px 23px;box-sizing:border-box;border-left:0;border-right:0;border-radius:0;
-  background:linear-gradient(135deg,rgba(18,13,9,.97),rgba(31,24,18,.96));
-  border-top:1px solid rgba(230,199,126,.18);border-bottom:1px solid rgba(230,199,126,.18);
-}
-.flyBand__card .flyBand__spec{color:#E6C77E;border-bottom-color:rgba(230,199,126,.22)}
-.flyBand__card p{font-size:15px;line-height:1.58;max-width:34ch}
-.flyBand__acts{gap:16px}
-.flyBand__acts .btn--primary{min-height:44px;padding-left:17px;padding-right:17px}
-.flyBand__acts .linkMore{color:#E6C77E}
 
 /* Premium secondary navigation — edge-to-edge cards, but not form buttons. */
-.homeSecondaryLinks{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  margin:0;padding:18px 0 36px;background:linear-gradient(180deg,#fbf8f2 0%,#f5eee3 100%);
-  border-top:1px solid rgba(181,139,55,.09);
-}
-.homeSecondaryLinks button{
-  position:relative;width:100%;min-height:116px;overflow:hidden;
-  display:flex;align-items:center;justify-content:flex-start;text-align:left;
-  padding:23px 58px 21px 22px;border:1px solid rgba(181,139,55,.30);border-radius:0;
-  background:linear-gradient(145deg,rgba(255,255,255,.98) 0%,rgba(249,244,234,.98) 56%,rgba(238,225,204,.96) 100%);
-  color:#2b241e;font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.19em;line-height:1.35;text-transform:uppercase;
-  box-shadow:0 10px 26px rgba(42,32,21,.07),inset 0 1px 0 rgba(255,255,255,.98);
-  transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease);
-}
-.homeSecondaryLinks button::before{content:"";position:absolute;left:22px;top:19px;width:34px;height:1px;background:linear-gradient(90deg,#d9b366,rgba(217,179,102,.06))}
-.homeSecondaryLinks button::after{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.50);pointer-events:none}
-.homeSecondaryLinks button svg{
-  position:absolute;right:18px;top:50%;transform:translateY(-50%);width:13px;height:13px;padding:8px;box-sizing:content-box;
-  border:1px solid rgba(181,139,55,.34);border-radius:50%;background:rgba(255,255,255,.60);color:#B58B37;stroke-width:1.6;
-}
-.homeSecondaryLinks button:active{transform:translateY(1px);box-shadow:0 6px 18px rgba(42,32,21,.08)}
 
 /* Closing invitation — the page ends with the service, not with navigation. */
 .homeFinalCta{
@@ -2604,26 +1991,16 @@ select.input option{background:#fff;color:var(--txt)}
 .tab--hero.is-on .tab__ic{border-color:#E6C77E;box-shadow:0 7px 20px rgba(181,139,55,.20)}
 
 /* Reveal feels expensive only when it is restrained. */
-.reveal{transition-duration:.62s}
-.homeMotionCard.reveal,.homeOfferCard.reveal,.homeServiceCard.reveal,.homeSecondaryLinks button.reveal{transform:translate3d(0,10px,0)}
-.homeMotionCard.reveal.is-in,.homeOfferCard.reveal.is-in,.homeServiceCard.reveal.is-in,.homeSecondaryLinks button.reveal.is-in{transform:none}
+.reveal{transition-duration:.62s}.homeOfferCard.reveal{transform:translate3d(0,10px,0)}.homeOfferCard.reveal.is-in{transform:none}
 
 @media (hover:hover){
-  .homeSecondaryLinks button:hover{transform:translateY(-2px);border-color:rgba(181,139,55,.48);box-shadow:0 15px 34px rgba(42,32,21,.10)}
-  .homeMotionCard:hover .homeMotionCard__video{transform:scale(1.012)}
   .homeOfferCard:hover .homeOfferCard__media>img{transform:scale(1.025)}
 }
 @media (max-width:360px){
-  .homeMotionCard{flex-basis:84vw}
-  .homeSecondaryLinks{gap:7px}
-  .homeSecondaryLinks button{min-height:108px;padding-left:17px;padding-right:48px;font-size:10px;letter-spacing:.15em}
-  .homeSecondaryLinks button::before{left:17px}
   .homeFinalCta h2{font-size:31px}
 }
 @media (prefers-reduced-motion:reduce){
-  .pHero__img{animation:none;transition-duration:.35s}
-  .homeMotionCard__video{transition:none}
-  .homeMotionCard.reveal,.homeOfferCard.reveal,.homeServiceCard.reveal,.homeSecondaryLinks button.reveal{transform:none}
+  .pHero__img{animation:none;transition-duration:.35s}.homeOfferCard.reveal{transform:none}
 }
 
 /* ========================================================================== 
@@ -2678,16 +2055,16 @@ select.input option{background:#fff;color:var(--txt)}
    viewport receive .is-alive, so off-screen images do not keep the compositor
    busy on iOS. Transform-only animation keeps layout and paint untouched.
    ========================================================================== */
-.travelWorld img,.homeExcCard img,.destinationHome__card img,.homeExperience img,.homeOfferCard__media>img,.featureCard img,.homeConcierge>img{
+.travelWorld img,.homeOfferCard__media>img{
   transform-origin:50% 50%;
   backface-visibility:hidden;
-}.travelWorld.is-alive img,.homeExcCard.is-alive img,.destinationHome__card.is-alive img,.homeExperience.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img,.featureCard.is-alive img,.homeConcierge.is-alive>img{
+}.travelWorld.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img{
   will-change:transform;
   animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both;
-}.travelWorld:nth-child(3n+2).is-alive img,.homeExcCard:nth-child(3n+2).is-alive img,.destinationHome__card:nth-child(3n+2).is-alive img,.homeExperience:nth-child(3n+2).is-alive img,.homeOfferCard:nth-child(3n+2).is-alive .homeOfferCard__media>img,.featureCard:nth-child(3n+2).is-alive img{
+}.travelWorld:nth-child(3n+2).is-alive img,.homeOfferCard:nth-child(3n+2).is-alive .homeOfferCard__media>img{
   animation-name:livingImageB;
   animation-duration:15.8s;
-}.travelWorld:nth-child(3n).is-alive img,.homeExcCard:nth-child(3n).is-alive img,.destinationHome__card:nth-child(3n).is-alive img,.homeExperience:nth-child(3n).is-alive img,.homeOfferCard:nth-child(3n).is-alive .homeOfferCard__media>img,.featureCard:nth-child(3n).is-alive img{
+}.travelWorld:nth-child(3n).is-alive img,.homeOfferCard:nth-child(3n).is-alive .homeOfferCard__media>img{
   animation-name:livingImageC;
   animation-duration:16.6s;
 }
@@ -2720,7 +2097,7 @@ select.input option{background:#fff;color:var(--txt)}
   to{transform:scale(1.088) translate3d(.66%,.38%,0)}
 }
 
-@media (prefers-reduced-motion:reduce){.travelWorld.is-alive img,.homeExcCard.is-alive img,.destinationHome__card.is-alive img,.homeExperience.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img,.featureCard.is-alive img,.homeConcierge.is-alive>img{
+@media (prefers-reduced-motion:reduce){.travelWorld.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img{
     animation:none !important;
     transform:scale(1.02) !important;
     will-change:auto;
@@ -2765,21 +2142,17 @@ select.input option{background:#fff;color:var(--txt)}
 .homeBestHotels{position:relative}
 
 .homeVipServices{position:relative;padding:40px 0 44px;background:linear-gradient(180deg,#17100b 0%,#0c0907 100%);color:#fff;border-top:1px solid rgba(224,191,116,.18)}.homeVipServices .homeEditorialHead{padding-bottom:22px}
-.homeVipServices__single{padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}
 .homeVipServices__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}.homeVipServices__rail::-webkit-scrollbar{display:none}
 .vipServiceCard{position:relative;flex:0 0 min(80vw,326px);aspect-ratio:4/5;border:1px solid rgba(230,199,126,.14);border-radius:5px;overflow:hidden;padding:0;background:#120d09;text-align:left;scroll-snap-align:start;color:#fff}.vipServiceCard>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vipServiceCard--featured{flex-basis:min(88vw,356px);aspect-ratio:4/5;border-color:rgba(230,199,126,.38);box-shadow:0 18px 42px rgba(0,0,0,.28)}
-.vipServiceCard--solo{display:block;width:100%;max-width:none;flex:none}
 .vipServiceCard--featured .vipServiceCard__shade{background:linear-gradient(180deg,rgba(10,8,6,.04) 24%,rgba(10,8,6,.16) 44%,rgba(10,8,6,.90) 100%)}
 .vipServiceCard--featured .vipServiceCard__copy b{font-size:31px}
-.vipServiceCard--featured .vipServiceCard__copy p{font-size:12.5px;line-height:1.56;max-width:28ch}
-.vipServiceCard--plane>img{object-fit:contain;padding:18% 10%;background:radial-gradient(circle at 65% 34%,#2b2118,#0d0907 67%);transform:rotate(4deg) scale(.88)}.vipServiceCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.04) 30%,rgba(10,8,6,.17) 50%,rgba(10,8,6,.92) 100%)}
+.vipServiceCard--featured .vipServiceCard__copy p{font-size:12.5px;line-height:1.56;max-width:28ch}.vipServiceCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.04) 30%,rgba(10,8,6,.17) 50%,rgba(10,8,6,.92) 100%)}
 .vipServiceCard__copy{position:absolute;left:19px;right:19px;bottom:18px}.vipServiceCard__copy i,.vipServiceCard__copy em{display:flex;align-items:center;gap:5px;font-style:normal}.vipServiceCard__copy i{font-size:9px;letter-spacing:.19em;color:#E8C97E}.vipServiceCard__copy b{display:block;margin-top:7px;font-family:var(--display);font-size:25px;line-height:1.06}.vipServiceCard__copy p{margin:8px 0 0;max-width:29ch;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.72)}.vipServiceCard__copy em{margin-top:11px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C97E}.vipServiceCard__copy em svg{width:13px;height:13px}
 
-.homeTransferRequest{position:relative;min-height:330px;padding:36px calc(24px + var(--sar)) 38px calc(24px + var(--sal));overflow:hidden;color:#fff;background:linear-gradient(90deg,rgba(13,9,7,.96),rgba(13,9,7,.74)),url("../images/home-experiences/transfer.webp") center/cover no-repeat;border-top:1px solid rgba(230,199,126,.22);border-bottom:1px solid rgba(230,199,126,.22)}
-.homeTransferRequest__word{position:absolute;left:22px;right:10px;top:24px;font-size:clamp(34px,10vw,52px);font-weight:250;letter-spacing:.14em;color:rgba(230,199,126,.62)}.homeTransferRequest__copy{position:absolute;left:24px;right:24px;bottom:32px}.homeTransferRequest__copy .eyebrow{color:#E8C97E}.homeTransferRequest__copy h2{margin:7px 0 0;max-width:11ch;font-family:var(--display);font-size:34px;line-height:1.02}.homeTransferRequest__copy p{margin:11px 0 0;max-width:31ch;font-size:13px;line-height:1.55;color:rgba(255,255,255,.72)}.homeTransferRequest__copy button{margin-top:18px;padding:0 0 8px;border:0;border-bottom:1px solid rgba(230,199,126,.72);background:none;color:#E8C97E;display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:750;letter-spacing:.15em;text-transform:uppercase}.homeTransferRequest__copy button svg{width:14px;height:14px}
+.homeTransferRequest{position:relative;min-height:330px;padding:36px calc(24px + var(--sar)) 38px calc(24px + var(--sal));overflow:hidden;color:#fff;background:linear-gradient(90deg,rgba(13,9,7,.96),rgba(13,9,7,.74)),url("../images/home-experiences/transfer.webp") center/cover no-repeat;border-top:1px solid rgba(230,199,126,.22);border-bottom:1px solid rgba(230,199,126,.22)}.homeTransferRequest__copy{position:absolute;left:24px;right:24px;bottom:32px}.homeTransferRequest__copy .eyebrow{color:#E8C97E}.homeTransferRequest__copy h2{margin:7px 0 0;max-width:11ch;font-family:var(--display);font-size:34px;line-height:1.02}.homeTransferRequest__copy p{margin:11px 0 0;max-width:31ch;font-size:13px;line-height:1.55;color:rgba(255,255,255,.72)}.homeTransferRequest__copy button{margin-top:18px;padding:0 0 8px;border:0;border-bottom:1px solid rgba(230,199,126,.72);background:none;color:#E8C97E;display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:750;letter-spacing:.15em;text-transform:uppercase}.homeTransferRequest__copy button svg{width:14px;height:14px}
 .homeFinalCta--customer{padding-top:54px;padding-bottom:62px}.homeFinalCta--customer h2{max-width:11ch;font-size:clamp(38px,10.5vw,51px);line-height:.98;letter-spacing:-.035em}.homeFinalCta--customer p{max-width:34ch;font-size:14px;line-height:1.63}.homeFinalCta--customer button{margin-top:25px}
-.homePromoCard>img,.vipServiceCard>img{transform-origin:50% 50%;backface-visibility:hidden}.homePromoCard.is-alive>img,.vipServiceCard.is-alive>img{will-change:transform;animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both}.homePromoCard:nth-child(3n+2).is-alive>img,.vipServiceCard:nth-child(3n+2).is-alive>img{animation-name:livingImageB;animation-duration:15.8s}.homePromoCard:nth-child(3n).is-alive>img,.vipServiceCard:nth-child(3n).is-alive>img{animation-name:livingImageC;animation-duration:16.6s}.vipServiceCard--plane.is-alive>img{animation:none;will-change:auto}
+.homePromoCard>img,.vipServiceCard>img{transform-origin:50% 50%;backface-visibility:hidden}.homePromoCard.is-alive>img,.vipServiceCard.is-alive>img{will-change:transform;animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both}.homePromoCard:nth-child(3n+2).is-alive>img,.vipServiceCard:nth-child(3n+2).is-alive>img{animation-name:livingImageB;animation-duration:15.8s}.homePromoCard:nth-child(3n).is-alive>img,.vipServiceCard:nth-child(3n).is-alive>img{animation-name:livingImageC;animation-duration:16.6s}
 @media(max-width:360px){.homeVipCallback__form{grid-template-columns:1fr}.homeVipCallback__form button,.homeVipCallback__form small{grid-column:1}.homeSuperDealCard{min-height:330px}.homeSuperDealCard__copy b{font-size:30px}}
 @media(prefers-reduced-motion:reduce){.homePromoCard.is-alive>img,.vipServiceCard.is-alive>img{animation:none!important}}
 
@@ -2841,19 +2214,6 @@ select.input option{background:#fff;color:var(--txt)}
 .homeTransferQuick button{grid-column:1/-1;min-height:48px;margin-top:4px!important;padding:0 14px!important;border:1px solid rgba(230,199,126,.66)!important;border-radius:2px!important;background:#E0BF74!important;color:#18110c!important;display:flex!important;align-items:center;justify-content:space-between;width:100%;font-size:10px!important;font-weight:800!important;letter-spacing:.14em!important;text-transform:uppercase}
 .homeTransferQuick button svg{width:14px;height:14px}
 
-.homeArrivalModes{padding:18px calc(20px + var(--sar)) 42px calc(20px + var(--sal));background:linear-gradient(180deg,#15110d 0%,#0f0c09 100%);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
-.homeArrivalModes .homeEditorialHead{padding-bottom:18px}
-.homeArrivalModes__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.homeArrivalCard{display:block;padding:0;border:1px solid rgba(230,199,126,.16);border-radius:8px;overflow:hidden;background:#1a1410;text-align:left;color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.18)}
-.homeArrivalCard__media{position:relative;display:block;aspect-ratio:1.12/1;overflow:hidden;background:#221912}
-.homeArrivalCard__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
-.homeArrivalCard:active .homeArrivalCard__media img{transform:scale(1.03)}
-.homeArrivalCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,10,7,.04) 28%,rgba(14,10,7,.68) 100%)}
-.homeArrivalCard__copy{display:block;padding:14px 14px 15px}
-.homeArrivalCard__copy b,.homeArrivalCard__copy em{display:block;font-style:normal}
-.homeArrivalCard__copy b{font-family:var(--display);font-size:22px;line-height:1.02;font-weight:600;color:#fff}
-.homeArrivalCard__copy em{margin-top:7px;font-size:9.5px;line-height:1.45;letter-spacing:.08em;text-transform:uppercase;color:rgba(232,201,126,.82)}
-
 /* VIP transfer hero with restored aircraft movement, animated clouds and visible slipstream. */
 .homeAviationFinal{position:relative;min-height:620px;padding:58px calc(22px + var(--sar)) 72px calc(22px + var(--sal));overflow:hidden;background:radial-gradient(circle at 18% 12%,rgba(224,191,116,.16),transparent 32%),linear-gradient(180deg,#fffdf9 0%,#f4eee4 100%);border-top:1px solid rgba(181,139,55,.18);color:#21180f}
 .homeAviationFinal--transferHero{padding-top:62px;padding-bottom:330px}
@@ -2876,12 +2236,10 @@ select.input option{background:#fff;color:var(--txt)}
   .homeTransferQuick button{grid-column:1}
   .homeTransferRequest{min-height:720px}
   .homeAviationFinal{min-height:650px;padding-bottom:300px}
-  .homeArrivalModes__grid{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){
   .homeAviationFinal__plane img{animation:none}
-  .homeAviationFinal__trail,.homeAviationFinal>.flySky{display:none}
-  .homeYachtCard__media img,.homeArrivalCard__media img{transition:none}
+  .homeAviationFinal__trail,.homeAviationFinal>.flySky{display:none}.homeYachtCard__media img{transition:none}
 }
 
 /* CUSTOMER HOMEPAGE · r14 · 2026-08-18
@@ -2897,11 +2255,6 @@ select.input option{background:#fff;color:var(--txt)}
   border-top:1px solid rgba(230,199,126,.18);
   overflow:hidden;
   text-align:left;
-}
-.homeFinalCta--photo{
-  background:
-    linear-gradient(180deg,rgba(13,9,7,.04) 28%,rgba(13,9,7,.16) 54%,rgba(13,9,7,.84) 100%),
-    url("../images/r27/vip-final-resort-9x16.webp") center 44%/cover no-repeat;
 }
 .homeFinalCta--last::after{
   content:"";
@@ -2923,7 +2276,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeYachtHero{width:min(100%,980px);margin:0 auto 24px auto}
   .homeYachtHero__media{min-height:460px}
   .homeYachtCard{flex-basis:min(30vw,260px)}
-  .homeArrivalModes__grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .homeAviationFinal{padding-bottom:250px}
   .homeAviationFinal__plane{width:min(38vw,360px)}
   .homeSuperDealCard{min-height:420px;border-radius:0}
@@ -2967,18 +2319,13 @@ select.input option{background:#fff;color:var(--txt)}
     linear-gradient(90deg,rgba(13,9,7,.08),rgba(13,9,7,.02)),
     url("../images/r28/transfer-day-9x16.webp") center 22%/cover no-repeat;
 }
-.homeTransferRequest__word{display:none}
 @media(max-width:360px){
   .homeTransferRequest{min-height:720px;background-position:center 18%}
 }
 
 /* CUSTOMER HOMEPAGE · r29 · 2026-08-18
    VIP assistant fast-contact forms everywhere + daytime final page. */
-.homeFinalCta--photo{
-  background:
-    linear-gradient(180deg,rgba(8,14,17,.00) 24%,rgba(8,14,17,.08) 46%,rgba(7,10,11,.58) 68%,rgba(7,8,8,.96) 100%),
-    url("../images/r29/vip-final-day-9x16.webp") center 44%/cover no-repeat;
-}
+
 .homeFinalCta--last{min-height:820px;padding-bottom:54px}
 .homeFinalCta--last p{margin:12px 0 17px;max-width:29ch;color:rgba(255,255,255,.86);font-size:13.5px;line-height:1.55;text-shadow:0 2px 14px rgba(0,0,0,.45)}
 .vipLeadForm{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:18px}
@@ -3017,11 +2364,7 @@ select.input option{background:#fff;color:var(--txt)}
 /* CUSTOMER HOMEPAGE · r32 · 2026-08-18
    Final VIP page: smiling holiday couple speaking face-to-face with a VIP assistant.
    Car stays farther in the background with a Turkish-style white 07-00-01 plate. */
-.homeFinalCta--photo{
-  background:
-    linear-gradient(180deg,rgba(8,14,17,.00) 22%,rgba(8,14,17,.08) 43%,rgba(7,10,11,.58) 67%,rgba(7,8,8,.97) 100%),
-    url("../images/r32/vip-final-assistant-07oo01-9x16.webp") center 24%/cover no-repeat;
-}
+
 .homeTransferRequest .vipLeadForm input,
 .homeTransferRequest .vipLeadForm button{
   -webkit-backdrop-filter:none!important;
@@ -3179,7 +2522,6 @@ select.input option{background:#fff;color:var(--txt)}
   border-top:1px solid rgba(151,112,45,.14);
   border-bottom:1px solid rgba(151,112,45,.16);
 }
-.homeTransferRequest--tile .homeTransferRequest__word{display:none!important}
 .homeTransferTile{
   position:relative;
   width:100%;
