@@ -161,7 +161,6 @@ svg{
 .brandMark--sm{ width:26px; height:26px; }
 .brandMark--sm::after{ inset:4px; }
 
-
 /* ==========================================================================
    INTRO — cinematic hero, exactly one visible viewport height
    ========================================================================== */
@@ -402,7 +401,6 @@ svg{
 .intro__end.is-in .intro__endEyebrow,
 .intro__end.is-in .intro__endTitle{ transform:none; }
 
-
 /* ==========================================================================
    COUNTDOWN
    Positioning and animation are deliberately split across two elements:
@@ -496,8 +494,6 @@ svg{
   100% { transform:scale(1);    opacity:1; }
 }
 
-
-
 /* iOS Safari: animated SVG filters over a hardware-decoded full-screen video
    can briefly freeze the video compositor. Keep the countdown cinematic but
    use a static ring and a cheap number pulse on WebKit touch devices. */
@@ -554,8 +550,6 @@ svg{
   transition:opacity .45s var(--ease);
 }
 .intro__flash.is-in{ opacity:1; }
-
-
 
 /* ==========================================================================
    PLATFORM
@@ -855,7 +849,6 @@ svg{
 .trust li{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--txt);list-style:none;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 14px rgba(0,0,0,.5)}
 .trust svg{width:15px;height:15px;flex:0 0 15px;color:var(--gold);stroke-width:2.4}
 
-
 /* Short phones: keep the hero hierarchy clear without crowding the bottom nav. */
 @media (max-height:720px){
   .pHero__script{font-size:clamp(28px,8.4vw,38px);margin-bottom:0}
@@ -929,7 +922,6 @@ svg{
 .homeFinalCta h2{font-family:var(--display);font-size:31px;line-height:1.05;margin:9px 0 0;font-weight:600}
 .homeFinalCta p{margin:13px auto 22px;max-width:31ch;font-size:13.5px;line-height:1.6;color:var(--txt-2)}
 .homeFinalCta .btn{max-width:300px;margin:0 auto}
-
 
 .destinationIndex{padding:18px 0 42px;background:var(--ground-2)}
 .destinationIndex__intro{padding:18px calc(20px + var(--sar)) 24px calc(20px + var(--sal))}
@@ -1117,7 +1109,6 @@ svg{
 }
 .regionCard__txt b{display:block;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
 .regionCard__txt span{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);margin-top:5px}
-
 
 /* --- Home destination / excursion showcases ----------------------------- */
 .homeShowcase{
@@ -1748,56 +1739,9 @@ select.input option{background:#fff;color:var(--txt)}
    20px .wrap gutter: the whole point is that the image runs to both edges of
    the phone, so the type sits in the photograph rather than on a card.
    ========================================================================== */
-/* --------------------------------------------------------------------------
-   Upright clip bands
-
-   The operator's own footage, shot 9:16 on a phone. A 9:16 frame at phone width
-   is almost exactly one screen tall, which is the point: the clip gets the
-   screen to itself, the way it was filmed, instead of being letterboxed into a
-   landscape slot. One rule set, one row in CLIPS per clip.
-
-   Three layers in the frame — still, clip, type — for the same reason the
-   experience bands have them: the still is on screen first, the clip arrives
-   over it when the section comes into view, and if the video never loads at
-   all the section still reads as a finished thing rather than a black hole.
-   -------------------------------------------------------------------------- */
-.clipBand{margin:30px 0 0}
-.clipBand__frame{
-  position:relative;width:100%;
-  aspect-ratio:9/16;
-  overflow:hidden;background:#100D0A;
-  border-top:1px solid var(--hair-soft);
-  border-bottom:1px solid var(--hair-soft);
-}
-.clipBand__still,.clipBand__vid{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-}
-.clipBand__vid{z-index:1}
-.clipBand__scrim{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:linear-gradient(180deg,
-    rgba(16,12,8,.44) 0%,
-    rgba(16,12,8,.04) 24%,
-    rgba(16,12,8,.22) 58%,
-    rgba(16,12,8,.80) 100%);
-}
 /* The type sits on its own dark pane rather than on the gradient alone: this
    is moving image, so whatever is behind a given word changes from frame to
    frame, and a gradient tuned to one frame fails on the next. */
-.clipBand__panel{
-  position:absolute;left:16px;right:16px;bottom:18px;z-index:3;
-  padding:16px 18px 18px;
-}
-.clipBand__panel .eyebrow{color:var(--gold-light)}
-.clipBand__title{
-  font-family:var(--display);font-weight:600;
-  font-size:clamp(24px,7vw,32px);line-height:1.1;letter-spacing:-.02em;
-  margin:8px 0 0;color:#fff;
-}
-.clipBand__panel p{
-  margin:9px 0 0;font-size:13.5px;line-height:1.6;
-  color:rgba(255,255,255,.86);
-}
 
 .expBands{margin-top:44px}
 .expBands--homeTop{margin-top:0}
@@ -2240,34 +2184,6 @@ select.input option{background:#fff;color:var(--txt)}
 .confirmOver .tl.is-now .tl__dot{border-color:var(--gold);box-shadow:0 0 0 4px rgba(216,180,92,.22)}
 .confirmOver .tl::before{background:rgba(255,255,255,.18)}
 
-/* ==========================================================================
-   BLOCK PAGES
-
-   The four picture blocks on the home screen open now. A full-width photograph
-   that does nothing when you press it reads as broken on a phone, so the whole
-   clip band is a <button> — keyboard reachable and announced as openable —
-   while the two flight bands, which already carry a concierge button, get a
-   quiet second link instead of becoming one big tap target with two meanings.
-
-   The detail copy itself is still to come from the operator. What is here is
-   what the site can honestly say today: the block's own line, and the way an
-   offer actually comes about. Nothing is invented.
-   ========================================================================== */
-.clipBand__frame{
-  display:block;border:0;padding:0;margin:0;
-  background:#100D0A;color:inherit;font:inherit;text-align:left;
-  cursor:pointer;
-}
-.clipBand__frame:active .clipBand__panel{transform:scale(.985)}
-.clipBand__panel{transition:transform .18s var(--ease)}
-.clipBand__more{
-  display:inline-flex;align-items:center;gap:5px;
-  margin-top:13px;
-  font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold-light);
-}
-.clipBand__more svg{width:13px;height:13px;stroke-width:2}
-
 .flyBand__acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .linkMore{
   display:inline-flex;align-items:center;gap:5px;
@@ -2349,121 +2265,11 @@ select.input option{background:#fff;color:var(--txt)}
 .blockHero--plane{aspect-ratio:5/4}
 .blockHero--plane .blockHero__img{padding:6% 20%}
 
-/* ==========================================================================
-   VIP DECK
-
-   Three upright slides you swipe through, with dots — the shape people already
-   know from a card stack, in this site's language rather than a generic one.
-
-   One slide fills the width, which is what makes the snap safe here: a swipe
-   either changes the slide or it does not, so there is no half-card state to
-   bounce back from. (The regions rail had its snapping removed for exactly
-   that reason — 190px cards where a short nudge snapped back felt restless.)
-
-   scroll-behavior:smooth on the rail rather than only in the dot handler, so a
-   keyboard or a programmatic jump eases the same way a finger does.
-   ========================================================================== */
-.vipDeck{
-  margin:34px 0 0;position:relative;
-  /* everything that is NOT the picture: the sticky header, the tab bar, the row
-     of dots, and a little air. A 9:16 slide is 699 px tall on a 393 px phone
-     while the window between the two bars is 702 — so it "fitted" by three
-     pixels and in practice always had a bar across it. In a browser with its
-     address bar showing (measured 390 × 664) the window is 514 px and the slide
-     overhung it by 179. The slide is capped against this instead. */
-  --deckChrome:calc(64px + var(--sat) + var(--nav-h) + 66px);
-}
-.vipDeck__head{
-  font-family:var(--display);
-  font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--txt);text-align:center;margin:0;
-  padding:26px 20px 22px;background:var(--ground-2);
-  border-top:1px solid var(--hair-soft);
-}
-.vipDeck__rail{
-  display:flex;
-  overflow-x:auto;overflow-y:hidden;
-  scroll-snap-type:x mandatory;
-  scroll-behavior:smooth;
-  /* pan-x AND pan-y, which is the pattern every other sideways scroller here
-     uses. The two properties do different jobs and it is easy to conflate them:
-     `overscroll-behavior-x:contain` is what stops a sideways swipe running on
-     into the page, while `touch-action` says which gestures this element will
-     take at all. Written as bare `pan-x` it took the horizontal one and threw
-     the vertical one away — so a finger that landed on a slide could not scroll
-     the page, and since a slide is two thirds of a screen tall, almost every
-     scroll in this section landed on one. */
-  touch-action:pan-x pan-y;
-  overscroll-behavior-x:contain;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.vipDeck__rail::-webkit-scrollbar{display:none}
-.vipDeck__slide{
-  position:relative;flex:0 0 100%;width:100%;
-  display:grid;place-items:center;
-  /* 9:16 while it fits, otherwise as tall as the free window — never taller */
-  height:min(calc(100vw * 16 / 9), calc(100svh - var(--deckChrome)));
-  background:var(--ground-2);
-  scroll-snap-align:center;scroll-snap-stop:always;
-}
 /* The picture keeps its shape. When the window is the binding constraint the
    frame narrows rather than cropping, so the photograph is always whole — which
    is the point: these were composed for 9:16 and a crop takes the composition
    apart. What appears beside it is the section's own ivory, so the narrow case
    reads as a card rather than as a mistake. */
-.vipDeck__frame{
-  position:relative;height:100%;aspect-ratio:9/16;max-width:100%;
-  overflow:hidden;background:#100D0A;
-}
-.vipDeck__frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.vipDeck__scrim{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(16,12,8,.34) 0%,rgba(16,12,8,0) 26%,
-    rgba(16,12,8,.26) 58%,rgba(16,12,8,.84) 100%);
-}
-.vipDeck__panel{
-  position:absolute;left:16px;right:16px;bottom:18px;
-  padding:18px 18px 16px;
-}
-.vipDeck__ic{display:block;color:var(--gold-light);margin-bottom:11px}
-.vipDeck__ic svg{width:24px;height:24px;stroke-width:1.2}
-.vipDeck__panel .eyebrow{color:var(--gold-light)}
-.vipDeck__title{
-  font-family:var(--display);font-weight:600;
-  font-size:clamp(23px,6.6vw,30px);line-height:1.12;letter-spacing:-.02em;
-  margin:8px 0 0;color:#fff;
-}
-.vipDeck__panel p{
-  margin:9px 0 0;font-size:13.5px;line-height:1.6;
-  color:rgba(255,255,255,.86);
-}
-.vipDeck__panel .linkMore{margin-top:12px;padding-left:0}
-.vipDeck__dots{
-  display:flex;justify-content:center;gap:9px;
-  padding:16px 0 22px;background:var(--ground-2);
-}
-.vipDeck__dot{
-  width:7px;height:7px;border-radius:50%;padding:0;border:0;
-  background:rgba(42,33,25,.22);cursor:pointer;
-  transition:background .25s var(--ease),transform .25s var(--ease);
-}
-.vipDeck__dot.is-on{background:var(--gold-ink);transform:scale(1.3)}
-@media (prefers-reduced-motion:reduce){
-  .vipDeck__rail{scroll-behavior:auto}
-  .vipDeck__dot{transition:none}
-}
-/* On a short window the frame shrinks but the panel does not, and it ended up
-   covering most of the picture. Trim it where the room is scarce. */
-@media (max-height:740px){
-  .vipDeck__panel{left:12px;right:12px;bottom:12px;padding:13px 14px 12px}
-  .vipDeck__ic{margin-bottom:8px}
-  .vipDeck__ic svg{width:20px;height:20px}
-  .vipDeck__title{font-size:clamp(19px,5.4vw,24px);margin-top:6px}
-  .vipDeck__panel p{font-size:12.5px;margin-top:7px}
-  .vipDeck__panel .linkMore{margin-top:9px;font-size:10px}
-}
-
 
 /* ==========================================================================
    Slim home — categories, excursions and VIP assistance first
@@ -2577,7 +2383,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeExcCard img{transition:none}
 }
 
-
 /* Five curated offers: one feature card, four supporting cards. */
 .homeOffers{padding:34px 0 40px;background:var(--ground)}
 .homeOffers .homeEditorialHead{padding-bottom:20px}
@@ -2616,7 +2421,6 @@ select.input option{background:#fff;color:var(--txt)}
 @media (prefers-reduced-motion:reduce){
   .blockHero__video{display:none}
 }
-
 
 /* ========================================================================== 
    FINAL PREMIUM PASS · 2026-08-17
@@ -2822,7 +2626,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeMotionCard.reveal,.homeOfferCard.reveal,.homeServiceCard.reveal,.homeSecondaryLinks button.reveal{transform:none}
 }
 
-
 /* ========================================================================== 
    HERO MOTION STABLE · r9
    Visible but restrained Ken Burns movement. Animation begins only when a
@@ -2875,48 +2678,16 @@ select.input option{background:#fff;color:var(--txt)}
    viewport receive .is-alive, so off-screen images do not keep the compositor
    busy on iOS. Transform-only animation keeps layout and paint untouched.
    ========================================================================== */
-.travelWorld img,
-.homeExcCard img,
-.destinationHome__card img,
-.homeExperience img,
-.homeOfferCard__media>img,
-.featureCard img,
-.vipDeck__frame>img,
-.homeConcierge>img{
+.travelWorld img,.homeExcCard img,.destinationHome__card img,.homeExperience img,.homeOfferCard__media>img,.featureCard img,.homeConcierge>img{
   transform-origin:50% 50%;
   backface-visibility:hidden;
-}
-
-.travelWorld.is-alive img,
-.homeExcCard.is-alive img,
-.destinationHome__card.is-alive img,
-.homeExperience.is-alive img,
-.homeOfferCard.is-alive .homeOfferCard__media>img,
-.featureCard.is-alive img,
-.vipDeck__frame.is-alive>img,
-.homeConcierge.is-alive>img{
+}.travelWorld.is-alive img,.homeExcCard.is-alive img,.destinationHome__card.is-alive img,.homeExperience.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img,.featureCard.is-alive img,.homeConcierge.is-alive>img{
   will-change:transform;
   animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both;
-}
-
-.travelWorld:nth-child(3n+2).is-alive img,
-.homeExcCard:nth-child(3n+2).is-alive img,
-.destinationHome__card:nth-child(3n+2).is-alive img,
-.homeExperience:nth-child(3n+2).is-alive img,
-.homeOfferCard:nth-child(3n+2).is-alive .homeOfferCard__media>img,
-.featureCard:nth-child(3n+2).is-alive img,
-.vipDeck__slide:nth-child(3n+2) .vipDeck__frame.is-alive>img{
+}.travelWorld:nth-child(3n+2).is-alive img,.homeExcCard:nth-child(3n+2).is-alive img,.destinationHome__card:nth-child(3n+2).is-alive img,.homeExperience:nth-child(3n+2).is-alive img,.homeOfferCard:nth-child(3n+2).is-alive .homeOfferCard__media>img,.featureCard:nth-child(3n+2).is-alive img{
   animation-name:livingImageB;
   animation-duration:15.8s;
-}
-
-.travelWorld:nth-child(3n).is-alive img,
-.homeExcCard:nth-child(3n).is-alive img,
-.destinationHome__card:nth-child(3n).is-alive img,
-.homeExperience:nth-child(3n).is-alive img,
-.homeOfferCard:nth-child(3n).is-alive .homeOfferCard__media>img,
-.featureCard:nth-child(3n).is-alive img,
-.vipDeck__slide:nth-child(3n) .vipDeck__frame.is-alive>img{
+}.travelWorld:nth-child(3n).is-alive img,.homeExcCard:nth-child(3n).is-alive img,.destinationHome__card:nth-child(3n).is-alive img,.homeExperience:nth-child(3n).is-alive img,.homeOfferCard:nth-child(3n).is-alive .homeOfferCard__media>img,.featureCard:nth-child(3n).is-alive img{
   animation-name:livingImageC;
   animation-duration:16.6s;
 }
@@ -2949,21 +2720,12 @@ select.input option{background:#fff;color:var(--txt)}
   to{transform:scale(1.088) translate3d(.66%,.38%,0)}
 }
 
-@media (prefers-reduced-motion:reduce){
-  .travelWorld.is-alive img,
-  .homeExcCard.is-alive img,
-  .destinationHome__card.is-alive img,
-  .homeExperience.is-alive img,
-  .homeOfferCard.is-alive .homeOfferCard__media>img,
-  .featureCard.is-alive img,
-  .vipDeck__frame.is-alive>img,
-  .homeConcierge.is-alive>img{
+@media (prefers-reduced-motion:reduce){.travelWorld.is-alive img,.homeExcCard.is-alive img,.destinationHome__card.is-alive img,.homeExperience.is-alive img,.homeOfferCard.is-alive .homeOfferCard__media>img,.featureCard.is-alive img,.homeConcierge.is-alive>img{
     animation:none !important;
     transform:scale(1.02) !important;
     will-change:auto;
   }
 }
-
 
 /* CUSTOMER HOMEPAGE RESTRUCTURE · r12 · 2026-08-18 */
 .homePromos{position:relative;padding:38px 0 46px;background:linear-gradient(180deg,#fbfaf7 0%,#f6f0e7 100%)}
@@ -2998,7 +2760,6 @@ select.input option{background:#fff;color:var(--txt)}
 .homeBestHotels{margin-top:26px}
 .homeYachts{margin-top:8px}
 .homeSuperDeal{margin-top:24px}
-
 
 .travelWorlds--customer{position:relative;padding-top:38px;padding-bottom:42px;color:#fff;background:linear-gradient(180deg,#120d09 0%,#0d0907 100%);border-bottom:1px solid rgba(224,191,116,.17)}.travelWorlds--customer .homeEditorialHead{padding-bottom:22px}.travelWorlds--customer .travelWorld{border-color:rgba(230,199,126,.14);box-shadow:0 16px 38px rgba(0,0,0,.18)}
 .homeBestHotels{position:relative}
@@ -3079,7 +2840,6 @@ select.input option{background:#fff;color:var(--txt)}
 .homeTransferQuick input:focus{border-color:rgba(230,199,126,.72);background:rgba(255,255,255,.09)}
 .homeTransferQuick button{grid-column:1/-1;min-height:48px;margin-top:4px!important;padding:0 14px!important;border:1px solid rgba(230,199,126,.66)!important;border-radius:2px!important;background:#E0BF74!important;color:#18110c!important;display:flex!important;align-items:center;justify-content:space-between;width:100%;font-size:10px!important;font-weight:800!important;letter-spacing:.14em!important;text-transform:uppercase}
 .homeTransferQuick button svg{width:14px;height:14px}
-
 
 .homeArrivalModes{padding:18px calc(20px + var(--sar)) 42px calc(20px + var(--sal));background:linear-gradient(180deg,#15110d 0%,#0f0c09 100%);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
 .homeArrivalModes .homeEditorialHead{padding-bottom:18px}
@@ -3242,7 +3002,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeFinalCta--last{min-height:790px;padding-left:20px;padding-right:20px}
 }
 
-
 /* CUSTOMER HOMEPAGE · r30 · 2026-08-18
    VIP transfer: black premium car + chauffeur, Turkish plate 07-OO-01. */
 .homeTransferRequest{
@@ -3254,7 +3013,6 @@ select.input option{background:#fff;color:var(--txt)}
 @media(max-width:360px){
   .homeTransferRequest{min-height:720px;background-position:center 17%}
 }
-
 
 /* CUSTOMER HOMEPAGE · r32 · 2026-08-18
    Final VIP page: smiling holiday couple speaking face-to-face with a VIP assistant.
@@ -3269,7 +3027,6 @@ select.input option{background:#fff;color:var(--txt)}
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
-
 
 /* CUSTOMER HOMEPAGE · r33 · 2026-08-18
    Final VIP page rebuilt 1:1 to the approved mobile reference.
@@ -3387,7 +3144,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeFinalCta--last .vipLeadForm--final{grid-template-columns:1fr 1fr}
   .homeFinalCta--last .vipLeadForm button{grid-column:1/-1}
 }
-
 
 /* CUSTOMER HOMEPAGE · r34 · 2026-08-18
    Transfer redesigned as a pure premium UI tile: no photo, no black-glass blur.
@@ -3547,7 +3303,6 @@ select.input option{background:#fff;color:var(--txt)}
   }
 }
 
-
 /* CUSTOMER HOMEPAGE · r36 · 2026-08-18
    - Yacht video shown at its native 9:16 composition: no cover-crop / no artificial zoom.
    - Final VIP image uses the same restrained Ken-Burns motion language as the opening hero.
@@ -3630,7 +3385,6 @@ select.input option{background:#fff;color:var(--txt)}
   right:12px!important;
   border-radius:8px!important;
 }
-
 
 /* CUSTOMER HOMEPAGE · r41 · 2026-08-18
    Yacht video: preserve the complete native 9:16 frame with zero cover crop/zoom.
