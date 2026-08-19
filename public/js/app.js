@@ -1479,8 +1479,12 @@
   }
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
   LANG = S.lang || detectLang();
+  /* The standard `lang` attribute only. A `data-lang` copy used to sit here as
+     well; nothing read it — no CSS rule, no other line of script — but it put
+     the attribute on the root element, where it turned the click handler's
+     language branch into a trap that swallowed every click on the site. Use
+     :lang() or documentElement.lang if a hook is ever needed. */
   document.documentElement.lang=LANG;
-  document.documentElement.dataset.lang=LANG;
   try{
     document.title = hx('ONLYONE · Путешествия по Турции','ONLYONE · Reisen in der Türkei','ONLYONE · Luxury Travel in Türkiye');
     const md=document.querySelector('meta[name="description"]');
@@ -3760,8 +3764,15 @@
     if(tp){go('trip',tp.dataset.trip);return;}
     const sq=T.closest('[data-sreq]');
     if(sq){go('s-reqd',sq.dataset.sreq);return;}
-    const lg=T.closest('[data-lang]');
-    if(lg){LANG=lg.dataset.lang;S.lang=LANG;document.documentElement.lang=LANG;document.documentElement.dataset.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
+    /* `button[data-lang]`, not `[data-lang]`. The language chips are buttons;
+       nothing else in the app carries the attribute. Written open, this branch
+       once matched every click on the page, because <html> carried data-lang
+       too — closest() walks all the way up — so it fired on every tap, set the
+       language to the one already chosen, and returned. Everything below this
+       line was unreachable: the whole wizard and the entire data-act switch,
+       which is to say every form on the site. */
+    const lg=T.closest('button[data-lang]');
+    if(lg){LANG=lg.dataset.lang;S.lang=LANG;document.documentElement.lang=LANG;save();closeSheet();setTimeout(render,260);return;}
 
     /* wizard */
     const w=T.closest('[data-w]');
