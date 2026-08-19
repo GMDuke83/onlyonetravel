@@ -55,22 +55,31 @@ onlyonetravel/
 │   ├── index.html                 intro markup + platform mount point
 │   ├── css/app.css                intro styles + platform styles
 │   ├── js/app.js                  intro controller + platform application
-│   ├── video/
-│   │   ├── onlyone-hero-ocean-v3.mp4   intro hero — silent
-│   │   └── onlyone-marina-v1.mp4       platform banner — silent by design
+│   ├── video/                     8 clips, every one of them silent
+│   │   ├── onlyone-hero-ocean-v4.mp4   intro hero
+│   │   ├── onlyone-yacht-tour-v2.mp4   yacht band, loaded on approach
+│   │   ├── onlyone-vip-welcome-v3.mp4  VIP welcome, loaded on approach
+│   │   └── …                           excursions, confirm, events, tours
+│   ├── audio/                     the intro's sound, and nothing else's
 │   ├── images/
 │   │   ├── hero/                       3-image cinematic hero rotation
-│   │   ├── worlds/                     4 distinct travel-world images
+│   │   ├── worlds/  worlds-r13/        travel-world imagery
 │   │   ├── destinations/               Türkiye-wide destination imagery
-│   │   ├── home-experiences/           selected homepage experiences
 │   │   ├── hotels/                     hotel & Antalya-region imagery
-│   │   └── *.webp                      service imagery / video posters
+│   │   ├── excursions/                 excursion imagery
+│   │   ├── clouds/  3d/                sprites for the flying plane
+│   │   ├── r18/ … r34/                 imagery added per release round
+│   │   └── video-posters/              first frames, shown while a clip loads
+│   ├── fonts/                     Inter + Great Vibes, latin and cyrillic
 │   ├── icons/
 │   ├── _headers                   Cloudflare Pages cache/mime rules
+│   ├── version.json               build id; the page reloads itself on a change
 │   └── manifest.webmanifest
 │
 ├── scripts/dev-server.js          zero-dependency local server (Range support)
+├── scripts/render-clouds/         raymarches the cloud sprites offline
 ├── docs/project-notes.md          decisions, open points, asset provenance
+├── assets-source/                 untouched originals behind some images
 ├── .github/workflows/             GitHub Pages + Cloudflare Pages deployment
 ├── vercel.json
 ├── package.json
