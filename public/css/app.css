@@ -2148,15 +2148,17 @@ select.input option{background:#fff;color:var(--txt)}
    one reads as not yet there. Filling in CONTACT in app.js turns the second
    state into the first with no change here. */
 .siteFooter{position:relative;padding:46px calc(22px + var(--sar)) 42px calc(22px + var(--sal));background:linear-gradient(180deg,#1A140E 0%,#110C08 100%);color:#F2EDE4;border-top:1px solid rgba(224,187,168,.22)}
-/* The logo sits at the right edge; CONTACT and everything under it stay
-   left, so the block reads as one column with the mark closing it off
-   rather than two things stacked flush left. */
-.siteFooter__brand{display:flex;align-items:center;justify-content:flex-end}
+/* The logo is centred over the block it heads. */
+.siteFooter__brand{display:flex;align-items:center;justify-content:center}
 /* The heading takes the key the app already carries in all five languages
    rather than a sixth translation of the same word; the caps are the
    stylesheet's, so İLETİŞİM keeps its dotted I. */
-.siteFooter__head{margin:22px 0 0;font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;line-height:1.1;color:#F2EDE4}
-.siteFooter__rule{height:1px;margin:26px 0 22px;background:linear-gradient(90deg,rgba(224,187,168,.34),rgba(224,187,168,.05))}
+/* CONTACT moved below the rule and now introduces the three rows directly,
+   so it is sized as their label rather than as the block's heading: 10px
+   against the 9px dt beside it, close enough to belong to them and just
+   clear enough to lead. The old 22px top margin belonged above the rule. */
+.siteFooter__head{margin:0 0 16px;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;line-height:1.1;color:#F2EDE4}
+.siteFooter__rule{height:1px;margin:26px 0 18px;background:linear-gradient(90deg,rgba(224,187,168,.34),rgba(224,187,168,.05))}
 .siteFooter__rows{margin:0;display:grid;gap:13px}
 .siteFooter__row{display:grid;grid-template-columns:82px 1fr;align-items:baseline;gap:12px}
 .siteFooter__row dt{font-size:8.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C8A392}
@@ -2193,17 +2195,56 @@ span.siteFooter__ic{cursor:default}
      its whole row taller than the other and the block stops reading as a
      grid. Titles wrap differently in five languages, so this is not a
      German-only concern. */
-.homeGatewayTile{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:128px;padding:15px 15px 14px;border:1px solid rgba(131,87,70,.18);border-radius:4px;background:var(--ground-3);color:var(--txt);text-align:left;transition:transform .28s var(--ease),background .28s var(--ease)}
-.homeGatewayTile:active{transform:translateY(1px);background:#E9E0D0}
-.homeGatewayTile__ic{display:flex;color:var(--gold-ink)}
-.homeGatewayTile__ic svg{width:22px;height:22px}
-.homeGatewayTile__copy{display:block;margin-top:14px}
+/* The four tiles carry the whole offering, so they should not read as four
+   grey boxes with a hairline. Four changes, each borrowed from something the
+   page already does rather than invented for them:
+
+   The ground is a gradient rather than one flat beige, lit from the top, and
+   a white inset line along the top edge gives it the lift a flat fill cannot.
+   Under it a shadow the colour of the ink, not black, so it stays warm.
+
+   The icon gets the round medallion the footer's social icons already use --
+   same rose gold hairline, same idea -- which turns a small loose glyph into
+   a deliberate mark and gives the tile a fixed point to build on.
+
+   The chevron moves from floating in the top right to the baseline of the
+   label, where it reads as the action belonging to that label instead of a
+   decoration in the corner.
+
+   Pressed, the tile sinks into its own gradient rather than jumping to a
+   different beige. */
+.homeGatewayTile{
+  position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  min-height:138px;padding:16px 15px 15px;
+  border:1px solid rgba(131,87,70,.16);border-radius:6px;
+  background:linear-gradient(168deg,#F6F0E6 0%,#EFE7D9 52%,#E9E0D0 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72), 0 6px 16px rgba(74,50,34,.07);
+  color:var(--txt);text-align:left;
+  transition:transform .28s var(--ease),box-shadow .28s var(--ease),filter .28s var(--ease);
+}
+.homeGatewayTile:active{
+  transform:translateY(1px);
+  filter:brightness(.975);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 2px 7px rgba(74,50,34,.09);
+}
+.homeGatewayTile__ic{
+  display:grid;place-items:center;
+  width:34px;height:34px;flex:0 0 34px;
+  border:1px solid rgba(155,109,34,.30);border-radius:50%;
+  color:var(--gold-ink);
+}
+.homeGatewayTile__ic svg{width:17px;height:17px}
+/* Only the last line of the label has to clear the chevron -- it sits at the
+   bottom now, so keeping that reserve on the whole block cost the title 18px
+   of width it did not need and broke "Die schoensten Unterkuenfte" over three
+   lines, which then set the height of all four tiles. */
+.homeGatewayTile__copy{display:block;margin-top:13px}
 .homeGatewayTile__copy b{display:block;font-family:var(--display);font-size:18px;line-height:1.1;font-weight:600;letter-spacing:-.012em}
-.homeGatewayTile__copy i{display:block;margin-top:6px;font-style:normal;font-size:9px;line-height:1.4;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
-.homeGatewayTile__go{position:absolute;right:13px;top:14px;display:flex;color:var(--gold-ink);opacity:.45}
-.homeGatewayTile__go svg{width:14px;height:14px}
-@media(max-width:340px){.homeGatewayTile{min-height:116px;padding:13px}.homeGatewayTile__copy b{font-size:16px}.homeGatewayTile__copy i{font-size:8.5px}}
-@media(min-width:760px){.homeGateway{padding-top:24px}.homeGateway__grid{max-width:980px;margin:0 auto;gap:12px}.homeGatewayTile{min-height:152px;padding:20px}.homeGatewayTile__copy b{font-size:21px}}
+.homeGatewayTile__copy i{display:block;margin-top:6px;padding-right:34px;font-style:normal;font-size:9px;line-height:1.4;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+.homeGatewayTile__go{position:absolute;right:13px;bottom:15px;display:flex;color:var(--gold-ink);opacity:.6}
+.homeGatewayTile__go svg{width:13px;height:13px}
+@media(max-width:340px){.homeGatewayTile{min-height:128px;padding:13px}.homeGatewayTile__ic{width:30px;height:30px;flex-basis:30px}.homeGatewayTile__ic svg{width:15px;height:15px}.homeGatewayTile__copy b{font-size:16px}.homeGatewayTile__copy i{font-size:8.5px}}
+@media(min-width:760px){.homeGateway{padding-top:24px}.homeGateway__grid{max-width:980px;margin:0 auto;gap:12px}.homeGatewayTile{min-height:162px;padding:20px}.homeGatewayTile__ic{width:38px;height:38px;flex-basis:38px}.homeGatewayTile__ic svg{width:19px;height:19px}.homeGatewayTile__copy b{font-size:21px}}
 
 .homePromos{position:relative;padding:38px 0 46px;background:linear-gradient(180deg,#fbfaf7 0%,#f6f0e7 100%)}
 .homePromos .homeEditorialHead{padding-bottom:20px}
