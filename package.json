@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "node scripts/dev-server.js",
     "start": "node scripts/dev-server.js",
-    "build": "echo \"No build step — 'public/' is deployed as-is.\" && exit 0"
+    "build": "echo \"No build step — 'public/' is deployed as-is.\" && exit 0",
+    "stamp": "node scripts/stamp-build.js",
+    "stamp:check": "node scripts/stamp-build.js --check"
   },
   "engines": {
     "node": ">=18"

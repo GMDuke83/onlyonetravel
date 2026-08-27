@@ -63,6 +63,13 @@ jobs:
           echo "hero video: $bytes bytes"
           [ "$bytes" -gt 100000 ] || { echo "::error::hero video looks truncated"; exit 1; }
 
+      # The build id has to move whenever public/ moves, or a browser that
+      # has been here before has no way to learn it is holding old files.
+      # Deriving it from the commit is what makes it impossible to forget.
+      - name: Stamp the build id
+        if: steps.check.outputs.ready == 'true'
+        run: node scripts/stamp-build.js
+
       - name: Publish to Cloudflare Pages
         if: steps.check.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@v3

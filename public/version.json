@@ -1,6 +1,7 @@
 {
   "version": "R43",
-  "date": "2026-08-18",
+  "date": "2026-08-19",
   "label": "r43-mobile",
-  "build": "20260818-customer-home-r43"
+  "build": "20260819-1157-591a965",
+  "commit": "591a965c5fea279ba039f090dab862ce8e88c993"
 }

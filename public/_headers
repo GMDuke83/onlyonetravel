@@ -1,5 +1,12 @@
 # Cloudflare Pages headers
 # https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Read this before trusting it: the live site is on GitHub Pages, which
+# honours neither this file nor vercel.json and serves everything with
+# max-age=600. What keeps a deployed page from going stale is the build id
+# in version.json, which the page polls and reloads itself on — see
+# scripts/stamp-build.js. These rules apply on Cloudflare and on the dev
+# server, and are the policy this project wants wherever it can have it.
 
 # HTML must never be served from a long-lived cache during development,
 # otherwise an old page keeps pointing at an old asset.
@@ -12,12 +19,19 @@
   Cache-Control: no-cache, must-revalidate
   X-Content-Type-Options: nosniff
 
-# CSS and JS are not fingerprinted yet — revalidate on every load.
+# The build id every deployment stamps onto ?v= already makes these fresh
+# URLs; revalidating as well costs one conditional request and removes the
+# last way an old file can survive a deploy.
 /css/*
   Cache-Control: no-cache, must-revalidate
 
 /js/*
   Cache-Control: no-cache, must-revalidate
+
+# The one request that must never be answered from a cache: it is what the
+# page asks to find out whether it is the current build.
+/version.json
+  Cache-Control: no-store
 
 # The hero video carries its version in the filename (…-v1.mp4), so a long
 # cache is safe: publishing a new cut means publishing a new filename.

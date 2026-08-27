@@ -67,6 +67,13 @@ jobs:
           echo "hero video: $bytes bytes"
           [ "$bytes" -gt 100000 ] || { echo "::error::hero video looks truncated"; exit 1; }
 
+      # The build id has to move whenever public/ moves, or a browser that
+      # has been here before has no way to learn it is holding old files —
+      # and on GitHub Pages there is no cache header to fall back on. Deriving
+      # the id from the commit is what makes it impossible to forget.
+      - name: Stamp the build id
+        run: node scripts/stamp-build.js
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
