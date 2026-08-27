@@ -2100,11 +2100,14 @@ select.input option{background:#fff;color:var(--txt)}
    one reads as not yet there. Filling in CONTACT in app.js turns the second
    state into the first with no change here. */
 .siteFooter{position:relative;padding:46px calc(22px + var(--sar)) 42px calc(22px + var(--sal));background:linear-gradient(180deg,#1A140E 0%,#110C08 100%);color:#F2EDE4;border-top:1px solid rgba(224,187,168,.22)}
-.siteFooter__brand{display:flex;align-items:center;gap:13px}
+/* The logo sits at the right edge; CONTACT and everything under it stay
+   left, so the block reads as one column with the mark closing it off
+   rather than two things stacked flush left. */
+.siteFooter__brand{display:flex;align-items:center;justify-content:flex-end}
 /* The heading takes the key the app already carries in all five languages
    rather than a sixth translation of the same word; the caps are the
    stylesheet's, so İLETİŞİM keeps its dotted I. */
-.siteFooter__head{margin:22px 0 0;font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;line-height:1.1;color:#F2EDE4}
+.siteFooter__head{margin:22px 0 0;font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;line-height:1.1;color:#F2EDE4}
 .siteFooter__rule{height:1px;margin:26px 0 22px;background:linear-gradient(90deg,rgba(224,187,168,.34),rgba(224,187,168,.05))}
 .siteFooter__rows{margin:0;display:grid;gap:13px}
 .siteFooter__row{display:grid;grid-template-columns:82px 1fr;align-items:baseline;gap:12px}
