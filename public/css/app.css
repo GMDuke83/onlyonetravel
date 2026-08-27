@@ -871,11 +871,6 @@ svg{
 .travelWorld__copy>span{grid-column:2;grid-row:1/3;align-self:center;color:var(--gold-light)}
 .travelWorld__copy svg{width:18px;height:18px}
 
-.homeFinalCta{padding:48px calc(22px + var(--sar)) 54px calc(22px + var(--sal));background:var(--ground-2);text-align:center;border-top:1px solid var(--hair-soft)}
-.homeFinalCta h2{font-family:var(--display);font-size:31px;line-height:1.05;margin:9px 0 0;font-weight:600}
-.homeFinalCta p{margin:13px auto 22px;max-width:31ch;font-size:13.5px;line-height:1.6;color:var(--txt-2)}
-.homeFinalCta .btn{max-width:300px;margin:0 auto}
-
 .destinationIndex{padding:18px 0 42px;background:var(--ground-2)}
 .destinationIndex__intro{padding:18px calc(20px + var(--sar)) 24px calc(20px + var(--sal))}
 .destinationIndex__intro h1{font-family:var(--display);font-size:34px;line-height:1.02;margin:8px 0 0;font-weight:600;letter-spacing:-.03em}
@@ -1916,12 +1911,9 @@ select.input option{background:#fff;color:var(--txt)}
 .pHero__cta:active{transform:translateX(2px)}
 
 /* Chapter separators — subtle, not decorative clutter. */
-.travelWorlds,.homeOffers,.homeFinalCta{position:relative}.homeOffers::before{
+.travelWorlds,.homeOffers{position:relative}.homeOffers::before{
   content:"";position:absolute;left:20px;right:20px;top:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(181,139,55,.24) 18%,rgba(181,139,55,.24) 82%,transparent);
-}.homeFinalCta::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(224,191,116,.32),transparent);
 }
 
 /* VIP focus — slightly more breathing room, calm typography. */
@@ -1959,19 +1951,6 @@ select.input option{background:#fff;color:var(--txt)}
 /* Premium secondary navigation — edge-to-edge cards, but not form buttons. */
 
 /* Closing invitation — the page ends with the service, not with navigation. */
-.homeFinalCta{
-  padding:44px calc(24px + var(--sar)) 52px calc(24px + var(--sal));
-  background:radial-gradient(circle at 82% 12%,rgba(224,191,116,.16),transparent 34%),linear-gradient(145deg,#17100b 0%,#0d0907 72%);
-  color:#fff;text-align:left;
-}
-.homeFinalCta .eyebrow{color:#E6C77E}
-.homeFinalCta h2{margin:9px 0 0;max-width:12ch;font-family:var(--display);font-size:34px;line-height:1.04;letter-spacing:-.035em;font-weight:600}
-.homeFinalCta p{margin:15px 0 0;max-width:33ch;font-size:13.5px;line-height:1.62;color:rgba(255,255,255,.72)}
-.homeFinalCta button{
-  display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:0 0 9px;border:0;border-bottom:1px solid rgba(230,199,126,.74);
-  background:none;color:#E6C77E;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-}
-.homeFinalCta button svg{width:14px;height:14px}
 
 /* Bottom navigation — flatter glass, active state is a small gold signal. */
 .tabbar{
@@ -1995,9 +1974,6 @@ select.input option{background:#fff;color:var(--txt)}
 
 @media (hover:hover){
   .homeOfferCard:hover .homeOfferCard__media>img{transform:scale(1.025)}
-}
-@media (max-width:360px){
-  .homeFinalCta h2{font-size:31px}
 }
 @media (prefers-reduced-motion:reduce){
   .pHero__img{animation:none;transition-duration:.35s}.homeOfferCard.reveal{transform:none}
@@ -2105,6 +2081,35 @@ select.input option{background:#fff;color:var(--txt)}
 }
 
 /* CUSTOMER HOMEPAGE RESTRUCTURE · r12 · 2026-08-18 */
+
+/* The four main areas, directly under the hero.
+
+   Everything else on this page is a photograph asking to be looked at, and a
+   fifth row of pictures here would have been read as a fifth offer rather
+   than as the way in. So this block is typographic and beige: it is the one
+   place that answers "what is actually here" instead of selling something,
+   and the quiet ground is what lets it say so.
+
+   Beige is --ground-3, the warm sand already in the palette; the gold is
+   --gold-ink rather than the decorative gold, because on this ground the
+   bright one measures 1.8:1 and cannot carry a label. */
+.homeGateway{position:relative;padding:18px calc(20px + var(--sar)) 6px calc(20px + var(--sal));background:#fbfaf7}
+.homeGateway__grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:10px}  /* 1fr rows, not auto: a two-line label in one tile would otherwise make
+     its whole row taller than the other and the block stops reading as a
+     grid. Titles wrap differently in five languages, so this is not a
+     German-only concern. */
+.homeGatewayTile{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:128px;padding:15px 15px 14px;border:1px solid rgba(126,91,43,.18);border-radius:4px;background:var(--ground-3);color:var(--txt);text-align:left;transition:transform .28s var(--ease),background .28s var(--ease)}
+.homeGatewayTile:active{transform:translateY(1px);background:#E9E0D0}
+.homeGatewayTile__ic{display:flex;color:var(--gold-ink)}
+.homeGatewayTile__ic svg{width:22px;height:22px}
+.homeGatewayTile__copy{display:block;margin-top:14px}
+.homeGatewayTile__copy b{display:block;font-family:var(--display);font-size:18px;line-height:1.1;font-weight:600;letter-spacing:-.012em}
+.homeGatewayTile__copy i{display:block;margin-top:6px;font-style:normal;font-size:9px;line-height:1.4;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+.homeGatewayTile__go{position:absolute;right:13px;top:14px;display:flex;color:var(--gold-ink);opacity:.45}
+.homeGatewayTile__go svg{width:14px;height:14px}
+@media(max-width:340px){.homeGatewayTile{min-height:116px;padding:13px}.homeGatewayTile__copy b{font-size:16px}.homeGatewayTile__copy i{font-size:8.5px}}
+@media(min-width:760px){.homeGateway{padding-top:24px}.homeGateway__grid{max-width:980px;margin:0 auto;gap:12px}.homeGatewayTile{min-height:152px;padding:20px}.homeGatewayTile__copy b{font-size:21px}}
+
 .homePromos{position:relative;padding:38px 0 46px;background:linear-gradient(180deg,#fbfaf7 0%,#f6f0e7 100%)}
 .homePromos .homeEditorialHead{padding-bottom:20px}
 .homePromos__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}
@@ -2118,7 +2123,7 @@ select.input option{background:#fff;color:var(--txt)}
 .homeSuperDeal{position:relative;padding:10px 0 48px;background:linear-gradient(180deg,#f8f3ea 0%,#f3ecdf 100%)}
 .homeSuperDeal::before,.homeBestHotels::before,.homePromos::before{content:"";position:absolute;left:20px;right:20px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(181,139,55,.24),transparent)}
 .homeSuperDeal .homeEditorialHead{padding:0 calc(20px + var(--sar)) 18px calc(20px + var(--sal))}
-.homeSuperDealCard{position:relative;display:block;width:100%;min-height:360px;border:0;border-radius:0;overflow:hidden;background:#18110c;box-shadow:0 24px 55px rgba(34,23,12,.12)}
+.homeSuperDealCard{position:relative;display:block;width:100%;min-height:360px;border:0;border-radius:0;overflow:hidden;background:#18110c;text-align:left;box-shadow:0 24px 55px rgba(34,23,12,.12)}
 .homeSuperDealCard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .homeSuperDealCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,15,10,.08) 0%,rgba(22,15,10,.24) 28%,rgba(22,15,10,.74) 100%)}
 .homeSuperDealCard__copy{position:absolute;left:20px;right:20px;bottom:18px;display:flex;flex-direction:column;gap:9px;color:#fff;z-index:1}
@@ -2132,10 +2137,8 @@ select.input option{background:#fff;color:var(--txt)}
 .homeVipCallback__head .eyebrow{color:#E6C77E}.homeVipCallback__head h2{margin:6px 0 0;font-family:var(--display);font-size:30px;line-height:1.04}.homeVipCallback__head p{margin:11px 0 0;max-width:35ch;font-size:13.5px;line-height:1.62;color:rgba(255,255,255,.73)}
 .homeVipCallback__form{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:24px}.homeVipCallback__form label span{display:block;margin-bottom:6px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#E8C97E}
 .homeVipCallback__form input{width:100%;min-height:47px;padding:0 13px;border:1px solid rgba(230,199,126,.26);border-radius:2px;background:rgba(255,255,255,.055);color:#fff;font:inherit;font-size:13px;outline:0}.homeVipCallback__form input:focus{border-color:rgba(230,199,126,.70);background:rgba(255,255,255,.075)}
-.homeVipCallback__form button{grid-column:1/-1;min-height:48px;padding:0 15px;border:1px solid rgba(230,199,126,.60);border-radius:2px;display:flex;align-items:center;justify-content:space-between;background:#E0BF74;color:#18110c;font-size:10.5px;font-weight:750;letter-spacing:.14em;text-transform:uppercase}.homeVipCallback__form button svg{width:14px;height:14px}.homeVipCallback__form small{grid-column:1/-1;font-size:9.5px;line-height:1.45;color:rgba(255,255,255,.46)}
-.homeVipCallback,.travelWorlds--customer,.homeVipServices,.homeAviationFinal,.homeTransferRequest,.homeFinalCta--last{margin-top:26px}
+.homeVipCallback__form button{grid-column:1/-1;min-height:48px;padding:0 15px;border:1px solid rgba(230,199,126,.60);border-radius:2px;display:flex;align-items:center;justify-content:space-between;background:#E0BF74;color:#18110c;font-size:10.5px;font-weight:750;letter-spacing:.14em;text-transform:uppercase}.homeVipCallback__form button svg{width:14px;height:14px}.homeVipCallback__form small{grid-column:1/-1;font-size:9.5px;line-height:1.45;color:rgba(255,255,255,.46)}.homeVipCallback,.travelWorlds--customer,.homeVipServices,.homeAviationFinal,.homeTransferRequest{margin-top:26px}
 .homeBestHotels{margin-top:26px}
-.homeYachts{margin-top:8px}
 .homeSuperDeal{margin-top:24px}
 
 .travelWorlds--customer{position:relative;padding-top:38px;padding-bottom:42px;color:#fff;background:linear-gradient(180deg,#120d09 0%,#0d0907 100%);border-bottom:1px solid rgba(224,191,116,.17)}.travelWorlds--customer .homeEditorialHead{padding-bottom:22px}.travelWorlds--customer .travelWorld{border-color:rgba(230,199,126,.14);box-shadow:0 16px 38px rgba(0,0,0,.18)}
@@ -2151,7 +2154,6 @@ select.input option{background:#fff;color:var(--txt)}
 .vipServiceCard__copy{position:absolute;left:19px;right:19px;bottom:18px}.vipServiceCard__copy i,.vipServiceCard__copy em{display:flex;align-items:center;gap:5px;font-style:normal}.vipServiceCard__copy i{font-size:9px;letter-spacing:.19em;color:#E8C97E}.vipServiceCard__copy b{display:block;margin-top:7px;font-family:var(--display);font-size:25px;line-height:1.06}.vipServiceCard__copy p{margin:8px 0 0;max-width:29ch;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.72)}.vipServiceCard__copy em{margin-top:11px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C97E}.vipServiceCard__copy em svg{width:13px;height:13px}
 
 .homeTransferRequest{position:relative;min-height:330px;padding:36px calc(24px + var(--sar)) 38px calc(24px + var(--sal));overflow:hidden;color:#fff;background:linear-gradient(90deg,rgba(13,9,7,.96),rgba(13,9,7,.74)),url("../images/home-experiences/transfer.webp") center/cover no-repeat;border-top:1px solid rgba(230,199,126,.22);border-bottom:1px solid rgba(230,199,126,.22)}.homeTransferRequest__copy{position:absolute;left:24px;right:24px;bottom:32px}.homeTransferRequest__copy .eyebrow{color:#E8C97E}.homeTransferRequest__copy h2{margin:7px 0 0;max-width:11ch;font-family:var(--display);font-size:34px;line-height:1.02}.homeTransferRequest__copy p{margin:11px 0 0;max-width:31ch;font-size:13px;line-height:1.55;color:rgba(255,255,255,.72)}.homeTransferRequest__copy button{margin-top:18px;padding:0 0 8px;border:0;border-bottom:1px solid rgba(230,199,126,.72);background:none;color:#E8C97E;display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:750;letter-spacing:.15em;text-transform:uppercase}.homeTransferRequest__copy button svg{width:14px;height:14px}
-.homeFinalCta--customer{padding-top:54px;padding-bottom:62px}.homeFinalCta--customer h2{max-width:11ch;font-size:clamp(38px,10.5vw,51px);line-height:.98;letter-spacing:-.035em}.homeFinalCta--customer p{max-width:34ch;font-size:14px;line-height:1.63}.homeFinalCta--customer button{margin-top:25px}
 .homePromoCard>img,.vipServiceCard>img{transform-origin:50% 50%;backface-visibility:hidden}.homePromoCard.is-alive>img,.vipServiceCard.is-alive>img{will-change:transform;animation:livingImageA 14.5s cubic-bezier(.22,.61,.36,1) infinite alternate both}.homePromoCard:nth-child(3n+2).is-alive>img,.vipServiceCard:nth-child(3n+2).is-alive>img{animation-name:livingImageB;animation-duration:15.8s}.homePromoCard:nth-child(3n).is-alive>img,.vipServiceCard:nth-child(3n).is-alive>img{animation-name:livingImageC;animation-duration:16.6s}
 @media(max-width:360px){.homeVipCallback__form{grid-template-columns:1fr}.homeVipCallback__form button,.homeVipCallback__form small{grid-column:1}.homeSuperDealCard{min-height:330px}.homeSuperDealCard__copy b{font-size:30px}}
 @media(prefers-reduced-motion:reduce){.homePromoCard.is-alive>img,.vipServiceCard.is-alive>img{animation:none!important}}
@@ -2166,35 +2168,9 @@ select.input option{background:#fff;color:var(--txt)}
 .homeOfferCard--featured .homeOfferCard__copy{bottom:22px}
 .homeOfferCard--featured .homeOfferCard__copy b{font-size:32px}
 
-/* Yacht collection directly after Best Hotels: large hero video first, smaller cards after. */
-.homeYachts{position:relative;padding:30px 0 62px;background:linear-gradient(180deg,#f8f3ea 0%,#fffdf9 100%);border-top:1px solid rgba(181,139,55,.16);border-bottom:1px solid rgba(181,139,55,.16)}
-.homeYachts .homeEditorialHead{padding-bottom:18px}
-.homeYachtHero{display:block;width:calc(100% - 40px - var(--sal) - var(--sar));margin:0 calc(20px + var(--sar)) 20px calc(20px + var(--sal));padding:0;border:1px solid rgba(126,91,43,.18);border-radius:10px;overflow:hidden;background:#17110c;color:#fff;text-align:left;box-shadow:0 16px 38px rgba(31,22,12,.16)}
-.homeYachtHero__media{position:relative;display:block;aspect-ratio:4/5;min-height:420px;overflow:hidden;background:#1b140e}
-.homeYachtHero__media>img,.homeYachtHero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.homeYachtHero__video{z-index:1;background:#120d09}
-.homeYachtHero__shade{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(12,9,6,.06) 18%,rgba(12,9,6,.18) 50%,rgba(12,9,6,.72) 100%)}
-.homeYachtHero__copy{position:absolute;left:18px;right:18px;bottom:16px;z-index:3;display:block}
-.homeYachtHero__copy i,.homeYachtHero__copy em{display:block;font-style:normal}
-.homeYachtHero__copy i{font-size:10px;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:#e2c17c}
-.homeYachtHero__copy b{display:block;margin-top:7px;font-family:var(--display);font-size:22px;line-height:1.02;font-weight:650;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.22)}
-.homeYachtHero__copy em{margin-top:7px;font-size:10px;line-height:1.4;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,244,228,.82)}
-.homeYachts__rail{display:flex;gap:13px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 7px calc(20px + var(--sal))}
-.homeYachts__rail::-webkit-scrollbar{display:none}
-.homeYachtCard{flex:0 0 min(66vw,286px);padding:0;border:1px solid rgba(126,91,43,.16);border-radius:6px;overflow:hidden;background:#fff;text-align:left;scroll-snap-align:start;color:#21180f;box-shadow:0 14px 34px rgba(42,31,18,.09)}
-.homeYachtCard__media{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#ece5da}
-.homeYachtCard__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.01);transition:transform .7s var(--ease)}
-.homeYachtCard:active .homeYachtCard__media img{transform:scale(1.035)}
-.homeYachtCard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,8,6,.01) 45%,rgba(11,8,6,.24) 100%)}
-.homeYachtCard__copy{display:block;padding:16px 16px 17px}
-.homeYachtCard__copy i,.homeYachtCard__copy em{display:block;font-style:normal}
-.homeYachtCard__copy i{font-size:9px;font-weight:750;letter-spacing:.18em;color:#a77a2c;text-transform:uppercase}
-.homeYachtCard__copy b{display:block;margin-top:6px;font-family:var(--display);font-size:21px;line-height:1.06;font-weight:600;color:#1f1812}
-.homeYachtCard__copy em{margin-top:8px;font-size:9.5px;line-height:1.45;letter-spacing:.08em;text-transform:uppercase;color:#766858}
-.homeYachtCard__copy>span{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:9px;font-weight:750;letter-spacing:.14em;text-transform:uppercase;color:#a77a2c}
-.homeYachtCard__copy>span svg{width:13px;height:13px}
 
-/* Only VIP Welcome plays a video in this rail. Yacht remains a still image. */
+/* Two cards in this rail carry a video — VIP Welcome and the yacht. The
+   rest stay stills, which is what keeps the rail affordable on mobile data. */
 .vipServiceCard__video{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;background:#120d09}
 .vipServiceCard--video>img{z-index:0}
 .vipServiceCard--video .vipServiceCard__shade{z-index:2}
@@ -2239,43 +2215,11 @@ select.input option{background:#fff;color:var(--txt)}
 }
 @media(prefers-reduced-motion:reduce){
   .homeAviationFinal__plane img{animation:none}
-  .homeAviationFinal__trail,.homeAviationFinal>.flySky{display:none}.homeYachtCard__media img{transition:none}
+  .homeAviationFinal__trail,.homeAviationFinal>.flySky{display:none}
 }
 
-/* CUSTOMER HOMEPAGE · r14 · 2026-08-18
-   New current-offer artwork + final VIP invitation truly last. */
-.homeFinalCta--last{
-  position:relative;
-  min-height:760px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  align-items:flex-start;
-  padding:48px calc(24px + var(--sar)) 82px calc(24px + var(--sal));
-  border-top:1px solid rgba(230,199,126,.18);
-  overflow:hidden;
-  text-align:left;
-}
-.homeFinalCta--last::after{
-  content:"";
-  position:absolute;
-  inset:18px;
-  border:1px solid rgba(230,199,126,.16);
-  pointer-events:none;
-}
-.homeFinalCta--last>*{position:relative;z-index:1}
-.homeFinalCta--last .eyebrow{color:#E8C97E;text-shadow:0 2px 16px rgba(0,0,0,.35)}
-.homeFinalCta--last h2{margin:9px 0 0;font-size:clamp(36px,9.5vw,48px);line-height:1.02;max-width:9.5ch;color:#fff;text-shadow:0 4px 22px rgba(0,0,0,.42)}
-.homeFinalCta--last button{margin-top:22px;min-height:52px;padding:0 16px;border:1px solid rgba(232,201,126,.78);background:rgba(17,12,8,.62);color:#F0D28B;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-@media(max-width:360px){
-  .homeFinalCta--last{min-height:700px;padding:42px 20px 72px}
-  .homeFinalCta--last h2{font-size:34px}
-}
 
 @media (min-width:760px){
-  .homeYachtHero{width:min(100%,980px);margin:0 auto 24px auto}
-  .homeYachtHero__media{min-height:460px}
-  .homeYachtCard{flex-basis:min(30vw,260px)}
   .homeAviationFinal{padding-bottom:250px}
   .homeAviationFinal__plane{width:min(38vw,360px)}
   .homeSuperDealCard{min-height:420px;border-radius:0}
@@ -2323,11 +2267,7 @@ select.input option{background:#fff;color:var(--txt)}
   .homeTransferRequest{min-height:720px;background-position:center 18%}
 }
 
-/* CUSTOMER HOMEPAGE · r29 · 2026-08-18
-   VIP assistant fast-contact forms everywhere + daytime final page. */
 
-.homeFinalCta--last{min-height:820px;padding-bottom:54px}
-.homeFinalCta--last p{margin:12px 0 17px;max-width:29ch;color:rgba(255,255,255,.86);font-size:13.5px;line-height:1.55;text-shadow:0 2px 14px rgba(0,0,0,.45)}
 .vipLeadForm{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:18px}
 .vipLeadForm label{display:block;text-align:left}
 .vipLeadForm label span{display:block;margin:0 0 6px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8C97E}
@@ -2338,7 +2278,6 @@ select.input option{background:#fff;color:var(--txt)}
 .vipLeadForm button svg{width:14px;height:14px}
 .homeVipCallback__form.vipLeadForm{margin-top:24px}
 .homeVipCallback__form.vipLeadForm small{grid-column:1/-1}
-.vipLeadForm--final{max-width:390px;margin-top:0}
 .concQuickLead{margin-top:20px;padding:18px;border:1px solid rgba(216,177,91,.24);background:linear-gradient(145deg,rgba(35,25,17,.96),rgba(15,11,8,.98));color:#fff}
 .concQuickLead h2{margin:0;font-family:var(--display);font-size:24px;line-height:1.05}
 .concQuickLead p{margin:9px 0 0;color:rgba(255,255,255,.70);font-size:12.5px;line-height:1.55}
@@ -2346,7 +2285,6 @@ select.input option{background:#fff;color:var(--txt)}
 @media(max-width:360px){
   .vipLeadForm{grid-template-columns:1fr}
   .vipLeadForm button,.homeVipCallback__form.vipLeadForm small{grid-column:1}
-  .homeFinalCta--last{min-height:790px;padding-left:20px;padding-right:20px}
 }
 
 /* CUSTOMER HOMEPAGE · r30 · 2026-08-18
@@ -2361,9 +2299,7 @@ select.input option{background:#fff;color:var(--txt)}
   .homeTransferRequest{min-height:720px;background-position:center 17%}
 }
 
-/* CUSTOMER HOMEPAGE · r32 · 2026-08-18
-   Final VIP page: smiling holiday couple speaking face-to-face with a VIP assistant.
-   Car stays farther in the background with a Turkish-style white 07-00-01 plate. */
+/* CUSTOMER HOMEPAGE · r32 · 2026-08-18 */
 
 .homeTransferRequest .vipLeadForm input,
 .homeTransferRequest .vipLeadForm button{
@@ -2371,145 +2307,10 @@ select.input option{background:#fff;color:var(--txt)}
   backdrop-filter:none!important;
 }
 
-/* CUSTOMER HOMEPAGE · r33 · 2026-08-18
-   Final VIP page rebuilt 1:1 to the approved mobile reference.
-   The photo is a separate top block; the contact area is solid black, with no glass/blur. */
-.homeFinalCta--last{
-  min-height:0!important;
-  display:block!important;
-  padding:0!important;
-  background:#090907!important;
-  border-top:0!important;
-  overflow:hidden;
-  text-align:left;
-}
-.homeFinalCta--last::after{display:none!important}
-.homeFinalCta--last>*{position:relative;z-index:1}
-.homeFinalCta__media{
-  width:100%;
-  aspect-ratio:1.75/1;
-  overflow:hidden;
-  background:#d8d2c8;
-}
-.homeFinalCta__media img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center top;
-}
-.homeFinalCta__panel{
-  position:relative;
-  min-height:470px;
-  padding:72px calc(22px + var(--sar)) 49px calc(22px + var(--sal));
-  background:#090907;
-}
-.homeFinalCta__panel::before{
-  content:"";
-  position:absolute;
-  inset:30px 15px 16px;
-  border:1px solid rgba(232,201,126,.22);
-  pointer-events:none;
-}
-.homeFinalCta__panel>*{position:relative;z-index:1}
-.homeFinalCta--last .eyebrow{
-  color:#e8c97e;
-  text-shadow:none!important;
-  font-size:9px;
-  line-height:1;
-  letter-spacing:.19em;
-}
-.homeFinalCta--last .homeFinalCta__title{
-  margin:12px 0 0;
-  max-width:none;
-  color:#fff;
-  font-size:clamp(38px,10.75vw,44px);
-  line-height:.99;
-  letter-spacing:-.045em;
-  text-shadow:none!important;
-}
-.homeFinalCta--last p{
-  margin:15px 0 18px;
-  max-width:30ch;
-  color:#d6d6d2;
-  font-size:12.5px;
-  line-height:1.48;
-  text-shadow:none!important;
-}
-.homeFinalCta--last .vipLeadForm--final{
-  max-width:none;
-  width:100%;
-  margin-top:0;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:10px;
-}
-.homeFinalCta--last .vipLeadForm label span{
-  margin-bottom:7px;
-  color:#e8c97e;
-  font-size:8px;
-  letter-spacing:.14em;
-}
-.homeFinalCta--last .vipLeadForm input{
-  min-height:44px;
-  padding:0 12px;
-  border:1px solid rgba(232,201,126,.34);
-  border-radius:1px;
-  background:#11110f!important;
-  color:#fff;
-  font-size:12px;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-.homeFinalCta--last .vipLeadForm input:focus{
-  border-color:rgba(232,201,126,.82);
-  background:#141410!important;
-}
-.homeFinalCta--last .vipLeadForm button{
-  min-height:45px;
-  margin-top:1px!important;
-  padding:0 14px!important;
-  border:1px solid #e4c574!important;
-  border-radius:2px;
-  background:#e4c574!important;
-  color:#17110c!important;
-  font-size:9px;
-  letter-spacing:.14em;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-.homeFinalCta--last .vipLeadForm button:active{transform:translateY(1px);background:#d9b765!important}
-.homeFinalCta--last .vipLeadForm button svg{width:13px;height:13px}
-@media(max-width:360px){
-  .homeFinalCta__panel{padding:66px 20px 45px}
-  .homeFinalCta--last .homeFinalCta__title{font-size:38px}
-  .homeFinalCta--last .vipLeadForm--final{grid-template-columns:1fr 1fr}
-  .homeFinalCta--last .vipLeadForm button{grid-column:1/-1}
-}
 
 /* CUSTOMER HOMEPAGE · r34 · 2026-08-18
-   Transfer redesigned as a pure premium UI tile: no photo, no black-glass blur.
-   Yacht hero is edge-to-edge on the mobile page.
-   Final VIP page uses the approved 9:16 assistant/couple image, full-height with a simple readability gradient (no glass). */
+   Transfer redesigned as a pure premium UI tile: no photo, no black-glass blur. */
 
-/* Yacht video: full page width on smartphone. */
-.homeYachtHero{
-  width:100%!important;
-  margin:0 0 22px!important;
-  border-left:0!important;
-  border-right:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-}
-.homeYachtHero__media{
-  min-height:0!important;
-  aspect-ratio:9/12.4!important;
-}
-@media(min-width:760px){
-  .homeYachtHero{width:min(100%,980px)!important;margin:0 auto 24px!important;border-left:1px solid rgba(126,91,43,.18)!important;border-right:1px solid rgba(126,91,43,.18)!important;border-radius:10px!important}
-  .homeYachtHero__media{aspect-ratio:16/9!important;min-height:460px!important}
-}
 
 /* Transfer: solid premium tile, explicitly no image and no backdrop blur. */
 .homeTransferRequest.homeTransferRequest--tile{
@@ -2575,40 +2376,6 @@ select.input option{background:#fff;color:var(--txt)}
   .homeTransferRequest--tile .homeTransferQuick button{grid-column:1}
 }
 
-/* Final page: approved 9:16 image fills the whole card. No glass panel, no blur. */
-.homeFinalCta--last{
-  position:relative!important;
-  min-height:820px!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  padding:0!important;
-  background:#0b0b09!important;
-  overflow:hidden!important;
-}
-.homeFinalCta--last::before{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(5,6,6,0) 30%,rgba(6,7,7,.10) 44%,rgba(7,8,8,.56) 64%,rgba(7,8,8,.92) 81%,#080806 100%)
-}
-.homeFinalCta--last::after{
-  display:block!important;content:"";position:absolute;inset:16px;z-index:3;border:1px solid rgba(232,201,126,.18);pointer-events:none
-}
-.homeFinalCta--last .homeFinalCta__media{
-  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;background:#d8d2c8;z-index:0
-}
-.homeFinalCta--last .homeFinalCta__media img{width:100%;height:100%;object-fit:cover;object-position:center 42%}
-.homeFinalCta--last .homeFinalCta__panel{
-  position:relative!important;z-index:2!important;width:100%;min-height:0!important;padding:0 calc(22px + var(--sar)) 52px calc(22px + var(--sal))!important;background:transparent!important
-}
-.homeFinalCta--last .homeFinalCta__panel::before{display:none!important}
-.homeFinalCta--last .homeFinalCta__panel>*{position:relative;z-index:1}
-.homeFinalCta--last .homeFinalCta__title{font-size:clamp(38px,10.5vw,45px);max-width:9.5ch}
-.homeFinalCta--last .vipLeadForm input{background:#11110f!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-.homeFinalCta--last .vipLeadForm button{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-@media(max-width:360px){
-  .homeFinalCta--last{min-height:760px!important}
-  .homeFinalCta--last .homeFinalCta__panel{padding-left:20px!important;padding-right:20px!important;padding-bottom:45px!important}
-  .homeFinalCta--last .homeFinalCta__title{font-size:37px}
-}
 
 /* CUSTOMER HOMEPAGE · r35 · 2026-08-18
    VIP Transfer tile is edge-to-edge on smartphones. */
@@ -2646,57 +2413,8 @@ select.input option{background:#fff;color:var(--txt)}
 }
 
 /* CUSTOMER HOMEPAGE · r36 · 2026-08-18
-   - Yacht video shown at its native 9:16 composition: no cover-crop / no artificial zoom.
-   - Final VIP image uses the same restrained Ken-Burns motion language as the opening hero.
    - New daytime villa + private-beach imagery is supplied through the existing asset paths. */
 
-/* Preserve the full yacht frame on phones and avoid needless upscaling on larger displays. */
-.homeYachtHero__media{
-  aspect-ratio:9/16!important;
-  min-height:0!important;
-  background:#17110c!important;
-}
-.homeYachtHero__media>img,
-.homeYachtHero__video{
-  width:100%!important;
-  height:100%!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  transform:none!important;
-}
-@media(min-width:760px){
-  .homeYachtHero{
-    width:min(540px,calc(100% - 48px))!important;
-    margin:0 auto 24px!important;
-  }
-  .homeYachtHero__media{
-    aspect-ratio:9/16!important;
-    min-height:0!important;
-  }
-}
-
-/* Final page: subtle zoom/drift equivalent to the hero slider, active only near viewport. */
-.homeFinalCta--last .homeFinalCta__media img{
-  transform:scale(1.018) translate3d(-.2%,.08%,0);
-  transform-origin:50% 46%;
-  backface-visibility:hidden;
-}
-.homeFinalCta--last .homeFinalCta__media.is-alive img{
-  will-change:transform;
-  animation:finalHeroMotionR36 10.8s cubic-bezier(.22,.61,.36,1) infinite alternate both;
-}
-@keyframes finalHeroMotionR36{
-  from{transform:scale(1.018) translate3d(-.30%, .12%,0)}
-  to{transform:scale(1.086) translate3d(.72%,-.42%,0)}
-}
-@media(prefers-reduced-motion:reduce){
-  .homeFinalCta--last .homeFinalCta__media img,
-  .homeFinalCta--last .homeFinalCta__media.is-alive img{
-    animation:none!important;
-    transform:scale(1.02)!important;
-    will-change:auto!important;
-  }
-}
 
 /* CUSTOMER HOMEPAGE · r40 · 2026-08-18
    Keep the VIP transfer tile truly edge-to-edge inside the app shell.
@@ -2728,59 +2446,12 @@ select.input option{background:#fff;color:var(--txt)}
   border-radius:8px!important;
 }
 
-/* CUSTOMER HOMEPAGE · r41 · 2026-08-18
-   Yacht video: preserve the complete native 9:16 frame with zero cover crop/zoom.
-   The video is only scaled down on phones; on larger layouts it never exceeds its 540px source width. */
-.homeYachtHero{
-  width:100%!important;
-  max-width:none!important;
-  margin:0 0 22px!important;
-  border-left:0!important;
-  border-right:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-}
-.homeYachtHero__media{
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  aspect-ratio:9/16!important;
-  overflow:hidden!important;
-  background:#111!important;
-}
-.homeYachtHero__media>img,
-.homeYachtHero__video{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  object-fit:contain!important;
-  object-position:50% 50%!important;
-  transform:none!important;
-  scale:none!important;
-  filter:none!important;
-}
-@media(min-width:760px){
-  .homeYachtHero{
-    width:min(540px,100%)!important;
-    max-width:540px!important;
-    margin:0 auto 24px!important;
-    border:1px solid rgba(126,91,43,.18)!important;
-    border-radius:10px!important;
-  }
-  .homeYachtHero__media{
-    aspect-ratio:9/16!important;
-    min-height:0!important;
-  }
-}
 
 /* ========================================================================== 
    SCROLL MOTION · r42 · 2026-08-18
    Images gently zoom as they travel through the viewport. Section/card copy
    rises and sharpens as it enters. Everything is transform/opacity only for
-   smooth iOS + Android scrolling. Yacht hero is intentionally excluded so its
-   native 9:16 video stays completely uncropped and unzoomed.
+   smooth iOS + Android scrolling.
    ========================================================================== */
 .scrollZoomImg{
   --scroll-scale:1.02;
