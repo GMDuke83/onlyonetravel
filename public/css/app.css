@@ -2120,7 +2120,11 @@ select.input option{background:#fff;color:var(--txt)}
 .siteFooter__ic{width:58px;height:58px;flex:0 0 auto;display:grid;place-items:center;border:1px solid rgba(224,191,116,.32);border-radius:50%;color:#E0BF74;text-decoration:none;transition:border-color .25s var(--ease),color .25s var(--ease)}
 .siteFooter__ic svg{width:25px;height:25px}
 a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
-.siteFooter__ic.is-pending{opacity:.42}
+/* All three read as one set. Instagram and Facebook have no account yet, so
+   they stay spans rather than links — but a placeholder that is half-erased
+   looks like a fault, not a placeholder, so they carry the same gold as the
+   mail icon and simply do not travel anywhere. */
+span.siteFooter__ic{cursor:default}
 /* The address is a placeholder like the numbers above it, so it is text and
    not a map link — a pin dropped on a street that is not the office is a
    wrong answer delivered confidently. */
@@ -2274,69 +2278,9 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
 .homeAviationFinal__copy p{margin:15px 0 0;max-width:31ch;font-size:14px;line-height:1.64;color:#4E4438}
 .homeAviationFinal__copy button{margin-top:24px;min-height:48px;padding:0 15px;border:1px solid rgba(155,109,34,.55);border-radius:2px;background:rgba(255,255,255,.80);color:#8e661f;display:flex;align-items:center;gap:9px;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .homeAviationFinal__copy button svg{width:14px;height:14px}
-/* The wordmark on the wings.
-
-   Type rather than paint. Burning it into plane-top.webp would fix it at one
-   size and one language of the palette, and every later change to either would
-   mean re-rendering the aircraft; as two spans it is the site's own face, stays
-   sharp at any pixel density, and moves with the drift because it sits inside
-   .planeBody, which is the element the drift is actually on.
-
-   The numbers are measured off the image (900x1111) rather than eyeballed, and
-   each wing is measured on its own — which is the whole point. The two are not
-   mirror images: the render carries a little perspective, so a line fitted
-   through the chord mid-points of eleven rows between 56.5% and 68.5% of the
-   height comes out at -36.4 degrees on the left and +33.9 on the right. Giving
-   both the same 35 is what left the right one sitting askew across its wing
-   while the left looked almost right. Each mark now sits on its own fitted
-   centre-line, at 22.7%/57.5% and 76.9%/57.6%.
-
-   Size tracks the aircraft instead of the viewport, and the wide layout repeats
-   the sum against its own min(38vw,360px).
-
-   Warm off-white, the way a livery title is painted on a metal wing, with a
-   shadow underneath because the wing is not one tone: the render lights it from
-   the upper left, so the left wing measures 112,101,91 where the right measures
-   181,146,118 at the same height. */
-.planeMark{
-  position:absolute;z-index:2;
-  /* The grotesk the rest of the site is set in, spaced caps — a registration
-     rather than a signature, which is what an aircraft carries. The brand's
-     script was tried here and taken back out: it is the more elegant face and
-     the wrong one for this surface.
-     2.9% of the aircraft's width, which against min(78vw,360px) is
-     min(2.26vw,10.4px). It was 3.2% and overshot the wing's chord at the
-     outboard end on both sides — the mark has to sit inside the metal, not
-     across its edge. */
-  font-family:var(--display);
-  font-size:min(2.26vw,10.4px);
-  font-weight:600;
-  letter-spacing:.20em;
-  white-space:nowrap;
-  color:rgba(252,247,238,.88);
-  text-shadow:0 1px 2px rgba(46,32,18,.55);
-  pointer-events:none;
-}
-.planeMark--l{left:22.7%;top:57.5%;transform:translate(-50%,-50%) rotate(-36.4deg)}
-.planeMark--r{left:76.9%;top:57.6%;transform:translate(-50%,-50%) rotate(33.9deg)}
-@media(min-width:760px){
-  .planeMark{font-size:min(1.10vw,10.4px)}
-}
-@media (prefers-reduced-motion:reduce){
-  /* the whole aircraft is hidden there already, but be explicit */
-  .homeAviationFinal__plane .planeMark{display:inline}
-}
-
 .homeAviationFinal__plane{position:absolute;z-index:2;left:50%;bottom:10px;width:min(78vw,360px);transform:translateX(-50%);pointer-events:none}
 .homeAviationFinal__plane::before{content:"";position:absolute;left:12%;right:12%;bottom:7%;height:19%;background:radial-gradient(ellipse,rgba(40,62,82,.18),transparent 70%);filter:blur(14px)}
-/* The drift moves the whole aircraft, wordmark included. It used to sit on the
-   img, which meant the picture drifted out from under the two spans and left
-   them hanging in the sky — the marks are painted on the wings, so whatever
-   moves the wings has to move them too. The wrapper exists for exactly that,
-   and keeps the container's own translateX(-50%) centring out of the way of an
-   animated transform. */
-.planeBody{position:relative;display:block;animation:flyDrift 8s ease-in-out infinite}
-.homeAviationFinal__plane img{position:relative;display:block;width:100%;height:auto;filter:drop-shadow(0 22px 18px rgba(34,56,76,.16))}
+.homeAviationFinal__plane img{position:relative;display:block;width:100%;height:auto;filter:drop-shadow(0 22px 18px rgba(34,56,76,.16));animation:flyDrift 8s ease-in-out infinite}
 .homeAviationFinal__trail{inset:-6% 2% 8% 2%;opacity:.92}
 .homeAviationFinal__trail i{background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.52) 35%,rgba(255,255,255,.50) 65%,rgba(255,255,255,0) 100%)}
 
@@ -2347,7 +2291,7 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
   .homeAviationFinal{min-height:650px;padding-bottom:300px}
 }
 @media(prefers-reduced-motion:reduce){
-  .planeBody{animation:none}
+  .homeAviationFinal__plane img{animation:none}
   .homeAviationFinal__trail,.homeAviationFinal>.flySky{display:none}
 }
 
@@ -2379,7 +2323,11 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
 /* A contrail is condensed water, so it is white — the beige it used to be was
    chosen to sit on ivory and turns muddy against sky. */
 .homeAviationFinal__trail i{width:2px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.34) 18%,rgba(255,255,255,.76) 46%,rgba(255,255,255,.66) 72%,rgba(255,255,255,0) 100%)}
-.planeBody{animation:flyDriftR25 6.8s ease-in-out infinite}
+.homeAviationFinal__plane img{animation:flyDriftR25 6.8s ease-in-out infinite}
+/* This r25 rule is unconditional and comes after the reduced-motion stop
+   further up, so without repeating the stop here the aircraft keeps drifting
+   for readers who asked it not to. */
+@media(prefers-reduced-motion:reduce){.homeAviationFinal__plane img{animation:none}}
 @keyframes flyDriftR25{0%,100%{transform:translate3d(0,0,0)}25%{transform:translate3d(-3px,-7px,0)}55%{transform:translate3d(2px,-2px,0)}78%{transform:translate3d(4px,4px,0)}}
 @media(min-width:760px){.homeVipServices__rail{justify-content:flex-start}.homeVipServices__rail .vipServiceCard{flex-basis:min(27vw,310px)}.homeVipServices__rail .vipServiceCard--featured{flex-basis:min(34vw,390px)}}
 
