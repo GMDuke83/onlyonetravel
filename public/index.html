@@ -13,12 +13,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<link rel="manifest" href="./manifest.webmanifest?v=20260819-1157-591a965">
-<link rel="preload" as="image" href="./images/onlyone-hero-poster.webp">
+<link rel="manifest" href="./manifest.webmanifest?v=20260827-1241-e9d256b">
+<link rel="preload" as="image" href="./images/onlyone-hero-poster-v2.webp">
 <!-- The platform hero shows the moment the intro ends. Fetching its first
      photograph now, while the intro is still playing, means it is decoded and
      waiting instead of starting from zero at the hand-over. -->
-<link rel="stylesheet" href="./css/app.css?v=20260819-1157-591a965">
+<link rel="stylesheet" href="./css/app.css?v=20260827-1241-e9d256b">
 </head>
 <body>
 
@@ -36,12 +36,12 @@
     webkit-playsinline
     preload="auto"
     fetchpriority="high"
-    poster="./images/onlyone-hero-poster.webp"
+    poster="./images/onlyone-hero-poster-v2.webp"
     disablepictureinpicture
     disableremoteplayback
     x5-playsinline
   >
-    <source src="./video/onlyone-hero-ocean-v4.mp4" type="video/mp4">
+    <source src="./video/onlyone-hero-turkiye-v1.mp4" type="video/mp4">
   </video>
 
   <audio id="heroAudio" preload="auto" aria-hidden="true">
@@ -102,7 +102,6 @@
 
   <button class="skipIntro" id="skipIntro" type="button">Skip</button>
 
-  <div class="intro__flash" id="introFlash" aria-hidden="true"></div>
 </section>
 
 
@@ -151,7 +150,7 @@
      is maintained by hand.
      ====================================================================== */
 
-  var CURRENT_BUILD = "20260819-1157-591a965";
+  var CURRENT_BUILD = "20260827-1241-e9d256b";
   window.ONLYONE_BUILD = CURRENT_BUILD;
 
   var VERSION_URL = "./version.json";
@@ -377,6 +376,6 @@
   check(true);
 })();
 </script>
-<script src="./js/app.js?v=20260819-1157-591a965" defer></script>
+<script src="./js/app.js?v=20260827-1241-e9d256b" defer></script>
 </body>
 </html>
