@@ -1702,7 +1702,7 @@
       ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:''}
       <div class="appbar__brand">${o.title?
         `<span class="appbar__name" style="letter-spacing:.02em;font-size:15px">${esc(o.title)}</span>`:
-        `<span class="brandLogo brandLogo--bar" role="img" aria-label="ONLY ONE luxury travel"></span>`}</div>
+        `<button class="brandLogoBtn" type="button" data-act="to-top" aria-label="ONLY ONE luxury travel — ${esc(hx('наверх','nach oben','back to top'))}"><span class="brandLogo brandLogo--bar" aria-hidden="true"></span></button>`}</div>
       ${o.fav?`<button class="iconBtn${isFav(o.fav)?' is-fav':''}" data-act="fav" data-id="${o.fav}">${icon('heart')}</button>`:''}
       ${o.menu===false?'':`<button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button>`}
     </header>`;
@@ -1998,7 +1998,7 @@
 
     return `<footer class="siteFooter">
       <div class="siteFooter__brand">
-        <span class="brandLogo brandLogo--footer" role="img" aria-label="ONLY ONE luxury travel"></span>
+        <button class="brandLogoBtn" type="button" data-act="to-top" aria-label="ONLY ONE luxury travel — ${esc(hx('наверх','nach oben','back to top'))}"><span class="brandLogo brandLogo--footer" aria-hidden="true"></span></button>
       </div>
       <div class="siteFooter__rule" aria-hidden="true"></div>
       <h2 class="siteFooter__head">${esc(t('mContact'))}</h2>
@@ -3944,6 +3944,18 @@
         setTimeout(()=>toast(hx('Подробная заявка на трансфер отправлена','Detaillierte Transfer-Anfrage gesendet','Detailed transfer request sent')),330);break;
       }
       case 'back': back();break;
+      /* The logo in the bar and the one closing the page both come back up
+         here. #app is the scroller, not the window, so scrollTo has to be
+         asked of it; the smooth behaviour is dropped for anyone who has said
+         they do not want motion, and the plain assignment is there for a
+         browser that will not take the options object. */
+      case 'to-top': {
+        const sc=$('#app'); if(!sc) break;
+        const soft=!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+        try{ sc.scrollTo({top:0,left:0,behavior:soft?'smooth':'auto'}); }
+        catch(e){ sc.scrollTop=0; }
+        break;
+      }
       case 'menu': sheetMenu();break;
       case 'share': toast(t('shared'));break;
       case 'pick-region': sheetRegion();break;
