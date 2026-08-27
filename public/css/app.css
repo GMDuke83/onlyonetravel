@@ -175,7 +175,11 @@ svg{
   min-height:100svh;
   overflow:hidden;
   background:var(--navy);
-  transition:opacity .7s var(--ease);
+  /* The hand-over to the platform is this fade and nothing else, so it is
+     slower than a UI transition wants to be: the platform is already opaque
+     underneath and the intro simply thins away over it. CROSSFADE_MS in
+     app.js waits exactly this long before taking the intro out of the tree. */
+  transition:opacity 1s var(--ease);
 }
 .intro.is-leaving{ opacity:0; pointer-events:none; }
 .intro.is-hidden{ display:none; }
@@ -537,18 +541,6 @@ svg{
 }
 .tapStart svg{ width:15px; height:15px; fill:var(--gold-light); stroke:none; }
 
-/* --- transition flash ----------------------------------------------------- */
-.intro__flash{
-  position:absolute;
-  inset:0;
-  z-index:8;
-  background:var(--navy);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .45s var(--ease);
-}
-.intro__flash.is-in{ opacity:1; }
-
 /* ==========================================================================
    PLATFORM
 
@@ -570,6 +562,9 @@ svg{
   transition:opacity .7s var(--ease);
 }
 .main.is-active{opacity:1;pointer-events:auto}
+/* Switched on behind the intro, where a fade would only be a fade to nothing.
+   Removed one frame later so leaving the platform still animates. */
+.main.is-instant{transition:none}
 
 #app{
   height:100svh;

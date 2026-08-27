@@ -5,9 +5,14 @@
    Intro sequence
    --------------
      video starts (autoplay + muted)
-       └─ at 3.0s of playback → countdown 3 · 2 · 1
+       └─ at 2.0s of playback → countdown 3 · 2 · 1
             └─ "Your Journey Begins Now"
-                 └─ ~1.8s hold → soft transition to the main experience
+                 └─ ~1.2s hold → crossfade into the main experience
+
+   The three numbers add up to the film: 2.0 + 3.0 + 1.2 lands at 6.2s against
+   a 6.0s clip, so the sequence finishes as the last shot does instead of
+   holding a frozen frame. They were 3.0 and 1.8 when the film ran eight
+   seconds.
 
    Audio
    -----
@@ -21,11 +26,11 @@
   'use strict';
 
   /* ---- configuration ---------------------------------------------------- */
-  var COUNTDOWN_START_AT = 3.0;   // seconds of playback before the countdown
+  var COUNTDOWN_START_AT = 2.0;   // seconds of playback before the countdown
   var COUNTDOWN_FROM     = 3;     // 3 · 2 · 1
   var COUNTDOWN_STEP_MS  = 1000;
-  var END_TITLE_HOLD_MS  = 1800;  // pause on "Your Journey Begins Now"
-  var FLASH_MS           = 380;
+  var END_TITLE_HOLD_MS  = 1200;  // pause on "Your Journey Begins Now"
+  var CROSSFADE_MS       = 1000;  // must match .intro's opacity transition
   var AUTOPLAY_PROBE_MS  = 1200;
   var STALL_OFFER_HELP_S = 7;     // manual fallback only after a real autoplay failure
   /* Only counts while the video is provably dead — nothing decoded and nothing
@@ -40,7 +45,6 @@
   var oceanAudio   = document.getElementById('heroAudio');
   var introCopy    = document.getElementById('introCopy');
   var introEnd     = document.getElementById('introEnd');
-  var introFlash   = document.getElementById('introFlash');
   var countdown    = document.getElementById('countdown');
   var countValue   = document.getElementById('countdownValue');
   var tapStart     = document.getElementById('tapStart');
@@ -355,7 +359,6 @@
 
     if (introCopy)  introCopy.classList.remove('is-out');
     if (introEnd)   introEnd.classList.remove('is-in');
-    if (introFlash) introFlash.classList.remove('is-in');
     if (countdown)  countdown.classList.remove('is-in', 'is-ticking');
     if (countValue) countValue.textContent = String(COUNTDOWN_FROM);
     if (tapStart)   tapStart.classList.remove('is-in');
@@ -427,19 +430,34 @@
     }
   }
 
+  /* A crossfade, not a cut through a colour.
+
+     This used to raise a full-screen brown veil, wait 380ms, and only then
+     swap the two layers — a dip to dark with the platform coming out of it.
+     Two stacked layers cross-fade properly only when the lower one is already
+     opaque: fade both at once and the page ground shows through the middle of
+     the transition, which is that dip by another route. So the platform is
+     switched on at full opacity behind the intro, where nothing can see it,
+     and then the intro alone thins away over it.
+
+     Two things wait for the end of that fade rather than its start. The
+     platform is rendered before it, so the layout work happens while the intro
+     still covers everything instead of stuttering through the fade. And the
+     film keeps playing until the fade is over — stopHeroVideo rewinds to zero,
+     and doing that at the start would snap the picture back to its first frame
+     in full view. */
   function goToMain() {
     if (leaving || onMain) return;
     leaving = true;
     clearTimers();
 
-    if (introFlash) introFlash.classList.add('is-in');
+    onMain = true;
+    main.classList.add('is-instant', 'is-active');
+    main.setAttribute('aria-hidden', 'false');
+    if (window.ONLYONE && window.ONLYONE.boot) window.ONLYONE.boot();
 
     setTimeout(function () {
-      stopHeroVideo();
-
-      onMain = true;
-      main.classList.add('is-active');
-      main.setAttribute('aria-hidden', 'false');
+      main.classList.remove('is-instant');
       intro.classList.add('is-leaving');
       intro.setAttribute('aria-hidden', 'true');
 
@@ -447,11 +465,9 @@
       setTimeout(function () {
         if (!onMain) return;
         intro.classList.add('is-hidden');
-        if (introFlash) introFlash.classList.remove('is-in');
-      }, 700);
-
-      if (window.ONLYONE && window.ONLYONE.boot) window.ONLYONE.boot();
-    }, FLASH_MS);
+        stopHeroVideo();
+      }, CROSSFADE_MS);
+    }, 60);
   }
 
   /* ======================================================================
