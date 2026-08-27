@@ -2166,7 +2166,35 @@ select.input option{background:#fff;color:var(--txt)}
    a circle that responds to a tap by doing nothing reads as broken, a dimmed
    one reads as not yet there. Filling in CONTACT in app.js turns the second
    state into the first with no change here. */
-.siteFooter{position:relative;padding:46px calc(22px + var(--sar)) 42px calc(22px + var(--sal));background:linear-gradient(180deg,#1A140E 0%,#110C08 100%);color:#F2EDE4;border-top:1px solid rgba(224,187,168,.22)}
+/* The closing page, and it should read as one: full height, edge to edge,
+   with nothing of the page above carried into it.
+
+   Three things were breaking it, all measured rather than guessed. The
+   section above ended in 36px of ivory. This element carried a gold
+   hairline on top -- the break, drawn. And .pageBottom after it is 88px
+   of nothing, so the ivory of #app showed between the dark and the tab
+   bar. It was also only 509px tall in an 844px window.
+
+   Now it stands 100svh -- the small viewport unit, so a phone that hides
+   its address bar on scroll does not leave a gap at the bottom -- with
+   the tab bar's height added to the padding so the dark runs behind it
+   and the legal line still clears it. The block centres in that height
+   and the legal line sits at the foot of it. */
+.siteFooter{
+  position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:100vh;min-height:100svh;
+  /* The app bar is sticky at 64px plus the notch and content scrolls beneath
+     it, so a full-height page has to start below it or its own logo goes
+     under the bar. The tab bar at the foot is cleared the same way. */
+  padding:calc(110px + var(--sat)) calc(22px + var(--sar)) calc(30px + var(--nav-h)) calc(22px + var(--sal));
+  background:linear-gradient(180deg,#1A140E 0%,#110C08 100%);
+  color:#F2EDE4;
+}
+/* the 88px spacer exists to clear the fixed tab bar; the footer's own
+   padding does that now, and leaving it would put ivory back under the
+   dark */
+.siteFooter + .pageBottom{display:none}
 /* The logo is centred over the block it heads. */
 .siteFooter__brand{display:flex;align-items:center;justify-content:center}
 /* The heading takes the key the app already carries in all five languages
@@ -2527,7 +2555,7 @@ span.siteFooter__ic{cursor:default}
   overflow:visible!important;
   border-top:1px solid rgba(165,103,80,.14);
   border-bottom:1px solid rgba(165,103,80,.16);
-}
+;padding-bottom:0}
 .homeTransferTile{
   position:relative;
   width:100%;
@@ -2689,3 +2717,9 @@ span.siteFooter__ic{cursor:default}
     will-change:auto!important;
   }
 }
+
+/* The last thing above the closing page ended in 54px of ivory, which read as
+   a seam between two dark blocks. The tile inside keeps its own bottom
+   padding, so the card does not touch the footer -- only the light band
+   between them goes. !important because the rule it overrides carries it. */
+.homeTransferRequest.homeTransferRequest--tile{padding-bottom:0!important}
