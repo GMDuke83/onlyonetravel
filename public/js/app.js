@@ -2718,9 +2718,9 @@
           <stop offset="0%" stop-color="#123F47"/><stop offset="100%" stop-color="#0A2328"/></linearGradient></defs>
         <rect width="100" height="100" fill="url(#sea)"/>
         <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11 L100 0 L0 0 Z"
-              fill="#3A2E1E" stroke="rgba(240,215,135,.30)" stroke-width=".5" vector-effect="non-scaling-stroke"/>
+              fill="#3A2E1E" stroke="rgba(241,211,195,.30)" stroke-width=".5" vector-effect="non-scaling-stroke"/>
         <path d="M0 62 C 14 54, 24 46, 38 40 C 52 34, 64 28, 78 22 C 86 18, 94 14, 100 11"
-              fill="none" stroke="rgba(240,215,135,.58)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              fill="none" stroke="rgba(241,211,195,.58)" stroke-width="1" vector-effect="non-scaling-stroke"/>
         ${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${4+i*11} ${74+((i%3)*5)} q 5 -3 10 0" fill="none" stroke="rgba(87,198,212,.20)" stroke-width=".6" vector-effect="non-scaling-stroke"/>`).join('')}
       </svg>
       ${REGIONS.map(r=>`<button class="pin" style="left:${r.x}%;top:${r.y}%" data-mregion="${r.id}">
