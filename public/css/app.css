@@ -2089,6 +2089,49 @@ select.input option{background:#fff;color:var(--txt)}
    Beige is --ground-3, the warm sand already in the palette; the gold is
    --gold-ink rather than the decorative gold, because on this ground the
    bright one measures 1.8:1 and cannot carry a label. */
+/* The page closes on the contact details.
+
+   Dark, and the last full-bleed band: the tile above it sits on ivory with
+   ivory below it, so the two dark blocks do not touch. The gold hairline along
+   the top is the same rule that separates every chapter on this page.
+
+   Two states for a contact, not one. Something with a url is a link; something
+   without one is text, and an icon without a url is dimmed rather than dead —
+   a circle that responds to a tap by doing nothing reads as broken, a dimmed
+   one reads as not yet there. Filling in CONTACT in app.js turns the second
+   state into the first with no change here. */
+.siteFooter{position:relative;padding:46px calc(22px + var(--sar)) 42px calc(22px + var(--sal));background:linear-gradient(180deg,#1A140E 0%,#110C08 100%);color:#F2EDE4;border-top:1px solid rgba(224,191,116,.22)}
+.siteFooter__brand{display:flex;align-items:center;gap:13px}
+.siteFooter__mark{position:relative;width:34px;height:34px;flex:0 0 auto;border:1px solid rgba(224,191,116,.60);border-radius:50%}
+.siteFooter__mark::after{content:"";position:absolute;inset:8px;border:1px solid rgba(224,191,116,.40);border-radius:50%}
+.siteFooter__name{display:block;font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.20em;line-height:1}
+.siteFooter__name small{display:block;margin-top:5px;font-size:7.5px;font-weight:600;letter-spacing:.26em;color:#C6A768}
+.siteFooter__line{margin:20px 0 0;max-width:30ch;font-size:13px;line-height:1.62;color:rgba(242,237,228,.62)}
+.siteFooter__rule{height:1px;margin:26px 0 22px;background:linear-gradient(90deg,rgba(224,191,116,.34),rgba(224,191,116,.05))}
+.siteFooter__rows{margin:0;display:grid;gap:13px}
+.siteFooter__row{display:grid;grid-template-columns:82px 1fr;align-items:baseline;gap:12px}
+.siteFooter__row dt{font-size:8.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C6A768}
+.siteFooter__row dd{margin:0;font-size:13.5px;line-height:1.35;color:#F2EDE4;overflow-wrap:anywhere}
+.siteFooter__row a{color:inherit;text-decoration:none;padding-bottom:2px;border-bottom:1px solid rgba(224,191,116,.38)}
+.siteFooter__follow{margin-top:28px}
+.siteFooter__followLabel{display:block;font-size:8.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C6A768}
+.siteFooter__social{display:flex;gap:11px;margin-top:12px}
+.siteFooter__ic{width:46px;height:46px;flex:0 0 auto;display:grid;place-items:center;border:1px solid rgba(224,191,116,.32);border-radius:50%;color:#E0BF74;text-decoration:none;transition:border-color .25s var(--ease),color .25s var(--ease)}
+.siteFooter__ic svg{width:19px;height:19px}
+a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
+.siteFooter__ic.is-pending{opacity:.42}
+.siteFooter__legal{margin:30px 0 0;font-size:9.5px;line-height:1.65;letter-spacing:.07em;color:rgba(242,237,228,.40)}
+@media(min-width:760px){
+  .siteFooter{padding-left:calc(40px + var(--sal));padding-right:calc(40px + var(--sar))}
+  .siteFooter>*{max-width:980px;margin-left:auto;margin-right:auto}
+  .siteFooter__line{max-width:46ch}
+}
+
+/* Read by a screen reader, never seen. clip-path rather than display:none,
+   which would take it out of the accessibility tree along with everything
+   else. */
+.srOnly{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+
 .homeGateway{position:relative;padding:18px calc(20px + var(--sar)) 6px calc(20px + var(--sal));background:#fbfaf7}
 .homeGateway__grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:10px}  /* 1fr rows, not auto: a two-line label in one tile would otherwise make
      its whole row taller than the other and the block stops reading as a
