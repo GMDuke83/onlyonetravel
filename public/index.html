@@ -13,12 +13,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<link rel="manifest" href="./manifest.webmanifest?v=20260818-customer-home-r43">
+<link rel="manifest" href="./manifest.webmanifest?v=20260819-1157-591a965">
 <link rel="preload" as="image" href="./images/onlyone-hero-poster.webp">
 <!-- The platform hero shows the moment the intro ends. Fetching its first
      photograph now, while the intro is still playing, means it is decoded and
      waiting instead of starting from zero at the hand-over. -->
-<link rel="stylesheet" href="./css/app.css?v=20260818-customer-home-r43">
+<link rel="stylesheet" href="./css/app.css?v=20260819-1157-591a965">
 </head>
 <body>
 
@@ -41,11 +41,11 @@
     disableremoteplayback
     x5-playsinline
   >
-    <source src="./video/onlyone-hero-ocean-v4.mp4?v=20260818-customer-home-r43" type="video/mp4">
+    <source src="./video/onlyone-hero-ocean-v4.mp4" type="video/mp4">
   </video>
 
   <audio id="heroAudio" preload="auto" aria-hidden="true">
-    <source src="./audio/onlyone-hero-ocean-v1.m4a?v=20260818-customer-home-r43" type="audio/mp4">
+    <source src="./audio/onlyone-hero-ocean-v1.m4a" type="audio/mp4">
   </audio>
 
   <div class="intro__scrim" aria-hidden="true"></div>
@@ -124,34 +124,259 @@
 <script>
 (function(){
   "use strict";
-  var CURRENT_BUILD = "20260818-customer-home-r43";
+
+  /* ======================================================================
+     SELF-UPDATE
+     ----------------------------------------------------------------------
+     What a push has to do: be on the screen the next time someone looks,
+     without anyone being told to clear their browser.
+
+     Nothing about that is automatic here. The site is served by GitHub
+     Pages, which stamps `max-age=600` on every file and ignores both
+     public/_headers and vercel.json — for ten minutes a returning browser
+     answers out of its own cache without asking the server anything. An
+     installed Android PWA is worse: opened from the home screen it resumes
+     the document it already had rather than fetching a new one, and can
+     sit on the same HTML for days.
+
+     So the page does not wait to be re-fetched. version.json is the one
+     request that always reaches the server — unique query, no-store — and
+     the id it answers with is compared against the id compiled into this
+     document. When they differ the page reloads itself at a URL no cache
+     has an entry for, and that is what pulls the new stylesheet and the
+     new script down with it.
+
+     CURRENT_BUILD and the ?v= on the assets are written by
+     scripts/stamp-build.js, which both deploy workflows run. Nothing below
+     is maintained by hand.
+     ====================================================================== */
+
+  var CURRENT_BUILD = "20260819-1157-591a965";
   window.ONLYONE_BUILD = CURRENT_BUILD;
 
-  function checkBuild(){
-    try {
-      fetch("./version.json?_=" + Date.now(), {cache:"no-store"})
-        .then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(v){
-          if (!v || !v.build || v.build === CURRENT_BUILD) return;
-          try {
-            var seen = sessionStorage.getItem("onlyone.build.seen");
-            if (seen === v.build) return;
-            sessionStorage.setItem("onlyone.build.seen", v.build);
-          } catch (e) {}
-          window.location.reload();
-        })
-        .catch(function(){});
-    } catch (e) {}
+  var VERSION_URL = "./version.json";
+  var POLL_MS     = 60000;   // only while the page is in front of someone
+  var ATTEMPT_KEY = "onlyone.build.attempt";
+  var MAX_TRIES   = 3;       // reloads allowed per target build
+  var RETRY_MS    = 20000;   // spacing between them
+
+  var pending   = null;      // a newer build we know of but have not applied
+  var busy      = false;
+  var reloading = false;
+  var timer     = null;
+  var banner    = null;
+
+  /* --- how many times we may reload at the same build -------------------
+     A deploy propagates unevenly: version.json can already report the new
+     id while the document still comes back as the old one. Reloading on
+     that answer is right; reloading on it forever is not. The previous
+     version of this code guarded with a single "seen" flag, which did stop
+     the loop — and also stopped every later attempt in the same session,
+     leaving the visitor on the old page until they closed the app. That is
+     the failure this whole block exists to remove, so the attempts are
+     counted instead: a few, spaced out, then the page stops reloading on
+     its own and offers the reload as a tap.
+     -------------------------------------------------------------------- */
+  function ledger(){
+    try { return JSON.parse(sessionStorage.getItem(ATTEMPT_KEY)) || null; }
+    catch (e) { return null; }
+  }
+  function noteAttempt(build, tries){
+    try { sessionStorage.setItem(ATTEMPT_KEY, JSON.stringify({b:build, n:tries, t:Date.now()})); }
+    catch (e) {}
+  }
+  function forgetAttempts(){
+    try { sessionStorage.removeItem(ATTEMPT_KEY); } catch (e) {}
+  }
+  function spent(build){
+    var r = ledger();
+    return !!(r && r.b === build && r.n >= MAX_TRIES);
+  }
+  function mayReload(build){
+    var r = ledger(), now = Date.now();
+    if (!r || r.b !== build) { noteAttempt(build, 1); return true; }
+    if (r.n >= MAX_TRIES) return false;
+    if (now - r.t < RETRY_MS) return false;
+    noteAttempt(build, r.n + 1);
+    return true;
   }
 
-  window.onlyoneCheckBuild = checkBuild;
-  window.addEventListener("pageshow", checkBuild);
+  /* --- the reload ------------------------------------------------------- */
+  function reloadTo(build){
+    if (reloading) return;
+    reloading = true;
+    stopPolling();
+    /* location.reload() re-uses a URL the cache already holds an answer
+       for; on GitHub Pages that answer is up to ten minutes old and there
+       is no header we can set to say otherwise. A URL that has never been
+       requested cannot be answered from a cache at all. */
+    var url = location.pathname + "?b=" + encodeURIComponent(build || CURRENT_BUILD);
+    try { location.replace(url); } catch (e) { location.href = url; }
+  }
+
+  /* --- the tap, for when we will not reload on our own ------------------ */
+  var COPY = {
+    de: ["Neue Version verfügbar", "Jetzt laden"],
+    en: ["A new version is available", "Load it now"],
+    tr: ["Yeni sürüm mevcut", "Şimdi yükle"],
+    uk: ["Доступна нова версія", "Оновити"],
+    ru: ["Доступна новая версия", "Обновить"]
+  };
+  function lang(){
+    try {
+      var s = JSON.parse(localStorage.getItem("onlyone.state.v1"));
+      if (s && s.lang && COPY[s.lang]) return s.lang;
+    } catch (e) {}
+    var n = (navigator.language || "en").slice(0, 2).toLowerCase();
+    return COPY[n] ? n : "en";
+  }
+  function showBanner(){
+    if (banner || reloading || !document.body) return;
+    var t = COPY[lang()];
+
+    /* Styled inline on purpose. This banner appears exactly when the
+       stylesheet on the device may be the stale one, so it cannot depend
+       on a class surviving in it. */
+    banner = document.createElement("button");
+    banner.type = "button";
+    banner.setAttribute("aria-live", "polite");
+    banner.style.cssText = [
+      /* Clear of the bottom navigation, the way the toast is. --nav-h comes
+         from the stylesheet when there is one to read it from; the fallback
+         is what that token works out to on a phone, so the bar sits right
+         either way. */
+      "position:fixed", "left:16px", "right:16px",
+      "bottom:calc(var(--nav-h, calc(68px + env(safe-area-inset-bottom,0px))) + 16px)",
+      "z-index:2147483000",
+      "display:flex", "align-items:center", "justify-content:space-between", "gap:16px",
+      "margin:0", "padding:15px 18px", "border:0", "border-radius:2px",
+      "background:#15100B", "color:#fff", "text-align:left",
+      "font-family:inherit", "font-size:10px", "letter-spacing:.12em",
+      "text-transform:uppercase", "line-height:1.35",
+      "box-shadow:0 14px 40px rgba(0,0,0,.4)", "cursor:pointer"
+    ].join(";");
+
+    var label = document.createElement("span");
+    label.textContent = t[0];
+    label.style.cssText = "flex:1 1 auto;min-width:0";
+    var action = document.createElement("span");
+    action.textContent = t[1];
+    action.style.cssText = "flex:0 0 auto;white-space:nowrap;color:#D8B45C;font-weight:600;text-decoration:underline;text-underline-offset:4px";
+
+    banner.appendChild(label);
+    banner.appendChild(action);
+    banner.addEventListener("click", function(){ reloadTo(pending); });
+    document.body.appendChild(banner);
+  }
+  function hideBanner(){
+    if (!banner) return;
+    if (banner.parentNode) banner.parentNode.removeChild(banner);
+    banner = null;
+  }
+
+  /* --- when it is safe to reload without asking -------------------------
+     The URL carries no route — the view lives in history state — so a
+     reload always lands back on the intro. That is nothing while the intro
+     is still playing, and rude in the middle of a booking. So: reload
+     outright when the page is being opened or has just come back to the
+     foreground, and while someone is reading, offer the tap and apply it
+     the next time they leave and return.
+     -------------------------------------------------------------------- */
+  function onIntro(){
+    var m = document.getElementById("main");
+    return !m || m.getAttribute("aria-hidden") !== "false";
+  }
+
+  /* Coming back from another app is normally the best possible moment to
+     reload — except when the visitor only switched away to copy a date out
+     of a message and is halfway through a request. Typed text and an open
+     sheet are the two things a reload would throw away, so they are the two
+     things that turn the reload back into an offer. */
+  function engaged(){
+    var sheet = document.getElementById("sheetWrap");
+    if (sheet && sheet.className.indexOf("is-open") > -1) return true;
+    var fields = document.querySelectorAll("#app input, #app textarea, #app select");
+    for (var i = 0; i < fields.length; i++) {
+      var el = fields[i];
+      if (el.disabled || el.type === "hidden") continue;
+      if (el.tagName === "SELECT") { if (el.selectedIndex > 0) return true; continue; }
+      if (el.type === "checkbox" || el.type === "radio") { if (el.checked !== el.defaultChecked) return true; continue; }
+      if ((el.value || "") !== (el.defaultValue || "")) return true;
+    }
+    return false;
+  }
+
+  function apply(build, eager){
+    pending = build;
+    var mayTake = onIntro() || (eager && !engaged());
+    if (!spent(build) && mayTake && mayReload(build)) { reloadTo(build); return; }
+    showBanner();
+  }
+
+  function check(eager){
+    if (busy || reloading) return;
+    busy = true;
+    var done = function(){ busy = false; };
+    try {
+      fetch(VERSION_URL + "?_=" + Date.now(), { cache: "no-store", credentials: "omit" })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(v){
+          done();
+          if (!v || !v.build) return;
+          if (v.build === CURRENT_BUILD) { pending = null; forgetAttempts(); hideBanner(); return; }
+          apply(v.build, eager);
+        })
+        .catch(done);
+    } catch (e) { done(); }
+  }
+
+  function startPolling(){
+    stopPolling();
+    timer = setInterval(function(){ check(false); }, POLL_MS);
+  }
+  function stopPolling(){
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  /* --- wiring ----------------------------------------------------------- */
+
+  // Arriving on the build we were reloading towards means it worked; the
+  // count of how many attempts that took is of no further use.
+  var rec = ledger();
+  if (rec && rec.b === CURRENT_BUILD) forgetAttempts();
+
+  // Both ?b= from a reload above and the ?v= the manifest used to put on
+  // start_url are noise once the document is here. Dropping them also keeps
+  // the PWA and a plain link on one URL, and so on one cache entry.
+  if (location.search) {
+    try { history.replaceState(history.state, "", location.pathname); } catch (e) {}
+  }
+
+  window.onlyoneCheckBuild = function(){ check(true); };
+
+  /* focus fires on every tab switch and every dismissed keyboard; the poll
+     is already covering this ground, so these two only fill the gaps. */
+  var lastNudge = 0;
+  function nudge(){
+    var now = Date.now();
+    if (now - lastNudge < 5000) return;
+    lastNudge = now;
+    check(false);
+  }
+
+  window.addEventListener("pageshow", function(){ startPolling(); check(true); });
+  window.addEventListener("focus",  nudge);
+  window.addEventListener("online", nudge);
   document.addEventListener("visibilitychange", function(){
-    if (!document.hidden) checkBuild();
+    if (document.hidden) { stopPolling(); return; }
+    startPolling();
+    check(true);   // back in front of someone — reloading here is expected
   });
-  checkBuild();
+
+  startPolling();
+  check(true);
 })();
 </script>
-<script src="./js/app.js?v=20260818-customer-home-r43" defer></script>
+<script src="./js/app.js?v=20260819-1157-591a965" defer></script>
 </body>
 </html>

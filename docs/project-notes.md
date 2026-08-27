@@ -1037,3 +1037,119 @@ kein Pixel ab.
 jenseits der ersten zwei Karten, und das Bild eines laufenden Videos — dieser
 Browser hat keinen H.264-Decoder. Beides wurde stattdessen über den Text- bzw.
 Netzwerkweg geprüft.
+
+---
+
+## Neuerungen sichtbar machen — 27.08.2026
+
+Gemeldet: Auf dem Android-Handy — sowohl in der aus Chrome installierten
+App als auch beim normalen Aufruf über den Link — kam eine gepushte Änderung
+erst an, nachdem die Browserdaten gelöscht und die Seite neu gestartet wurden.
+
+### Warum
+
+Drei Dinge zusammen, und keines davon war Zufall.
+
+**Die Build-Nummer stand still.** Die Seite lädt sich selbst neu, wenn
+`version.json` eine Kennung meldet, die sie nicht kennt. Das funktioniert nur,
+wenn sich diese Kennung bewegt, sobald sich die Dateien bewegen — und von Hand
+getippt tat sie das nicht: elf Commits lagen auf
+`20260818-customer-home-r43`, darunter der, der ein Viertel des Stylesheets
+entfernt hat. Für die laufende Seite war das derselbe Build wie vorher. Sie
+hatte keinen Anlass, irgendetwas neu zu holen, und die `?v=`-Kennung an CSS und
+Skript stand ebenfalls unverändert da — dieselbe Adresse, also die alte Datei
+aus dem Cache.
+
+**Die Cache-Regeln gelten auf dem Testserver nicht.** `public/_headers` und
+`vercel.json` beschreiben genau die richtige Politik — HTML und Code niemals
+lange vorhalten. Nur läuft die Testumgebung auf GitHub Pages, und GitHub Pages
+liest keine der beiden Dateien; es liefert alles mit `max-age=600` aus. Zehn
+Minuten lang fragt ein Browser, der schon einmal da war, den Server gar nicht
+erst. Eine vom Startbildschirm geöffnete PWA setzt das Dokument fort, das sie
+ohnehin hat, und das kann deutlich älter sein. Der README behauptete das
+Gegenteil; das ist jetzt richtiggestellt.
+
+**Die Notbremse war eine Sackgasse.** Vor dem Neuladen setzte die alte Fassung
+`sessionStorage['onlyone.build.seen']` auf den Ziel-Build. Kam das Dokument
+danach noch einmal alt zurück — was während einer Auslieferung normal ist, die
+Verteilung ist nicht überall gleichzeitig fertig —, dann galt dieser Build als
+„gesehen" und es wurde in dieser Sitzung nie wieder nachgeladen. Genau der
+Zustand, aus dem nur Daten löschen heraushilft.
+
+### Was jetzt passiert
+
+Die Kennung wird nicht mehr getippt. `scripts/stamp-build.js` schreibt sie aus
+dem Commit heraus in `version.json` und in `index.html` (`CURRENT_BUILD` und die
+`?v=` an Stylesheet, Skript und Manifest), und beide Deploy-Workflows rufen das
+vor dem Hochladen auf. Vergessen ist damit keine Möglichkeit mehr.
+
+Die Seite fragt `version.json` beim Laden, bei jeder Rückkehr in den Vordergrund
+und einmal pro Minute, solange jemand hinschaut. Diese eine Anfrage verlässt das
+Gerät immer — eigene Query, `no-store`. Stimmt die Antwort nicht mit der Kennung
+im Dokument überein, lädt sich die Seite unter `?b=<build>` neu: eine Adresse,
+zu der kein Cache einen Eintrag hat. Das ist es, was das neue Stylesheet und das
+neue Skript mitzieht. Danach wird die Query per `replaceState` wieder
+abgeräumt.
+
+Neuladen ist nicht immer höflich — die Ansicht steht im History-State, nicht in
+der Adresse, ein Neuladen landet also wieder im Intro. Also: sofort neu laden,
+wenn die Seite gerade geöffnet oder gerade in den Vordergrund geholt wird; wer
+mitten im Lesen ist, bekommt stattdessen eine Leiste angeboten und tippt selbst,
+oder es greift beim nächsten Wechsel in den Vordergrund. Zwei Dinge halten auch
+die Rückkehr in den Vordergrund zurück, weil ein Neuladen sie wegwerfen würde:
+getippter Text in einem Feld und ein offenes Sheet. Wer nur kurz in WhatsApp
+nachsieht, wie das Datum hiess, findet seine halbe Anfrage wieder vor. Die Leiste bringt ihr
+Aussehen als Inline-Style mit, denn sie erscheint genau dann, wenn das
+Stylesheet auf dem Gerät das alte sein kann.
+
+Aus der einen Sackgassen-Marke sind gezählte Versuche geworden: drei pro
+Ziel-Build, mindestens 20 Sekunden auseinander. Das übersteht eine ungleichmässig
+verteilte Auslieferung, kann nicht endlos kreisen, und — der Unterschied zur
+alten Fassung — ein *anderer* Build wird davon nicht mehr blockiert.
+
+Nebenbei: `start_url` im Manifest zeigte noch auf `./?v=20260817-1924-motion5`.
+Das war ein eigener Cache-Eintrag, die installierte App und der Link im Browser
+hielten also getrennte Kopien derselben Seite. Steht jetzt auf `./`. Und das
+`?v=` an Hero-Video und -Ton ist weg: die tragen ihre Version im Dateinamen
+(`-v4.mp4`), liegen ein Jahr immutable im Cache, und eine Query, die sich bei
+jeder Auslieferung bewegt, hätte 1,1 MB Video bei jedem Deploy erneut über
+Mobilfunk geholt.
+
+### Kein Service Worker
+
+Naheliegend und trotzdem falsch. Ein Service Worker bringt einen weiteren Cache
+mit, den die Seite steuern muss, und das klassische Symptom, wenn man ihn falsch
+steuert, ist genau das hier behandelte: eine App, die einen alten Build nicht
+loslässt. Eine kleine JSON-Datei abzufragen leistet dasselbe, ohne dass etwas
+schiefgehen kann, und ein Offline-Anspruch, der den Rest bezahlen würde, besteht
+nicht.
+
+### Wie abgesichert wurde
+
+Gegen den echten Dev-Server, in echtem Chromium, mit Dateien, die sich unter der
+geöffneten Seite ändern — nicht simuliert:
+
+* frisch geladen meldet die Seite ihren Build, das Stylesheet trägt dieselbe
+  Kennung, Hero-Video und -Ton tragen keine;
+* eine Auslieferung unter der offenen Seite: sie lädt sich selbst neu, über
+  `?b=`, kommt mit dem neuen Stylesheet zurück, räumt die Query ab und vergisst
+  den Versuchszähler;
+* mitten im Lesen: kein erzwungenes Neuladen, sondern die Leiste — auf Deutsch,
+  Russisch und Türkisch je einzeilig geprüft, oberhalb der Navigationsleiste;
+* Tippen darauf lädt neu, wieder über `?b=`;
+* halb getippte Anfrage im VIP-Assistenten: auch die Rückkehr in den
+  Vordergrund lädt dann *nicht* neu, der Text steht noch da, angeboten wird es
+  trotzdem — und sobald das Feld wieder leer ist, lädt es;
+* drei verbrauchte Versuche: kein vierter Versuch, die Leiste bleibt;
+* der *nächste* Build lädt trotzdem — das ist der Fehler der alten Marke;
+* und ein gewöhnlicher Aufruf des aktuellen Builds bleibt still: kein
+  überflüssiges Neuladen, keine Konsolenfehler.
+
+Dazu der übliche Durchgang: alle fünf Ansichten der unteren Leiste, alle fünf
+Sprachen, keine fehlgeschlagene Anfrage, kein Konsolenfehler.
+
+**Was das nicht abdeckt:** GitHub Pages selbst. Die Netzwerkregel dieser
+Umgebung lässt `gmduke83.github.io` nicht durch, die dort ausgelieferten Header
+sind hier also nicht nachgemessen, sondern aus der Dokumentation von GitHub
+Pages übernommen. Der Weg über `version.json` ist aber gerade so gebaut, dass er
+nicht davon abhängt, welche Header ein Host schickt.

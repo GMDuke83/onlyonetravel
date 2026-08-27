@@ -41,7 +41,12 @@ const MIME = {
 };
 
 function cacheControl(ext, pathname) {
-  // Mirrors public/_headers so local behaviour matches production.
+  // Mirrors public/_headers. Note that the live site is on GitHub Pages,
+  // which honours neither that file nor vercel.json and serves everything
+  // with max-age=600 — so this is the *intended* policy, not the deployed
+  // one. What actually keeps the deployed site fresh is the build id in
+  // version.json; see scripts/stamp-build.js.
+  if (pathname === '/version.json') return 'no-store';
   if (pathname.startsWith('/video/')) return 'public, max-age=31536000, immutable';
   if (pathname.startsWith('/images/') || pathname.startsWith('/icons/')) return 'public, max-age=604800';
   return 'no-cache, must-revalidate';

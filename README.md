@@ -76,6 +76,7 @@ onlyonetravel/
 │   ├── version.json               build id; the page reloads itself on a change
 │   └── manifest.webmanifest
 │
+├── scripts/stamp-build.js         writes the build id into public/ before a deploy
 ├── scripts/dev-server.js          zero-dependency local server (Range support)
 ├── scripts/render-clouds/         raymarches the cloud sprites offline
 ├── docs/project-notes.md          decisions, open points, asset provenance
@@ -370,21 +371,80 @@ axes across all three digits.
 
 ---
 
-## Caching
+## Caching, and how a push reaches a visitor
 
-Set in `public/_headers` (Cloudflare) and mirrored in `vercel.json` and the dev
+### The headers, and where they actually apply
+
+Set in `public/_headers` (Cloudflare), mirrored in `vercel.json` and the dev
 server:
 
 | Path | Cache-Control |
 |---|---|
 | `/`, `/index.html` | `no-cache, must-revalidate` |
 | `/css/*`, `/js/*` | `no-cache, must-revalidate` |
-| `/video/*` | `public, max-age=31536000, immutable` |
+| `/version.json` | `no-store` |
+| `/video/*`, `/audio/*` | `public, max-age=31536000, immutable` |
 | `/images/*`, `/icons/*` | `public, max-age=604800` |
 
-HTML and code revalidate on every load, so during development you never chase a
-stale page. The video is safe to cache for a year **because its filename is
-versioned** — a new cut means a new filename.
+**GitHub Pages honours none of it.** It ignores `_headers` and `vercel.json`
+alike and serves every file with `max-age=600`, so on the live site a returning
+browser answers out of its own cache for ten minutes without asking anything —
+and a PWA opened from the Android home screen resumes the document it already
+has, which can be very much older than that. The table above is the policy this
+project wants and gets on Cloudflare, on Vercel and locally. It is not what the
+test site does.
+
+The video is safe to cache for a year **because its filename is versioned** — a
+new cut means a new filename. For that reason the hero video and its audio carry
+no `?v=`: a query that moved every deploy would re-download 1.1 MB over mobile
+data each time, for a file that has not changed.
+
+### What actually keeps the site fresh
+
+One build id, in two places that must agree:
+
+* `public/version.json` — what the server says the current build is
+* `CURRENT_BUILD` in `public/index.html` — what the loaded page thinks it is
+
+The page asks `version.json` for that id on load, on every return to the
+foreground, and once a minute while someone is looking. That request is the only
+one guaranteed to leave the device (unique query, `no-store`). When the answer
+differs from the id in the document, the page reloads itself at
+`?b=<build>` — a URL no cache holds an entry for, which is what pulls the new
+stylesheet and script down with it.
+
+Reloading is not always polite: the view lives in history state, not in the URL,
+so a reload lands back on the intro. So it reloads outright when the page is
+being opened or has just come back to the foreground, and while somebody is
+reading it offers the reload as a tap instead, applying it the next time they
+leave and return.
+
+**Both ids are written by `scripts/stamp-build.js`, never by hand**, and both
+deploy workflows run it before they upload. The id is derived from the commit,
+so it moves whenever `public/` moves and cannot be forgotten:
+
+```
+npm run stamp          stamp public/ from HEAD
+npm run stamp:check    fail if public/ is not stamped for HEAD
+```
+
+The value committed to git points at whichever commit it was last stamped from;
+the deploy re-stamps at upload, so the deployed id always matches the deployed
+commit. `stamp:check` reporting drift on a fresh commit is expected, not a fault.
+
+This mattered: while the id was typed by hand it went eleven commits without
+moving — one of them removed a quarter of the stylesheet — and every browser
+that had been to the site kept the old CSS and the old script until its storage
+was cleared by hand.
+
+### Why there is no service worker
+
+A service worker is the usual answer to "make a PWA update itself", and it is
+the wrong one here. It adds a cache the page controls badly, and the classic
+symptom of getting it wrong is precisely the one this section exists to remove:
+an app that will not let go of an old build. Polling one small JSON file gets
+the same result with nothing to get wrong, and the site has no offline
+requirement that would pay for the rest.
 
 ---
 
