@@ -3263,6 +3263,13 @@
     '.section__head', '.cardList > .card', '.expBand', '.listCard',
     '.homeEditorialHead', '.homeOfferCard',
     '.statRow', '.doList', '.person', '.searchCard', '.tl',
+    /* The section headings already rose on arrival; the full-bleed panels
+       carried the largest type on the page and did not. These are the copy
+       blocks, not their cards, so the photograph stays put and only the words
+       move -- and not the gateway tiles, whose own press transition would be
+       replaced by the reveal's slower one and turn the tap mushy. */
+    '.homeAviationFinal__copy', '.homeSuperDealCard__copy',
+    '.homeTransferRequest__copy', '.homeVipCallback__head',
   ].join(',');
   let revealObserver=null;
   function armReveals(){

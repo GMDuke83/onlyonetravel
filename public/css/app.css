@@ -1334,6 +1334,25 @@ select.input option{background:#fff;color:var(--txt)}
   will-change:opacity,transform;
 }
 .reveal.is-in{opacity:1;transform:none;will-change:auto}
+/* Rail cards are rounded clips over a photograph whose own slow scale
+   animation never stops. Moving such a layer -- by a swipe, by the drift, by
+   anything -- makes the browser re-resolve the rounded mask against the pixel
+   grid, and the edge pixels shimmer. Promoting each card to its own layer and
+   taking it off the back face lets the mask rasterise once and only
+   recomposite after that.
+
+   Honest note: this could not be reproduced here. Measured over twelve frames,
+   the edge pixels reverse direction on 3.5% of frame changes with the
+   sub-pixel drift and 3.2% without it, peaking at 6.4% either way -- so the
+   sub-pixel carry is not the cause and removing it would not help. Headless
+   Chromium on a desktop GPU is also not a phone's compositor, and it cannot
+   decode the site's H.264 clips at all, so the video case is untested. This is
+   the standard remedy for the symptom, not a verified fix for this one. */
+.travelWorld,.homePromoCard,.vipServiceCard{
+  transform:translateZ(0);
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+}
+
 /* Rails scroll sideways, so their cards arrive from the side instead. */
 /* Rail cards fade only. A horizontal slide inside a horizontally snapping
    scroller means two things moving the same axis at the same time, which is
@@ -2352,8 +2371,24 @@ span.siteFooter__ic{cursor:default}
    anywhere still holds.
    The sun sits top-left, which is where LIGHT_DIR points in clouds.py, so the
    lit side of every sprite faces the glow instead of contradicting it. */
-.homeAviationFinal{position:relative;min-height:620px;padding:58px calc(22px + var(--sar)) 72px calc(22px + var(--sal));overflow:hidden;background:radial-gradient(circle at 16% 6%,rgba(255,252,238,.80),transparent 44%),linear-gradient(180deg,#B2D6EC 0%,#C6E1F1 42%,#DFEDF6 76%,#EFF6FA 100%);border-top:1px solid rgba(187,134,111,.18);color:#21180f}
-.homeAviationFinal--transferHero{padding-top:62px;padding-bottom:330px}
+/* The bottom padding is what keeps the copy off the aircraft: the plane is
+   absolutely positioned at bottom:10px, the copy is in normal flow at the
+   top, so the section has to reserve the plane's own height beneath the
+   text. It was three hand-set numbers -- 300px under 360, 250 over 760 and
+   72 in between -- and that gap in the middle is every phone made in the
+   last few years. Measured, the button crossed the nose by 56px at 390 and
+   95px at 430, while 320 was almost clear.
+
+   So it is derived instead of guessed. The plane is min(78vw,360px) wide
+   and the render is 900x1111, so it is 1.2344 times that tall, which is
+   min(96.3vw,444px); plus its own 10px offset and 20px of air. One rule
+   now covers every width, and the wide layout gets the same formula
+   against its own min(38vw,360px). */
+.homeAviationFinal{position:relative;min-height:620px;padding:58px calc(22px + var(--sar)) calc(min(96.3vw,444px) + 30px) calc(22px + var(--sal));overflow:hidden;background:radial-gradient(circle at 16% 6%,rgba(255,252,238,.80),transparent 44%),linear-gradient(180deg,#B2D6EC 0%,#C6E1F1 42%,#DFEDF6 76%,#EFF6FA 100%);border-top:1px solid rgba(187,134,111,.18);color:#21180f}
+/* The only form this section is ever rendered in, and so the rule that
+   actually decides the space under the copy -- two classes beat the base
+   rule, which is why setting it there changed nothing at 390 and 430. */
+.homeAviationFinal--transferHero{padding-top:62px;padding-bottom:calc(min(96.3vw,444px) + 30px)}
 .homeAviationFinal>.flySky--far{z-index:0;opacity:.64}
 .homeAviationFinal>.flySky--near{z-index:2;opacity:.88;bottom:28%;-webkit-mask-image:linear-gradient(180deg,transparent 0,transparent 14%,#000 26%);mask-image:linear-gradient(180deg,transparent 0,transparent 14%,#000 26%)}
 .homeAviationFinal__copy{position:relative;z-index:3;max-width:370px}
@@ -2375,7 +2410,7 @@ span.siteFooter__ic{cursor:default}
   .homeTransferQuick{grid-template-columns:1fr}
   .homeTransferQuick button{grid-column:1}
   .homeTransferRequest{min-height:720px}
-  .homeAviationFinal{min-height:650px;padding-bottom:300px}
+  .homeAviationFinal{min-height:650px}
 }
 @media(prefers-reduced-motion:reduce){
   .homeAviationFinal__plane img{animation:none}
@@ -2384,7 +2419,7 @@ span.siteFooter__ic{cursor:default}
 
 
 @media (min-width:760px){
-  .homeAviationFinal{padding-bottom:250px}
+  .homeAviationFinal,.homeAviationFinal--transferHero{padding-bottom:calc(min(46.9vw,444px) + 30px)}
   .homeAviationFinal__plane{width:min(38vw,360px)}
   .homeSuperDealCard{min-height:420px;border-radius:0}
   .homeSuperDealCard__copy b{font-size:42px}
