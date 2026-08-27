@@ -170,10 +170,58 @@ svg{
    everywhere keeps the proportions honest and leaves one number per place. */
 .brandLogo{
   display:block;
+  position:relative;
   aspect-ratio:470.26/135.76;
+}
+/* The wordmark is painted on ::after rather than on the box itself, so the map
+   behind it is not clipped away: a mask applies to everything the element
+   renders, pseudo-elements included, and with the mask on .brandLogo the map
+   would only have shown inside the letters. */
+.brandLogo::after{
+  content:"";
+  position:absolute;
+  inset:0;
   background-color:currentColor;
   -webkit-mask:url(../images/onlyone-logo.svg) center/contain no-repeat;
   mask:url(../images/onlyone-logo.svg) center/contain no-repeat;
+}
+
+/* The world map from the artwork, where there is room for it.
+
+   Measured off the source rather than placed by eye: in the logo's own
+   coordinate space the map is 100.4% of the wordmark's width and 234.2% of its
+   height, its left edge flush to within 0.6%, sitting 71.3% of that height
+   above it. So it needs no offset of its own -- width:100% and those two
+   numbers put it exactly where the artwork does.
+
+   Flattened to an alpha mask rather than kept as the two-tone picture. The
+   white country borders are opaque like the landmass, so a mask loses them --
+   but at the 172px this is ever drawn at they are already below a device pixel,
+   and rendering both side by side at that size shows no difference. What it
+   buys: one file serves white over the film and ivory in the footer, tinted
+   through currentColor, and it is 35 KB instead of a 822 KB vector.
+
+   Opacity is the artwork's own: the map measures #404040 against black there,
+   a quarter of the ground's contrast.
+
+   The footer only. It was tried on the intro too and taken back out: the
+   artwork sets the map on flat black, and over a moving photograph the same
+   shape reads as dirt on the picture rather than as a ground behind the
+   words. It was also cut 17px short there -- the intro lockup sits 18px from
+   the top and the map reaches 35px above it -- but the crop was the smaller
+   half of the problem. */
+.brandLogo--footer::before{
+  content:"";
+  position:absolute;
+  left:0;
+  width:100%;
+  top:-71.3%;
+  height:234.2%;
+  background-color:currentColor;
+  opacity:.24;
+  -webkit-mask:url(../images/onlyone-logo-map.webp) center/contain no-repeat;
+  mask:url(../images/onlyone-logo-map.webp) center/contain no-repeat;
+  pointer-events:none;
 }
 .brandLogo--intro{width:172px;margin:0 auto;
   /* the wordmark sits on a photograph, so it needs the lift the old text got
