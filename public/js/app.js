@@ -2178,10 +2178,6 @@
 
     <section class="homeTransferRequest homeTransferRequest--tile">
       <div class="homeTransferTile">
-        <div class="homeTransferTile__top">
-          <div class="homeTransferTile__route" aria-hidden="true"><span></span><i></i><span></span></div>
-          <div class="homeTransferTile__status">24/7</div>
-        </div>
         <div class="homeTransferRequest__copy"><div class="eyebrow">ONLY ONE TRAVEL · VIP TRANSFER</div>
           <h2>${hx('Ваш VIP-транспорт ждёт вас','Ihr VIP-Transport wartet auf Sie','Your VIP transport is waiting for you')}</h2>
           <p>${hx('Короткая заявка — ваш VIP-ассистент уточнит детали лично.','Kurze Anfrage – dein VIP-Assistent klärt die Details persönlich.','A short request — your VIP assistant confirms the details personally.')}</p>
