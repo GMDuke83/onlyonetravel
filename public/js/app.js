@@ -2173,7 +2173,7 @@
         <p>${hx('Перелёт, VIP-приём и трансфер — одна персональная организация от ONLYONE.','Flug, VIP-Empfang und Transfer – persönlich aus einer Hand organisiert.','Flight, VIP welcome and transfer — personally arranged as one journey.')}</p>
         <button type="button" data-block="flight">${hx('Организовать перелёт','Flug organisieren','Arrange a flight')}${icon('chev')}</button>
       </div>
-      <div class="homeAviationFinal__plane" aria-hidden="true"><span class="flyTrail homeAviationFinal__trail"><i style="left:42.5%;top:15%;--h:58%;--t:2.5s;--d:-.2s"></i><i style="left:46.5%;top:16%;--h:64%;--t:2.8s;--d:-1.0s"></i><i style="left:50.5%;top:17%;--h:68%;--t:2.4s;--d:-1.6s"></i><i style="left:54.5%;top:16%;--h:64%;--t:2.9s;--d:-.7s"></i><i style="left:58.5%;top:15%;--h:58%;--t:2.6s;--d:-1.3s"></i></span><span class="planeBody"><img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async"><span class="planeMark planeMark--l" aria-hidden="true">ONLY ONE</span><span class="planeMark planeMark--r" aria-hidden="true">ONLY ONE</span></span></div>
+      <div class="homeAviationFinal__plane" aria-hidden="true"><span class="flyTrail homeAviationFinal__trail"><i style="left:42.5%;top:15%;--h:58%;--t:2.5s;--d:-.2s"></i><i style="left:46.5%;top:16%;--h:64%;--t:2.8s;--d:-1.0s"></i><i style="left:50.5%;top:17%;--h:68%;--t:2.4s;--d:-1.6s"></i><i style="left:54.5%;top:16%;--h:64%;--t:2.9s;--d:-.7s"></i><i style="left:58.5%;top:15%;--h:58%;--t:2.6s;--d:-1.3s"></i></span><img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async"></div>
     </section>
 
     <section class="homeTransferRequest homeTransferRequest--tile">
