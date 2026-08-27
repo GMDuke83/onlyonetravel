@@ -22,12 +22,19 @@ What it actually computes, per pixel:
 so the top-left of each puff is lit and the underside falls into shadow, which
 is the whole reason it looks three-dimensional.
 
-The palette is deliberately not white. These sit on the ivory flight band, and a
-white cloud on ivory is an invisible cloud; what you see of a real cloud against
-a bright hazy sky is its shadowed contour. So the lit tone is barely above the
-band and the shadow carries the shape.
+The palette follows the band underneath it, and that band is sky now.
+
+It used to be ivory, and a white cloud on ivory is an invisible cloud — so the
+lit tone sat barely above the band and a warm grey shadow carried the whole
+shape. Against blue the opposite holds: the cloud can be white, because the
+ground is darker than it is, and the shadow only has to be cool and a little
+deeper rather than dark. Too dark and a fair-weather cloud turns into a storm.
 
     python3 clouds.py [outdir]
+
+Writes .webp directly. The sprites are consumed as webp by the page, and a PNG
+that somebody has to remember to convert is a step that eventually gets
+forgotten.
 """
 import sys, os, math
 import numpy as np
@@ -37,8 +44,8 @@ RES        = 768          # sprite edge, before the final downscale
 VIEW_STEPS = 56
 LIGHT_STEPS= 5
 OCTAVES    = 4
-LIT        = np.array([252, 249, 243], np.float32)   # barely above the band
-SHADOW     = np.array([138, 126, 110], np.float32)   # warm grey, carries the form
+LIT        = np.array([255, 255, 255], np.float32)   # white, the sky is darker
+SHADOW     = np.array([170, 190, 212], np.float32)   # cool and only a little deeper
 LIGHT_DIR  = np.array([-0.55, -0.68, 0.48], np.float32)
 LIGHT_DIR /= np.linalg.norm(LIGHT_DIR)
 
@@ -151,6 +158,13 @@ SHAPES = [
     # a long veil, for the layer that crosses in front of the aircraft
     dict(c=np.float32([0.00, 0.00, 0.0]), r=np.float32([1.00, 0.40, 0.48]),
          scale=2.6, cut=0.40, edge=0.62, dens=1.3, absorb=2.3),
+    # a small high wisp — with more clouds on the band, repetition is what gives
+    # the trick away, so the two extra shapes exist to break the pattern
+    dict(c=np.float32([0.00, 0.00, 0.0]), r=np.float32([0.74, 0.52, 0.48]),
+         scale=4.6, cut=0.44, edge=0.48, dens=1.5, absorb=2.6),
+    # a broad, soft, slow bank for the far layer
+    dict(c=np.float32([0.00, 0.00, 0.0]), r=np.float32([1.00, 0.52, 0.58]),
+         scale=2.0, cut=0.38, edge=0.58, dens=1.6, absorb=2.5),
 ]
 
 if __name__ == "__main__":
@@ -164,8 +178,8 @@ if __name__ == "__main__":
             pad = 6
             img = img.crop((max(0, box[0] - pad), max(0, box[1] - pad),
                             min(img.width, box[2] + pad), min(img.height, box[3] + pad)))
-        path = os.path.join(out, f"cloud-{i}.png")
-        img.save(path)
+        path = os.path.join(out, f"sky-cloud-{i}.webp")
+        img.save(path, "WEBP", quality=88, method=6)
         a = np.asarray(img)[..., 3]
         print(f"{path}  {img.size[0]}x{img.size[1]}  Deckung {a.mean()/255*100:5.1f}%  "
               f"max {a.max()}")
