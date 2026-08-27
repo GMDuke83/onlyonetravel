@@ -2097,6 +2097,7 @@
         <img src="${p.img}" alt="${esc(p.title)}" loading="${i<2?'eager':'lazy'}" decoding="async" fetchpriority="${i===0?'high':'low'}">
         <span class="homePromoCard__shade"></span><span class="homePromoCard__copy"><i>${esc(p.tag)}</i><b>${esc(p.title)}</b><em>${esc(p.meta)}</em><span>${icon('chev')}</span></span>
       </button>`).join('')}</div>
+      <div class="railBar" aria-hidden="true"><i></i></div>
     </section>
 
     <section class="homeSuperDeal">
@@ -2131,6 +2132,7 @@
         <img src="${x.img}" alt="${esc(x.title)}" loading="${i<2?'eager':'lazy'}" decoding="async" fetchpriority="low">
         <span class="travelWorld__shade"></span><span class="travelWorld__copy"><b>${esc(x.title)}</b><i>${esc(x.meta)}</i><span>${icon('chev')}</span></span>
       </button>`).join('')}</div>
+      <div class="railBar" aria-hidden="true"><i></i></div>
     </section>
 
     <section class="homeOffers homeBestHotels">
@@ -2158,6 +2160,7 @@
         <img src="${s.img}" alt="" loading="lazy" decoding="async">${s.video?`<video class="vipServiceCard__video" muted autoplay loop playsinline webkit-playsinline preload="none" poster="${s.img}" data-bg="${s.video}" disablepictureinpicture disableremoteplayback aria-hidden="true"></video>`:''}<span class="vipServiceCard__shade"></span>
         <span class="vipServiceCard__copy"><i>${esc(s.ey)}</i><b>${esc(s.title)}</b><p>${esc(s.body)}</p><em>${hx('Подробнее','Mehr erfahren','Learn more')}${icon('chev')}</em></span>
       </button>`).join('')}</div>
+      <div class="railBar" aria-hidden="true"><i></i></div>
     </section>
 
     <section class="homeAviationFinal homeAviationFinal--transferHero">
@@ -3043,87 +3046,143 @@
      This keeps the desired editorial movement while avoiding a page full of
      off-screen transforms competing with video playback on iOS. */
   let livingImagesObserver=null;
-  /* The rails move by themselves while they are on screen.
+  /* The rails drift, and they say so.
 
      A row of cards that runs off the edge of a phone only reads as swipeable
-     once something in it moves; standing still it looks like a picture that
-     happens to be cropped, and everything past the second card is never seen.
-     So each rail steps one card sideways every few seconds while it is in
-     view, and turns round at the end rather than rewinding across the whole
-     row — a long sweep backwards reads as a glitch where a single step reads
-     as browsing.
+     once something in it moves, and a step every few seconds reads as a
+     carousel taking its turn rather than as a rail you could push yourself.
+     So the motion is continuous and slow — 16 pixels a second, closer to a
+     minute hand than to an animation — and under each rail sits a thin bar
+     whose thumb is as wide a share of the track as the visible cards are of
+     the whole row. A part-filled bar that creeps along is the plainest
+     statement there is that something scrolls sideways and there is more of
+     it than you can see.
 
-     The step is measured, not guessed: the distance between the first two
-     cards' offsetLeft, which already includes the gap and stays right when a
-     card's width changes with the viewport. The rails snap on proximity, so
-     the browser lands the card square either way.
+     One frame loop for all three rails rather than one each, and it is not
+     running at all while none of them is on screen.
 
-     What stops it, in order of importance:
+     Snapping is off while a rail drifts and back on the moment a finger lands:
+     proximity snapping and a continuous programmatic scroll fight each other,
+     and the finger is the one that should win.
 
-     A hand. But only a hand that actually swiped. Pausing on every pointerdown
-     would kill the rail for good on nearly every visit, because the cards are
-     two thirds of the screen and most vertical scrolls begin on one. So a
-     touch pauses, and on release the rail compares where it ended up with
-     where the finger landed: moved sideways means the visitor has taken over
-     and it never moves on its own again; did not move means they were only
-     scrolling the page past it, and it resumes. The comparison waits out the
-     momentum first, or an iOS flick would still be travelling when it is read.
+     What stops the drift, in order of importance:
+
+     A hand — but only a hand that actually swiped. Pausing on every
+     pointerdown would kill the rail for good on nearly every visit, because
+     the cards are two thirds of the screen and most vertical scrolls begin on
+     one. So a touch pauses, and on release the rail compares where it ended up
+     with where the finger landed: moved sideways means the visitor has taken
+     over and it never moves on its own again; did not move means they were
+     only scrolling the page past it, and it resumes. The comparison waits out
+     the momentum first, or an iOS flick would still be travelling when it is
+     read.
 
      Leaving the screen, or the tab going to the background — both only pause.
 
-     And prefers-reduced-motion, where it never starts at all. */
+     And prefers-reduced-motion, where it never starts at all; the bar is still
+     drawn and still tracks a hand, because it is information rather than
+     decoration. */
   const RAIL_SEL   = '.homePromos__rail,.travelWorlds__rail,.homeVipServices__rail';
-  const RAIL_STEP_MS = 3600;
+  const RAIL_SPEED = 16;     // px per second
   const RAIL_SETTLE_MS = 420;
-  let railTimers=[], railObserver=null;
+  let railRaf=0, railLast=0, railList=[], railObserver=null;
 
   function disarmRailAutoScroll(){
-    railTimers.forEach(clearInterval);
-    railTimers=[];
+    if(railRaf) cancelAnimationFrame(railRaf);
+    railRaf=0; railLast=0;
+    railList.forEach(r=>r.el.classList.remove('is-drifting'));
+    railList=[];
     if(railObserver){ railObserver.disconnect(); railObserver=null; }
+  }
+
+  function railBar(r){
+    if(!r.bar) return;
+    const total=r.el.scrollWidth, view=r.el.clientWidth;
+    if(total<=view+2){ r.bar.parentNode.style.visibility='hidden'; return; }
+    r.bar.parentNode.style.visibility='';
+    const track=r.bar.parentNode.clientWidth;
+    const w=Math.max(18, track*view/total);
+    r.bar.style.width=w+'px';
+    r.bar.style.transform='translateX('+((track-w)*(r.el.scrollLeft/(total-view)))+'px)';
+  }
+
+  function railTick(now){
+    railRaf=requestAnimationFrame(railTick);
+    if(!railLast){ railLast=now; return; }
+    let dt=(now-railLast)/1000; railLast=now;
+    if(dt>0.1) dt=0.1;                       // a backgrounded tab comes back with a huge gap
+    if(document.hidden) return;
+    railList.forEach(r=>{
+      if(!r.drift||r.taken||r.paused||!r.visible) return;
+      const max=r.el.scrollWidth-r.el.clientWidth;
+      if(max<8) return;
+      r.pos += RAIL_SPEED*dt*r.dir;
+      if(r.pos>=max){ r.pos=max; r.dir=-1; }
+      else if(r.pos<=0){ r.pos=0; r.dir=1; }
+      r.el.scrollLeft=r.pos;
+    });
   }
 
   function armRailAutoScroll(){
     disarmRailAutoScroll();
     const root=$('#app'); if(!root) return;
-    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if(!('IntersectionObserver' in window)) return;
     const rails=$$(RAIL_SEL,root); if(!rails.length) return;
+    const drift = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-    const visible=new Set();
-    railObserver=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{ if(e.isIntersecting) visible.add(e.target); else visible.delete(e.target); });
-    },{root,threshold:0.45});
+    rails.forEach(el=>{
+      const next=el.nextElementSibling;
+      const r={el, bar:(next&&next.classList.contains('railBar'))?next.firstElementChild:null,
+               dir:1, pos:el.scrollLeft, taken:false, paused:false, visible:false,
+               markLeft:0, drift};
+      if(drift) el.classList.add('is-drifting');
 
-    rails.forEach(rail=>{
-      let dir=1, taken=false, paused=false, markLeft=0;
+      let barRaf=0;
+      const paint=()=>{ barRaf=0; railBar(r); };
+      el.addEventListener('scroll',()=>{ if(!barRaf) barRaf=requestAnimationFrame(paint); },{passive:true});
 
-      rail.addEventListener('pointerdown',()=>{ paused=true; markLeft=rail.scrollLeft; },{passive:true});
+      /* Snapping stays off for the whole touch, not just for the drift. The
+         first version turned it back on at pointerdown so the visitor's own
+         swipe would snap — and the snap fired immediately, pulled the rail
+         back to the nearest card, and the check below read that jump as a
+         sideways swipe and handed the rail over for good. It was also visible:
+         touch the rail and it lurches backwards. With snapping off nothing but
+         the finger can move the rail while it is down, so any change in
+         scrollLeft across the touch is the finger's, which is the whole
+         premise of the check. It comes back on when the visitor has taken
+         over, so every swipe after the first one snaps. */
+      el.addEventListener('pointerdown',()=>{ r.paused=true; r.markLeft=el.scrollLeft; },{passive:true});
       const release=()=>{
-        if(!paused) return;
+        if(!r.paused) return;
         setTimeout(()=>{
-          paused=false;
-          if(Math.abs(rail.scrollLeft-markLeft)>6) taken=true;
+          r.paused=false;
+          if(Math.abs(el.scrollLeft-r.markLeft)>6){ r.taken=true; el.classList.remove('is-drifting'); }
+          else r.pos=el.scrollLeft;
         },RAIL_SETTLE_MS);
       };
-      rail.addEventListener('pointerup',release,{passive:true});
-      rail.addEventListener('pointercancel',release,{passive:true});
-      rail.addEventListener('wheel',()=>{ taken=true; },{passive:true,once:true});
+      el.addEventListener('pointerup',release,{passive:true});
+      el.addEventListener('pointercancel',release,{passive:true});
+      el.addEventListener('wheel',()=>{ r.taken=true; el.classList.remove('is-drifting'); },{passive:true,once:true});
 
-      railTimers.push(setInterval(()=>{
-        if(taken||paused||document.hidden||!visible.has(rail)) return;
-        const max=rail.scrollWidth-rail.clientWidth;
-        if(max<8) return;                                   // nothing to show sideways
-        const a=rail.children[0], b=rail.children[1];
-        const step=(a&&b) ? Math.abs(b.offsetLeft-a.offsetLeft) : rail.clientWidth*0.8;
-        if(dir>0 && rail.scrollLeft>=max-4)      dir=-1;
-        else if(dir<0 && rail.scrollLeft<=4)     dir=1;
-        try{ rail.scrollBy({left:step*dir,behavior:'smooth'}); }
-        catch(e){ rail.scrollLeft += step*dir; }
-      },RAIL_STEP_MS));
-
-      railObserver.observe(rail);
+      railList.push(r);
+      requestAnimationFrame(()=>railBar(r));
     });
+
+    if('IntersectionObserver' in window){
+      railObserver=new IntersectionObserver(entries=>{
+        entries.forEach(e=>{
+          const r=railList.find(x=>x.el===e.target); if(!r) return;
+          r.visible=e.isIntersecting;
+          if(r.visible){ r.pos=r.el.scrollLeft; railBar(r); }
+        });
+        const live=railList.some(r=>r.visible&&r.drift&&!r.taken);
+        if(live && !railRaf){ railLast=0; railRaf=requestAnimationFrame(railTick); }
+        if(!live && railRaf){ cancelAnimationFrame(railRaf); railRaf=0; }
+      },{root,threshold:0.25});
+      railList.forEach(r=>railObserver.observe(r.el));
+    } else {
+      railList.forEach(r=>{ r.visible=true; });
+      if(drift){ railLast=0; railRaf=requestAnimationFrame(railTick); }
+    }
   }
 
   function armLivingImages(){
