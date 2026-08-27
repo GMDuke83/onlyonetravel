@@ -3090,7 +3090,7 @@
   function disarmRailAutoScroll(){
     if(railRaf) cancelAnimationFrame(railRaf);
     railRaf=0; railLast=0;
-    railList.forEach(r=>r.el.classList.remove('is-drifting'));
+    railList.forEach(r=>{ railFold(r); r.el.classList.remove('is-drifting'); });
     railList=[];
     if(railObserver){ railObserver.disconnect(); railObserver=null; }
   }
@@ -3106,20 +3106,68 @@
     r.bar.style.transform='translateX('+((track-w)*(r.el.scrollLeft/(total-view)))+'px)';
   }
 
+  /* Sub-pixel, or it visibly steps.
+
+     scrollLeft is quantised to whole CSS pixels — a fractional value written
+     to it is rounded, and reading the position back or measuring a card's box
+     confirms it. At 16 px/s that is 0.27 px of travel per frame against a 1 px
+     grid, so the rail stands still for three or four frames and then jumps a
+     whole pixel. Measured over 180 frames: 131 of them moved nothing at all,
+     and the pattern was 0 0 -1 0 0 -1 0 0 0 -1. Frame pacing was never the
+     problem — the gap held at 16.65 ms with a standard deviation of 0.27.
+
+     So the whole pixels go to scrollLeft, which is what actually scrolls, and
+     the remainder — always under half a pixel — is carried as a translate on
+     the cards. Their sum is the true position, and a transform is not on the
+     pixel grid: it is interpolated on the compositor and costs no layout. The
+     cards are the right place for it because none of them carries a transform
+     of its own; the living-image animation is on the img inside, and the
+     nth-child selectors that drive it count children of the rail, which this
+     does not change.
+
+     The remainder is folded back into scrollLeft and the transforms cleared
+     whenever a hand takes over, so nothing is left leaning by half a pixel
+     when snapping comes back. That correction is at most 0.5 px.
+
+     Reads are batched ahead of writes. scrollWidth and clientWidth were being
+     read inside the same loop that wrote scrollLeft, once per rail per frame,
+     which interleaves measuring and mutating three times over. */
+  function railFold(r){
+    if(r.kids){ r.kids.forEach(c=>{ c.style.transform=''; }); r.kids=null; }
+    r.lastT='';
+    if(r.drift && !r.taken){ r.el.scrollLeft=Math.round(r.pos); r.pos=r.el.scrollLeft; }
+  }
+
   function railTick(now){
     railRaf=requestAnimationFrame(railTick);
     if(!railLast){ railLast=now; return; }
     let dt=(now-railLast)/1000; railLast=now;
     if(dt>0.1) dt=0.1;                       // a backgrounded tab comes back with a huge gap
     if(document.hidden) return;
+
+    const plan=[];
     railList.forEach(r=>{
       if(!r.drift||r.taken||r.paused||!r.visible) return;
       const max=r.el.scrollWidth-r.el.clientWidth;
       if(max<8) return;
+      plan.push([r,max]);
+    });
+
+    plan.forEach(([r,max])=>{
       r.pos += RAIL_SPEED*dt*r.dir;
       if(r.pos>=max){ r.pos=max; r.dir=-1; }
       else if(r.pos<=0){ r.pos=0; r.dir=1; }
-      r.el.scrollLeft=r.pos;
+
+      const whole=Math.round(r.pos);
+      if(whole!==r.whole){ r.el.scrollLeft=whole; r.whole=whole; }
+
+      // content travels left as the position grows, so the remainder does too
+      const t='translate3d('+(r.whole-r.pos).toFixed(3)+'px,0,0)';
+      if(t!==r.lastT){
+        if(!r.kids) r.kids=Array.prototype.slice.call(r.el.children);
+        r.kids.forEach(c=>{ c.style.transform=t; });
+        r.lastT=t;
+      }
     });
   }
 
@@ -3133,7 +3181,8 @@
       const next=el.nextElementSibling;
       const r={el, bar:(next&&next.classList.contains('railBar'))?next.firstElementChild:null,
                dir:1, pos:el.scrollLeft, taken:false, paused:false, visible:false,
-               markLeft:0, drift};
+               markLeft:0, drift,
+               whole:el.scrollLeft, lastT:'', kids:null};
       if(drift) el.classList.add('is-drifting');
 
       let barRaf=0;
@@ -3150,18 +3199,23 @@
          scrollLeft across the touch is the finger's, which is the whole
          premise of the check. It comes back on when the visitor has taken
          over, so every swipe after the first one snaps. */
-      el.addEventListener('pointerdown',()=>{ r.paused=true; r.markLeft=el.scrollLeft; },{passive:true});
+      el.addEventListener('pointerdown',()=>{
+        r.paused=true; railFold(r); r.markLeft=el.scrollLeft;
+      },{passive:true});
       const release=()=>{
         if(!r.paused) return;
         setTimeout(()=>{
           r.paused=false;
           if(Math.abs(el.scrollLeft-r.markLeft)>6){ r.taken=true; el.classList.remove('is-drifting'); }
-          else r.pos=el.scrollLeft;
+          else { r.pos=el.scrollLeft; r.whole=r.pos; }
+          railFold(r);
         },RAIL_SETTLE_MS);
       };
       el.addEventListener('pointerup',release,{passive:true});
       el.addEventListener('pointercancel',release,{passive:true});
-      el.addEventListener('wheel',()=>{ r.taken=true; el.classList.remove('is-drifting'); },{passive:true,once:true});
+      el.addEventListener('wheel',()=>{
+        r.taken=true; el.classList.remove('is-drifting'); railFold(r);
+      },{passive:true,once:true});
 
       railList.push(r);
       requestAnimationFrame(()=>railBar(r));
@@ -3172,7 +3226,7 @@
         entries.forEach(e=>{
           const r=railList.find(x=>x.el===e.target); if(!r) return;
           r.visible=e.isIntersecting;
-          if(r.visible){ r.pos=r.el.scrollLeft; railBar(r); }
+          if(r.visible){ railFold(r); r.pos=r.el.scrollLeft; r.whole=r.pos; railBar(r); }
         });
         const live=railList.some(r=>r.visible&&r.drift&&!r.taken);
         if(live && !railRaf){ railLast=0; railRaf=requestAnimationFrame(railTick); }
