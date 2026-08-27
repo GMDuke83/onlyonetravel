@@ -2157,6 +2157,24 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
 
 .homePromos{position:relative;padding:38px 0 46px;background:linear-gradient(180deg,#fbfaf7 0%,#f6f0e7 100%)}
 .homePromos .homeEditorialHead{padding-bottom:20px}
+/* The bar under a rail: the plainest statement that something scrolls
+   sideways and there is more of it than fits. The thumb is as wide a share of
+   the track as the visible cards are of the whole row, so its width is the
+   answer to "how much am I seeing" and its position the answer to "where am
+   I" — both without a number and without a word in five languages.
+
+   It is drawn and it tracks a hand even under prefers-reduced-motion, because
+   it is information rather than decoration; only the drift stops there.
+
+   Snapping goes off while a rail drifts: proximity snapping and a continuous
+   programmatic scroll pull against each other, and the moment a finger lands
+   the class comes off and the browser snaps again. */
+.railBar{height:2px;margin:16px calc(20px + var(--sar)) 0 calc(20px + var(--sal));border-radius:2px;background:rgba(126,91,43,.15);overflow:hidden}
+.railBar i{display:block;height:100%;width:32%;border-radius:2px;background:#A9812F;transition:width .2s var(--ease)}
+.travelWorlds--customer .railBar,.homeVipServices .railBar{background:rgba(230,199,126,.16)}
+.travelWorlds--customer .railBar i,.homeVipServices .railBar i{background:#E0BF74}
+.homePromos__rail.is-drifting,.travelWorlds__rail.is-drifting,.homeVipServices__rail.is-drifting{scroll-snap-type:none}
+
 .homePromos__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}
 .homePromos__rail::-webkit-scrollbar{display:none}
 .homePromoCard{position:relative;flex:0 0 min(79vw,322px);aspect-ratio:4/5;border:0;border-radius:5px;overflow:hidden;padding:0;background:#17110c;text-align:left;scroll-snap-align:start;box-shadow:0 14px 34px rgba(36,27,18,.12)}
@@ -2262,15 +2280,16 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
    size and one language of the palette, and every later change to either would
    mean re-rendering the aircraft; as two spans it is the site's own face, stays
    sharp at any pixel density, and moves with the drift because it sits inside
-   the element that drifts.
+   .planeBody, which is the element the drift is actually on.
 
-   The numbers are measured off the image (900x1111) rather than eyeballed. At
-   58% of its height the silhouette breaks into three runs — left wing 73..325,
-   fuselage and engines 382..507, right wing 593..802 — so the wings' mid-points
-   are at 22.1% and 77.4%. Following those mid-points down to the next sampled
-   row gives the sweep, and the leading edge measured off the render puts it at 35
-   degrees — which is what each side is rotated by, one
-   mirrored, so both read left to right.
+   The numbers are measured off the image (900x1111) rather than eyeballed, and
+   each wing is measured on its own — which is the whole point. The two are not
+   mirror images: the render carries a little perspective, so a line fitted
+   through the chord mid-points of eleven rows between 56.5% and 68.5% of the
+   height comes out at -36.4 degrees on the left and +33.9 on the right. Giving
+   both the same 35 is what left the right one sitting askew across its wing
+   while the left looked almost right. Each mark now sits on its own fitted
+   centre-line, at 22.7%/57.5% and 76.9%/57.6%.
 
    Size tracks the aircraft instead of the viewport, and the wide layout repeats
    the sum against its own min(38vw,360px).
@@ -2285,10 +2304,12 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
      rather than a signature, which is what an aircraft carries. The brand's
      script was tried here and taken back out: it is the more elegant face and
      the wrong one for this surface.
-     3.2% of the aircraft's width, which against min(78vw,360px) is
-     min(2.5vw,11.5px). */
+     2.9% of the aircraft's width, which against min(78vw,360px) is
+     min(2.26vw,10.4px). It was 3.2% and overshot the wing's chord at the
+     outboard end on both sides — the mark has to sit inside the metal, not
+     across its edge. */
   font-family:var(--display);
-  font-size:min(2.5vw,11.5px);
+  font-size:min(2.26vw,10.4px);
   font-weight:600;
   letter-spacing:.20em;
   white-space:nowrap;
@@ -2296,10 +2317,10 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
   text-shadow:0 1px 2px rgba(46,32,18,.55);
   pointer-events:none;
 }
-.planeMark--l{left:23.4%;top:59%;transform:translate(-50%,-50%) rotate(-35deg)}
-.planeMark--r{left:76.1%;top:59%;transform:translate(-50%,-50%) rotate(35deg)}
+.planeMark--l{left:22.7%;top:57.5%;transform:translate(-50%,-50%) rotate(-36.4deg)}
+.planeMark--r{left:76.9%;top:57.6%;transform:translate(-50%,-50%) rotate(33.9deg)}
 @media(min-width:760px){
-  .planeMark{font-size:min(1.22vw,11.5px)}
+  .planeMark{font-size:min(1.10vw,10.4px)}
 }
 @media (prefers-reduced-motion:reduce){
   /* the whole aircraft is hidden there already, but be explicit */
