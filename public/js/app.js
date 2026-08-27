@@ -1560,7 +1560,11 @@
     diamond:'<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18"/><path d="M9.5 4 7.5 9l4.5 11 4.5-11-2-5"/>',
     keyhouse:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><circle cx="12" cy="12.6" r="1.7"/><path d="M12 14.3V17"/>',
     yacht:'<path d="M4 16.5h15.5l-1.9 3.2a1.6 1.6 0 0 1-1.4.8H7a1.6 1.6 0 0 1-1.4-.8z"/><path d="M11.4 14.4V4.2l6.9 8.1a1 1 0 0 1-.8 1.6z"/><path d="M9.4 14.4V8l-3.6 5.1a.8.8 0 0 0 .7 1.3z"/>',
-    car:'<path d="M4.2 14.2 5.8 9.6a2 2 0 0 1 1.9-1.4h8.6a2 2 0 0 1 1.9 1.4l1.6 4.6"/><path d="M3.5 14.2h17v3.9a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><circle cx="7.1" cy="16.8" r="1.25"/><circle cx="16.9" cy="16.8" r="1.25"/><path d="M6.3 12.2h11.4M8 8.2 9 5.7h6l1 2.5"/>',
+    /* A low sedan rather than the box it was. The old glyph carried a raised
+       panel across its roof — meant as a windscreen, read as a taxi sign, and
+       at 22px that is the only thing anyone saw. This one has a belt line and
+       a sloping greenhouse instead, which is what separates a car from a cab. */
+    car:'<path d="M3.6 16.1v-2.5a1.5 1.5 0 0 1 .66-1.24l2.24-1.52 1.6-2.1a2.1 2.1 0 0 1 1.67-.82h3.96a2.1 2.1 0 0 1 1.5.63l2.55 2.6 1.62.52a1.8 1.8 0 0 1 1.24 1.71v2.74"/><path d="M3.6 16.1h1.9M10.5 16.1h3.4M18.9 16.1h1.7"/><path d="M6.9 11.2h9.9"/><circle cx="8.1" cy="16.2" r="2.05"/><circle cx="16.6" cy="16.2" r="2.05"/>',
     headset:'<path d="M5 13v-1a7 7 0 0 1 14 0v1"/><path d="M5 13h2.2v4.4H5.6A1.6 1.6 0 0 1 4 15.8V13z"/><path d="M19 13h-2.2v4.4h1.6A1.6 1.6 0 0 0 20 15.8V13z"/><path d="M17.2 17.8v.4a2.4 2.4 0 0 1-2.4 2.4h-1.6"/>',
     instagram:'<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><circle cx="12" cy="12" r="3.9"/><circle cx="16.85" cy="7.15" r="1" fill="currentColor" stroke="none"/>',
     facebook:'<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><path d="M14.7 8.3h-1.2a1.95 1.95 0 0 0-1.95 1.95V19.4"/><path d="M9.7 13.15h4.7"/>',
@@ -2164,7 +2168,7 @@
         <p>${hx('Перелёт, VIP-приём и трансфер — одна персональная организация от ONLYONE.','Flug, VIP-Empfang und Transfer – persönlich aus einer Hand organisiert.','Flight, VIP welcome and transfer — personally arranged as one journey.')}</p>
         <button type="button" data-block="flight">${hx('Организовать перелёт','Flug organisieren','Arrange a flight')}${icon('chev')}</button>
       </div>
-      <div class="homeAviationFinal__plane" aria-hidden="true"><span class="flyTrail homeAviationFinal__trail"><i style="left:42.5%;top:15%;--h:58%;--t:2.5s;--d:-.2s"></i><i style="left:46.5%;top:16%;--h:64%;--t:2.8s;--d:-1.0s"></i><i style="left:50.5%;top:17%;--h:68%;--t:2.4s;--d:-1.6s"></i><i style="left:54.5%;top:16%;--h:64%;--t:2.9s;--d:-.7s"></i><i style="left:58.5%;top:15%;--h:58%;--t:2.6s;--d:-1.3s"></i></span><img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async"></div>
+      <div class="homeAviationFinal__plane" aria-hidden="true"><span class="flyTrail homeAviationFinal__trail"><i style="left:42.5%;top:15%;--h:58%;--t:2.5s;--d:-.2s"></i><i style="left:46.5%;top:16%;--h:64%;--t:2.8s;--d:-1.0s"></i><i style="left:50.5%;top:17%;--h:68%;--t:2.4s;--d:-1.6s"></i><i style="left:54.5%;top:16%;--h:64%;--t:2.9s;--d:-.7s"></i><i style="left:58.5%;top:15%;--h:58%;--t:2.6s;--d:-1.3s"></i></span><img src="./images/3d/plane-top.webp" alt="" loading="lazy" decoding="async"><span class="planeMark planeMark--l" aria-hidden="true">ONLY ONE</span><span class="planeMark planeMark--r" aria-hidden="true">ONLY ONE</span></div>
     </section>
 
     <section class="homeTransferRequest homeTransferRequest--tile">
@@ -3037,6 +3041,89 @@
      This keeps the desired editorial movement while avoiding a page full of
      off-screen transforms competing with video playback on iOS. */
   let livingImagesObserver=null;
+  /* The rails move by themselves while they are on screen.
+
+     A row of cards that runs off the edge of a phone only reads as swipeable
+     once something in it moves; standing still it looks like a picture that
+     happens to be cropped, and everything past the second card is never seen.
+     So each rail steps one card sideways every few seconds while it is in
+     view, and turns round at the end rather than rewinding across the whole
+     row — a long sweep backwards reads as a glitch where a single step reads
+     as browsing.
+
+     The step is measured, not guessed: the distance between the first two
+     cards' offsetLeft, which already includes the gap and stays right when a
+     card's width changes with the viewport. The rails snap on proximity, so
+     the browser lands the card square either way.
+
+     What stops it, in order of importance:
+
+     A hand. But only a hand that actually swiped. Pausing on every pointerdown
+     would kill the rail for good on nearly every visit, because the cards are
+     two thirds of the screen and most vertical scrolls begin on one. So a
+     touch pauses, and on release the rail compares where it ended up with
+     where the finger landed: moved sideways means the visitor has taken over
+     and it never moves on its own again; did not move means they were only
+     scrolling the page past it, and it resumes. The comparison waits out the
+     momentum first, or an iOS flick would still be travelling when it is read.
+
+     Leaving the screen, or the tab going to the background — both only pause.
+
+     And prefers-reduced-motion, where it never starts at all. */
+  const RAIL_SEL   = '.homePromos__rail,.travelWorlds__rail,.homeVipServices__rail';
+  const RAIL_STEP_MS = 3600;
+  const RAIL_SETTLE_MS = 420;
+  let railTimers=[], railObserver=null;
+
+  function disarmRailAutoScroll(){
+    railTimers.forEach(clearInterval);
+    railTimers=[];
+    if(railObserver){ railObserver.disconnect(); railObserver=null; }
+  }
+
+  function armRailAutoScroll(){
+    disarmRailAutoScroll();
+    const root=$('#app'); if(!root) return;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if(!('IntersectionObserver' in window)) return;
+    const rails=$$(RAIL_SEL,root); if(!rails.length) return;
+
+    const visible=new Set();
+    railObserver=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting) visible.add(e.target); else visible.delete(e.target); });
+    },{root,threshold:0.45});
+
+    rails.forEach(rail=>{
+      let dir=1, taken=false, paused=false, markLeft=0;
+
+      rail.addEventListener('pointerdown',()=>{ paused=true; markLeft=rail.scrollLeft; },{passive:true});
+      const release=()=>{
+        if(!paused) return;
+        setTimeout(()=>{
+          paused=false;
+          if(Math.abs(rail.scrollLeft-markLeft)>6) taken=true;
+        },RAIL_SETTLE_MS);
+      };
+      rail.addEventListener('pointerup',release,{passive:true});
+      rail.addEventListener('pointercancel',release,{passive:true});
+      rail.addEventListener('wheel',()=>{ taken=true; },{passive:true,once:true});
+
+      railTimers.push(setInterval(()=>{
+        if(taken||paused||document.hidden||!visible.has(rail)) return;
+        const max=rail.scrollWidth-rail.clientWidth;
+        if(max<8) return;                                   // nothing to show sideways
+        const a=rail.children[0], b=rail.children[1];
+        const step=(a&&b) ? Math.abs(b.offsetLeft-a.offsetLeft) : rail.clientWidth*0.8;
+        if(dir>0 && rail.scrollLeft>=max-4)      dir=-1;
+        else if(dir<0 && rail.scrollLeft<=4)     dir=1;
+        try{ rail.scrollBy({left:step*dir,behavior:'smooth'}); }
+        catch(e){ rail.scrollLeft += step*dir; }
+      },RAIL_STEP_MS));
+
+      railObserver.observe(rail);
+    });
+  }
+
   function armLivingImages(){
     if(livingImagesObserver){ livingImagesObserver.disconnect(); livingImagesObserver=null; }
     const root=$('#app'); if(!root) return;
@@ -3315,6 +3402,7 @@
     armAppbar();
     armReveals();
     armLivingImages();
+    armRailAutoScroll();
     armScrollFx();
     if(VIEW.name==='home')fillHeroSlides(); else stopHeroSlides();
   }

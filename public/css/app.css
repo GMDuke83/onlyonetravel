@@ -2250,6 +2250,51 @@ a.siteFooter__ic:active{border-color:rgba(224,191,116,.72);color:#F0D787}
 .homeAviationFinal__copy p{margin:15px 0 0;max-width:31ch;font-size:14px;line-height:1.64;color:#4E4438}
 .homeAviationFinal__copy button{margin-top:24px;min-height:48px;padding:0 15px;border:1px solid rgba(155,109,34,.55);border-radius:2px;background:rgba(255,255,255,.80);color:#8e661f;display:flex;align-items:center;gap:9px;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .homeAviationFinal__copy button svg{width:14px;height:14px}
+/* The wordmark on the wings.
+
+   Type rather than paint. Burning it into plane-top.webp would fix it at one
+   size and one language of the palette, and every later change to either would
+   mean re-rendering the aircraft; as two spans it is the site's own face, stays
+   sharp at any pixel density, and moves with the drift because it sits inside
+   the element that drifts.
+
+   The numbers are measured off the image (900x1111) rather than eyeballed. At
+   58% of its height the silhouette breaks into three runs — left wing 73..325,
+   fuselage and engines 382..507, right wing 593..802 — so the wings' mid-points
+   are at 22.1% and 77.4%. Following those mid-points down to the next sampled
+   row gives the sweep, and the leading edge measured off the render puts it at 35
+   degrees — which is what each side is rotated by, one
+   mirrored, so both read left to right.
+
+   Size tracks the aircraft instead of the viewport: the plane is
+   min(78vw,360px) wide, so 3.2% of that is min(2.5vw,11.5px), and the wide
+   layout repeats the sum against its own min(38vw,360px).
+
+   Warm off-white, the way a livery title is painted on a metal wing, with a
+   shadow underneath because the wing is not one tone: the render lights it from
+   the upper left, so the left wing measures 112,101,91 where the right measures
+   181,146,118 at the same height. */
+.planeMark{
+  position:absolute;z-index:2;
+  font-family:var(--display);
+  font-size:min(2.5vw,11.5px);
+  font-weight:600;
+  letter-spacing:.20em;
+  white-space:nowrap;
+  color:rgba(252,247,238,.88);
+  text-shadow:0 1px 2px rgba(46,32,18,.55);
+  pointer-events:none;
+}
+.planeMark--l{left:23.4%;top:59%;transform:translate(-50%,-50%) rotate(-35deg)}
+.planeMark--r{left:76.1%;top:59%;transform:translate(-50%,-50%) rotate(35deg)}
+@media(min-width:760px){
+  .planeMark{font-size:min(1.22vw,11.5px)}
+}
+@media (prefers-reduced-motion:reduce){
+  /* the whole aircraft is hidden there already, but be explicit */
+  .homeAviationFinal__plane .planeMark{display:inline}
+}
+
 .homeAviationFinal__plane{position:absolute;z-index:2;left:50%;bottom:10px;width:min(78vw,360px);transform:translateX(-50%);pointer-events:none}
 .homeAviationFinal__plane::before{content:"";position:absolute;left:12%;right:12%;bottom:7%;height:19%;background:radial-gradient(ellipse,rgba(40,62,82,.18),transparent 70%);filter:blur(14px)}
 .homeAviationFinal__plane img{position:relative;display:block;width:100%;height:auto;animation:flyDrift 8s ease-in-out infinite;filter:drop-shadow(0 22px 18px rgba(34,56,76,.16))}
