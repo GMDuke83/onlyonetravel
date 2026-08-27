@@ -1696,11 +1696,10 @@
   function appbar(o){
     o=o||{};
     return `<header class="appbar${o.over?' appbar--over':''}">
-      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:
-        `<span class="appbar__mark"></span>`}
+      ${o.back?`<button class="iconBtn" data-act="back" aria-label="${t('back')}">${icon('back')}</button>`:''}
       <div class="appbar__brand">${o.title?
         `<span class="appbar__name" style="letter-spacing:.02em;font-size:15px">${esc(o.title)}</span>`:
-        `<span class="appbar__name">ONLYONE<small>LUXURY TRAVEL</small></span>`}</div>
+        `<span class="brandLogo brandLogo--bar" role="img" aria-label="ONLY ONE luxury travel"></span>`}</div>
       ${o.fav?`<button class="iconBtn${isFav(o.fav)?' is-fav':''}" data-act="fav" data-id="${o.fav}">${icon('heart')}</button>`:''}
       ${o.menu===false?'':`<button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button>`}
     </header>`;
@@ -1991,8 +1990,7 @@
 
     return `<footer class="siteFooter">
       <div class="siteFooter__brand">
-        <span class="siteFooter__mark" aria-hidden="true"></span>
-        <span class="siteFooter__name">ONLYONE<small>LUXURY TRAVEL</small></span>
+        <span class="brandLogo brandLogo--footer" role="img" aria-label="ONLY ONE luxury travel"></span>
       </div>
       <h2 class="siteFooter__head">${esc(t('mContact'))}</h2>
       <div class="siteFooter__rule" aria-hidden="true"></div>
