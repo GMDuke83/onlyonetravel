@@ -1569,6 +1569,9 @@
     instagram:'<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><circle cx="12" cy="12" r="3.9"/><circle cx="16.85" cy="7.15" r="1" fill="currentColor" stroke="none"/>',
     facebook:'<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="4.8"/><path d="M14.7 8.3h-1.2a1.95 1.95 0 0 0-1.95 1.95V19.4"/><path d="M9.7 13.15h4.7"/>',
     mail:'<rect x="3.4" y="5.6" width="17.2" height="12.8" rx="2.6"/><path d="m4.6 7.7 7.4 5.4 7.4-5.4"/>',
+    /* the bubble with its tail, and the same handset the phone icon draws,
+       scaled to sit inside it */
+    whatsapp:'<path d="M20.3 11.8a8.3 8.3 0 0 1-12.4 7.2l-4.2 1.3 1.4-4.1a8.3 8.3 0 1 1 15.2-4.4z"/><path d="M9.5 9.1h1.4l.8 1.8-1 .7a5.6 5.6 0 0 0 2.5 2.5l.7-1 1.8.8v1.4a.8.8 0 0 1-.9.8 7.6 7.6 0 0 1-6.1-6.1.8.8 0 0 1 .8-.9z"/>',
     globe:'<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8a13 13 0 0 1 0 16.4a13 13 0 0 1 0-16.4"/>',
   };
   const icon=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
@@ -1985,8 +1988,13 @@
           : `<span class="siteFooter__ic is-pending" role="img" aria-label="${esc(name)} · ${esc(c.label)}" title="${esc(c.label)}">${inner}</span>`;
       }).join('');
 
-    const row = (label, c) => `<div class="siteFooter__row"><dt>${esc(label)}</dt><dd>${
-      c.url ? `<a href="${esc(c.url)}">${esc(c.label)}</a>` : esc(c.label)}</dd></div>`;
+    /* The icon carries the label now, so the words that used to sit in the dt
+       stay for anyone who cannot see it -- a mail glyph alone tells a screen
+       reader nothing. That is also why this is a list rather than the
+       definition list it was: with the term drawn instead of written, dt/dd no
+       longer describes what is on the page. */
+    const row = (ico, label, c) => `<li class="siteFooter__row">${icon(ico)}<span class="srOnly">${esc(label)}</span>${
+      c.url ? `<a href="${esc(c.url)}">${esc(c.label)}</a>` : `<span>${esc(c.label)}</span>`}</li>`;
 
     return `<footer class="siteFooter">
       <div class="siteFooter__brand">
@@ -1994,12 +2002,13 @@
       </div>
       <div class="siteFooter__rule" aria-hidden="true"></div>
       <h2 class="siteFooter__head">${esc(t('mContact'))}</h2>
-      <dl class="siteFooter__rows">
-        ${row(hx('Эл. почта','E-Mail','Email'), CONTACT.mail)}
-        ${row(hx('Телефон','Telefon','Phone'), CONTACT.phone)}
-        ${row('WhatsApp', CONTACT.whatsapp)}
-      </dl>
+      <ul class="siteFooter__rows">
+        ${row('mail',     hx('Эл. почта','E-Mail','Email'), CONTACT.mail)}
+        ${row('phone',    hx('Телефон','Telefon','Phone'),  CONTACT.phone)}
+        ${row('whatsapp', 'WhatsApp',                        CONTACT.whatsapp)}
+      </ul>
       <div class="siteFooter__social">${social}</div>
+      <div class="siteFooter__rule" aria-hidden="true"></div>
       <div class="siteFooter__addr">
         <span class="siteFooter__addrLabel">${hx('Адрес','Adresse','Address')}</span>
         <address>${esc(CONTACT.address.label)}</address>
