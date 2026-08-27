@@ -54,7 +54,7 @@ jobs:
       - name: Verify the hero video is a real file
         run: |
           set -e
-          video="public/video/onlyone-hero-turkiye-v1.mp4"
+          video="public/video/onlyone-hero-terrace-v1.mp4"
           test -f "$video" || { echo "::error::$video is missing"; exit 1; }
 
           # Guard the rule that matters most: the video must never be inlined.
