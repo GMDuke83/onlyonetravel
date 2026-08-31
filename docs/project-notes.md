@@ -1197,3 +1197,12 @@ auf der Blockseite. Keine Konsolenfehler; RU, DE und EN gesichtet.
 **Offen:** Mehr Yachten sind eine Datenzeile plus ein Bild in `r21/`
 (Hochformat 4:5, Karte beschneidet auf 16:10 mittig). Eine zweite
 Limousine (Maybach) hätte noch kein eigenes Foto.
+
+**Nachtrag (gleicher Tag):** Die Zugänge dorthin, wo der Auftraggeber sie
+vermisste — auf der VIP-Empfangs-Seite derselbe Roségold-CTA
+(`fleet:'transfers'` auch am welcome-Block), auf der VIP-Assistent-Seite
+zwei Ghost-Buttons über Anruf/WhatsApp, unter dem VIP-Service-Karussell
+der Startseite zwei dunkle Zeilen mit Roségold-Haarlinie, und in der
+Transport-Kachel ein unterstrichener Link unter dem Formular. Alle vier
+in Chromium durchgeklickt: jede landet auf der richtigen Liste, keine
+Konsolenfehler.

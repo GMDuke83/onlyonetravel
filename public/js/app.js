@@ -1904,7 +1904,13 @@
         <h3 class="charterCard__name">${esc(o.name)}</h3>
         <div class="charterCard__line">${esc(o.l1)}</div>
         <div class="charterCard__line charterCard__line--soft">${esc(o.l2)}</div>
-        <div class="charterCard__rate"><span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b></div>
+        <div class="charterCard__rate">
+          <div class="charterCard__rateVal"><span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b></div>
+          ${/* No handler of its own: the tap bubbles to the card, which is
+                the sheet's door anyway — the button only says the door is
+                there. */''}
+          <button class="charterCard__more" type="button">${hx('Детали','Details','Details')}${icon('chev')}</button>
+        </div>
       </div>
     </article>`;
   }
@@ -2095,7 +2101,8 @@
      here, not a new page. */
   const BLOCKS={
     welcome:{ img:'./images/vip-welcome-poster-v2.webp', vid:'./video/onlyone-vip-welcome-v3.mp4',
-              eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
+              eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody',
+              fleet:'transfers' },
     yacht:  { img:'./images/yacht-tour-poster.webp',
               eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody',
               fleet:'yachts' },
@@ -2369,6 +2376,10 @@
         <span class="vipServiceCard__copy"><i>${esc(s.ey)}</i><b>${esc(s.title)}</b><p>${esc(s.body)}</p><em>${hx('Подробнее','Mehr erfahren','Learn more')}${icon('chev')}</em></span>
       </button>`).join('')}</div>
       <div class="railBar" aria-hidden="true"><i></i></div>
+      <div class="homeVipServices__links">
+        <button type="button" data-go="transfers">${icon('car')}<span>${hx('VIP-транспорт и тарифы','VIP-Transport & Raten','VIP transport & rates')}</span>${icon('chev')}</button>
+        <button type="button" data-go="yachts">${icon('yacht')}<span>${hx('Наши яхты','Unsere Yachten','Our yachts')}</span>${icon('chev')}</button>
+      </div>
     </section>
 
     <section class="homeAviationFinal homeAviationFinal--transferHero">
@@ -2399,6 +2410,7 @@
             <label><span>${hx('Телефон','Telefon','Phone')}</span><input id="trQuickPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
             <button type="button" data-act="transfer-quick-send">${hx('Отправить запрос','Anfrage senden','Send request')}${icon('chev')}</button>
           </div>
+          <button type="button" class="homeTransferTile__fleet" data-go="transfers">${hx('Транспорт и тарифы','Fahrzeuge & Raten ansehen','Vehicles & rates')}${icon('chev')}</button>
         </div>
       </div>
     </section>
@@ -2894,6 +2906,8 @@
       `}
 
       <div style="margin-top:26px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn--ghost" data-go="transfers">${icon('car')}${hx('VIP-транспорт и тарифы','VIP-Transport & Raten','VIP transport & rates')}</button>
+        <button class="btn btn--ghost" data-go="yachts">${icon('yacht')}${hx('Наши яхты','Unsere Yachten','Our yachts')}</button>
         <button class="btn btn--ghost" data-act="c-call">${icon('phone')}${t('callNow')}</button>
         <button class="btn btn--ghost" data-act="c-wa">${t('writeWa')}</button>
       </div>
@@ -3985,7 +3999,7 @@
         ${kv(hx('Экипаж','Crew','Crew'),y.crew)}
         ${kv(hx('Маршруты','Reviere','Cruising area'),y.dests.map(d=>label(CHARTER_DESTS,d)).join(' · '))}
       </div>
-      <div class="charterCard__rate" style="margin-top:14px"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div>
+      <div class="charterCard__rate" style="margin-top:14px"><div class="charterCard__rateVal"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div></div>
       <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(y.d))}</p>
       <div class="noteBox">${hx('Тариф — ориентир за день с экипажем и топливом по стандартному маршруту. Точное предложение под вашу дату соберёт VIP-ассистент.',
         'Die Rate ist ein Richtwert pro Tag mit Crew und Kraftstoff auf der Standardroute. Das genaue Angebot für Ihr Datum erstellt Ihr VIP-Assistent.',
