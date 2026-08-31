@@ -2391,6 +2391,21 @@ span.siteFooter__ic{cursor:default}
 
 .homeVipServices{position:relative;padding:40px 0 44px;background:linear-gradient(180deg,#17100b 0%,#0c0907 100%);color:#fff;border-top:1px solid rgba(224,187,168,.18)}.homeVipServices .homeEditorialHead{padding-bottom:22px}
 .homeVipServices__rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:0 calc(20px + var(--sar)) 5px calc(20px + var(--sal))}.homeVipServices__rail::-webkit-scrollbar{display:none}
+/* Direct doors out of the dark chapter: the rail tells the story, these two
+   rows open the rate cards behind it. Hairline in the section's rose so they
+   read as part of it, not as ivory buttons that fell onto a dark ground. */
+.homeVipServices__links{display:flex;flex-direction:column;gap:10px;padding:22px calc(20px + var(--sar)) 0 calc(20px + var(--sal))}
+.homeVipServices__links button{
+  display:flex;align-items:center;gap:12px;min-height:52px;padding:0 16px;border-radius:2px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(231,195,177,.30);color:#fff;text-align:left;
+  font-size:10px;font-weight:650;letter-spacing:.13em;text-transform:uppercase;
+  transition:transform .18s var(--ease),background .25s var(--ease);
+}
+.homeVipServices__links button:active{transform:scale(.985);background:rgba(255,255,255,.09)}
+.homeVipServices__links button svg:first-child{width:17px;height:17px;flex:0 0 auto;color:#E0BBA8}
+.homeVipServices__links button span{flex:1 1 auto;min-width:0}
+.homeVipServices__links button svg:last-child{width:13px;height:13px;flex:0 0 auto;color:rgba(255,255,255,.55)}
+@media(min-width:760px){.homeVipServices__links{flex-direction:row}.homeVipServices__links button{flex:1 1 0}}
 .vipServiceCard{position:relative;flex:0 0 min(80vw,326px);aspect-ratio:4/5;border:1px solid rgba(231,195,177,.14);border-radius:5px;overflow:hidden;padding:0;background:#120d09;text-align:left;scroll-snap-align:start;color:#fff}.vipServiceCard>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vipServiceCard--featured{flex-basis:min(88vw,356px);aspect-ratio:4/5;border-color:rgba(231,195,177,.38);box-shadow:0 18px 42px rgba(0,0,0,.28)}
 .vipServiceCard--featured .vipServiceCard__shade{background:linear-gradient(180deg,rgba(10,8,6,.04) 24%,rgba(10,8,6,.16) 44%,rgba(10,8,6,.90) 100%)}
@@ -2638,6 +2653,15 @@ span.siteFooter__ic{cursor:default}
   min-height:49px!important;margin-top:2px!important;border:1px solid #e5c1ae!important;background:#e5c1ae!important;color:#15110a!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
 }
 .homeTransferRequest--tile .homeTransferQuick button:active{transform:translateY(1px);background:#dab3a1!important}
+/* The quiet way out of the tile: whoever wants to see the cars before asking
+   finds the fleet page one line under the form. */
+.homeTransferTile__fleet{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:0;border:0;background:none;
+  color:#e5c1ae;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  text-decoration:underline;text-underline-offset:5px;text-decoration-color:rgba(229,193,174,.45);
+}
+.homeTransferTile__fleet svg{width:13px;height:13px}
+.homeTransferTile__fleet:active{color:#f1d3c3}
 @media(max-width:360px){
   .homeTransferRequest.homeTransferRequest--tile{padding-left:14px!important;padding-right:14px!important}
   .homeTransferTile{padding:20px 15px 18px;border-radius:12px}

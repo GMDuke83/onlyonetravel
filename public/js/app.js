@@ -2095,7 +2095,8 @@
      here, not a new page. */
   const BLOCKS={
     welcome:{ img:'./images/vip-welcome-poster-v2.webp', vid:'./video/onlyone-vip-welcome-v3.mp4',
-              eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
+              eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody',
+              fleet:'transfers' },
     yacht:  { img:'./images/yacht-tour-poster.webp',
               eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody',
               fleet:'yachts' },
@@ -2369,6 +2370,10 @@
         <span class="vipServiceCard__copy"><i>${esc(s.ey)}</i><b>${esc(s.title)}</b><p>${esc(s.body)}</p><em>${hx('Подробнее','Mehr erfahren','Learn more')}${icon('chev')}</em></span>
       </button>`).join('')}</div>
       <div class="railBar" aria-hidden="true"><i></i></div>
+      <div class="homeVipServices__links">
+        <button type="button" data-go="transfers">${icon('car')}<span>${hx('VIP-транспорт и тарифы','VIP-Transport & Raten','VIP transport & rates')}</span>${icon('chev')}</button>
+        <button type="button" data-go="yachts">${icon('yacht')}<span>${hx('Наши яхты','Unsere Yachten','Our yachts')}</span>${icon('chev')}</button>
+      </div>
     </section>
 
     <section class="homeAviationFinal homeAviationFinal--transferHero">
@@ -2399,6 +2404,7 @@
             <label><span>${hx('Телефон','Telefon','Phone')}</span><input id="trQuickPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+90 ..."></label>
             <button type="button" data-act="transfer-quick-send">${hx('Отправить запрос','Anfrage senden','Send request')}${icon('chev')}</button>
           </div>
+          <button type="button" class="homeTransferTile__fleet" data-go="transfers">${hx('Транспорт и тарифы','Fahrzeuge & Raten ansehen','Vehicles & rates')}${icon('chev')}</button>
         </div>
       </div>
     </section>
@@ -2894,6 +2900,8 @@
       `}
 
       <div style="margin-top:26px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn--ghost" data-go="transfers">${icon('car')}${hx('VIP-транспорт и тарифы','VIP-Transport & Raten','VIP transport & rates')}</button>
+        <button class="btn btn--ghost" data-go="yachts">${icon('yacht')}${hx('Наши яхты','Unsere Yachten','Our yachts')}</button>
         <button class="btn btn--ghost" data-act="c-call">${icon('phone')}${t('callNow')}</button>
         <button class="btn btn--ghost" data-act="c-wa">${t('writeWa')}</button>
       </div>
