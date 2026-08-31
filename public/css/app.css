@@ -1091,13 +1091,26 @@ svg{
 }
 .charterCard__line{margin-top:9px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-2)}
 .charterCard__line--soft{margin-top:6px;color:var(--txt-3)}
-.charterCard__rate{margin-top:14px;padding-top:12px;border-top:1px solid var(--hair-soft)}
+.charterCard__rate{
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--hair-soft);
+  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+}
+.charterCard__rateVal{flex:1 1 auto;min-width:0}
 .charterCard__rate span{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3)}
 .charterCard__rate b{
   display:block;margin-top:4px;font-family:var(--display);
   font-size:24px;font-weight:600;letter-spacing:-.02em;color:var(--txt);
   font-variant-numeric:tabular-nums;
 }
+/* The stated door into the sheet, right of the rate. It carries no handler —
+   the card underneath is the target; the button only makes it visible. */
+.charterCard__more{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;
+  min-height:42px;padding:0 16px;border-radius:2px;border:0;
+  background:var(--dark);color:#fff;
+  font-size:10px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;
+}
+.charterCard__more svg{width:13px;height:13px}
 .fleetEmpty p{margin:0 0 16px;font-size:13.5px;line-height:1.65;color:var(--txt-2)}
 .fleetAsk{margin-top:46px;padding:22px}
 .blockFleetCta{margin-top:22px}

@@ -1904,7 +1904,13 @@
         <h3 class="charterCard__name">${esc(o.name)}</h3>
         <div class="charterCard__line">${esc(o.l1)}</div>
         <div class="charterCard__line charterCard__line--soft">${esc(o.l2)}</div>
-        <div class="charterCard__rate"><span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b></div>
+        <div class="charterCard__rate">
+          <div class="charterCard__rateVal"><span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b></div>
+          ${/* No handler of its own: the tap bubbles to the card, which is
+                the sheet's door anyway — the button only says the door is
+                there. */''}
+          <button class="charterCard__more" type="button">${hx('Детали','Details','Details')}${icon('chev')}</button>
+        </div>
       </div>
     </article>`;
   }
@@ -3993,7 +3999,7 @@
         ${kv(hx('Экипаж','Crew','Crew'),y.crew)}
         ${kv(hx('Маршруты','Reviere','Cruising area'),y.dests.map(d=>label(CHARTER_DESTS,d)).join(' · '))}
       </div>
-      <div class="charterCard__rate" style="margin-top:14px"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div>
+      <div class="charterCard__rate" style="margin-top:14px"><div class="charterCard__rateVal"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div></div>
       <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(y.d))}</p>
       <div class="noteBox">${hx('Тариф — ориентир за день с экипажем и топливом по стандартному маршруту. Точное предложение под вашу дату соберёт VIP-ассистент.',
         'Die Rate ist ein Richtwert pro Tag mit Crew und Kraftstoff auf der Standardroute. Das genaue Angebot für Ihr Datum erstellt Ihr VIP-Assistent.',
