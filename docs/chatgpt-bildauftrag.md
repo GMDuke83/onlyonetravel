@@ -665,3 +665,148 @@ ffmpeg -i <neu>.png -vf "scale=720:1280" -c:v libwebp -quality 78 \
 Kommen die Bilder in einem anderen Seitenverhältnis, vorher auf 9:16 schneiden —
 `.vipDeck__slide` steht fest auf `aspect-ratio:9/16`, ein abweichendes Bild wird
 sonst von `object-fit:cover` beschnitten, und zwar mittig.
+
+---
+
+# TEIL 3 — Wochencharter-Flotte (10 Bilder, Querformat 16:10)
+
+Die Yacht-Seite führt jetzt zehn reale Charteryachten des Marktes
+(LADY S, CARINTHIA VII, STARFIRE, TWIZZLE, PROMETHEUS I, HELIOS, IVA,
+SEACLUSION, DAIQUIRI, YUME). **Wichtig, bitte lesen:**
+
+* **Broker-Fotos niemals kopieren** (Northrop & Johnson etc.) — das sind
+  lizenzierte Aufnahmen; Kopien wären eine Urheberrechtsverletzung.
+* Die Prompts unten erzeugen **typgetreue Interimsbilder** (richtige Größe,
+  Werft-Stil, Bootstyp) — sie zeigen *nicht* das reale Schiff. Für den
+  Produktivbetrieb ersetzt ihr sie durch lizenzierte Originalfotos vom
+  Zentralagenten (bei Retail-Charter üblich und kostenlos).
+* **Kein Schiffsname im Bild** — Generatoren schreiben gern Namen an den
+  Rumpf, und ein falscher Name macht das Bild unbrauchbar. Steht in jedem
+  Prompt, beim Sichten trotzdem prüfen.
+
+Ablage: `public/images/fleet/` — die Dateinamen sind bereits verdrahtet.
+Solange eine Datei fehlt, zeigt die Karte automatisch „Foto folgt";
+sobald sie liegt, erscheint sie ohne Codeänderung.
+
+| Gruppe | Seitenverhältnis | Zielgröße |
+|---|---|---|
+| Flotte | Querformat 16:10 | 1280 × 800 px |
+
+Gemeinsamer Stil aller zehn Prompts: photorealistisch, ruhige Luxus-Editorial-
+Stimmung, natürliches Licht, Mittelmeer. Verbote wie immer: keine Schrift,
+kein Wasserzeichen, kein Logo, keine UI, keine Collage, keine erkennbaren
+Gesichter, keine Personen im Vordergrund — und kein Name am Rumpf.
+
+---
+
+### 1 · Dateiname: `lady-s.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+93-meter modern displacement superyacht at anchor at dawn on a glassy
+Mediterranean sea. Six decks, light metallic grey hull with a white
+superstructure, long elegant bow, warm interior lights glowing. Calm luxury
+editorial mood, soft natural light. No text, no watermark, no logo, no name
+on the hull, no user interface, no collage, no recognizable faces, no people
+in the foreground.
+```
+
+### 2 · Dateiname: `carinthia-vii.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+97-meter classic long-range superyacht underway on open Mediterranean water
+in late afternoon light. Deep navy-blue hull, white multi-deck
+superstructure, gentle bow wave, stately profile. Calm luxury editorial
+mood. No text, no watermark, no logo, no name on the hull, no user
+interface, no collage, no recognizable faces, no people in the foreground.
+```
+
+### 3 · Dateiname: `starfire.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+73-meter classic white tri-deck superyacht at anchor in a quiet
+Mediterranean bay at golden hour, pine-covered hills behind. Timeless
+lines, white hull and superstructure, tender at the stern. Calm luxury
+editorial mood. No text, no watermark, no logo, no name on the hull, no
+user interface, no collage, no recognizable faces, no people in the
+foreground.
+```
+
+### 4 · Dateiname: `twizzle.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+57-meter modern twin-masted luxury sailing ketch under full white sails,
+heeling gently on a deep blue sea in bright midday light. Dark blue hull,
+sleek modern deckhouse, clean teak deck. Calm luxury editorial mood. No
+text, no watermark, no logo, no name on the hull, no user interface, no
+collage, no recognizable faces, no people in the foreground.
+```
+
+### 5 · Dateiname: `prometheus-i.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+45-meter classic 1990s motor yacht with a fresh refit, anchored near light
+limestone cliffs on a turquoise Mediterranean coast in morning light. White
+hull, classic raked lines, navy trim line. Calm luxury editorial mood. No
+text, no watermark, no logo, no name on the hull, no user interface, no
+collage, no recognizable faces, no people in the foreground.
+```
+
+### 6 · Dateiname: `helios.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+35-meter sleek modern motor yacht cruising slowly along a pine-lined
+Turkish coast in soft evening light. Sporty low profile, white hull, large
+dark glazing. Calm luxury editorial mood. No text, no watermark, no logo,
+no name on the hull, no user interface, no collage, no recognizable faces,
+no people in the foreground.
+```
+
+### 7 · Dateiname: `iva.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+29-meter Italian flybridge motor yacht at anchor in a turquoise cove,
+bathing platform lowered to the water, towels rolled on the sunpads.
+White hull, elegant Italian lines. Calm luxury editorial mood, bright
+daylight. No text, no watermark, no logo, no name on the hull, no user
+interface, no collage, no recognizable faces, no people in the foreground.
+```
+
+### 8 · Dateiname: `seaclusion.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+24-meter luxury sailing catamaran anchored in shallow, glass-clear
+turquoise water over light sand. White hulls, wide aft deck with lounge
+seating, tall single mast. Calm luxury editorial mood, bright daylight. No
+text, no watermark, no logo, no name on the hull, no user interface, no
+collage, no recognizable faces, no people in the foreground.
+```
+
+### 9 · Dateiname: `daiquiri.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+20-meter modern cruising catamaran lying at anchor in a quiet bay at
+sunset, warm light on light-grey hulls, large trampoline forward, soft
+ripples on the water. Calm luxury editorial mood. No text, no watermark,
+no logo, no name on the hull, no user interface, no collage, no
+recognizable faces, no people in the foreground.
+```
+
+### 10 · Dateiname: `yume.webp`
+
+```text
+Create a horizontal 16:10 photorealistic photograph, 1280x800 pixels, of a
+22-meter minimalist carbon performance sailing sloop with a matte grey
+hull and crisp white sails, sailing upwind in clear morning light on deep
+blue water. Clean modern deck, few fittings. Calm luxury editorial mood.
+No text, no watermark, no logo, no name on the hull, no user interface, no
+collage, no recognizable faces, no people in the foreground.
+```

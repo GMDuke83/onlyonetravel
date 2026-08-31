@@ -1206,3 +1206,30 @@ der Startseite zwei dunkle Zeilen mit Roségold-Haarlinie, und in der
 Transport-Kachel ein unterstrichener Link unter dem Formular. Alle vier
 in Chromium durchgeklickt: jede landet auf der richtigen Liste, keine
 Konsolenfehler.
+
+---
+
+## Wochencharter-Flotte von der Broker-Vorlage übernommen — 31.08.2026
+
+Auftrag: „übernehme die Bilder und die Yachten von northropandjohnson.com".
+Übernommen wurden die **Yachten** — zehn reale Schiffe des Chartermarkts mit
+den öffentlich ausgeschriebenen Daten (Name, Werft, Baujahr, Länge, Kabinen,
+Gäste, Crew, Ab-Wochenrate €24.000 bis €1.750.000), per Websuche gegen die
+N&J-Einzelseiten geprüft; TWIZZLE vollständig bestätigt, LADY S und
+CARINTHIA VII gegen die Screenshots des Auftraggebers. Die **Fotos wurden
+bewusst nicht übernommen**: Broker-Fotografie ist lizenziert, Kopien wären
+eine Urheberrechtsverletzung.
+
+Stattdessen: jede Karte zeigt „Фото скоро / Foto folgt", bis unter
+`public/images/fleet/<id>.webp` eine Datei liegt — die Namen sind
+verdrahtet, ein globaler Error-Handler (Capture-Phase, `error` bubblet
+nicht) tauscht bei 404 den Medienblock. Zehn ChatGPT-Prompts für
+typgetreue Interimsbilder stehen in `chatgpt-bildauftrag.md` (TEIL 3),
+inklusive der Regel „kein Name am Rumpf". Für den Produktivbetrieb sind
+lizenzierte Originalfotos vom Zentralagenten vorgesehen.
+
+Die Seite hat jetzt zwei Abschnitte: **Недельный чартер** (die zehn, Filter
+nach Größe: bis 35 m / 35–60 m / 60 m+) und **Дневные туры · Турция** (die
+vier bisherigen mit ihren Fotos, Tagesraten). Das Sheet trägt beide Formen:
+Länge mit Fuß in Klammern, Wochennote „ohne APA und Steuern", Reviere-Zeile
+und Beschreibung nur wo vorhanden.

@@ -1349,7 +1349,34 @@
         de:'Die Abendausfahrt mit Dinner an Bord: Decks in warmem Licht, der Tisch ist gedeckt, die Küste von Bodrum verglüht hinter dem Heck.',
         en:'The evening cruise with dinner on board: decks in warm light, the table laid, the Bodrum shore fading slowly astern.'}},
   ];
-  const yachtById=id=>YACHTS.find(y=>y.id===id);
+  /* --- Weekly charter fleet. Real vessels of the international charter
+     market, adopted from a broker's public listing (northropandjohnson.com,
+     31.08.2026): name, builder, year, length, staterooms, guests, crew and
+     the advertised weekly from-rate are public market facts. Photographs are
+     NOT copied — a broker's photography is licensed to that broker. Instead
+     every entry points at images/fleet/<id>.webp; until that file exists the
+     card swaps itself to the pending treatment on the image error, so a
+     photograph dropped into the repo appears with no code change (briefs in
+     docs/chatgpt-bildauftrag.md). Rates are advertised from-rates, always
+     excl. APA/VAT. --- */
+  const FLEET_SIZES=[
+    {id:'xl', l:{ru:'60 м+',de:'60 m+',en:'60 m+'}},
+    {id:'l',  l:{ru:'35–60 м',de:'35–60 m',en:'35–60 m'}},
+    {id:'m',  l:{ru:'до 35 м',de:'bis 35 m',en:'under 35 m'}},
+  ];
+  const FLEET_WEEK=[
+    {id:'lady-s',       name:'LADY S',        m:93,   ft:305, builder:'Feadship',      year:'2019',      cabins:7, guests:12, crew:31, from:1750000, size:'xl'},
+    {id:'carinthia-vii',name:'CARINTHIA VII', m:97.2, ft:318, builder:'Lürssen',       year:'2002/2023', cabins:8, guests:12, crew:33, from:1500000, size:'xl'},
+    {id:'starfire',     name:'STARFIRE',      m:73,   ft:240, builder:'Lürssen',       year:'2007',      cabins:7, guests:12, crew:20, from:680000,  size:'xl'},
+    {id:'twizzle',      name:'TWIZZLE',       m:57.5, ft:188, builder:'Royal Huisman', year:'2010',      cabins:4, guests:9,  crew:11, from:250000,  size:'l'},
+    {id:'prometheus-i', name:'PROMETHEUS I',  m:45,   ft:147, builder:'Heesen',        year:'1998',      cabins:5, guests:12, crew:10, from:130000,  size:'l'},
+    {id:'helios',       name:'HELIOS',        m:35.5, ft:116, builder:'Falcon',        year:'2010',      cabins:5, guests:12, crew:6,  from:69000,   size:'l'},
+    {id:'iva',          name:'IVA',           m:29.2, ft:95,  builder:'Ferretti',      year:'2014',      cabins:5, guests:10, crew:5,  from:65000,   size:'m'},
+    {id:'seaclusion',   name:'SEACLUSION',    m:24,   ft:78,  builder:'Sunreef',       year:'2020',      cabins:4, guests:8,  crew:4,  from:65000,   size:'m'},
+    {id:'daiquiri',     name:'DAIQUIRI',      m:20.6, ft:67,  builder:'Lagoon',        year:'2022',      cabins:5, guests:10, crew:4,  from:32000,   size:'m'},
+    {id:'yume',         name:'YUME',          m:21.9, ft:71,  builder:'YYachts',       year:'2024',      cabins:3, guests:6,  crew:2,  from:24000,   size:'m'},
+  ].map(y=>({...y, week:true, img:'./images/fleet/'+y.id+'.webp'}));
+  const yachtById=id=>YACHTS.find(y=>y.id===id)||FLEET_WEEK.find(y=>y.id===id);
 
   /* --- VIP transport, same listing grammar. Three classes — the road twice,
      the air once — each with capacity and an entry rate per transfer. --- */
@@ -1385,7 +1412,7 @@
   /* Listing filters. Session-local on purpose — a filter is part of browsing,
      not of the saved state, so it resets with the next visit like a scroll
      position does. */
-  const CHARTERF={dest:null,cls:null};
+  const CHARTERF={size:null,cls:null};
 
   /* --- Concierge bands. Three full-bleed statements on the concierge page —
      the same visual language as the experience bands, but they assert the
@@ -1882,10 +1909,15 @@
      target and opens the detail sheet.
      -------------------------------------------------------------------- */
   const vehName=v=>typeof v.name==='string'?v.name:loc(v.name);
-  const yachtSpecs=y=>hx(
-    `${y.m} м · ${y.builder} · ${y.year}`,
-    `${y.m} m · ${y.builder} · ${y.year}`,
-    `${y.m} m · ${y.builder} · ${y.year}`);
+  /* The weekly fleet states its length the way the market does — metres with
+     feet in brackets; the day fleet keeps its plain metres. */
+  const yachtLen=y=>y.ft
+    ?`${fmtNum(y.m)} ${hx('м','m','m')} (${y.ft}′)`
+    :`${fmtNum(y.m)} ${hx('м','m','m')}`;
+  const yachtSpecs=y=>`${yachtLen(y)} · ${y.builder} · ${y.year}`;
+  const yachtRateLabel=y=>y.week
+    ?hx('тариф в неделю от','Wochenrate ab','weekly rates from')
+    :hx('тариф в день от','Tagesrate ab','day rates from');
   const yachtCap=y=>hx(
     `${y.cabins} ${ruPl(y.cabins,'каюта','каюты','кают')} · до ${y.guests} гостей · экипаж ${y.crew}`,
     `${y.cabins} ${y.cabins===1?'Kabine':'Kabinen'} · bis ${y.guests} Gäste · ${y.crew} Crew`,
@@ -1894,12 +1926,18 @@
     ?hx('за перелёт от','pro Flug ab','per flight from')
     :hx('за маршрут от','pro Strecke ab','per route from');
 
+  /* What a fleet card shows while its photograph does not exist yet — and
+     what the error handler in section 12 swaps in when a wired filename
+     comes back 404. */
+  const pendingMedia=()=>`<div class="charterCard__media--pending" aria-hidden="true">
+        ${icon('yacht')}<span>${hx('Фото скоро','Foto folgt','Photo coming soon')}</span>
+      </div>`;
   function charterCard(o){
     /* o: {attr,img,name,l1,l2,rateLabel,rate} */
     return `<article class="card charterCard fade-up" ${o.attr} role="button" tabindex="0">
-      <div class="card__media" style="aspect-ratio:16/10">
+      ${o.img?`<div class="card__media" style="aspect-ratio:16/10">
         <img src="${o.img}" alt="${esc(o.name)}" loading="lazy" decoding="async">
-      </div>
+      </div>`:pendingMedia()}
       <div class="card__body">
         <h3 class="charterCard__name">${esc(o.name)}</h3>
         <div class="charterCard__line">${esc(o.l1)}</div>
@@ -1933,22 +1971,25 @@
     </div>`;
 
   function vYachts(){
-    const list=CHARTERF.dest?YACHTS.filter(y=>y.dests.indexOf(CHARTERF.dest)>-1):YACHTS;
-    const chips=[`<button class="chip${CHARTERF.dest?'':' is-on'}" data-ydest="">${hx('Все','Alle','All')}</button>`]
-      .concat(CHARTER_DESTS.map(d=>`<button class="chip${CHARTERF.dest===d.id?' is-on':''}" data-ydest="${d.id}">${esc(loc(d.l))}</button>`)).join('');
+    const yCard=y=>charterCard({
+      attr:`data-yacht="${y.id}"`, img:y.img, name:y.name,
+      l1:yachtSpecs(y), l2:yachtCap(y),
+      rateLabel:yachtRateLabel(y), rate:eur(y.from)});
+    const week=CHARTERF.size?FLEET_WEEK.filter(y=>y.size===CHARTERF.size):FLEET_WEEK;
+    const chips=[`<button class="chip${CHARTERF.size?'':' is-on'}" data-ysize="">${hx('Все','Alle','All')}</button>`]
+      .concat(FLEET_SIZES.map(s=>`<button class="chip${CHARTERF.size===s.id?' is-on':''}" data-ysize="${s.id}">${esc(loc(s.l))}</button>`)).join('');
     return `${fleetHead({
       eyebrow:'ONLYONE · '+hx('ПРИВАТНЫЙ ЧАРТЕР','PRIVATCHARTER','PRIVATE CHARTER'),
       title:hx('Наши яхты','Unsere Yachten','Our yachts'),
-      note:hx('Дневные выходы от Антальи до Бодрума — с капитаном и экипажем. Тарифы ориентировочные; точное предложение соберёт ваш VIP-ассистент.',
-              'Tagestörns von Antalya bis Bodrum — mit Kapitän und Crew. Die Raten sind Richtwerte; das genaue Angebot erstellt Ihr VIP-Assistent.',
-              'Day charters from Antalya to Bodrum — with captain and crew. Rates are a guide; your VIP assistant prepares the exact offer.'),
+      note:hx('Недельный чартер по мировому флоту и дневные выходы вдоль турецкого побережья. Тарифы ориентировочные («от», без APA и налогов); точное предложение соберёт ваш VIP-ассистент.',
+              'Wochencharter aus der internationalen Flotte und Tagestörns entlang der türkischen Küste. Die Raten sind Ab-Richtwerte ohne APA und Steuern; das genaue Angebot erstellt Ihr VIP-Assistent.',
+              'Weekly charters from the international fleet and day runs along the Turkish coast. Rates are from-guides excl. APA and taxes; your VIP assistant prepares the exact offer.'),
       chips})}
     <div class="wrap">
-      <div class="cardList">${list.length?list.map(y=>charterCard({
-        attr:`data-yacht="${y.id}"`, img:y.img, name:y.name,
-        l1:yachtSpecs(y), l2:yachtCap(y),
-        rateLabel:hx('тариф в день от','Tagesrate ab','day rates from'),
-        rate:eur(y.from)})).join(''):fleetEmpty()}</div>
+      <h2 class="h-lg fleetSection">${hx('Недельный чартер','Wochencharter','Weekly charter')}</h2>
+      <div class="cardList">${week.length?week.map(yCard).join(''):fleetEmpty()}</div>
+      <h2 class="h-lg fleetSection">${hx('Дневные туры · Турция','Tagestörns · Türkiye','Day charters · Türkiye')}</h2>
+      <div class="cardList">${YACHTS.map(yCard).join('')}</div>
       <div class="listCard blockAsk fleetAsk">
         <p>${hx('Нужна яхта побольше, гулет на неделю или флотилия на событие? Подберём за пределами этой страницы.',
                 'Eine größere Yacht, eine Gulet für eine Woche oder eine Flottille für ein Event? Wir finden sie auch jenseits dieser Seite.',
@@ -3989,21 +4030,25 @@
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(y.name)}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
-      <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/10">
-        <img src="${y.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      ${y.img?`<div style="border-radius:16px;overflow:hidden;aspect-ratio:16/10" data-photo-wrap>
+        <img class="fleetPhoto" src="${y.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>`:''}
       <div style="margin-top:12px">
-        ${kv(hx('Длина','Länge','Length'),y.m+' '+hx('м','m','m'))}
+        ${kv(hx('Длина','Länge','Length'),yachtLen(y))}
         ${kv(hx('Верфь','Werft','Builder'),y.builder+' · '+y.year)}
         ${kv(hx('Каюты','Kabinen','Cabins'),y.cabins)}
         ${kv(hx('Гости','Gäste','Guests'),hx('до ','bis ','up to ')+y.guests)}
         ${kv(hx('Экипаж','Crew','Crew'),y.crew)}
-        ${kv(hx('Маршруты','Reviere','Cruising area'),y.dests.map(d=>label(CHARTER_DESTS,d)).join(' · '))}
+        ${y.dests?kv(hx('Маршруты','Reviere','Cruising area'),y.dests.map(d=>label(CHARTER_DESTS,d)).join(' · ')):''}
       </div>
-      <div class="charterCard__rate" style="margin-top:14px"><div class="charterCard__rateVal"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div></div>
-      <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(y.d))}</p>
-      <div class="noteBox">${hx('Тариф — ориентир за день с экипажем и топливом по стандартному маршруту. Точное предложение под вашу дату соберёт VIP-ассистент.',
-        'Die Rate ist ein Richtwert pro Tag mit Crew und Kraftstoff auf der Standardroute. Das genaue Angebot für Ihr Datum erstellt Ihr VIP-Assistent.',
-        'The rate is a guide per day with crew and fuel on the standard route. Your VIP assistant prepares the exact offer for your date.')}</div>
+      <div class="charterCard__rate" style="margin-top:14px"><div class="charterCard__rateVal"><span>${yachtRateLabel(y)}</span><b>${eur(y.from)}</b></div></div>
+      ${y.d?`<p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(y.d))}</p>`:''}
+      <div class="noteBox">${y.week
+        ?hx('Ставка «от» за неделю, без APA и налогов. Наличие на ваши даты и точное предложение подтвердит VIP-ассистент.',
+            'Ab-Rate pro Woche, ohne APA und Steuern. Verfügbarkeit für Ihre Daten und das genaue Angebot bestätigt Ihr VIP-Assistent.',
+            'From-rate per week, excl. APA and taxes. Your VIP assistant confirms availability for your dates and the exact offer.')
+        :hx('Тариф — ориентир за день с экипажем и топливом по стандартному маршруту. Точное предложение под вашу дату соберёт VIP-ассистент.',
+            'Die Rate ist ein Richtwert pro Tag mit Crew und Kraftstoff auf der Standardroute. Das genaue Angebot für Ihr Datum erstellt Ihr VIP-Assistent.',
+            'The rate is a guide per day with crew and fuel on the standard route. Your VIP assistant prepares the exact offer for your date.')}</div>
       <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="ycName" autocomplete="name"></div>
       <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="ycPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..."></div>
     </div>
@@ -4031,6 +4076,22 @@
   /* ====================================================================
      12 · Events
      ==================================================================== */
+  /* The weekly fleet's photographs are wired by filename before the files
+     exist (docs/chatgpt-bildauftrag.md briefs them). A 404 must read as
+     "photo to follow", not as a broken-image glyph — error does not bubble,
+     so this listens in the capture phase and swaps the media block. The
+     same handler drops the photo frame inside the yacht sheet. */
+  document.addEventListener('error',e=>{
+    const im=e.target;
+    if(!im||im.tagName!=='IMG')return;
+    if(im.classList&&im.classList.contains('fleetPhoto')){
+      const w=im.closest('[data-photo-wrap]');if(w)w.remove();return;
+    }
+    if(im.closest&&im.closest('.charterCard')){
+      const m=im.closest('.card__media');if(m)m.outerHTML=pendingMedia();
+    }
+  },true);
+
   document.addEventListener('click',e=>{
     const T=e.target;
     if(T.closest('[data-sheet-close]')){closeSheet();return;}
@@ -4172,8 +4233,8 @@
       sheetTransferRequest(v?{notes:hx('Транспорт: ','Fahrzeug: ','Vehicle: ')+vehName(v)}:{});
       return;
     }
-    const yd=T.closest('[data-ydest]');
-    if(yd){CHARTERF.dest=yd.dataset.ydest||null;render();return;}
+    const yd=T.closest('[data-ysize]');
+    if(yd){CHARTERF.size=yd.dataset.ysize||null;render();return;}
     const tcl=T.closest('[data-tclass]');
     if(tcl){CHARTERF.cls=tcl.dataset.tclass||null;render();return;}
     const ww=T.closest('[data-wish]');
