@@ -1112,6 +1112,16 @@ svg{
 }
 .charterCard__more svg{width:13px;height:13px}
 .fleetEmpty p{margin:0 0 16px;font-size:13.5px;line-height:1.65;color:var(--txt-2)}
+.fleetSection{margin:0 0 22px}
+.cardList+.fleetSection{margin-top:54px}
+/* A wired photograph that does not exist yet: the card keeps its shape and
+   says so quietly, instead of showing the browser's broken-image glyph. */
+.charterCard__media--pending{
+  aspect-ratio:16/10;border-radius:3px;background:var(--ground-3);
+  display:grid;place-content:center;justify-items:center;gap:10px;
+}
+.charterCard__media--pending svg{width:42px;height:42px;color:var(--gold-ink);opacity:.4}
+.charterCard__media--pending span{font-size:9px;letter-spacing:.20em;text-transform:uppercase;color:var(--txt-3)}
 .fleetAsk{margin-top:46px;padding:22px}
 .blockFleetCta{margin-top:22px}
 
