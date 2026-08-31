@@ -1153,3 +1153,47 @@ Umgebung lässt `gmduke83.github.io` nicht durch, die dort ausgelieferten Header
 sind hier also nicht nachgemessen, sondern aus der Dokumentation von GitHub
 Pages übernommen. Der Weg über `version.json` ist aber gerade so gebaut, dass er
 nicht davon abhängt, welche Header ein Host schickt.
+
+---
+
+## Charter-Seiten für Yachten und VIP-Transport — 31.08.2026
+
+Vorbild war die Listenseite eines Charter-Brokers (Northrop & Johnson):
+Foto, Name, Werft · Baujahr, Kabinen · Gäste · Crew, darunter die
+Einstiegsrate. Diese Grammatik liest jeder, der die Kategorie kennt — sie
+wurde auf die eigene Typo und das Elfenbein der Plattform übersetzt, ohne
+Karten-Container und ohne Buttons: die ganze Karte öffnet das Sheet.
+
+**Zwei neue Ansichten in `app.js`:**
+
+* `yachts` — vier Yachten (`YACHTS`), Bilder aus `public/images/r21/`
+  (lagen ungenutzt im Repo, waren genau dafür generiert). Filter-Chips nach
+  Revier (Antalya … Bodrum). Karte → Sheet mit Spezifikationen, Rate und
+  Kurzanfrage (Name + Telefon → `S.leads`, Typ `yacht-charter`).
+* `transfers` — Limousine, VIP-Bus, Helikopter (`VEHICLES`), Bilder
+  `home-experiences/transfer.webp` + `r18/`. Filter-Chips nach Klasse.
+  Karte → das bestehende Transfer-Formular, Fahrzeug im Kommentarfeld
+  vorbefüllt.
+
+**Erreichbar über:** Menü (zwei neue Einträge), die Yacht-Karte der
+VIP-Ausflüge (führt jetzt auf die Flotte statt aufs Sheet), und einen
+Roségold-CTA auf den Blockseiten Yacht, Transfer und Flug (`fleet:`-Feld
+in `BLOCKS`).
+
+**Bewusst so:** Die Raten sind „ab"-Richtwerte — die Seite bleibt beim
+Prinzip, dass das echte Angebot persönlich kommt. Schiffsnamen sind eigene
+(ALARA, MAVI RUYA, ELARA, LADY LYKIA); Werft und Baujahr sind gewöhnliche
+Angaben, keine Behauptung über ein real existierendes Boot. Die
+Tarif-Zahl schreibt `eur()` mit €-Zeichen davor, weil eine Broker-Rate so
+gelesen wird; `money()` blieb unangetastet, weil Angebote und Zahlung
+andersherum formatiert sind.
+
+**Geprüft:** in echtem Chromium (390×844), alle Wege: Menü → beide Seiten,
+Chips filtern (RU-Deklination: 4 каюты / 5 кают), Yacht-Sheet sendet den
+Lead, Fahrzeug-Karte öffnet das Transfer-Sheet mit vorbefülltem Fahrzeug,
+Ausflüge → Yachten, Blockseite → CTA → Flotte, Zurück-Geste landet wieder
+auf der Blockseite. Keine Konsolenfehler; RU, DE und EN gesichtet.
+
+**Offen:** Mehr Yachten sind eine Datenzeile plus ein Bild in `r21/`
+(Hochformat 4:5, Karte beschneidet auf 16:10 mittig). Eine zweite
+Limousine (Maybach) hätte noch kein eigenes Foto.
