@@ -1075,6 +1075,33 @@ svg{
 .chip.is-on{background:var(--dark);border-color:var(--dark);color:#fff}
 .chip:active{transform:scale(.96)}
 
+/* --- charter listings (yachts & VIP transport) ---------------------------
+   The grammar of a broker's rate card, set in the platform's own type: the
+   photograph, the name, two quiet spec lines, and the entry rate under a
+   hairline. No badges, no buttons — the whole card opens the sheet. */
+.fleetIntro{padding:26px 20px 0}
+.fleetIntro .h-xl{margin-top:8px}
+.fleetIntro__note{margin:14px 0 0;max-width:46ch;font-size:13px;line-height:1.65;color:var(--txt-2)}
+.fleetChips{margin-top:22px;margin-bottom:32px}
+.charterCard__name{
+  margin:14px 0 0;font-family:var(--display);
+  font-size:20px;font-weight:600;letter-spacing:.06em;line-height:1.2;color:var(--txt);
+  /* vessel names arrive as caps; localised vehicle names get the same set */
+  text-transform:uppercase;
+}
+.charterCard__line{margin-top:9px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-2)}
+.charterCard__line--soft{margin-top:6px;color:var(--txt-3)}
+.charterCard__rate{margin-top:14px;padding-top:12px;border-top:1px solid var(--hair-soft)}
+.charterCard__rate span{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3)}
+.charterCard__rate b{
+  display:block;margin-top:4px;font-family:var(--display);
+  font-size:24px;font-weight:600;letter-spacing:-.02em;color:var(--txt);
+  font-variant-numeric:tabular-nums;
+}
+.fleetEmpty p{margin:0 0 16px;font-size:13.5px;line-height:1.65;color:var(--txt-2)}
+.fleetAsk{margin-top:46px;padding:22px}
+.blockFleetCta{margin-top:22px}
+
 /* --- search --------------------------------------------------------------- */
 .searchCard{background:var(--ground-2);border:1px solid var(--hair-soft);border-radius:3px}
 .searchRow{display:flex;align-items:center;gap:14px;padding:17px 16px;min-height:66px;width:100%;text-align:left;background:none;border:none}

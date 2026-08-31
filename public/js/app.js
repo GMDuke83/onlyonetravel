@@ -1309,6 +1309,84 @@
   ];
   const excursion=id=>EXCURSIONS.find(e=>e.id===id);
 
+  /* --- Charter fleet. The yacht and transport pages borrow the grammar of a
+     charter broker's listing — name, builder, year, cabins · guests · crew,
+     and a from-rate — because that is how the category is read everywhere
+     else. The rates are deliberately "from": entry day rates as orientation,
+     the exact offer is always personal. Vessel names are our own; builder and
+     year are ordinary specs, not claims about a particular real boat.
+     Photography: the four r21 yacht frames, briefed for exactly this page. --- */
+  const CHARTER_DESTS=[
+    {id:'antalya', l:{ru:'Анталья',de:'Antalya',en:'Antalya'}},
+    {id:'kemer',   l:{ru:'Кемер',de:'Kemer',en:'Kemer'}},
+    {id:'fethiye', l:{ru:'Фетхие',de:'Fethiye',en:'Fethiye'}},
+    {id:'gocek',   l:{ru:'Гёчек',de:'Göcek',en:'Göcek'}},
+    {id:'bodrum',  l:{ru:'Бодрум',de:'Bodrum',en:'Bodrum'}},
+  ];
+  const YACHTS=[
+    {id:'alara', img:'./images/r21/yacht-card-1.webp', name:'ALARA',
+     m:24, builder:'Princess', year:2021, cabins:4, guests:10, crew:3, from:3900,
+     dests:['antalya','kemer'],
+     d:{ru:'Флайбридж для золотого часа: просторная корма, шеф на борту и закат над заливом на обратном пути.',
+        de:'Eine Flybridge für die goldene Stunde: großes Achterdeck, Chefkoch an Bord und der Sonnenuntergang über der Bucht auf dem Rückweg.',
+        en:'A flybridge built for the golden hour: a wide aft deck, a chef on board and the sunset over the bay on the way home.'}},
+    {id:'mavi-ruya', img:'./images/r21/yacht-card-2.webp', name:'MAVI RUYA',
+     m:21, builder:'Azimut', year:2019, cabins:3, guests:8, crew:2, from:2700,
+     dests:['kemer','antalya'],
+     d:{ru:'День в бирюзовых бухтах Кемера: якорь в тихой воде, купание прямо с кормы и обед под тентом.',
+        de:'Ein Tag in den türkisfarbenen Buchten von Kemer: Anker im stillen Wasser, Baden direkt von der Badeplattform, Mittagessen unter dem Sonnensegel.',
+        en:'A day in Kemer’s turquoise coves: anchor in still water, swim straight off the bathing platform, lunch under the awning.'}},
+    {id:'elara', img:'./images/r21/yacht-card-3.webp', name:'ELARA',
+     m:27, builder:'Ferretti', year:2022, cabins:4, guests:12, crew:4, from:4900,
+     dests:['gocek','fethiye'],
+     d:{ru:'Двенадцать островов Гёчека с воды: лагуны, сосновые берега и маршрут, который капитан строит по вашему дню.',
+        de:'Die zwölf Inseln von Göcek vom Wasser aus: Lagunen, Pinienufer und eine Route, die der Kapitän um Ihren Tag herum baut.',
+        en:'The twelve islands of Göcek from the water: lagoons, pine-lined shores and a route the captain shapes around your day.'}},
+    {id:'lady-lykia', img:'./images/r21/yacht-card-4.webp', name:'LADY LYKIA',
+     m:26, builder:'Sunseeker', year:2020, cabins:5, guests:12, crew:4, from:5400,
+     dests:['bodrum','gocek'],
+     d:{ru:'Вечерний выход с ужином на борту: палубы в тёплом свете, стол накрыт, берег Бодрума медленно гаснет за кормой.',
+        de:'Die Abendausfahrt mit Dinner an Bord: Decks in warmem Licht, der Tisch ist gedeckt, die Küste von Bodrum verglüht hinter dem Heck.',
+        en:'The evening cruise with dinner on board: decks in warm light, the table laid, the Bodrum shore fading slowly astern.'}},
+  ];
+  const yachtById=id=>YACHTS.find(y=>y.id===id);
+
+  /* --- VIP transport, same listing grammar. Three classes — the road twice,
+     the air once — each with capacity and an entry rate per transfer. --- */
+  const VEHICLE_CLASSES=[
+    {id:'limo', l:{ru:'Лимузин',de:'Limousine',en:'Limousine'}},
+    {id:'bus',  l:{ru:'VIP-бус',de:'VIP-Bus',en:'VIP bus'}},
+    {id:'heli', l:{ru:'Вертолёт',de:'Helikopter',en:'Helicopter'}},
+  ];
+  const VEHICLES=[
+    {id:'s-class', img:'./images/home-experiences/transfer.webp', cls:'limo',
+     name:'MERCEDES-BENZ S-CLASS', from:190,
+     kind:{ru:'Лимузин с водителем',de:'Limousine mit Chauffeur',en:'Chauffeured limousine'},
+     cap:{ru:'до 3 гостей · 3 чемодана',de:'bis 3 Gäste · 3 Koffer',en:'up to 3 guests · 3 cases'},
+     d:{ru:'Первый класс на дороге: встреча с табличкой, прохладный салон, вода и тишина — от трапа до дверей отеля.',
+        de:'Erste Klasse auf der Straße: Empfang mit Schild, gekühlter Innenraum, Wasser und Ruhe — vom Flugzeug bis zur Hoteltür.',
+        en:'First class on the road: a name sign at arrivals, a cooled cabin, water and quiet — from the aircraft to the hotel door.'}},
+    {id:'sprinter-vip', img:'./images/r18/transfer-van.webp', cls:'bus',
+     name:'MERCEDES SPRINTER VIP', from:290,
+     kind:{ru:'VIP-бус с водителем',de:'VIP-Bus mit Chauffeur',en:'Chauffeured VIP bus'},
+     cap:{ru:'до 10 гостей · 12 чемоданов',de:'bis 10 Gäste · 12 Koffer',en:'up to 10 guests · 12 cases'},
+     d:{ru:'Для семьи или команды: салон-лаундж с креслами, место для всего багажа и один автомобиль на всех.',
+        de:'Für Familie oder Team: Lounge-Innenraum mit Einzelsitzen, Platz für das gesamte Gepäck und ein Wagen für alle.',
+        en:'For a family or a team: a lounge cabin with individual seats, room for all the luggage and one vehicle for everyone.'}},
+    {id:'helicopter', img:'./images/r18/transfer-heli.webp', cls:'heli',
+     name:{ru:'Частный вертолёт',de:'Privater Helikopter',en:'Private helicopter'}, from:2400, perFlight:true,
+     kind:{ru:'Вертолётный трансфер',de:'Helikopter-Transfer',en:'Helicopter transfer'},
+     cap:{ru:'до 5 гостей · лёгкий багаж',de:'bis 5 Gäste · leichtes Gepäck',en:'up to 5 guests · light luggage'},
+     d:{ru:'Побережье за минуты вместо часов: вылет от аэропорта или отеля, посадка у моря — и весь Ликийский берег под вами.',
+        de:'Die Küste in Minuten statt Stunden: Start am Flughafen oder Hotel, Landung am Meer — und die ganze lykische Küste unter Ihnen.',
+        en:'The coast in minutes instead of hours: departure from the airport or hotel, landing by the sea — the whole Lycian shore beneath you.'}},
+  ];
+  const vehicleById=id=>VEHICLES.find(v=>v.id===id);
+  /* Listing filters. Session-local on purpose — a filter is part of browsing,
+     not of the saved state, so it resets with the next visit like a scroll
+     position does. */
+  const CHARTERF={dest:null,cls:null};
+
   /* --- Concierge bands. Three full-bleed statements on the concierge page —
      the same visual language as the experience bands, but they assert the
      service instead of opening a filter. Interim crops again; the ChatGPT
@@ -1523,6 +1601,15 @@
     const loc=LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':LANG==='tr'?'tr-TR':LANG==='uk'?'uk-UA':'en-GB';
     return `${n.toLocaleString(loc,{minimumFractionDigits:0,maximumFractionDigits:2})} ${c||'EUR'}`;
   }
+  /* The charter listings write €3.900, not "3 900 EUR" — the symbol in front
+     is how a broker's rate card reads, and money() is left alone because the
+     offers and payments built on it already read the other way. */
+  const eur=v=>'€'+(Number(v)||0).toLocaleString(LANG==='ru'?'ru-RU':LANG==='de'?'de-DE':LANG==='tr'?'tr-TR':LANG==='uk'?'uk-UA':'en-GB',{maximumFractionDigits:0});
+  /* Russian counts change the noun: 1 каюта, 3 каюты, 5 кают. */
+  const ruPl=(n,one,few,many)=>{const m10=n%10,m100=n%100;
+    if(m10===1&&m100!==11)return one;
+    if(m10>=2&&m10<=4&&(m100<12||m100>14))return few;
+    return many;};
   let toastTimer;
   function toast(msg){
     const el=$('#toast');if(!el)return;
@@ -1786,6 +1873,113 @@
     <div class="pageBottom"></div>${tabbar('excursions')}`;
   }
 
+  /* --------------------------------------------------------------------
+     Charter listings — yachts and VIP transport
+
+     One card grammar for both pages, read from any broker's site: the
+     photograph, the name, one line of what it is, one line of how many it
+     takes, and the entry rate under a hairline. The whole card is the tap
+     target and opens the detail sheet.
+     -------------------------------------------------------------------- */
+  const vehName=v=>typeof v.name==='string'?v.name:loc(v.name);
+  const yachtSpecs=y=>hx(
+    `${y.m} м · ${y.builder} · ${y.year}`,
+    `${y.m} m · ${y.builder} · ${y.year}`,
+    `${y.m} m · ${y.builder} · ${y.year}`);
+  const yachtCap=y=>hx(
+    `${y.cabins} ${ruPl(y.cabins,'каюта','каюты','кают')} · до ${y.guests} гостей · экипаж ${y.crew}`,
+    `${y.cabins} ${y.cabins===1?'Kabine':'Kabinen'} · bis ${y.guests} Gäste · ${y.crew} Crew`,
+    `${y.cabins} ${y.cabins===1?'cabin':'cabins'} · up to ${y.guests} guests · crew of ${y.crew}`);
+  const rateWordFleet=perFlight=>perFlight
+    ?hx('за перелёт от','pro Flug ab','per flight from')
+    :hx('за маршрут от','pro Strecke ab','per route from');
+
+  function charterCard(o){
+    /* o: {attr,img,name,l1,l2,rateLabel,rate} */
+    return `<article class="card charterCard fade-up" ${o.attr} role="button" tabindex="0">
+      <div class="card__media" style="aspect-ratio:16/10">
+        <img src="${o.img}" alt="${esc(o.name)}" loading="lazy" decoding="async">
+      </div>
+      <div class="card__body">
+        <h3 class="charterCard__name">${esc(o.name)}</h3>
+        <div class="charterCard__line">${esc(o.l1)}</div>
+        <div class="charterCard__line charterCard__line--soft">${esc(o.l2)}</div>
+        <div class="charterCard__rate"><span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b></div>
+      </div>
+    </article>`;
+  }
+  function fleetHead(o){
+    /* o: {eyebrow,title,note,chips} — the calm listing head: no hero, the
+       photographs belong to the fleet itself. */
+    return `${appbar({back:true})}
+    <section class="fleetIntro">
+      <div class="eyebrow">${esc(o.eyebrow)}</div>
+      <h1 class="h-xl">${esc(o.title)}</h1>
+      <p class="fleetIntro__note">${esc(o.note)}</p>
+      <div class="chips fleetChips">${o.chips}</div>
+    </section>`;
+  }
+  const fleetEmpty=()=>`<div class="fleetEmpty fade-up">
+      <p>${hx('Под этот фильтр мы подберём вариант лично — флот шире, чем страница.',
+              'Für diesen Filter stellen wir die Option persönlich zusammen — die Flotte ist größer als diese Seite.',
+              'For this filter we will match you personally — the fleet is larger than this page.')}</p>
+      <button class="btn btn--ghost" data-go="concierge">${t('askVip')}</button>
+    </div>`;
+
+  function vYachts(){
+    const list=CHARTERF.dest?YACHTS.filter(y=>y.dests.indexOf(CHARTERF.dest)>-1):YACHTS;
+    const chips=[`<button class="chip${CHARTERF.dest?'':' is-on'}" data-ydest="">${hx('Все','Alle','All')}</button>`]
+      .concat(CHARTER_DESTS.map(d=>`<button class="chip${CHARTERF.dest===d.id?' is-on':''}" data-ydest="${d.id}">${esc(loc(d.l))}</button>`)).join('');
+    return `${fleetHead({
+      eyebrow:'ONLYONE · '+hx('ПРИВАТНЫЙ ЧАРТЕР','PRIVATCHARTER','PRIVATE CHARTER'),
+      title:hx('Наши яхты','Unsere Yachten','Our yachts'),
+      note:hx('Дневные выходы от Антальи до Бодрума — с капитаном и экипажем. Тарифы ориентировочные; точное предложение соберёт ваш VIP-ассистент.',
+              'Tagestörns von Antalya bis Bodrum — mit Kapitän und Crew. Die Raten sind Richtwerte; das genaue Angebot erstellt Ihr VIP-Assistent.',
+              'Day charters from Antalya to Bodrum — with captain and crew. Rates are a guide; your VIP assistant prepares the exact offer.'),
+      chips})}
+    <div class="wrap">
+      <div class="cardList">${list.length?list.map(y=>charterCard({
+        attr:`data-yacht="${y.id}"`, img:y.img, name:y.name,
+        l1:yachtSpecs(y), l2:yachtCap(y),
+        rateLabel:hx('тариф в день от','Tagesrate ab','day rates from'),
+        rate:eur(y.from)})).join(''):fleetEmpty()}</div>
+      <div class="listCard blockAsk fleetAsk">
+        <p>${hx('Нужна яхта побольше, гулет на неделю или флотилия на событие? Подберём за пределами этой страницы.',
+                'Eine größere Yacht, eine Gulet für eine Woche oder eine Flottille für ein Event? Wir finden sie auch jenseits dieser Seite.',
+                'A larger yacht, a gulet for a week or a flotilla for an event? We source beyond this page.')}</p>
+        <button class="btn btn--primary" data-go="concierge">${t('flyCta')}</button>
+      </div>
+    </div>
+    <div class="pageBottom"></div>${tabbar('')}`;
+  }
+
+  function vTransfers(){
+    const list=CHARTERF.cls?VEHICLES.filter(v=>v.cls===CHARTERF.cls):VEHICLES;
+    const chips=[`<button class="chip${CHARTERF.cls?'':' is-on'}" data-tclass="">${hx('Все','Alle','All')}</button>`]
+      .concat(VEHICLE_CLASSES.map(c=>`<button class="chip${CHARTERF.cls===c.id?' is-on':''}" data-tclass="${c.id}">${esc(loc(c.l))}</button>`)).join('');
+    return `${fleetHead({
+      eyebrow:'ONLYONE · '+hx('VIP-ТРАНСФЕР','VIP-TRANSFER','VIP TRANSFER'),
+      title:hx('VIP-транспорт','VIP-Transport','VIP transport'),
+      note:hx('Лимузин, VIP-бус или вертолёт — с водителем или пилотом, встречей и сопровождением. Тарифы ориентировочные, по региону Антальи.',
+              'Limousine, VIP-Bus oder Helikopter — mit Chauffeur oder Pilot, Empfang und Begleitung. Die Raten sind Richtwerte für die Region Antalya.',
+              'Limousine, VIP bus or helicopter — with chauffeur or pilot, welcome and escort. Rates are a guide for the Antalya region.'),
+      chips})}
+    <div class="wrap">
+      <div class="cardList">${list.length?list.map(v=>charterCard({
+        attr:`data-vehicle="${v.id}"`, img:v.img, name:vehName(v),
+        l1:loc(v.kind), l2:loc(v.cap),
+        rateLabel:rateWordFleet(v.perFlight),
+        rate:eur(v.from)})).join(''):fleetEmpty()}</div>
+      <div class="listCard blockAsk fleetAsk">
+        <p>${hx('Кортеж, эскорт, встреча борта бизнес-авиации или машина на весь день — организуем по запросу.',
+                'Konvoi, Eskorte, Empfang eines Privatjets oder ein Wagen für den ganzen Tag — organisieren wir auf Anfrage.',
+                'A convoy, an escort, meeting a private jet or a car for the whole day — arranged on request.')}</p>
+        <button class="btn btn--primary" data-go="concierge">${t('flyCta')}</button>
+      </div>
+    </div>
+    <div class="pageBottom"></div>${tabbar('')}`;
+  }
+
   /* ====================================================================
      8 · Guest views
      ==================================================================== */
@@ -1903,7 +2097,8 @@
     welcome:{ img:'./images/vip-welcome-poster-v2.webp', vid:'./video/onlyone-vip-welcome-v3.mp4',
               eyebrow:'welcomeEyebrow', title:'welcomeTitle', body:'welcomeBody' },
     yacht:  { img:'./images/yacht-tour-poster.webp',
-              eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody'   },
+              eyebrow:'yachtEyebrow',   title:'yachtTitle',   body:'yachtBody',
+              fleet:'yachts' },
     groups: { img:'./images/video-posters/groups-cappadocia.webp', vid:'./video/onlyone-groups-cappadocia-v1.mp4',
               eyebrow:'groupsEyebrow',  title:'groupsTitle', body:'groupsBody' },
     events: { img:'./images/video-posters/event-dinner.webp',      vid:'./video/onlyone-event-dinner-v1.mp4',
@@ -1911,11 +2106,16 @@
     pamukkale:{ img:'./images/video-posters/pamukkale-tour.webp',  vid:'./video/onlyone-pamukkale-v1.mp4',
               eyebrow:'pamukkaleEyebrow', title:'pamukkaleTitle', body:'pamukkaleBody' },
     transfer:{word:true, eyebrow:'carEyebrow', title:'carTitle', body:'carBody',
-              specA:'carSpecA', specB:'carSpecB' },
+              specA:'carSpecA', specB:'carSpecB', fleet:'transfers' },
     flight: { img:'./images/r18/transfer-heli.webp', plane:true,
               eyebrow:'flyEyebrow', title:'flyTitle', body:'flyBody',
-              specA:'flySpecA', specB:'flySpecB' },
+              specA:'flySpecA', specB:'flySpecB', fleet:'transfers' },
   };
+  /* The page each fleet CTA opens carries its own name — "view our yachts"
+     on the yacht chapter, "vehicles & rates" on both transfer chapters. */
+  const fleetCtaLabel=f=>f==='yachts'
+    ?hx('Смотреть наши яхты','Unsere Yachten ansehen','View our yachts')
+    :hx('Транспорт и тарифы','Fahrzeuge & Raten ansehen','View vehicles & rates');
   function vBlock(id){
     const b=BLOCKS[id]; if(!b) return vHome();
     const title=t(b.title).replace(/<br\s*\/?>/g,' ');
@@ -1941,6 +2141,7 @@
       </div>`}
       <p class="blockLede">${t(b.body)}</p>
       ${b.specA?`<div class="blockSpec"><span>${t(b.specA)}</span><span>${t(b.specB)}</span></div>`:''}
+      ${b.fleet?`<button class="btn btn--gold blockFleetCta" data-go="${b.fleet}">${fleetCtaLabel(b.fleet)}${icon('chev')}</button>`:''}
 
       <h2 class="blockHow">${t('blockHow')}</h2>
       <ol class="blockSteps">
@@ -3492,6 +3693,8 @@
       case 'favorites': html=vFavorites();break;
       case 'map':       html=vMap();break;
       case 'excursions':html=vExcursions();break;
+      case 'yachts':    html=vYachts();break;
+      case 'transfers': html=vTransfers();break;
       case 'concierge': html=vConcierge();break;
       case 'block':     html=vBlock(VIEW.param);break;
       case 'staff':     html=vStaffLogin();break;
@@ -3519,6 +3722,14 @@
        card reserves its space through aspect-ratio. */
     if(restore>0){ a.scrollTop=restore; requestAnimationFrame(()=>{a.scrollTop=restore;}); }
     else a.scrollTop=0;
+    /* A tapped filter chip re-renders the listing, and the chips rail comes
+       back at its start — with the active chip possibly out of view, the page
+       looks filtered by nobody. Centre it; block:'nearest' keeps the page
+       itself where it is. */
+    if(VIEW.name==='yachts'||VIEW.name==='transfers'){
+      const on=a.querySelector('.fleetChips .chip.is-on');
+      if(on&&on.scrollIntoView)try{on.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}
+    }
     document.documentElement.lang=LANG;
     if(VIEW.name==='hotel')bindGallery();
     armBgVideos();
@@ -3641,8 +3852,13 @@
     });
   }
   function sheetMenu(){
+    /* The two charter pages ride on t()'s fallback: an unknown key returns
+       itself, so a pre-localised hx() string passes straight through. */
     const items=[['discover','search','search'],['destinations','pin','destinations'],
-                 ['navVip','star','excursions'],['map','map','map'],
+                 ['navVip','star','excursions'],
+                 [hx('Наши яхты','Unsere Yachten','Our yachts'),'yacht','yachts'],
+                 [hx('VIP-транспорт','VIP-Transport','VIP transport'),'car','transfers'],
+                 ['map','map','map'],
                  ['myFav','heart','favorites'],['myTrips','trip','trips'],
                  ['mContact','phone','contact']];
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('menu')}</h3>
@@ -3752,6 +3968,32 @@
       <div class="noteBox">${t('excNote')}</div>
     </div>
     <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-add" data-id="${id}">${t('addToReq')}</button></div>`);
+  }
+  function sheetYacht(id){
+    const y=yachtById(id);if(!y)return;
+    const kv=(l,v)=>`<div class="kv"><span class="muted">${l}</span><b>${esc(v)}</b></div>`;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(y.name)}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div style="border-radius:16px;overflow:hidden;aspect-ratio:16/10">
+        <img src="${y.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="margin-top:12px">
+        ${kv(hx('Длина','Länge','Length'),y.m+' '+hx('м','m','m'))}
+        ${kv(hx('Верфь','Werft','Builder'),y.builder+' · '+y.year)}
+        ${kv(hx('Каюты','Kabinen','Cabins'),y.cabins)}
+        ${kv(hx('Гости','Gäste','Guests'),hx('до ','bis ','up to ')+y.guests)}
+        ${kv(hx('Экипаж','Crew','Crew'),y.crew)}
+        ${kv(hx('Маршруты','Reviere','Cruising area'),y.dests.map(d=>label(CHARTER_DESTS,d)).join(' · '))}
+      </div>
+      <div class="charterCard__rate" style="margin-top:14px"><span>${hx('тариф в день от','Tagesrate ab','day rates from')}</span><b>${eur(y.from)}</b></div>
+      <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(y.d))}</p>
+      <div class="noteBox">${hx('Тариф — ориентир за день с экипажем и топливом по стандартному маршруту. Точное предложение под вашу дату соберёт VIP-ассистент.',
+        'Die Rate ist ein Richtwert pro Tag mit Crew und Kraftstoff auf der Standardroute. Das genaue Angebot für Ihr Datum erstellt Ihr VIP-Assistent.',
+        'The rate is a guide per day with crew and fuel on the standard route. Your VIP assistant prepares the exact offer for your date.')}</div>
+      <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="ycName" autocomplete="name"></div>
+      <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="ycPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..."></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="yacht-send" data-id="${id}">${hx('Запросить эту яхту','Diese Yacht anfragen','Request this yacht')}</button></div>`);
   }
   function sheetPay(id){
     const r=request(id);
@@ -3905,7 +4147,21 @@
       render();return;
     }
     const ex=T.closest('[data-exc]');
-    if(ex){sheetExcursion(ex.dataset.exc);return;}
+    /* The yacht entry stopped being a sheet the day the fleet got a page of
+       its own: every yacht tap now lands on the listing. */
+    if(ex){if(ex.dataset.exc==='yacht-tour'){go('yachts');return;}sheetExcursion(ex.dataset.exc);return;}
+    const yc=T.closest('[data-yacht]');
+    if(yc){sheetYacht(yc.dataset.yacht);return;}
+    const vh=T.closest('[data-vehicle]');
+    if(vh){
+      const v=vehicleById(vh.dataset.vehicle);
+      sheetTransferRequest(v?{notes:hx('Транспорт: ','Fahrzeug: ','Vehicle: ')+vehName(v)}:{});
+      return;
+    }
+    const yd=T.closest('[data-ydest]');
+    if(yd){CHARTERF.dest=yd.dataset.ydest||null;render();return;}
+    const tcl=T.closest('[data-tclass]');
+    if(tcl){CHARTERF.cls=tcl.dataset.tclass||null;render();return;}
     const ww=T.closest('[data-wish]');
     if(ww&&W){
       const k=ww.dataset.wish,i=W.wishes.indexOf(k);
@@ -3933,6 +4189,14 @@
         S.leads=S.leads||[];S.leads.unshift({type:'transfer-callback',source:'transfer-banner',name,phone,createdAt:Date.now()});save();
         if(n)n.value='';if(p)p.value='';
         toast(hx('Спасибо. VIP-ассистент уточнит детали трансфера лично.','Danke. Ihr VIP-Assistent klärt die Transferdetails persönlich.','Thank you. Your VIP assistant will confirm the transfer details personally.'));
+        break;
+      }
+      case 'yacht-send': {
+        const y=yachtById(a.dataset.id);
+        const n=$('#ycName'),p=$('#ycPhone'),name=(n&&n.value||'').trim(),phone=(p&&p.value||'').trim();
+        if(!name||!phone){toast(hx('Введите имя и телефон','Bitte Name und Telefon eingeben','Please enter name and phone'));break;}
+        S.leads=S.leads||[];S.leads.unshift({type:'yacht-charter',yacht:y?y.name:a.dataset.id,name,phone,createdAt:Date.now()});save();closeSheet();
+        setTimeout(()=>toast(hx('Спасибо. VIP-ассистент свяжется с вами по яхте.','Danke. Ihr VIP-Assistent meldet sich zur Yacht.','Thank you. Your VIP assistant will contact you about the yacht.')),330);
         break;
       }
       case 'transfer-form': sheetTransferRequest();break;
