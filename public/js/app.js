@@ -1852,7 +1852,10 @@
   function staffTabbar(active){
     const items=[['s-dash','grid','dashboard'],['s-req','inbox','requests'],['s-book','book','bookings'],['s-cust','user','customers'],['s-more','dots','more']];
     const nw=S.requests.filter(r=>r.status==='new').length
-      + S.requests.filter(r=>(r.messages||[]).some(m=>m.from==='guest'&&!m.read)).length;
+      + S.requests.filter(r=>(r.messages||[]).some(m=>m.from==='guest'&&!m.read)).length
+      /* A direct booking never passes 'new' — paid money must still light
+         the dot until someone records the confirmation. */
+      + S.requests.filter(r=>r.kind==='charter'&&r.status==='paid').length;
     return `<nav class="tabbar tabbar--staff">${items.map(([v,ic,k])=>
       `<button class="tab${active===v?' is-on':''}" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v==='s-req'&&nw?'<i class="tab__dot"></i>':''}</button>`).join('')}</nav>`;
   }
@@ -1960,6 +1963,7 @@
                 there. */''}
           <button class="charterCard__more" type="button">${hx('Детали','Details','Details')}${icon('chev')}</button>
         </div>
+        ${o.book?`<button class="btn btn--gold charterCard__book" type="button" data-book="${o.book}">${hx('Забронировать и оплатить','Buchen & bezahlen','Book & pay')}</button>`:''}
       </div>
     </article>`;
   }
@@ -1985,7 +1989,8 @@
     const yCard=y=>charterCard({
       attr:`data-yacht="${y.id}"`, img:y.img, name:y.name,
       l1:yachtSpecs(y), l2:yachtCap(y),
-      rateLabel:yachtRateLabel(y), rate:eur(y.from)});
+      rateLabel:yachtRateLabel(y), rate:eur(y.from),
+      book:'yacht:'+y.id});
     const week=CHARTERF.size?FLEET_WEEK.filter(y=>y.size===CHARTERF.size):FLEET_WEEK;
     const chips=[`<button class="chip${CHARTERF.size?'':' is-on'}" data-ysize="">${hx('Все','Alle','All')}</button>`]
       .concat(FLEET_SIZES.map(s=>`<button class="chip${CHARTERF.size===s.id?' is-on':''}" data-ysize="${s.id}">${esc(loc(s.l))}</button>`)).join('');
@@ -2027,7 +2032,7 @@
         attr:`data-vehicle="${v.id}"`, img:v.img, name:vehName(v),
         l1:loc(v.kind), l2:loc(v.cap),
         rateLabel:rateWordFleet(v.perFlight),
-        rate:eur(v.from)})).join(''):fleetEmpty()}</div>
+        rate:eur(v.from), book:'vehicle:'+v.id})).join(''):fleetEmpty()}</div>
       <div class="listCard blockAsk fleetAsk">
         <p>${hx('Кортеж, эскорт, встреча борта бизнес-авиации или машина на весь день — организуем по запросу.',
                 'Konvoi, Eskorte, Empfang eines Privatjets oder ein Wagen für den ganzen Tag — organisieren wir auf Anfrage.',
@@ -2836,12 +2841,13 @@
     <div class="wrap" style="padding-top:18px">
       <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myTrips')}</h1>
       ${S.requests.length?S.requests.map(r=>{
-        const h=hotel(r.hotelId);
+        const charter=r.kind==='charter';
+        const h=charter?null:hotel(r.hotelId);
         return `<div class="listCard fade-up">
           <div class="listCard__h">
             <div style="min-width:0">
-              <b style="font-size:15.5px">${esc(h.name)}</b>
-              <div class="muted tiny" style="margin-top:4px">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}</div>
+              <b style="font-size:15.5px">${esc(charter?r.item.name:h.name)}</b>
+              <div class="muted tiny" style="margin-top:4px">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
               <div class="muted mini" style="margin-top:3px">${r.code}</div>
             </div>
             <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
@@ -2856,8 +2862,40 @@
     <div class="pageBottom"></div>${tabbar('trips')}`;
   }
 
+  /* A charter booking has no hotel, no room and no night count — its trip
+     page is the item, the day, the price and the payment state. */
+  function vTripCharter(r){
+    const paid=r.status==='paid'||r.status==='confirmed';
+    return `${appbar({back:true,title:r.code,menu:false})}
+    <div class="wrap" style="padding-top:16px">
+      <article class="card charterCard" style="pointer-events:none">
+        ${r.item.img?`<div class="card__media" style="aspect-ratio:16/10"><img src="${r.item.img}" alt=""></div>`:pendingMedia()}
+        <div class="card__body">
+          <h2 class="charterCard__name">${esc(r.item.name)}</h2>
+          <div class="charterCard__line">${charterWhen(r)} · ${r.adults} ${t('adultsShort')}</div>
+          ${r.route?`<div class="charterCard__line charterCard__line--soft">${esc(r.route)}</div>`:''}
+        </div>
+      </article>
+      <div class="priceBox fade-up" style="margin-top:18px">
+        <div class="lbl">${t('total')}</div>
+        <div class="amt">${money(r.offer.price,r.offer.currency)}</div>
+      </div>
+      ${r.status==='payopen'?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
+      ${paid?`<div class="listCard" style="display:flex;align-items:center;gap:11px;background:rgba(40,168,121,.10)">
+        <span style="color:var(--ok);display:grid;place-items:center">${icon('check')}</span>
+        <b style="font-size:14px;color:var(--ok)">${t('paid')}</b></div>`:''}
+      <div class="listCard">
+        <p class="muted" style="margin:0 0 12px;font-size:13px;line-height:1.6">${hx('Детали дня ваш VIP-ассистент согласует с вами лично.',
+          'Die Details des Tages stimmt Ihr VIP-Assistent persönlich mit Ihnen ab.',
+          'Your VIP assistant confirms the details of the day with you personally.')}</p>
+        <button class="btn btn--ghost btn--sm" style="width:100%" data-go="concierge">${t('askVip')}</button>
+      </div>
+    </div>
+    <div class="pageBottom"></div>`;
+  }
   function vTrip(id){
     const r=request(id);if(!r)return vTrips();
+    if(r.kind==='charter')return vTripCharter(r);
     const h=hotel(r.hotelId);
     const roomId=(r.offer&&r.offer.roomId)||r.roomId;
     const room=roomId?h.rooms.find(x=>x.id===roomId):null;
@@ -2889,7 +2927,8 @@
       </div>
       ${r.status==='offer'?`<div class="btnRow" style="margin-top:12px">
         <button class="btn btn--ghost" data-act="ask">${t('askBack')}</button>
-        <button class="btn btn--primary" data-act="accept" data-id="${r.id}">${t('acceptOffer')}</button></div>`:''}
+        <button class="btn btn--primary" data-act="accept" data-id="${r.id}">${t('acceptOffer')}</button></div>
+      <div style="margin-top:10px"><button class="btn btn--gold" data-act="accept-pay" data-id="${r.id}">${icon('card')}${hx('Принять и оплатить сейчас','Annehmen & jetzt bezahlen','Accept & pay now')}</button></div>`:''}
       ${r.status==='payopen'?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
       ${(r.status==='paid'||r.status==='confirmed')?`<div class="listCard" style="display:flex;align-items:center;gap:11px;background:rgba(40,168,121,.10)">
         <span style="color:var(--ok);display:grid;place-items:center">${icon('check')}</span>
@@ -3014,14 +3053,15 @@
     </div>`;
   }
   function staffReqCard(r){
-    const h=hotel(r.hotelId);
+    const charter=r.kind==='charter';
+    const h=charter?null:hotel(r.hotelId);
     return `<div class="listCard fade-up">
       <div class="listCard__h">
         <div style="min-width:0">
           <div class="muted mini">${r.code}</div>
           <b style="font-size:15px;display:block;margin-top:3px">${esc(r.contact.first||'—')} ${esc(r.contact.last||'')}</b>
-          <div class="muted tiny" style="margin-top:3px">${esc(h.name)}</div>
-          <div class="muted tiny">${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}</div>
+          <div class="muted tiny" style="margin-top:3px">${esc(charter?r.item.name:h.name)}</div>
+          <div class="muted tiny">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
         </div>
         <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
       </div>
@@ -3067,13 +3107,22 @@
       return `<div class="noteBox" style="margin-top:0">${t('offerSentWait')}</div>`;
     if(r.status==='accepted')
       return `<button class="btn btn--primary" data-act="paylink" data-id="${r.id}">${icon('card')}${t('createPayLink')}</button>`;
-    if(r.status==='payopen')
+    if(r.status==='payopen'){
+      /* Two ways into payopen now: the staff link, and the guest's own
+         "pay now" (direct bookings, accept & pay). Only the first has a
+         link to show — claiming one for the second was a lie with an
+         empty line under it. */
+      if(!(r.payment&&r.payment.link))
+        return `<div class="listCard" style="margin-top:0;display:flex;gap:10px;align-items:center">
+          <span style="color:var(--ok)">${icon('check')}</span>
+          <b style="font-size:13.5px">${hx('Оплата открыта — гость платит в приложении','Zahlung offen — der Gast zahlt in der App','Payment open — the guest pays in the app')}</b></div>`;
       return `<div class="listCard" style="margin-top:0">
         <div style="display:flex;align-items:center;gap:9px;color:var(--ok)">${icon('check')}<b style="font-size:13.5px">${t('payLinkDone')}</b></div>
         <div class="muted mini" style="margin-top:8px;word-break:break-all">${esc(r.payment.link)}</div>
         <div class="btnRow" style="margin-top:11px">
           <button class="btn btn--ghost btn--sm" data-act="copy" data-id="${r.id}">${t('copyLink')}</button>
           <button class="btn btn--ghost btn--sm" data-act="notify">${t('sendWa')}</button></div></div>`;
+    }
     if(r.status==='paid')
       return `<button class="btn btn--primary" data-act="confirm-hotel" data-id="${r.id}">${t('confirmHotel')}</button>`;
     return `<div class="listCard" style="margin-top:0;display:flex;gap:10px;align-items:center;background:rgba(40,168,121,.10)">
@@ -3082,8 +3131,9 @@
   function vStaffReq(id){
     const r=request(id);if(!r)return vStaffReqs();
     markRead(r,'staff');
-    const h=hotel(r.hotelId);
-    const room=r.roomId?h.rooms.find(x=>x.id===r.roomId):null;
+    const charter=r.kind==='charter';
+    const h=charter?null:hotel(r.hotelId);
+    const room=(h&&r.roomId)?h.rooms.find(x=>x.id===r.roomId):null;
     return `${appbar({back:true,title:r.code,menu:false})}
     <div class="wrap" style="padding-top:16px">
       <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
@@ -3094,7 +3144,13 @@
         <div class="kv"><span class="muted">${t('email')}</span><b>${esc(r.contact.email||'—')}</b></div>
         ${r.contact.wa?`<div class="kv"><span class="muted">WhatsApp</span><b>${esc(r.contact.wa)}</b></div>`:''}
       </div>
-      <div class="listCard">
+      ${charter?`<div class="listCard">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${hx('Чартер','Charter','Charter')}</div>
+        <div class="kv" style="margin-top:8px"><span class="muted">${hx('Объект','Objekt','Item')}</span><b>${esc(r.item.name)}</b></div>
+        <div class="kv"><span class="muted">${hx('Дата','Datum','Date')}</span><b>${charterWhen(r)}</b></div>
+        <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}</b></div>
+        ${r.route?`<div class="kv"><span class="muted">${hx('Маршрут','Strecke','Route')}</span><b>${esc(r.route)}</b></div>`:''}
+      </div>`:`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotel')}</div>
         <div class="kv" style="margin-top:8px"><span class="muted">${t('hotel')}</span><b>${esc(h.name)}</b></div>
         <div class="kv"><span class="muted">${t('regions')}</span><b>${esc(regionName(h.region))}</b></div>
@@ -3102,7 +3158,7 @@
           <span class="muted tiny">${nights(r.from,r.to)} ${t('nights')}</span></b></div>
         <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}${r.childAges.length?' ('+r.childAges.join(', ')+')':''}`:''}</b></div>
         <div class="kv"><span class="muted">${t('roomReq')}</span><b>${room?esc(loc(room.n)):t('notSure')}</b></div>
-      </div>
+      </div>`}
       ${(r.excursions&&r.excursions.length)?`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('excursions')}</div>
         <div class="badges" style="margin-top:9px">${r.excursions.map(id=>{const e=excursion(id);
@@ -3128,7 +3184,9 @@
         ${r.offer.internalNote?`<div class="kv"><span class="muted">${t('internalNote')}</span><b>${esc(r.offer.internalNote)}</b></div>`:''}
       </div>`:''}
       <div style="margin-top:14px">${staffActions(r)}</div>
-      <div class="listCard">${statusTimeline(r)}</div>
+      ${/* A charter is born at payopen — the hotel timeline would show an
+            offer that was never made as done. */''}
+      ${charter?'':`<div class="listCard">${statusTimeline(r)}</div>`}
     </div>
     <div class="pageBottom"></div>`;
   }
@@ -3147,7 +3205,8 @@
       if(!map[k])map[k]={c:r.contact,reqs:0,books:0,last:null};
       map[k].reqs++;
       if(['paid','confirmed'].indexOf(r.status)>-1)map[k].books++;
-      map[k].last=hotel(r.hotelId);
+      const lh=hotel(r.hotelId);
+      if(lh)map[k].last=lh;
     });
     const list=Object.keys(map).map(k=>map[k]);
     return `<div class="staffTop"><h1 class="h-xl">${t('customers')}</h1>
@@ -4063,7 +4122,10 @@
       <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="ycName" autocomplete="name"></div>
       <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="ycPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..."></div>
     </div>
-    <div class="sheet__foot"><button class="btn btn--primary" data-act="yacht-send" data-id="${id}">${hx('Запросить эту яхту','Diese Yacht anfragen','Request this yacht')}</button></div>`);
+    <div class="sheet__foot"><div class="btnRow">
+      <button class="btn btn--ghost" data-act="yacht-send" data-id="${id}">${hx('Запросить','Anfragen','Enquire')}</button>
+      <button class="btn btn--gold" data-book="yacht:${id}">${hx('Забронировать','Buchen & zahlen','Book & pay')}</button>
+    </div></div>`);
   }
   /* --------------------------------------------------------------------
      Payment — two Turkish acquirers, both through their hosted bank pages.
@@ -4138,6 +4200,62 @@
       const n=$('#payModeNote');if(!n)return;
       if(!c){n.hidden=false;n.textContent=t('payDemoNote');}
     });
+  }
+  /* --------------------------------------------------------------------
+     Direct booking. The request flow stays what it is; but wherever a
+     price is printed there is now also the short way: book the listed
+     from-rate and pay at once. A charter booking is an ordinary request
+     born at 'payopen' with the price as its offer — the whole payment
+     machinery, the trips list and the staff back office pick it up
+     without a second code path for money.
+     -------------------------------------------------------------------- */
+  function bookable(bt,bid){
+    if(bt==='yacht')return yachtById(bid);
+    if(bt==='vehicle')return vehicleById(bid);
+    return null;
+  }
+  function newCharterBooking(o){
+    S.seq+=1;
+    const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
+    const req={id:'r'+Date.now(),code,kind:'charter',hotelId:null,
+      item:{t:o.t,id:o.id,name:o.name,img:o.img||''},
+      from:o.date,to:o.to||'',adults:o.guests,children:0,childAges:[],
+      route:o.route||'',note:o.note||'',wishes:[],excursions:[],
+      contact:{first:o.first,last:'',phone:o.phone,email:'',wa:''},
+      status:'payopen',createdAt:Date.now(),
+      offer:{price:o.price,currency:'EUR'},
+      payment:{link:'',status:'open'},staffNote:'',messages:[],
+      history:[{s:'payopen',at:Date.now()}]};
+    S.requests.unshift(req);save();
+    return req;
+  }
+  /* One charter day reads as its date; a weekly charter as its week. */
+  const charterWhen=r=>fmtDate(r.from)+(r.to?' – '+fmtDate(r.to):'');
+  function sheetBookCharter(bt,bid){
+    const it=bookable(bt,bid);if(!it)return;
+    const name=bt==='vehicle'?vehName(it):it.name;
+    const rateLabel=bt==='vehicle'?rateWordFleet(it.perFlight):yachtRateLabel(it);
+    const maxG=bt==='yacht'?(it.guests||8):10;
+    const week=!!it.week;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${hx('Бронирование','Buchung','Booking')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div class="kv" style="margin-top:0"><span class="muted">${hx('Что бронируем','Gebucht wird','Booking')}</span><b>${esc(name)}</b></div>
+      <div class="priceBox"><div class="lbl">${esc(rateLabel)}</div><div class="amt">${eur(it.from)}</div></div>
+      <div class="grid2"><div class="field"><label class="label">${week?hx('Начало · 1 неделя','Start · 1 Woche','Start · 1 week'):hx('Дата','Datum','Date')} *</label>
+          <input class="input" type="date" id="bcDate" min="${today()}"></div>
+        <div class="field"><label class="label">${t('guests')}</label>
+          <input class="input" type="number" id="bcGuests" inputmode="numeric" min="1" max="${maxG}" value="2"></div></div>
+      ${bt==='vehicle'?`<div class="field"><label class="label">${hx('Маршрут','Strecke','Route')}</label>
+        <input class="input" id="bcRoute" placeholder="${hx('Аэропорт → отель','Flughafen → Hotel','Airport → hotel')}"></div>`:''}
+      <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="bcName" autocomplete="name"></div>
+      <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="bcPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..."></div>
+      <div class="field"><label class="label">${hx('Комментарий','Hinweis','Note')}</label><input class="input" id="bcNote"></div>
+      <div class="noteBox">${hx('Сейчас оплачивается ставка «от». Финальные детали и возможные доплаты VIP-ассистент подтвердит с вами до начала.',
+        'Bezahlt wird jetzt die Ab-Rate. Finale Details und etwaige Aufpreise bestätigt Ihr VIP-Assistent vor Antritt persönlich.',
+        'You pay the from-rate now. Final details and any extras are confirmed personally by your VIP assistant before the start.')}</div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--gold" data-act="book-pay" data-bt="${bt}" data-bid="${bid}">${hx('Забронировать и оплатить','Buchen & bezahlen','Book & pay')}</button></div>`);
   }
   function sheetPayDemo(id,provider){
     const r=request(id);
@@ -4308,6 +4426,15 @@
     /* The yacht entry stopped being a sheet the day the fleet got a page of
        its own: every yacht tap now lands on the listing. */
     if(ex){if(ex.dataset.exc==='yacht-tour'){go('yachts');return;}sheetExcursion(ex.dataset.exc);return;}
+    /* Before the card handlers: the book button sits INSIDE a charter card,
+       and the card itself opens the detail sheet — the more specific target
+       must win. */
+    const bk=T.closest('[data-book]');
+    if(bk){
+      const parts=String(bk.dataset.book).split(':');
+      sheetBookCharter(parts[0],parts[1]);
+      return;
+    }
     const yc=T.closest('[data-yacht]');
     if(yc){sheetYacht(yc.dataset.yacht);return;}
     const vh=T.closest('[data-vehicle]');
@@ -4411,6 +4538,47 @@
       case 'accept': setStatus(request(id),'accepted');render();toast(t('offerAccepted'));break;
       case 'ask': toast(t('questionSent'));break;
       case 'pay': sheetPay(id);break;
+      case 'book-pay': {
+        if(a.disabled)break;
+        const bt=a.dataset.bt,bid=a.dataset.bid,it=bookable(bt,bid);if(!it)break;
+        const date=(($('#bcDate')||{}).value||'').trim();
+        const first=(($('#bcName')||{}).value||'').trim();
+        const phone=(($('#bcPhone')||{}).value||'').trim();
+        if(!date||!first||!phone){toast(hx('Заполните дату, имя и телефон','Bitte Datum, Name und Telefon ausfüllen','Please fill in date, name and phone'));break;}
+        /* The min/max on the inputs are advisory in every browser; the
+           handler is the fence. ISO date strings compare as dates do. */
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<today()){
+          toast(hx('Выберите дату в будущем','Bitte ein Datum in der Zukunft wählen','Please choose a future date'));break;
+        }
+        const maxG=bt==='yacht'?(it.guests||8):10;
+        const guests=Math.min(maxG,Math.max(1,Math.round(+((($('#bcGuests')||{}).value)||2))||1));
+        /* A weekly charter is a week: the stored booking carries its real
+           end date instead of pretending to be an afternoon. */
+        let to='';
+        if(it.week){
+          const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+7);
+          to=d.toISOString().slice(0,10);
+        }
+        a.disabled=true;   // a second tap during the hand-over books nothing
+        const req=newCharterBooking({t:bt,id:bid,
+          name:bt==='vehicle'?vehName(it):it.name,img:it.img||'',price:it.from,
+          date,to,guests,
+          route:(($('#bcRoute')||{}).value||'').trim(),
+          note:(($('#bcNote')||{}).value||'').trim(),first,phone});
+        /* Straight into the payment sheet — swapping the open sheet's
+           content leaves no gap for a back gesture or a double tap. */
+        sheetPay(req.id);
+        break;
+      }
+      case 'accept-pay': {
+        const r=request(id);if(!r)break;
+        setStatus(r,'accepted');
+        r.payment={link:'',status:'open'};
+        setStatus(r,'payopen');
+        render();
+        sheetPay(r.id);
+        break;
+      }
       case 'pay-start': {
         const r=request(id);if(!r||!r.offer)break;
         const provider=PAYSEL;
@@ -4434,7 +4602,14 @@
         const r=request(id);
         r.payment.status='paid';r.payment.paidAt=Date.now();
         setStatus(r,'paid');
-        closeSheet();setTimeout(()=>{render();toast(t('paidOk'));},280);break;
+        closeSheet();
+        /* Whoever paid from a catalogue page must land on the paid trip,
+           not back among the cards as if nothing had happened. */
+        setTimeout(()=>{
+          if(VIEW.name==='trip'&&VIEW.param===r.id)render();
+          else go('trip',r.id);
+          toast(t('paidOk'));
+        },280);break;
       }
       case 'do-login': {
         const n=$('#stName');
@@ -4488,7 +4663,10 @@
       case 'c-call': toast('+90 242 000 00 00');break;
       case 'c-wa':   toast('WhatsApp +90 500 000 00 00');break;
       case 'c-mail': toast('hello@onlyone.travel');break;
-      case 'confirm-hotel': setStatus(request(id),'confirmed');render();toast(t('hotelConfirmed'));break;
+      case 'confirm-hotel': {
+        const r=request(id);setStatus(r,'confirmed');render();
+        toast(r&&r.kind==='charter'?hx('Бронирование подтверждено','Buchung bestätigt','Booking confirmed'):t('hotelConfirmed'));break;
+      }
     }
   });
 

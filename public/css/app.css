@@ -1111,6 +1111,8 @@ svg{
   font-size:10px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;
 }
 .charterCard__more svg{width:13px;height:13px}
+/* The short way: book the printed from-rate and pay at once. */
+.charterCard__book{margin-top:12px;min-height:48px;font-size:11px}
 .fleetEmpty p{margin:0 0 16px;font-size:13.5px;line-height:1.65;color:var(--txt-2)}
 .fleetSection{margin:0 0 22px}
 .cardList+.fleetSection{margin-top:54px}
