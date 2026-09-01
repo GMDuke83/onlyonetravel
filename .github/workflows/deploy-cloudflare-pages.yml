@@ -14,6 +14,11 @@ name: Deploy test environment
 # If you connect the repository through the Cloudflare Pages Git integration
 # instead, Cloudflare deploys on its own and this workflow is redundant —
 # delete it then, so the same commit is not deployed twice.
+#
+# The payment endpoints under functions/ ship automatically: wrangler picks
+# up the functions directory next to the working directory on deploy. They
+# stay inert until the bank credentials are set as environment variables in
+# the Cloudflare Pages project — see docs/zahlung-sanal-pos.md.
 
 on:
   push:

@@ -345,7 +345,13 @@
   // Both ?b= from a reload above and the ?v= the manifest used to put on
   // start_url are noise once the document is here. Dropping them also keeps
   // the PWA and a plain link on one URL, and so on one cache entry.
+  // One query is not noise: ?pay=… is a bank sending the customer back with
+  // the payment outcome. It is stashed before the strip so the app can still
+  // read it — app.js clears the stash the moment it applies it.
   if (location.search) {
+    try {
+      if (/[?&]pay=/.test(location.search)) sessionStorage.setItem("onlyone.payreturn", location.search);
+    } catch (e) {}
     try { history.replaceState(history.state, "", location.pathname); } catch (e) {}
   }
 
