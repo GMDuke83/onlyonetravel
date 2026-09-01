@@ -1233,3 +1233,33 @@ nach Größe: bis 35 m / 35–60 m / 60 m+) und **Дневные туры · Т�
 vier bisherigen mit ihren Fotos, Tagesraten). Das Sheet trägt beide Formen:
 Länge mit Fuß in Klammern, Wochennote „ohne APA und Steuern", Reviere-Zeile
 und Beschreibung nur wo vorhanden.
+
+---
+
+## Zahlungsmodul: Ziraat & VakıfBank Sanal POS — 31.08.2026
+
+Beide Banken im „Hosted Page"-Modell (Karteneingabe auf der Bankseite,
+PCI-Umfang bleibt SAQ A): Ziraat über NestPay „3D Pay Hosting"
+(signiertes Formular, Hash ver3/SHA-512), VakıfBank über PayFlex „Ortak
+Ödeme" (RegisterTransaction → PaymentToken → Bankseite). Ein Geheimnis
+gehört nicht in Browser-JS, deshalb liegen Signatur und Rückweg in
+Cloudflare Pages Functions (`functions/api/pay/`): `ping` (was ist
+freigeschaltet), `start` (Übergabe), `return/[provider]` (Antwort der
+Bank; bei Ziraat kryptographisch geprüft — der Manipulationstest mit
+verfälschtem Betrag scheitert am Hash).
+
+Das Frontend: Zahlungs-Sheet mit Bankauswahl im Stil der bestehenden
+Checklisten, Sicherheitshinweis, „Weiter zur Bank". Ohne Backend (GitHub
+Pages) erkennt die App das per `ping`-Probe selbst und zeigt einen
+ehrlich beschrifteten Demo-Simulator — neutral, keine Bank-Optik. Die
+Rückkehr `?pay=…` wird von index.html vor dem Query-Aufräumen in
+sessionStorage gelegt; boot() wendet sie einmal an (Status „bezahlt",
+Reise öffnet sich, Intro übersprungen). Der Sofort-Skip ist bewusst um
+einen Tick verzögert — synchron liefe er vor der boot-Definition.
+
+Geprüft: 16 Node-Checks gegen die Functions (Hash-Rundlauf mit Pipe- und
+Backslash im Store-Key, gefälschte/abgelehnte Callbacks, VakıfBank gegen
+gemockte Bank), dazu in Chromium Demo-Erfolg, Bank-Rückkehr ok/fail.
+Anleitung inkl. Bankantrag und Live-Schaltung: `zahlung-sanal-pos.md`.
+VakıfBank-Feldnamen bewusst in einer Funktion isoliert — gegen das
+Bankdokument prüfen, wenn die Zugangsdaten kommen.

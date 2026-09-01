@@ -685,6 +685,17 @@
     });
   }
 
+  /* Coming back from a bank's payment page must not replay the film. The
+     document stashed ?pay=… before stripping the query; if it is there,
+     someone is mid-payment and the platform opens directly. Deferred one
+     tick on purpose: goToMain() hands over to ONLYONE.boot, and boot is
+     defined by the platform section further down this same file — a
+     synchronous call here would run before it exists and the payment
+     outcome would never be applied. */
+  try {
+    if (sessionStorage.getItem('onlyone.payreturn')) setTimeout(goToMain, 0);
+  } catch (e) {}
+
   /* --- never let the ocean play in a background tab ---------------------- */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -4054,23 +4065,95 @@
     </div>
     <div class="sheet__foot"><button class="btn btn--primary" data-act="yacht-send" data-id="${id}">${hx('Запросить эту яхту','Diese Yacht anfragen','Request this yacht')}</button></div>`);
   }
+  /* --------------------------------------------------------------------
+     Payment — two Turkish acquirers, both through their hosted bank pages.
+
+     Ziraat runs on NestPay ("3D Pay Hosting"), VakıfBank on PayFlex
+     ("Ortak Ödeme"): in both models the customer types the card on the
+     BANK's page, never here — this site only chooses the bank and hands
+     over a signed order. The signing needs a secret, and a secret cannot
+     live in a browser, so the hand-over goes through /api/pay/* —
+     Cloudflare Pages Functions in /functions. Where those functions do
+     not exist (GitHub Pages) the probe fails and the flow falls back to
+     an honest demo simulator that says it is one.
+     -------------------------------------------------------------------- */
+  const PAY_PROVIDERS=[
+    {id:'ziraat', n:'Ziraat Bankası', s:'Sanal POS · 3-D Secure'},
+    {id:'vakif',  n:'VakıfBank',      s:'Sanal POS · 3-D Secure'},
+  ];
+  let PAYSEL='ziraat';
+  let PAY_CAPS;   // undefined=unknown · false=no backend · {providers:{…}}
+  function probePay(){
+    if(PAY_CAPS!==undefined)return Promise.resolve(PAY_CAPS);
+    return fetch('./api/pay/ping',{cache:'no-store'})
+      .then(r=>r.ok?r.json():false)
+      .then(v=>{PAY_CAPS=(v&&v.ok)?v:false;return PAY_CAPS;})
+      .catch(()=>{PAY_CAPS=false;return PAY_CAPS;});
+  }
+  function startBankPayment(r,provider){
+    fetch('./api/pay/start',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({provider,oid:r.id,amount:r.offer.price,currency:r.offer.currency||'EUR',lang:LANG})})
+    .then(x=>x.json().then(j=>({ok:x.ok,j})).catch(()=>({ok:false,j:null})))
+    .then(({ok,j})=>{
+      if(ok&&j&&j.mode==='redirect'&&j.url){location.href=j.url;return;}
+      if(ok&&j&&j.mode==='form'&&j.action){
+        /* NestPay wants a browser POST: build the signed form and submit it. */
+        const f=document.createElement('form');
+        f.method='POST';f.action=j.action;f.style.display='none';
+        Object.keys(j.fields||{}).forEach(k=>{
+          const i=document.createElement('input');
+          i.type='hidden';i.name=k;i.value=j.fields[k];f.appendChild(i);
+        });
+        document.body.appendChild(f);f.submit();return;
+      }
+      toast(hx('Не удалось начать оплату. Попробуйте ещё раз.',
+               'Die Zahlung konnte nicht gestartet werden. Bitte erneut versuchen.',
+               'The payment could not be started. Please try again.'));
+    })
+    .catch(()=>toast(hx('Не удалось начать оплату. Попробуйте ещё раз.',
+                        'Die Zahlung konnte nicht gestartet werden. Bitte erneut versuchen.',
+                        'The payment could not be started. Please try again.')));
+  }
   function sheetPay(id){
     const r=request(id);
-    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('demoPay')}</h3>
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${hx('Оплата','Zahlung','Payment')}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
       <div class="priceBox" style="margin-top:0"><div class="lbl">${t('total')}</div>
         <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+      <div class="field"><label class="label">${hx('Способ оплаты','Zahlungsweg','Payment method')}</label>
+        ${PAY_PROVIDERS.map(m=>`<button class="check${m.id===PAYSEL?' is-on':''}" data-paymethod="${m.id}">
+          <span class="check__box">${icon('check')}</span>
+          <span><b style="font-weight:600">${esc(m.n)}</b><br><span class="muted tiny">${esc(m.s)}</span></span>
+        </button>`).join('')}</div>
       <div class="listCard" style="display:flex;align-items:center;gap:11px">
         <span style="color:var(--turq-600)">${icon('lock')}</span>
-        <div><b style="font-size:13.5px;display:block">Ziraat Bank · Linkle Ödeme</b>
-        <span class="muted mini">${t('payDemoNote')}</span></div></div>
-      <div class="field"><label class="label">${t('cardNo')}</label>
-        <input class="input" inputmode="numeric" value="4111 1111 1111 1111"></div>
-      <div class="grid2"><div class="field"><label class="label">MM/YY</label><input class="input" value="12/29"></div>
-        <div class="field"><label class="label">CVV</label><input class="input" value="123"></div></div>
+        <span class="muted mini">${hx('Данные карты вводятся на защищённой странице банка (3-D Secure). Мы не видим и не храним номер карты.',
+          'Die Kartendaten werden auf der gesicherten Seite der Bank eingegeben (3-D Secure). Wir sehen und speichern keine Kartennummer.',
+          'Card details are entered on the bank’s secured page (3-D Secure). We never see or store the card number.')}</span></div>
+      <div class="noteBox" id="payModeNote" hidden></div>
     </div>
-    <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-do" data-id="${id}">${t('payNowBtn')}</button></div>`);
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-start" data-id="${id}">${hx('Перейти к оплате','Weiter zur Bank','Continue to the bank')}</button></div>`);
+    probePay().then(c=>{
+      const n=$('#payModeNote');if(!n)return;
+      if(!c){n.hidden=false;n.textContent=t('payDemoNote');}
+    });
+  }
+  function sheetPayDemo(id,provider){
+    const r=request(id);
+    const p=PAY_PROVIDERS.find(x=>x.id===provider)||PAY_PROVIDERS[0];
+    /* Deliberately neutral: a labelled simulator, not a bank's page. */
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('demoPay')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div class="eyebrow">DEMO · 3-D SECURE</div>
+      <div class="kv" style="margin-top:10px"><span class="muted">${hx('Банк','Bank','Bank')}</span><b>${esc(p.n)}</b></div>
+      <div class="priceBox"><div class="lbl">${t('total')}</div>
+        <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+      <div class="noteBox">${t('payDemoNote')}</div>
+      <button class="btn btn--ghost" style="margin-top:14px" data-act="pay-demo-fail">${hx('Симулировать отказ','Fehlschlag simulieren','Simulate a decline')}</button>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-do" data-id="${id}">${hx('Симулировать успешную оплату','Erfolgreiche Zahlung simulieren','Simulate a successful payment')}</button></div>`);
   }
 
   /* ====================================================================
@@ -4235,6 +4318,12 @@
     }
     const yd=T.closest('[data-ysize]');
     if(yd){CHARTERF.size=yd.dataset.ysize||null;render();return;}
+    const pm=T.closest('[data-paymethod]');
+    if(pm){
+      PAYSEL=pm.dataset.paymethod;
+      $$('#sheetInner [data-paymethod]').forEach(b=>b.classList.toggle('is-on',b.dataset.paymethod===PAYSEL));
+      return;
+    }
     const tcl=T.closest('[data-tclass]');
     if(tcl){CHARTERF.cls=tcl.dataset.tclass||null;render();return;}
     const ww=T.closest('[data-wish]');
@@ -4322,6 +4411,25 @@
       case 'accept': setStatus(request(id),'accepted');render();toast(t('offerAccepted'));break;
       case 'ask': toast(t('questionSent'));break;
       case 'pay': sheetPay(id);break;
+      case 'pay-start': {
+        const r=request(id);if(!r||!r.offer)break;
+        const provider=PAYSEL;
+        probePay().then(c=>{
+          if(!c){sheetPayDemo(id,provider);return;}
+          if(!(c.providers&&c.providers[provider])){
+            toast(hx('Оплата через этот банк ещё не подключена.',
+                     'Diese Bank ist noch nicht freigeschaltet.',
+                     'This bank is not activated yet.'));
+            return;
+          }
+          startBankPayment(r,provider);
+        });
+        break;
+      }
+      case 'pay-demo-fail':
+        closeSheet();
+        setTimeout(()=>toast(hx('Платёж не выполнен (демо).','Zahlung fehlgeschlagen (Demo).','Payment failed (demo).')),330);
+        break;
       case 'pay-do': {
         const r=request(id);
         r.payment.status='paid';r.payment.paidAt=Date.now();
@@ -4388,7 +4496,33 @@
      13 · Public API for the intro
      ==================================================================== */
   window.ONLYONE = window.ONLYONE || {};
+  /* A visitor coming back from a bank carries the outcome in the stash the
+     document wrote before it stripped the query. Read once, here, so the
+     platform opens on the trip with its new state instead of the home page.
+     The bank's callback function has already verified the cryptography —
+     this only mirrors the result into the on-device state. */
+  let PAYRET=null;
+  try{
+    const q=sessionStorage.getItem('onlyone.payreturn');
+    if(q){sessionStorage.removeItem('onlyone.payreturn');PAYRET=new URLSearchParams(q);}
+  }catch(e){}
   window.ONLYONE.boot = function(){
+    if(PAYRET&&PAYRET.get('pay')){
+      const ok=PAYRET.get('pay')==='ok';
+      const r=S.requests.find(x=>x.id===PAYRET.get('oid'));
+      if(r&&ok&&r.status!=='paid'&&r.status!=='confirmed'){
+        r.payment=r.payment||{};
+        r.payment.status='paid';r.payment.paidAt=Date.now();
+        r.payment.provider=PAYRET.get('provider')||'';
+        setStatus(r,'paid');
+      }
+      VIEW=r?{name:'trip',param:r.id}:{name:'trips',param:null};
+      const msg=ok?t('paidOk'):hx('Платёж не выполнен. Попробуйте ещё раз или напишите VIP-ассистенту.',
+        'Die Zahlung wurde nicht ausgeführt. Bitte erneut versuchen oder dem VIP-Assistenten schreiben.',
+        'The payment did not go through. Please try again or write to your VIP assistant.');
+      setTimeout(()=>toast(msg),700);
+      PAYRET=null;
+    }
     if(!VIEW.name)VIEW={name:'home',param:null};
     render();
     initHistory();
