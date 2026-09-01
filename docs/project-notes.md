@@ -1263,3 +1263,13 @@ gemockte Bank), dazu in Chromium Demo-Erfolg, Bank-Rückkehr ok/fail.
 Anleitung inkl. Bankantrag und Live-Schaltung: `zahlung-sanal-pos.md`.
 VakıfBank-Feldnamen bewusst in einer Funktion isoliert — gegen das
 Bankdokument prüfen, wenn die Zugangsdaten kommen.
+
+## 2026-09-01 · Wording: „Raten" → „Preise"
+
+„Raten ansehen" klang nach Ratenzahlung. Alle Preis-Labels umbenannt:
+DE „Preis pro Woche/Tag ab", „VIP-Transport & Preise", „Fahrzeuge &
+Preise ansehen"; RU цена/цены statt тариф(ы); UK ціна/ціни statt
+тариф(и); TR fiyat statt tarife. EN bleibt bewusst bei „rates" —
+im internationalen Charter der Standardbegriff (weekly/day rates).
+In Chromium (390×844) in de/ru/tr/uk geprüft: keine Reste von
+Raten/тариф/tarif auf Yachten-, Transfer-, Home-Seite und im Yacht-Sheet.
