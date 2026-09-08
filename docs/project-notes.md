@@ -1286,3 +1286,14 @@ markiert „Zahlung eingegangen". sheetPay zeigt link-first, sobald ein
 Link existiert; ohne Link wie bisher Bankauswahl/Demo. Kein fabrizierter
 Demo-Link mehr. Details: docs/zahlung-hotelrunner.md. E2E in Chromium
 (de + tr): Buchung → Link → Öffnen → bezahlt, alle Checks grün.
+
+## 2026-09-08 · Recherche: HotelRunner hat keine Zahlungs-API
+
+Adversarial geprüfte Tiefenrecherche (15 Agenten): Die Entwickler-API
+(api.hotelrunner.com/api/v2) kann nur Inventar/Reservierungen, keine
+Zahlungen; der Ödeme-Al-Zahlungslink ist panel-only. „Finance and
+Payments" ist eine Orchestrierungsschicht über dem eigenen Bank-POS
+der Unterkunft (DenizBank/İş Bankası/GarantiPay; Ziraat/Vakıf nirgends
+genannt), kein Acquirer. Konsequenz in docs/zahlung-hotelrunner.md
+dokumentiert: Link-Weg bleibt manuell; volle Automatisierung kommt vom
+eigenen Sanal-POS-Modul, sobald Bankverträge da sind.

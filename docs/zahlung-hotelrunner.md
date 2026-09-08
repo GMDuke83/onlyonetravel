@@ -60,6 +60,33 @@ Außerdem im Panel korrigieren: Der Store heißt derzeit „ONLY ONE
   echten Einsatz eine kleine Testzahlung machen und im Panel prüfen, ob
   sie als Abbuchung (nicht nur Kartengarantie) ankommt.
 
+## API-Lage (geprüft 09/2026)
+
+Gründlich recherchiert und gegengeprüft: **HotelRunner hat keine
+Zahlungs-API.** Die dokumentierte Entwickler-Schnittstelle
+(developers.hotelrunner.com, api.hotelrunner.com/api/v2) ist eine
+Konnektivitäts-API für Channel-/PMS-Partner — Zimmer, Raten,
+Verfügbarkeiten, Reservierungen abrufen/pushen. Kein Endpunkt für
+Zahlungen, Zahlungslinks oder Belastungen. Der „Ödeme Al"-Button
+(Zahlungslink) existiert nur im Panel, manuell pro Reservierung
+(Online-Payments-Tab: Betrag, Methode, E-Mail, Gültigkeit).
+
+Folgen für uns:
+
+* Automatisches Erzeugen von Zahlungslinks aus der App heraus ist mit
+  HotelRunner derzeit **nicht möglich** — der Panel-Schritt bleibt.
+  (Feature-Wunsch an den HotelRunner-Support lohnt sich trotzdem.)
+* Ein HotelRunner-Login-Feld in unserer App ist tabu: Zugangsdaten
+  gehören nicht in fremde Apps, der Login ist reCAPTCHA-geschützt, und
+  ein Panel im iframe blockt HotelRunner selbst. Unsere Sheets verlinken
+  das Panel direkt; mit „Remember me" bleibt man dort angemeldet.
+* HotelRunners Checkout setzt ohnehin den **eigenen Bank-Sanal-POS**
+  der Unterkunft voraus (genannte Integrationen: DenizBank, İş Bankası,
+  GarantiPay — Ziraat/VakıfBank tauchen nirgends auf). Für volle
+  Automatisierung ohne Hin und Her ist der eingebaute eigene
+  Ziraat/Vakıf-Weg (docs/zahlung-sanal-pos.md) der Endzustand: Gast
+  zahlt in der App, Rückmeldung automatisch, kein Panel nötig.
+
 ## Verhältnis zum Sanal-POS-Modul
 
 Das direkte Ziraat/VakıfBank-Modul (`docs/zahlung-sanal-pos.md`) bleibt
