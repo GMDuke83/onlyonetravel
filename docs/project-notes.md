@@ -1297,3 +1297,15 @@ der Unterkunft (DenizBank/İş Bankası/GarantiPay; Ziraat/Vakıf nirgends
 genannt), kein Acquirer. Konsequenz in docs/zahlung-hotelrunner.md
 dokumentiert: Link-Weg bleibt manuell; volle Automatisierung kommt vom
 eigenen Sanal-POS-Modul, sobald Bankverträge da sind.
+
+## 2026-09-08 · Entscheidung: ohne HotelRunner, Zahlungslinks anbieterneutral
+
+HotelRunner wird nicht genutzt (keine Zahlungs-API, kein Acquirer,
+Zusatzkosten — siehe docs/zahlung-hotelrunner.md, jetzt als
+Entscheidungsprotokoll). Alle HotelRunner-Bezüge aus der Oberfläche
+entfernt: neutrale Panel-Hinweise („Panel des Zahlungsanbieters"),
+Panel-Öffnen-Knöpfe raus, Platzhalter „https://…". Der
+Link-Mechanismus (Zahlung anfordern, Link an Anfragen, link-first-Sheet,
+Zahlung eingegangen) bleibt unverändert — daran dockt später der
+Finanzdienstleister an; mit API wird das Linkerzeugen automatisiert.
+E2E erneut grün (de+tr), keine JS-Fehler.
