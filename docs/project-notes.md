@@ -1273,3 +1273,16 @@ Preise ansehen"; RU цена/цены statt тариф(ы); UK ціна/ціни
 im internationalen Charter der Standardbegriff (weekly/day rates).
 In Chromium (390×844) in de/ru/tr/uk geprüft: keine Reste von
 Raten/тариф/tarif auf Yachten-, Transfer-, Home-Seite und im Yacht-Sheet.
+
+## 2026-09-08 · HotelRunner-Zahlungslinks angebunden
+
+Wir sind HotelRunner-Kunde; das Panel erzeugt pro Buchung eine gehostete
+Zahlungsseite (Karte, 3-D Secure, EUR). Die App trägt diese Links jetzt
+zum Gast: Mitarbeiter hinterlegt den Link (an der Anfrage oder über den
+neuen Dashboard-Button „Zahlung anfordern" mit Bezeichnung/Betrag/Link),
+der Gast öffnet „Sichere Zahlungsseite" (neuer Tab, locale= der
+Gastsprache wird angehängt), Mitarbeiter prüft den Eingang im Panel und
+markiert „Zahlung eingegangen". sheetPay zeigt link-first, sobald ein
+Link existiert; ohne Link wie bisher Bankauswahl/Demo. Kein fabrizierter
+Demo-Link mehr. Details: docs/zahlung-hotelrunner.md. E2E in Chromium
+(de + tr): Buchung → Link → Öffnen → bezahlt, alle Checks grün.
