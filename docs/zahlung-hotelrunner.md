@@ -1,97 +1,57 @@
-# Zahlungen über HotelRunner — der Weg, der heute schon geht
+# Zahlungslinks — anbieterneutral (HotelRunner: geprüft und verworfen)
 
-Wir sind HotelRunner-Kunde (Store `only-one-suites-residence`). Das Panel
-kann zu jeder Buchung eine **Zahlung anfordern** und erzeugt dafür eine
-gehostete Zahlungsseite (Karte + 3-D Secure, EUR). Genau diese Links
-trägt die App jetzt zum Gast.
+**Entscheidung 09/2026:** HotelRunner wird für Zahlungen nicht genutzt.
+Der in der App gebaute Zahlungslink-Mechanismus bleibt bestehen und ist
+bewusst **anbieterneutral** — später wird ein Finanzdienstleister
+angebunden (PSP mit Link-/API-Angebot oder der eigene Bank-Sanal-POS).
+Dieses Dokument hält den Mechanismus und die Rechercheergebnisse fest,
+die zur Entscheidung geführt haben.
 
-## Der Ablauf
+## Der Link-Mechanismus in der App (bleibt)
 
-1. **Mitarbeiter** meldet sich im HotelRunner-Panel an (Benutzername +
-   Kennwort, app.hotelrunner.com) und fordert dort die Zahlung an →
-   HotelRunner erzeugt die Zahlungsseite
-   (`…hotelrunner.com/orders/…/payments/…/edit?token=…`).
-2. Link kopieren und in der App hinterlegen — zwei Wege:
-   * **Zahlung anfordern** (Button im Mitarbeiter-Dashboard): Bezeichnung,
-     Betrag, Link → erzeugt sofort eine offene Zahlung im Gastbereich.
-     Gebaut für den schnellen Test auf einem Telefon, taugt genauso für
-     echte Anzahlungen und Sonderposten.
-   * An einer bestehenden Anfrage/Buchung: Status „Zahlung offen" →
-     **Zahlungslink erstellen** → Link einfügen.
-3. **Gast** sieht in „Meine Reise" den Bezahl-Button → „Sichere
-   Zahlungsseite öffnen" → HotelRunner-Seite (neuer Tab, in der Sprache
-   des Gastes — die App hängt `locale=` an) → zahlt mit 3-D Secure.
-4. Die HotelRunner-Seite kann **nicht** in unsere App zurückmelden.
-   Darum schließt der Mitarbeiter die Schleife: Zahlungseingang im
-   HotelRunner-Panel prüfen → in der App **„Zahlung eingegangen"** →
-   Status „Bezahlt", der Gast sieht die Bestätigung.
+* **Mitarbeiter-Dashboard → „Zahlung anfordern"**: Bezeichnung, Betrag,
+  Link der Zahlungsseite → erzeugt eine offene Zahlung im Gastbereich.
+* An jeder Anfrage im Status „Zahlung offen": **„Zahlungslink
+  erstellen"** — Link einfügen; die App fabriziert nie selbst einen.
+* **Gast**: Zahlungs-Sheet wird link-first, sobald ein Link existiert —
+  „Sichere Zahlungsseite öffnen" (neuer Tab).
+* **„Zahlung eingegangen"**: Mitarbeiter prüft im Anbieter-Panel und
+  setzt den Status auf „Bezahlt" — nötig, solange der Anbieter keine
+  automatische Rückmeldung (Callback) an unsere Seite liefert.
 
-Wichtig: Die HotelRunner-Zugangsdaten bleiben im Panel. In die App
-wandert nur der Zahlungslink — nie Benutzername oder Kennwort.
+Damit dockt jeder künftige Finanzdienstleister ohne Codeänderung an,
+sobald er Zahlungsseiten-Links erzeugt. Liefert er eine **API**, wird
+das Erzeugen des Links automatisiert (Cloudflare Function, wie beim
+Sanal-POS-Modul); liefert er **Callbacks**, entfällt auch das manuelle
+„Zahlung eingegangen".
 
-## Optik der Zahlungsseite
+## Warum nicht HotelRunner (Recherche, adversarial geprüft, 09/2026)
 
-Die Kartenseite läuft auf HotelRunners Domain; ihr Aussehen kommt aus
-den **Design-/Farbeinstellungen eures HotelRunner-Auftritts** (die Seite
-lädt `colors.css?store_code=only-one-suites-residence` — also die im
-Panel gepflegten Storefarben). Damit sie zur App passt, dort diese Werte
-eintragen:
+* **Keine Zahlungs-API.** Die Entwickler-API (developers.hotelrunner.com,
+  api.hotelrunner.com/api/v2) kann nur Inventar und Reservierungen;
+  Zahlungslinks („Ödeme Al") existieren nur manuell im Panel — der
+  Panel-Schritt wäre für immer geblieben.
+* **Kein eigener Acquirer.** „Finance and Payments" ist eine
+  Orchestrierungsschicht über dem **eigenen Bank-Sanal-POS** der
+  Unterkunft (genannte Integrationen: DenizBank, İş Bankası, GarantiPay;
+  Ziraat/VakıfBank tauchen nirgends auf). Den Bankvertrag bräuchte man
+  also ohnehin — dann kann er gleich ins eigene Modul.
+* **Zusatzkosten** (Hybrid-Abo, z. B. min. $29.95/Monat + Prozentanteil
+  am Buchungsumsatz) ohne Zahlungs-Fähigkeit, die unser eigenes Modul
+  nicht hätte.
+* Ein Login-Feld/iframe-Panel in unserer App verbietet sich (fremde
+  Zugangsdaten, reCAPTCHA, Frame-Block).
 
-| Rolle | Wert |
-|---|---|
-| Seitenhintergrund | `#F7F3ED` (Elfenbein) |
-| Flächen/Karten | `#FFFFFF` |
-| Text | `#2A2119` |
-| Akzent/Links | `#935640` (Roségold dunkel) |
-| Buttons | `#2A2119`, Text `#FFFFFF` — oder Akzent `#D9B09C` mit dunklem Text |
+Nebenbefund aus dem Test mit der echten HotelRunner-Zahlungsseite:
+Checkout-URLs von hotelrunner.com verstehen `locale=` — die App hängt
+bei solchen Links weiterhin automatisch die Gastsprache an (inert für
+alle anderen Anbieter).
 
-Außerdem im Panel korrigieren: Der Store heißt derzeit „ONLY ONE
-**Sutes** & Residences" — Tippfehler, der auf jeder Zahlungsseite steht
-(→ „Suites").
+## Endzustand
 
-## Was der Quelltext der Zahlungsseite bestätigt
-
-* Kartendaten werden auf HotelRunners Seite eingegeben und direkt an
-  HotelRunner gesendet — PCI liegt bei denen, nicht bei uns.
-* 3-D Secure ist aktiv (Checkbox, vorausgewählt), Verkaufswährung EUR.
-* Die Checkout-URL versteht `locale=` (z. B. `de-DE`, `ru-RU`, `tr-TR`) —
-  die App hängt die Gastsprache automatisch an.
-* Hinweis „You are not charged now" neben „Pay now": vor dem ersten
-  echten Einsatz eine kleine Testzahlung machen und im Panel prüfen, ob
-  sie als Abbuchung (nicht nur Kartengarantie) ankommt.
-
-## API-Lage (geprüft 09/2026)
-
-Gründlich recherchiert und gegengeprüft: **HotelRunner hat keine
-Zahlungs-API.** Die dokumentierte Entwickler-Schnittstelle
-(developers.hotelrunner.com, api.hotelrunner.com/api/v2) ist eine
-Konnektivitäts-API für Channel-/PMS-Partner — Zimmer, Raten,
-Verfügbarkeiten, Reservierungen abrufen/pushen. Kein Endpunkt für
-Zahlungen, Zahlungslinks oder Belastungen. Der „Ödeme Al"-Button
-(Zahlungslink) existiert nur im Panel, manuell pro Reservierung
-(Online-Payments-Tab: Betrag, Methode, E-Mail, Gültigkeit).
-
-Folgen für uns:
-
-* Automatisches Erzeugen von Zahlungslinks aus der App heraus ist mit
-  HotelRunner derzeit **nicht möglich** — der Panel-Schritt bleibt.
-  (Feature-Wunsch an den HotelRunner-Support lohnt sich trotzdem.)
-* Ein HotelRunner-Login-Feld in unserer App ist tabu: Zugangsdaten
-  gehören nicht in fremde Apps, der Login ist reCAPTCHA-geschützt, und
-  ein Panel im iframe blockt HotelRunner selbst. Unsere Sheets verlinken
-  das Panel direkt; mit „Remember me" bleibt man dort angemeldet.
-* HotelRunners Checkout setzt ohnehin den **eigenen Bank-Sanal-POS**
-  der Unterkunft voraus (genannte Integrationen: DenizBank, İş Bankası,
-  GarantiPay — Ziraat/VakıfBank tauchen nirgends auf). Für volle
-  Automatisierung ohne Hin und Her ist der eingebaute eigene
-  Ziraat/Vakıf-Weg (docs/zahlung-sanal-pos.md) der Endzustand: Gast
-  zahlt in der App, Rückmeldung automatisch, kein Panel nötig.
-
-## Verhältnis zum Sanal-POS-Modul
-
-Das direkte Ziraat/VakıfBank-Modul (`docs/zahlung-sanal-pos.md`) bleibt
-eingebaut und wartet auf Bankverträge + Cloudflare. Sobald es live ist,
-laufen beide Wege parallel: Direktbuchung über die Bankseite, Links über
-HotelRunner. Hat eine Buchung einen Link, zeigt die App dem Gast den
-Link-Weg (dort fließt heute echtes Geld); ohne Link erscheint die
-Bankauswahl bzw. der ehrlich beschriftete Demo-Simulator.
+Der eingebaute **Ziraat/VakıfBank-Sanal-POS-Weg**
+(`docs/zahlung-sanal-pos.md`) bleibt der Zielzustand für volle
+Automatisierung: Gast zahlt in der App auf der Bankseite, kryptografisch
+geprüfte Rückmeldung, kein Panel, kein manueller Schritt. Bis Bankverträge
+oder ein PSP da sind, zeigt die Seite den ehrlich beschrifteten
+Demo-Simulator; mit Link läuft der Link-Weg.
