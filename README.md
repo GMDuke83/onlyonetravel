@@ -273,6 +273,22 @@ As with hotel requests, enquiries currently live in the browser's
 `localStorage`; submission does not transmit them to staff on another device.
 A shared backend is required for that handover in production.
 
+## Search across services
+
+The search page now links **Stays**, **Yachts** and **Excursions** through a
+shared category selector. Accommodation search settings remain available when
+switching categories. Yacht enquiries remain independent of accommodation.
+
+Excursion details offer a standalone enquiry as the primary action and saving
+the excursion for a hotel enquiry as a secondary action. Standalone enquiries
+collect a preferred start date, adults, children, contact details, optional
+pickup location and wishes. Multi-day excursions store their full date range.
+They appear in My trips and staff requests without a hotel, price or payment;
+the existing individual-offer, guest-acceptance and payment-link flow follows.
+
+These enquiries share the existing browser-local storage limitation described
+above; no cross-device delivery or live availability connection is added.
+
 ## Hero video
 
 `public/video/onlyone-hero-ocean-v3.mp4`

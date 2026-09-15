@@ -1208,6 +1208,12 @@
   Object.assign(I18N.tr, {"homeStayTitle": "Konaklama", "homeStaySub": "Oteller ve villalar", "homeTripsTitle": "Özel geziler", "homeTripsSub": "Size özel deneyimler", "homeTransferTitle": "Karşılama ve transfer", "homeTransferSub": "Rahat bir varış", "homeAssistantTitle": "VIP asistanınız", "homeAssistantSub": "Her zaman yanınızda", "homeIdeasTitle": "Seyahat fikirleri ve öneriler", "homeIdeasSub": "İlham alın. Sizin için özel olarak planlanır.", "homeIdeasEyebrow": "İLHAM", "homeIdeasLink": "Gezileri keşfet"});
   Object.assign(I18N.uk, {"homeStayTitle": "Проживання", "homeStaySub": "Готелі та вілли", "homeTripsTitle": "Приватні екскурсії", "homeTripsSub": "Враження для вас", "homeTransferTitle": "Зустріч і трансфер", "homeTransferSub": "Комфортне прибуття", "homeAssistantTitle": "Ваш VIP-асистент", "homeAssistantSub": "Особисто для вас", "homeIdeasTitle": "Ідеї для подорожей", "homeIdeasSub": "Надихайтеся. Ми сплануємо подорож для вас.", "homeIdeasEyebrow": "НАТХНЕННЯ", "homeIdeasLink": "Переглянути екскурсії"});
 
+  Object.assign(I18N.ru, {"serviceSearchTitle": "Что вы планируете?", "serviceStays": "Проживание", "serviceYachts": "Яхты", "serviceExcursions": "Экскурсии", "excStandaloneNote": "Экскурсии можно заказать отдельно, без бронирования отеля. Мы проверим наличие на вашу дату и подготовим индивидуальное предложение.", "excRequest": "Запросить экскурсию", "excAddHotel": "Добавить к запросу отеля", "excStart": "Желаемая дата начала", "excPickup": "Место встречи / отель (необязательно)", "excGuestError": "Укажите хотя бы одного взрослого и целое неотрицательное число детей.", "excWishesPlaceholder": "Возраст детей, пожелания, вопросы", "serviceItem": "Услуга"});
+  Object.assign(I18N.de, {"serviceSearchTitle": "Was möchten Sie planen?", "serviceStays": "Unterkünfte", "serviceYachts": "Yachten", "serviceExcursions": "Ausflüge", "excStandaloneNote": "Ausflüge können Sie auch ohne Unterkunft bei uns anfragen. Wir prüfen die Verfügbarkeit für Ihren Wunschtermin und erstellen Ihr individuelles Angebot.", "excRequest": "Ausflug anfragen", "excAddHotel": "Zur Unterkunft vormerken", "excStart": "Gewünschter Starttermin", "excPickup": "Abholort / Hotel (optional)", "excGuestError": "Bitte mindestens einen Erwachsenen und eine ganze, nicht negative Kinderzahl eingeben.", "excWishesPlaceholder": "Kinderalter, Wünsche oder Fragen", "serviceItem": "Leistung"});
+  Object.assign(I18N.en, {"serviceSearchTitle": "What would you like to plan?", "serviceStays": "Stays", "serviceYachts": "Yachts", "serviceExcursions": "Excursions", "excStandaloneNote": "Enquire about excursions on their own, without booking accommodation. We check availability for your preferred date and prepare a personal offer.", "excRequest": "Enquire about this excursion", "excAddHotel": "Save for a hotel enquiry", "excStart": "Preferred start date", "excPickup": "Pickup location / hotel (optional)", "excGuestError": "Enter at least one adult and a whole, non-negative number of children.", "excWishesPlaceholder": "Children’s ages, wishes or questions", "serviceItem": "Service"});
+  Object.assign(I18N.tr, {"serviceSearchTitle": "Ne planlamak istersiniz?", "serviceStays": "Konaklama", "serviceYachts": "Yatlar", "serviceExcursions": "Geziler", "excStandaloneNote": "Konaklama rezervasyonu olmadan da gezi talep edebilirsiniz. İstediğiniz tarih için müsaitliği kontrol edip kişisel teklifinizi hazırlarız.", "excRequest": "Gezi talep et", "excAddHotel": "Konaklama talebi için kaydet", "excStart": "Tercih edilen başlangıç tarihi", "excPickup": "Buluşma yeri / otel (isteğe bağlı)", "excGuestError": "En az bir yetişkin ve sıfır veya daha büyük bir tam çocuk sayısı girin.", "excWishesPlaceholder": "Çocukların yaşları, istekler veya sorular", "serviceItem": "Hizmet"});
+  Object.assign(I18N.uk, {"serviceSearchTitle": "Що ви плануєте?", "serviceStays": "Проживання", "serviceYachts": "Яхти", "serviceExcursions": "Екскурсії", "excStandaloneNote": "Екскурсії можна замовити окремо, без бронювання готелю. Ми перевіримо наявність на бажану дату та підготуємо індивідуальну пропозицію.", "excRequest": "Запитати екскурсію", "excAddHotel": "Додати до запиту на готель", "excStart": "Бажана дата початку", "excPickup": "Місце зустрічі / готель (необов’язково)", "excGuestError": "Вкажіть хоча б одного дорослого та цілу невід’ємну кількість дітей.", "excWishesPlaceholder": "Вік дітей, побажання або запитання", "serviceItem": "Послуга"});
+
   const localizeExtra = en => ((EXTRA_TEXT[LANG] && EXTRA_TEXT[LANG][en]) || en);
   const loc = obj => { if(!obj) return ''; if(obj[LANG]) return obj[LANG]; if((LANG==='tr'||LANG==='uk') && obj.en) return localizeExtra(obj.en); return obj.en || obj.ru || obj.de || ''; };
 
@@ -1306,27 +1312,27 @@
      d:{ru:'Анталья, Кемер, Фетхие или Бодрум — яхту, бухты, маршрут и детали дня мы подберём персонально.',
         de:'Antalya, Kemer, Fethiye oder Bodrum – Yacht, Buchten, Route und Tagesablauf stellen wir persönlich zusammen.',
         en:'Antalya, Kemer, Fethiye or Bodrum — we tailor the yacht, bays, route and details of the day personally.'}},
-    {id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+    {id:'cappadocia', days:2, img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
      d:{ru:'Долины сказочных дымоходов, пещерные церкви и полёт на воздушном шаре на рассвете.',
         de:'Täler voller Feenkamine, Höhlenkirchen und eine Ballonfahrt bei Sonnenaufgang.',
         en:'Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.'}},
-    {id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'pamukkale', days:1, img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Памуккале и Хиераполис',de:'Pamukkale & Hierapolis',en:'Pamukkale & Hierapolis'},
      d:{ru:'Белоснежные травертиновые террасы с термальной водой и античный город над ними.',
         de:'Schneeweiße Kalksinterterrassen mit Thermalwasser und die antike Stadt darüber.',
         en:'Snow-white travertine terraces of thermal water and the ancient city above them.'}},
-    {id:'ephesus', img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'ephesus', days:1, img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Эфес',de:'Ephesos',en:'Ephesus'},
      d:{ru:'Мраморные улицы, библиотека Цельса и один из крупнейших античных театров.',
         de:'Marmorstraßen, die Celsus-Bibliothek und eines der größten antiken Theater.',
         en:'Marble streets, the Library of Celsus and one of the largest ancient theatres.'}},
-    {id:'oludeniz', img:EXC_IMG+'exc-oludeniz.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'oludeniz', days:1, img:EXC_IMG+'exc-oludeniz.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Олюдениз — Голубая лагуна',de:'Ölüdeniz — Blaue Lagune',en:'Ölüdeniz — Blue Lagoon'},
      d:{ru:'Лагуна бирюзового цвета, пляж Бельджекиз и параглайдинг с горы Бабадаг.',
         de:'Türkisfarbene Lagune, der Belcekiz-Strand und Gleitschirmflug vom Babadag.',
         en:'A turquoise lagoon, Belcekiz beach and paragliding from Mount Babadag.'}},
-    {id:'istanbul', img:EXC_IMG+'exc-istanbul.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+    {id:'istanbul', days:2, img:EXC_IMG+'exc-istanbul.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Стамбул',de:'Istanbul',en:'Istanbul'},
      d:{ru:'Босфор, Айя-София и Гранд-базар — короткий перелёт от Антальи.',
         de:'Bosporus, Hagia Sophia und Großer Basar — ein kurzer Flug ab Antalya.',
@@ -1891,6 +1897,16 @@
     </article>`;
   }
 
+  function serviceSearchNav(active){
+    return `<section class="serviceSearch" aria-labelledby="serviceSearchTitle">
+      <h2 id="serviceSearchTitle">${t('serviceSearchTitle')}</h2>
+      <nav class="serviceSearch__choices" aria-label="${t('serviceSearchTitle')}">
+        ${[['search','keyhouse','serviceStays'],['yachts','yacht','serviceYachts'],['excursions','star','serviceExcursions']].map(([view,ic,key])=>
+          `<button type="button" class="serviceSearch__choice${active===view?' is-on':''}" data-go="${view}"${active===view?' aria-current="page"':''}>${icon(ic)}<span>${t(key)}</span></button>`).join('')}
+      </nav>
+    </section>`;
+  }
+
   function excCard(e){
     return `<article class="card fade-up" data-exc="${e.id}" role="button" tabindex="0">
       <div class="card__media" style="aspect-ratio:16/10">
@@ -1900,22 +1916,21 @@
         <div class="card__loc" style="color:var(--gold)">${esc(loc(e.dur))}</div>
         <h3 class="card__name">${esc(loc(e.n))}</h3>
         <p class="card__desc">${esc(loc(e.d))}</p>
+        <span class="excCard__action">${e.id==='yacht-tour'?t('serviceYachts'):t('excRequest')}${icon('chev')}</span>
       </div>
     </article>`;
   }
   function vExcursions(){
-    return `<section class="bandHero">
+    return `${appbar({})}${serviceSearchNav('excursions')}<section class="bandHero">
       ${bgVideo('./video/onlyone-excursions-v2.mp4','./images/onlyone-excursions-poster.webp')}
       <div class="bandHero__scrim"></div>
-      <div class="gal__bar"><span></span>
-        <button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button></div>
       <div class="bandHero__txt">
         <div class="eyebrow">${t('excSub')}</div>
         <h1 class="h-xl" style="margin-top:8px">${t('excursions')}</h1>
       </div>
     </section>
     <div class="wrap" style="padding-top:26px">
-      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 30px">${t('excNote')}</p>
+      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 30px">${t('excStandaloneNote')}</p>
       <div class="cardList">${EXCURSIONS.map(excCard).join('')}</div>
     </div>
     <div class="pageBottom"></div>${tabbar('excursions')}`;
@@ -1982,7 +1997,7 @@
   function fleetHead(o){
     /* o: {eyebrow,title,note,chips} — the calm listing head: no hero, the
        photographs belong to the fleet itself. */
-    return `${appbar({back:true})}
+    return `${appbar({back:true})}${o.service?serviceSearchNav(o.service):''}
     <section class="fleetIntro">
       <div class="eyebrow">${esc(o.eyebrow)}</div>
       <h1 class="h-xl">${esc(o.title)}</h1>
@@ -2006,6 +2021,7 @@
     const chips=[`<button class="chip${CHARTERF.size?'':' is-on'}" data-ysize="">${hx('Все','Alle','All')}</button>`]
       .concat(FLEET_SIZES.map(s=>`<button class="chip${CHARTERF.size===s.id?' is-on':''}" data-ysize="${s.id}">${esc(loc(s.l))}</button>`)).join('');
     return `${fleetHead({
+      service:'yachts',
       eyebrow:'ONLYONE · '+hx('ПРИВАТНЫЙ ЧАРТЕР','PRIVATCHARTER','PRIVATE CHARTER'),
       title:hx('Наши яхты','Unsere Yachten','Our yachts'),
       note:t('yachtRequestNote'),
@@ -2022,7 +2038,7 @@
         <button class="btn btn--primary" data-go="concierge">${t('flyCta')}</button>
       </div>
     </div>
-    <div class="pageBottom"></div>${tabbar('')}`;
+    <div class="pageBottom"></div>${tabbar('search')}`;
   }
 
   function vTransfers(){
@@ -2553,7 +2569,7 @@
     const gl=`${s.adults} ${t('adultsShort')}${s.children?` · ${s.children} ${t('childrenShort')}`:''}`;
     const dl=(s.from&&s.to)?`${fmtDate(s.from)} – ${fmtDate(s.to)}`:t('datesPh');
     const n=activeFilters();
-    return `${appbar({})}
+    return `${appbar({})}${serviceSearchNav('search')}
     <div class="wrap" style="padding-top:16px">
       <div class="searchCard">
         <button class="searchRow" data-act="pick-region">${icon('pin')}
@@ -2844,7 +2860,7 @@
           <div class="listCard__h">
             <div style="min-width:0">
               <b style="font-size:15.5px">${esc(charter?r.item.name:h.name)}</b>
-              <div class="muted tiny" style="margin-top:4px">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
+              <div class="muted tiny" style="margin-top:4px">${charter?`${charterWhen(r)} · ${charterGuests(r)}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
               <div class="muted mini" style="margin-top:3px">${r.code}</div>
             </div>
             <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
@@ -2869,7 +2885,7 @@
         ${r.item.img?`<div class="card__media" style="aspect-ratio:16/10"><img src="${r.item.img}" alt=""></div>`:pendingMedia()}
         <div class="card__body">
           <h2 class="charterCard__name">${esc(r.item.name)}</h2>
-          <div class="charterCard__line">${charterWhen(r)} · ${r.adults} ${t('adultsShort')}</div>
+          <div class="charterCard__line">${charterWhen(r)} · ${charterGuests(r)}</div>
           ${r.route?`<div class="charterCard__line charterCard__line--soft">${esc(r.route)}</div>`:''}
         </div>
       </article>
@@ -3062,7 +3078,7 @@
           <div class="muted mini">${r.code}</div>
           <b style="font-size:15px;display:block;margin-top:3px">${esc(r.contact.first||'—')} ${esc(r.contact.last||'')}</b>
           <div class="muted tiny" style="margin-top:3px">${esc(charter?r.item.name:h.name)}</div>
-          <div class="muted tiny">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
+          <div class="muted tiny">${charter?`${charterWhen(r)} · ${charterGuests(r)}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
         </div>
         <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
       </div>
@@ -3154,10 +3170,10 @@
         ${r.contact.wa?`<div class="kv"><span class="muted">WhatsApp</span><b>${esc(r.contact.wa)}</b></div>`:''}
       </div>
       ${charter?`<div class="listCard">
-        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${hx('Чартер','Charter','Charter')}</div>
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${r.item.t==='excursion'?t('serviceExcursions'):hx('Чартер','Charter','Charter')}</div>
         <div class="kv" style="margin-top:8px"><span class="muted">${hx('Объект','Objekt','Item')}</span><b>${esc(r.item.name)}</b></div>
         <div class="kv"><span class="muted">${hx('Дата','Datum','Date')}</span><b>${charterWhen(r)}</b></div>
-        <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}</b></div>
+        <div class="kv"><span class="muted">${t('guests')}</span><b>${charterGuests(r)}</b></div>
         ${r.route?`<div class="kv"><span class="muted">${hx('Маршрут','Strecke','Route')}</span><b>${esc(r.route)}</b></div>`:''}
       </div>`:`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotel')}</div>
@@ -4073,7 +4089,7 @@
         <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
       <div class="sheet__body">
         <div class="noteBox" style="margin-top:0;display:flex;gap:9px;align-items:flex-start">${icon('lock')}<span>${t('staffOnly')}</span></div>
-        <div class="kv" style="margin-top:12px"><span class="muted">${charter?hx('Яхта','Yacht','Yacht'):t('hotel')}</span><b>${esc(charter?r.item.name:h.name)}</b></div>
+        <div class="kv" style="margin-top:12px"><span class="muted">${charter?t('serviceItem'):t('hotel')}</span><b>${esc(charter?r.item.name:h.name)}</b></div>
         <div class="kv"><span class="muted">${t('period')}</span><b>${charter?charterWhen(r):`${fmtDate(r.from)} – ${fmtDate(r.to)}`}</b></div>
         ${charter?'':`<div class="field"><label class="label">${t('rooms')}</label>
           <select class="input" id="oRoom">${h.rooms.map(x=>`<option value="${x.id}"${r.roomId===x.id?' selected':''}>${esc(loc(x.n))}</option>`).join('')}</select></div>`}
@@ -4090,6 +4106,7 @@
       <div class="sheet__foot"><button class="btn btn--primary" data-act="offer-save" data-id="${id}">${t('sendOffer')}</button></div>`);
   }
   function sheetExcursion(id){
+    if(id==='yacht-tour'){closeSheet();go('yachts');return;}
     const e=excursion(id);if(!e)return;
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(loc(e.n))}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
@@ -4098,10 +4115,36 @@
         <img src="${e.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="kv" style="margin-top:12px"><span class="muted">${t('duration')}</span><b>${esc(loc(e.dur))}</b></div>
       <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(e.d))}</p>
-      <div class="noteBox">${t('excNote')}</div>
+      <div class="noteBox">${t('excStandaloneNote')}</div>
     </div>
-    <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-add" data-id="${id}">${t('addToReq')}</button></div>`);
+    <div class="sheet__foot excursionActions">
+      <button class="btn btn--primary" data-act="exc-request" data-id="${id}">${t('excRequest')}</button>
+      <button class="btn btn--ghost btn--sm" data-act="exc-add" data-id="${id}">${t('excAddHotel')}</button>
+    </div>`);
   }
+  function sheetExcursionRequest(id){
+    if(id==='yacht-tour'){closeSheet();go('yachts');return;}
+    const e=excursion(id);if(!e)return;
+    const search=S.search;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('excRequest')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <h4 class="h-lg">${esc(loc(e.n))}</h4>
+      <div class="kv"><span class="muted">${t('duration')}</span><b>${esc(loc(e.dur))}</b></div>
+      <div class="noteBox">${t('excStandaloneNote')}</div>
+      <div class="field"><label class="label" for="erDate">${t('excStart')} *</label><input class="input" id="erDate" type="date" min="${today()}" value="${esc(search.from||'')}" required></div>
+      <div class="grid2">
+        <div class="field"><label class="label" for="erAdults">${t('adults')} *</label><input class="input" id="erAdults" type="number" inputmode="numeric" min="1" step="1" value="${search.adults||2}" required></div>
+        <div class="field"><label class="label" for="erChildren">${t('children')}</label><input class="input" id="erChildren" type="number" inputmode="numeric" min="0" step="1" value="${search.children||0}"></div>
+      </div>
+      <div class="field"><label class="label" for="erName">${t('yourName')} *</label><input class="input" id="erName" autocomplete="name" required></div>
+      <div class="field"><label class="label" for="erPhone">${t('phone')} *</label><input class="input" id="erPhone" type="tel" autocomplete="tel" required></div>
+      <div class="field"><label class="label" for="erPickup">${t('excPickup')}</label><input class="input" id="erPickup"></div>
+      <div class="field"><label class="label" for="erNote">${t('otherWishes')}</label><textarea class="input" id="erNote" rows="2" placeholder="${t('excWishesPlaceholder')}"></textarea></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-send" data-id="${id}">${t('sendRequest')}</button></div>`);
+  }
+
   function sheetYacht(id){
     const y=yachtById(id);if(!y)return;
     const kv=(l,v)=>`<div class="kv"><span class="muted">${l}</span><b>${esc(v)}</b></div>`;
@@ -4241,11 +4284,11 @@
   function newCharterBooking(o){
     S.seq+=1;
     const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
-    const enquiry=o.t==='yacht';
+    const enquiry=o.t==='yacht'||o.t==='excursion';
     const status=enquiry?'new':'payopen';
     const req={id:'r'+Date.now(),code,kind:'charter',hotelId:null,
       item:{t:o.t,id:o.id,name:o.name,img:o.img||''},
-      from:o.date,to:o.to||'',adults:o.guests,children:0,childAges:[],
+      from:o.date,to:o.to||'',adults:o.guests,children:o.children||0,childAges:[],
       route:o.route||'',note:o.note||'',wishes:[],excursions:[],
       contact:{first:o.first,last:'',phone:o.phone,email:'',wa:''},
       status,createdAt:Date.now(),
@@ -4256,6 +4299,7 @@
     return req;
   }
   /* One charter day reads as its date; a weekly charter as its week. */
+  const charterGuests=r=>`${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}`:''}`;
   const charterWhen=r=>fmtDate(r.from)+(r.to?' – '+fmtDate(r.to):'');
   function sheetBookCharter(bt,bid){
     if(bt==='yacht'){sheetYacht(bid);return;}
@@ -4601,6 +4645,26 @@
       case 'fapply': closeSheet();setTimeout(render,260);break;
       case 'do-search': render();toast(`${filtered().length} ${t('results')}`);break;
       case 'compare': sheetCompare();break;
+      case 'exc-request': sheetExcursionRequest(id);break;
+      case 'exc-send': {
+        if(a.disabled)break;
+        const e=excursion(id);if(!e||e.id==='yacht-tour')break;
+        const value=selector=>(($(selector)||{}).value||'').trim();
+        const date=value('#erDate'),first=value('#erName'),phone=value('#erPhone');
+        const adults=Number(value('#erAdults')),children=Number(value('#erChildren'));
+        if(!date||!first||!phone){toast(t('required'));break;}
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date||date<today()){
+          toast(t('yachtDatesInvalid'));break;
+        }
+        if(!Number.isSafeInteger(adults)||adults<1||!Number.isSafeInteger(children)||children<0){toast(t('excGuestError'));break;}
+        const end=new Date(date+'T12:00:00Z');end.setUTCDate(end.getUTCDate()+(e.days||1)-1);
+        const to=e.days>1?end.toISOString().slice(0,10):'';
+        a.disabled=true;
+        const req=newCharterBooking({t:'excursion',id:e.id,name:loc(e.n),img:e.img,
+          date,to,guests:adults,children,first,phone,route:value('#erPickup'),note:value('#erNote')});
+        closeSheet();setTimeout(()=>{go('trip',req.id);toast(t('reqSent'));},330);
+        break;
+      }
       case 'exc-add': {
         // Vor der Anfrage vormerken; der Wizard übernimmt die Auswahl in Schritt 4.
         S.pendingExc = S.pendingExc || [];
