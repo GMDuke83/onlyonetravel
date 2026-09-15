@@ -256,6 +256,23 @@ side — the price appears only there, under *My trips*.
 State lives in `localStorage`, so a reload keeps favourites, requests, offers
 and payment status.
 
+## Yacht enquiries
+
+Day and weekly yachts show availability and price on request. Guests submit
+their preferred start/end dates, guest count, contact details and optional
+wishes. Yacht catalogue entries contain no prices and cannot start a direct
+payment. The enquiry appears in **My trips** and the staff request list with
+status `new`, without an offer or payment.
+
+Staff checks availability and prepares an individual offer. The guest can
+then accept it; staff can attach a payment link using the existing flow.
+Transfers retain their direct booking flow. Existing stored charter bookings
+and their agreed prices are preserved.
+
+As with hotel requests, enquiries currently live in the browser's
+`localStorage`; submission does not transmit them to staff on another device.
+A shared backend is required for that handover in production.
+
 ## Hero video
 
 `public/video/onlyone-hero-ocean-v3.mp4`
