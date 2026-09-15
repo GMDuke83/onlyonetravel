@@ -121,6 +121,20 @@ mit beantragt werden, sonst rechnet die Bank ab oder lehnt ab.
 
 ## 5. Live schalten — Schritt für Schritt
 
+### Wo trägt der Inhaber die Zugangsdaten ein?
+
+Der Inhaber trägt sie nicht in der Kunden-App, in `public/js/app.js` oder in
+GitHub Pages ein. Zuerst wird bei Ziraat ein geschäftlicher **Sanal-POS-
+Händlervertrag** für das Unternehmen beantragt. Die Bank stellt dafür
+separate Test- und Produktionsdaten bereit; das ist kein persönlicher
+Ziraat-Mobil-Zugang und kein HotelRunner-Login.
+
+Die erhaltenen Werte werden im Cloudflare-Pages-Projekt unter
+**Settings → Variables and Secrets** hinterlegt. `ZIRAAT_STORE_KEY` wird als
+**Secret** gespeichert und nie als normale Variable oder im Frontend. Die
+App ruft nur `/api/pay/start` auf; die Function signiert dort die Anfrage und
+leitet den Kunden auf die gehostete Ziraat-3-D-Secure-Seite weiter.
+
 1. Cloudflare-Konto anlegen (kostenlos reicht), Pages-Projekt
    `onlyone-luxury-travel`.
 2. In GitHub: *Settings → Secrets and variables → Actions* die zwei
