@@ -2855,7 +2855,8 @@
        paid from the existing customer flow. Import that one payment once. */
     if(r.payment&&r.payment.status==='paid'&&r.payment.paidAt&&
        !r.folio.payments.some(p=>p.legacyPaidAt===r.payment.paidAt||p.id===r.payment.requestId||p.paidAt===r.payment.paidAt)){
-      r.folio.payments.push({id:'legacy-'+r.payment.paidAt,type:'balance',method:r.payment.provider||'online',amount:Number(r.payment.amount)||Number(r.offer&&r.offer.price)||0,currency:(r.offer&&r.offer.currency)||'EUR',exchangeRate:1,reference:r.code,notes:'',status:'paid',createdAt:r.payment.paidAt,legacyPaidAt:r.payment.paidAt,staff:'system'});
+      const legacyAmount=Number(r.payment.amount)||Number(r.offer&&r.offer.price)||0;
+      r.folio.payments.push({id:'legacy-'+r.payment.paidAt,type:'balance',method:r.payment.provider||'online',amount:legacyAmount,baseAmount:legacyAmount,currency:(r.offer&&r.offer.currency)||'EUR',exchangeRate:1,reference:r.code,notes:'',status:'paid',createdAt:r.payment.paidAt,legacyPaidAt:r.payment.paidAt,staff:'system'});
     }
     return r.folio;
   }
@@ -2865,9 +2866,10 @@
     let paid=0,refunded=0,pending=0;
     folioPayments(r).forEach(p=>{
       const n=Math.max(0,Number(p.amount)||0);
-      if(p.status==='pending')pending+=n;
-      else if(p.status==='paid'&&p.type==='refund')refunded+=n;
-      else if(p.status==='paid')paid+=n;
+      const base=Number.isFinite(Number(p.baseAmount))?Math.max(0,Number(p.baseAmount)):n*(Number(p.exchangeRate)||1);
+      if(p.status==='pending')pending+=base;
+      else if(p.status==='paid'&&p.type==='refund')refunded+=base;
+      else if(p.status==='paid')paid+=base;
     });
     return {total,paid,refunded,net:Math.max(0,paid-refunded),due:Math.max(0,total-paid+refunded),pending};
   }
@@ -2884,6 +2886,7 @@
     const f=ensureFolio(r);if(!f)return null;
     const p=Object.assign({id:'p'+Date.now()+Math.random().toString(36).slice(2,6),currency:f.currency||'EUR',exchangeRate:1,status:'paid',createdAt:Date.now(),staff:S.staff||'Staff'},o||{});
     p.amount=Number(p.amount)||0;
+    if(!Number.isFinite(Number(p.baseAmount)))p.baseAmount=p.amount*(Number(p.exchangeRate)||1);
     f.payments.push(p);save();return p;
   }
   function staffFolioCard(r){
@@ -3353,9 +3356,10 @@
     S.requests.forEach(r=>{
       folioPayments(r).forEach(p=>{
         const n=Math.max(0,Number(p.amount)||0);
-        if(p.status==='pending')pending+=n;
-        if(p.status==='paid'&&p.type==='refund')refunded+=n;
-        if(p.status==='paid'&&p.type!=='refund')received+=n;
+        const base=Number.isFinite(Number(p.baseAmount))?Math.max(0,Number(p.baseAmount)):n*(Number(p.exchangeRate)||1);
+        if(p.status==='pending')pending+=base;
+        if(p.status==='paid'&&p.type==='refund')refunded+=base;
+        if(p.status==='paid'&&p.type!=='refund')received+=base;
         rows.push({r,p});
       });
     });
@@ -4842,10 +4846,11 @@
         const notes=((($('#pfNotes')||{}).value||'')).trim();
         const totals=paymentTotals(r);
         if(!Number.isFinite(amount)||amount<=0||!Number.isFinite(rate)||rate<=0){toast(t('required'));break;}
-        if(type==='refund'&&amount>totals.net+0.01){toast(hx('Die Erstattung darf den bezahlten Betrag nicht überschreiten.','Die Erstattung darf den bezahlten Betrag nicht überschreiten.','A refund cannot exceed the amount already paid.'));break;}
-        if(type!=='refund'&&totals.due>0&&amount>totals.due+0.01){toast(hx('Der Betrag überschreitet den offenen Betrag.','Der Betrag überschreitet den offenen Betrag.','The amount is higher than the balance due.'));break;}
+        const baseAmount=amount*rate;
+        if(type==='refund'&&baseAmount>totals.net+0.01){toast(hx('Сумма возврата больше оплаченной суммы.','Die Erstattung darf den bezahlten Betrag nicht überschreiten.','A refund cannot exceed the amount already paid.'));break;}
+        if(type!=='refund'&&totals.due>0&&baseAmount>totals.due+0.01){toast(hx('Сумма больше остатка.','Der Betrag überschreitet den offenen Betrag.','The amount is higher than the balance due.'));break;}
         const mode=a.dataset.paymentMode==='request'?'request':'paid';
-        const p=recordFolioPayment(r,{type,method,amount,currency,exchangeRate:rate,baseCurrency:(($('#pfBase')||{}).value||'EUR'),reference,notes,status:mode==='request'?'pending':'paid'});
+        const p=recordFolioPayment(r,{type,method,amount,baseAmount,currency,exchangeRate:rate,baseCurrency:(($('#pfBase')||{}).value||'EUR'),reference,notes,status:mode==='request'?'pending':'paid'});
         if(!p)break;
         r.payment=Object.assign({},r.payment||{}, {amount,currency,provider:method,requestId:p.id,requestType:type});
         if(mode==='request'){
