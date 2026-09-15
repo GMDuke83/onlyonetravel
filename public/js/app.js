@@ -1202,6 +1202,12 @@
   Object.assign(I18N.tr, {"yachtRequest": "Müsaitlik ve fiyat sor", "yachtOnRequest": "Müsaitlik ve fiyat talep üzerine", "yachtRequestNote": "Tercih ettiğiniz tarihler için bağlayıcı olmayan bir talep gönderin. VIP asistanınız müsaitliği kontrol ederek kişisel teklifinizi hazırlar. Ödeme yalnızca teklif üzerinde anlaşmaya varıldıktan sonra yapılır.", "yachtStart": "Tercih edilen başlangıç tarihi", "yachtEnd": "Tercih edilen bitiş tarihi", "yachtDatesInvalid": "Tarihleri kontrol edin: başlangıç bugün veya sonrası, bitiş başlangıçtan önce olamaz.", "yachtGuestsInvalid": "Yat kapasitesini aşmayan tam bir misafir sayısı girin."});
   Object.assign(I18N.uk, {"yachtRequest": "Запитати наявність і ціну", "yachtOnRequest": "Наявність і ціна за запитом", "yachtRequestNote": "Надішліть необов’язковий запит на бажані дати. VIP-асистент перевірить наявність і підготує індивідуальну пропозицію. Оплата лише після узгодження пропозиції.", "yachtStart": "Бажана дата початку", "yachtEnd": "Бажана дата завершення", "yachtDatesInvalid": "Перевірте дати: початок не раніше сьогодні, завершення не раніше початку.", "yachtGuestsInvalid": "Вкажіть цілу кількість гостей у межах місткості яхти."});
 
+  Object.assign(I18N.ru, {"homeStayTitle": "Проживание", "homeStaySub": "Отели и виллы", "homeTripsTitle": "Частные экскурсии", "homeTripsSub": "Впечатления для вас", "homeTransferTitle": "Встреча и трансфер", "homeTransferSub": "Комфортное прибытие", "homeAssistantTitle": "Ваш VIP-ассистент", "homeAssistantSub": "Лично для вас", "homeIdeasTitle": "Идеи для путешествий", "homeIdeasSub": "Вдохновляйтесь. Мы спланируем путешествие для вас.", "homeIdeasEyebrow": "ВДОХНОВЕНИЕ", "homeIdeasLink": "Смотреть экскурсии"});
+  Object.assign(I18N.de, {"homeStayTitle": "Unterkünfte", "homeStaySub": "Hotels & Villen", "homeTripsTitle": "Private Ausflüge", "homeTripsSub": "Erlebnisse nach Wunsch", "homeTransferTitle": "Empfang & Transfer", "homeTransferSub": "Entspannt ankommen", "homeAssistantTitle": "Ihr VIP-Assistent", "homeAssistantSub": "Persönlich für Sie da", "homeIdeasTitle": "Reiseideen & Empfehlungen", "homeIdeasSub": "Lassen Sie sich inspirieren. Individuell für Sie geplant.", "homeIdeasEyebrow": "INSPIRATION", "homeIdeasLink": "Ausflüge ansehen"});
+  Object.assign(I18N.en, {"homeStayTitle": "Places to stay", "homeStaySub": "Hotels & villas", "homeTripsTitle": "Private excursions", "homeTripsSub": "Experiences for you", "homeTransferTitle": "Welcome & transfer", "homeTransferSub": "Arrive at ease", "homeAssistantTitle": "Your VIP assistant", "homeAssistantSub": "Here for you personally", "homeIdeasTitle": "Travel ideas & inspiration", "homeIdeasSub": "Find your inspiration. Personally planned for you.", "homeIdeasEyebrow": "INSPIRATION", "homeIdeasLink": "Explore excursions"});
+  Object.assign(I18N.tr, {"homeStayTitle": "Konaklama", "homeStaySub": "Oteller ve villalar", "homeTripsTitle": "Özel geziler", "homeTripsSub": "Size özel deneyimler", "homeTransferTitle": "Karşılama ve transfer", "homeTransferSub": "Rahat bir varış", "homeAssistantTitle": "VIP asistanınız", "homeAssistantSub": "Her zaman yanınızda", "homeIdeasTitle": "Seyahat fikirleri ve öneriler", "homeIdeasSub": "İlham alın. Sizin için özel olarak planlanır.", "homeIdeasEyebrow": "İLHAM", "homeIdeasLink": "Gezileri keşfet"});
+  Object.assign(I18N.uk, {"homeStayTitle": "Проживання", "homeStaySub": "Готелі та вілли", "homeTripsTitle": "Приватні екскурсії", "homeTripsSub": "Враження для вас", "homeTransferTitle": "Зустріч і трансфер", "homeTransferSub": "Комфортне прибуття", "homeAssistantTitle": "Ваш VIP-асистент", "homeAssistantSub": "Особисто для вас", "homeIdeasTitle": "Ідеї для подорожей", "homeIdeasSub": "Надихайтеся. Ми сплануємо подорож для вас.", "homeIdeasEyebrow": "НАТХНЕННЯ", "homeIdeasLink": "Переглянути екскурсії"});
+
   const localizeExtra = en => ((EXTRA_TEXT[LANG] && EXTRA_TEXT[LANG][en]) || en);
   const loc = obj => { if(!obj) return ''; if(obj[LANG]) return obj[LANG]; if((LANG==='tr'||LANG==='uk') && obj.en) return localizeExtra(obj.en); return obj.en || obj.ru || obj.de || ''; };
 
@@ -1845,14 +1851,10 @@
                  ['trips','trip','navTrips']];
     const open=S.requests.filter(r=>r.status==='offer'||r.status==='payopen').length;
     const unread=unreadForGuest();
-    /* The concierge is the offering, not one tab among five: the whole promise
-       is that a named person handles the trip. It gets the raised, filled
-       treatment and sits in the middle slot so it reads as the primary action
-       rather than a destination. */
+    // Every destination uses the same active-page treatment.
     return `<nav class="tabbar">${items.map(([v,ic,k])=>{
       const dot = (v==='trips'&&open) || (v==='concierge'&&unread);
-      const hero = v==='concierge' ? ' tab--hero' : '';
-      return `<button class="tab${hero}${active===v?' is-on':''}" data-go="${v}"><span class="tab__ic">${icon(ic)}</span><span>${t(k)}</span>${dot?'<i class="tab__dot"></i>':''}</button>`;}).join('')}</nav>`;
+      return `<button class="tab${active===v?' is-on':''}" data-go="${v}"${active===v?' aria-current="page"':''}><span class="tab__ic">${icon(ic)}</span><span>${t(k)}</span>${dot?'<i class="tab__dot"></i>':''}</button>`;}).join('')}</nav>`;
   }
   function staffTabbar(active){
     const items=[['s-dash','grid','dashboard'],['s-req','inbox','requests'],['s-book','book','bookings'],['s-cust','user','customers'],['s-more','dots','more']];
@@ -2312,24 +2314,12 @@
       {img:'./images/worlds-r13/event-management.webp',title:hx('Event-менеджмент','Event-Management','Event management'),meta:hx('События · группы · частные праздники','Events · Gruppen · private Anlässe','Events · groups · private occasions'),attr:'data-world="event-management"'}
     ];
 
-    /* The four places this site actually goes, as one calm block before any
-       photography starts. Everything else on the page is a picture asking to
-       be looked at; this is the part that answers "what is here" in four
-       words, so it is typographic and beige. A fifth row of photographs would
-       have vanished between the hero and the offers rail. */
+    // Compact photo entries with readable captions in every supported language.
     const mainAreas=[
-      {ic:'keyhouse', attr:'data-go="search"',
-       title:hx('Красивейшие места','Die schönsten Unterkünfte','The finest stays'),
-       meta:hx('Отобранные дома','Ausgewählte Häuser','Selected houses')},
-      {ic:'star', attr:'data-go="excursions"',
-       title:hx('VIP-экскурсии','VIP-Ausflüge','VIP excursions'),
-       meta:hx('Приватные маршруты','Private Routen','Private routes')},
-      {ic:'car', attr:'data-block="welcome"',
-       title:hx('Приём и трансфер','Empfang & Transfer','Welcome & transfer'),
-       meta:hx('От трапа до отеля','Vom Flieger zum Hotel','From the plane to the hotel')},
-      {ic:'headset', attr:'data-go="concierge"',
-       title:hx('VIP-ассистент','VIP-Assistent','VIP assistant'),
-       meta:hx('Один человек на всё','Eine Person für alles','One person for everything')}
+      {img:'./images/hotels/h01.webp',attr:'data-go="search"',title:t('homeStayTitle'),meta:t('homeStaySub')},
+      {img:'./images/excursions/exc-oludeniz.webp',attr:'data-go="excursions"',title:t('homeTripsTitle'),meta:t('homeTripsSub')},
+      {img:'./images/home-experiences/transfer.webp',attr:'data-block="welcome"',title:t('homeTransferTitle'),meta:t('homeTransferSub')},
+      {img:'./images/r34/vip-assistant-final-9x16.webp',position:'70% 39%',attr:'data-go="concierge"',title:t('homeAssistantTitle'),meta:t('homeAssistantSub')}
     ];
 
     /* The order is the journey, not a list of products: met at the gate,
@@ -2361,17 +2351,17 @@
 
     <section class="homeGateway">
       <div class="homeGateway__grid">${mainAreas.map(a=>`<button class="homeGatewayTile" type="button" ${a.attr}>
-        <span class="homeGatewayTile__ic" aria-hidden="true">${icon(a.ic)}</span>
+        <span class="homeGatewayTile__media" aria-hidden="true"><img src="${a.img}" alt="" loading="lazy" decoding="async" width="360" height="220" style="object-position:${a.position||'center'}"></span>
         <span class="homeGatewayTile__copy"><b>${esc(a.title)}</b><i>${esc(a.meta)}</i></span>
         <span class="homeGatewayTile__go" aria-hidden="true">${icon('chev')}</span>
       </button>`).join('')}</div>
     </section>
 
-    <section class="homePromos">
-      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('СЕЙЧАС','AKTUELL','NOW')}</div>
-        <h2>${hx('Актуальные предложения','Aktuelle Angebote','Current offers')}</h2>
-        <p class="homeEditorialHead__sub">${hx('Скидки, туры и особенные предложения — то, что актуально прямо сейчас.','Aktionen, Touren und besondere Empfehlungen – was gerade aktuell ist.','Offers, tours and special recommendations — what matters right now.')}</p>
-      </div><button class="homeTextLink" type="button" data-go="search">${t('all')}</button></div>
+    <section class="homePromos" aria-labelledby="homeIdeasTitle">
+      <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${t('homeIdeasEyebrow')}</div>
+        <h2 id="homeIdeasTitle">${t('homeIdeasTitle')}</h2>
+        <p class="homeEditorialHead__sub">${t('homeIdeasSub')}</p>
+      </div><button class="homeTextLink" type="button" data-go="excursions">${t('homeIdeasLink')}${icon('chev')}</button></div>
       <div class="homePromos__rail">${promos.map((p,i)=>`<button class="homePromoCard" type="button" ${p.attr}>
         <img src="${p.img}" alt="${esc(p.title)}" loading="${i<2?'eager':'lazy'}" decoding="async" fetchpriority="${i===0?'high':'low'}">
         <span class="homePromoCard__shade"></span><span class="homePromoCard__copy"><i>${esc(p.tag)}</i><b>${esc(p.title)}</b><em>${esc(p.meta)}</em><span>${icon('chev')}</span></span>
