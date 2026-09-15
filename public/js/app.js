@@ -1208,6 +1208,20 @@
   Object.assign(I18N.tr, {"homeStayTitle": "Konaklama", "homeStaySub": "Oteller ve villalar", "homeTripsTitle": "Özel geziler", "homeTripsSub": "Size özel deneyimler", "homeTransferTitle": "Karşılama ve transfer", "homeTransferSub": "Rahat bir varış", "homeAssistantTitle": "VIP asistanınız", "homeAssistantSub": "Her zaman yanınızda", "homeIdeasTitle": "Seyahat fikirleri ve öneriler", "homeIdeasSub": "İlham alın. Sizin için özel olarak planlanır.", "homeIdeasEyebrow": "İLHAM", "homeIdeasLink": "Gezileri keşfet"});
   Object.assign(I18N.uk, {"homeStayTitle": "Проживання", "homeStaySub": "Готелі та вілли", "homeTripsTitle": "Приватні екскурсії", "homeTripsSub": "Враження для вас", "homeTransferTitle": "Зустріч і трансфер", "homeTransferSub": "Комфортне прибуття", "homeAssistantTitle": "Ваш VIP-асистент", "homeAssistantSub": "Особисто для вас", "homeIdeasTitle": "Ідеї для подорожей", "homeIdeasSub": "Надихайтеся. Ми сплануємо подорож для вас.", "homeIdeasEyebrow": "НАТХНЕННЯ", "homeIdeasLink": "Переглянути екскурсії"});
 
+  Object.assign(I18N.ru, {"serviceSearchTitle": "Что вы планируете?", "serviceStays": "Проживание", "serviceYachts": "Яхты", "serviceExcursions": "Экскурсии", "excStandaloneNote": "Экскурсии можно заказать отдельно, без бронирования отеля. Мы проверим наличие на вашу дату и подготовим индивидуальное предложение.", "excRequest": "Запросить экскурсию", "excAddHotel": "Добавить к запросу отеля", "excStart": "Желаемая дата начала", "excPickup": "Место встречи / отель (необязательно)", "excGuestError": "Укажите хотя бы одного взрослого и целое неотрицательное число детей.", "excWishesPlaceholder": "Возраст детей, пожелания, вопросы", "serviceItem": "Услуга"});
+  Object.assign(I18N.de, {"serviceSearchTitle": "Was möchten Sie planen?", "serviceStays": "Unterkünfte", "serviceYachts": "Yachten", "serviceExcursions": "Ausflüge", "excStandaloneNote": "Ausflüge können Sie auch ohne Unterkunft bei uns anfragen. Wir prüfen die Verfügbarkeit für Ihren Wunschtermin und erstellen Ihr individuelles Angebot.", "excRequest": "Ausflug anfragen", "excAddHotel": "Zur Unterkunft vormerken", "excStart": "Gewünschter Starttermin", "excPickup": "Abholort / Hotel (optional)", "excGuestError": "Bitte mindestens einen Erwachsenen und eine ganze, nicht negative Kinderzahl eingeben.", "excWishesPlaceholder": "Kinderalter, Wünsche oder Fragen", "serviceItem": "Leistung"});
+  Object.assign(I18N.en, {"serviceSearchTitle": "What would you like to plan?", "serviceStays": "Stays", "serviceYachts": "Yachts", "serviceExcursions": "Excursions", "excStandaloneNote": "Enquire about excursions on their own, without booking accommodation. We check availability for your preferred date and prepare a personal offer.", "excRequest": "Enquire about this excursion", "excAddHotel": "Save for a hotel enquiry", "excStart": "Preferred start date", "excPickup": "Pickup location / hotel (optional)", "excGuestError": "Enter at least one adult and a whole, non-negative number of children.", "excWishesPlaceholder": "Children’s ages, wishes or questions", "serviceItem": "Service"});
+  Object.assign(I18N.tr, {"serviceSearchTitle": "Ne planlamak istersiniz?", "serviceStays": "Konaklama", "serviceYachts": "Yatlar", "serviceExcursions": "Geziler", "excStandaloneNote": "Konaklama rezervasyonu olmadan da gezi talep edebilirsiniz. İstediğiniz tarih için müsaitliği kontrol edip kişisel teklifinizi hazırlarız.", "excRequest": "Gezi talep et", "excAddHotel": "Konaklama talebi için kaydet", "excStart": "Tercih edilen başlangıç tarihi", "excPickup": "Buluşma yeri / otel (isteğe bağlı)", "excGuestError": "En az bir yetişkin ve sıfır veya daha büyük bir tam çocuk sayısı girin.", "excWishesPlaceholder": "Çocukların yaşları, istekler veya sorular", "serviceItem": "Hizmet"});
+  Object.assign(I18N.uk, {"serviceSearchTitle": "Що ви плануєте?", "serviceStays": "Проживання", "serviceYachts": "Яхти", "serviceExcursions": "Екскурсії", "excStandaloneNote": "Екскурсії можна замовити окремо, без бронювання готелю. Ми перевіримо наявність на бажану дату та підготуємо індивідуальну пропозицію.", "excRequest": "Запитати екскурсію", "excAddHotel": "Додати до запиту на готель", "excStart": "Бажана дата початку", "excPickup": "Місце зустрічі / готель (необов’язково)", "excGuestError": "Вкажіть хоча б одного дорослого та цілу невід’ємну кількість дітей.", "excWishesPlaceholder": "Вік дітей, побажання або запитання", "serviceItem": "Послуга"});
+
+  /* Staff folios use a small, service-oriented payment vocabulary. Keep the
+     labels beside the existing late additions so older saved requests can be
+     opened in every supported language without a migration step. */
+  Object.assign(I18N.en, {"finances":"Finances & payments","folio":"Travel folio","addPayment":"Add payment","paymentType":"Payment type","deposit":"Deposit","balancePayment":"Balance payment","refund":"Refund","paymentMethod":"Payment method","ziraatPos":"Ziraat Sanal POS","bankTransfer":"Bank transfer","cash":"Cash","cardManual":"Card (manual)","department":"Department","account":"Account","amount":"Amount","exchangeRate":"Exchange rate","baseCurrency":"Base currency","reference":"Reference","notes":"Notes","savePayment":"Save payment","requestPayment":"Prepare payment request","recordPaid":"Record as paid","paymentRecorded":"Payment recorded","paymentRequested":"Payment request prepared","paidTotal":"Paid","balanceDue":"Balance due","pendingPayments":"Pending payments","received":"Received","paymentHistory":"Payment history","manualPaymentNote":"Use this only after the payment is verified in the provider or cash desk.","ziraatPaymentNote":"The customer pays on Ziraat’s hosted 3-D Secure page. Card details never enter this app.","noPayments":"No payments recorded yet","paymentPending":"Pending","paymentRefunded":"Refunded","paymentStatusPaid":"Paid","paymentStatusFailed":"Failed","serviceTotal":"Travel total","paymentRequestFor":"Payment for"});
+  Object.assign(I18N.de, {"finances":"Finanzen & Zahlungen","folio":"Reise-Folio","addPayment":"Zahlung hinzufügen","paymentType":"Zahlungsart","deposit":"Anzahlung","balancePayment":"Restzahlung","refund":"Erstattung","paymentMethod":"Zahlungsweg","ziraatPos":"Ziraat Sanal POS","bankTransfer":"Überweisung","cash":"Bar","cardManual":"Karte (manuell)","department":"Bereich","account":"Konto","amount":"Betrag","exchangeRate":"Wechselkurs","baseCurrency":"Basiswährung","reference":"Referenz","notes":"Notiz","savePayment":"Zahlung speichern","requestPayment":"Zahlungsanforderung vorbereiten","recordPaid":"Als bezahlt erfassen","paymentRecorded":"Zahlung erfasst","paymentRequested":"Zahlungsanforderung vorbereitet","paidTotal":"Bezahlt","balanceDue":"Offener Betrag","pendingPayments":"Offene Zahlungen","received":"Eingegangen","paymentHistory":"Zahlungsverlauf","manualPaymentNote":"Nur verwenden, wenn die Zahlung im Anbieter- oder Kassenbereich geprüft wurde.","ziraatPaymentNote":"Der Kunde bezahlt auf der gehosteten 3-D-Secure-Seite der Ziraat. Kartendaten gelangen nie in diese App.","noPayments":"Noch keine Zahlungen erfasst","paymentPending":"Offen","paymentRefunded":"Erstattet","paymentStatusPaid":"Bezahlt","paymentStatusFailed":"Fehlgeschlagen","serviceTotal":"Reisesumme","paymentRequestFor":"Zahlung für"});
+  Object.assign(I18N.tr, {"finances":"Finans ve ödemeler","folio":"Seyahat folyosu","addPayment":"Ödeme ekle","paymentType":"Ödeme türü","deposit":"Ön ödeme","balancePayment":"Kalan ödeme","refund":"İade","paymentMethod":"Ödeme yöntemi","ziraatPos":"Ziraat Sanal POS","bankTransfer":"Banka havalesi","cash":"Nakit","cardManual":"Kart (manuel)","department":"Departman","account":"Hesap","amount":"Tutar","exchangeRate":"Döviz kuru","baseCurrency":"Ana para birimi","reference":"Referans","notes":"Notlar","savePayment":"Ödemeyi kaydet","requestPayment":"Ödeme talebi hazırla","recordPaid":"Ödendi olarak kaydet","paymentRecorded":"Ödeme kaydedildi","paymentRequested":"Ödeme talebi hazırlandı","paidTotal":"Ödenen","balanceDue":"Kalan tutar","pendingPayments":"Bekleyen ödemeler","received":"Alındı","paymentHistory":"Ödeme geçmişi","manualPaymentNote":"Bunu yalnızca ödeme sağlayıcıda veya kasada doğruladıktan sonra kullanın.","ziraatPaymentNote":"Müşteri Ziraat’ın 3-D Secure sayfasında ödeme yapar. Kart bilgileri uygulamaya girmez.","noPayments":"Henüz ödeme kaydı yok","paymentPending":"Bekliyor","paymentRefunded":"İade edildi","paymentStatusPaid":"Ödendi","paymentStatusFailed":"Başarısız","serviceTotal":"Seyahat toplamı","paymentRequestFor":"Ödeme:"});
+  Object.assign(I18N.ru, {"finances":"Финансы и оплаты","folio":"Фолио поездки","addPayment":"Добавить оплату","paymentType":"Тип оплаты","deposit":"Предоплата","balancePayment":"Остаток","refund":"Возврат","paymentMethod":"Способ оплаты","ziraatPos":"Ziraat Sanal POS","bankTransfer":"Банковский перевод","cash":"Наличные","cardManual":"Карта (вручную)","department":"Отдел","account":"Счёт","amount":"Сумма","exchangeRate":"Курс обмена","baseCurrency":"Базовая валюта","reference":"Ссылка","notes":"Примечание","savePayment":"Сохранить оплату","requestPayment":"Подготовить запрос оплаты","recordPaid":"Отметить оплаченной","paymentRecorded":"Оплата записана","paymentRequested":"Запрос оплаты подготовлен","paidTotal":"Оплачено","balanceDue":"Осталось оплатить","pendingPayments":"Ожидающие оплаты","received":"Получено","paymentHistory":"История оплат","manualPaymentNote":"Используйте после проверки оплаты в панели провайдера или кассе.","ziraatPaymentNote":"Клиент платит на защищённой странице Ziraat 3-D Secure. Данные карты не попадают в приложение.","noPayments":"Оплаты ещё не записаны","paymentPending":"Ожидает","paymentRefunded":"Возвращено","paymentStatusPaid":"Оплачено","paymentStatusFailed":"Ошибка","serviceTotal":"Итого поездка","paymentRequestFor":"Оплата за"});
+
   const localizeExtra = en => ((EXTRA_TEXT[LANG] && EXTRA_TEXT[LANG][en]) || en);
   const loc = obj => { if(!obj) return ''; if(obj[LANG]) return obj[LANG]; if((LANG==='tr'||LANG==='uk') && obj.en) return localizeExtra(obj.en); return obj.en || obj.ru || obj.de || ''; };
 
@@ -1306,27 +1320,27 @@
      d:{ru:'Анталья, Кемер, Фетхие или Бодрум — яхту, бухты, маршрут и детали дня мы подберём персонально.',
         de:'Antalya, Kemer, Fethiye oder Bodrum – Yacht, Buchten, Route und Tagesablauf stellen wir persönlich zusammen.',
         en:'Antalya, Kemer, Fethiye or Bodrum — we tailor the yacht, bays, route and details of the day personally.'}},
-    {id:'cappadocia', img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+    {id:'cappadocia', days:2, img:EXC_IMG+'exc-cappadocia.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Каппадокия',de:'Kappadokien',en:'Cappadocia'},
      d:{ru:'Долины сказочных дымоходов, пещерные церкви и полёт на воздушном шаре на рассвете.',
         de:'Täler voller Feenkamine, Höhlenkirchen und eine Ballonfahrt bei Sonnenaufgang.',
         en:'Valleys of fairy chimneys, cave churches and a balloon flight at sunrise.'}},
-    {id:'pamukkale', img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'pamukkale', days:1, img:EXC_IMG+'exc-pamukkale.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Памуккале и Хиераполис',de:'Pamukkale & Hierapolis',en:'Pamukkale & Hierapolis'},
      d:{ru:'Белоснежные травертиновые террасы с термальной водой и античный город над ними.',
         de:'Schneeweiße Kalksinterterrassen mit Thermalwasser und die antike Stadt darüber.',
         en:'Snow-white travertine terraces of thermal water and the ancient city above them.'}},
-    {id:'ephesus', img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'ephesus', days:1, img:EXC_IMG+'exc-ephesus.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Эфес',de:'Ephesos',en:'Ephesus'},
      d:{ru:'Мраморные улицы, библиотека Цельса и один из крупнейших античных театров.',
         de:'Marmorstraßen, die Celsus-Bibliothek und eines der größten antiken Theater.',
         en:'Marble streets, the Library of Celsus and one of the largest ancient theatres.'}},
-    {id:'oludeniz', img:EXC_IMG+'exc-oludeniz.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
+    {id:'oludeniz', days:1, img:EXC_IMG+'exc-oludeniz.webp', dur:{ru:'1 день',de:'1 Tag',en:'1 day'},
      n:{ru:'Олюдениз — Голубая лагуна',de:'Ölüdeniz — Blaue Lagune',en:'Ölüdeniz — Blue Lagoon'},
      d:{ru:'Лагуна бирюзового цвета, пляж Бельджекиз и параглайдинг с горы Бабадаг.',
         de:'Türkisfarbene Lagune, der Belcekiz-Strand und Gleitschirmflug vom Babadag.',
         en:'A turquoise lagoon, Belcekiz beach and paragliding from Mount Babadag.'}},
-    {id:'istanbul', img:EXC_IMG+'exc-istanbul.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
+    {id:'istanbul', days:2, img:EXC_IMG+'exc-istanbul.webp', dur:{ru:'2 дня',de:'2 Tage',en:'2 days'},
      n:{ru:'Стамбул',de:'Istanbul',en:'Istanbul'},
      d:{ru:'Босфор, Айя-София и Гранд-базар — короткий перелёт от Антальи.',
         de:'Bosporus, Hagia Sophia und Großer Basar — ein kurzer Flug ab Antalya.',
@@ -1891,6 +1905,16 @@
     </article>`;
   }
 
+  function serviceSearchNav(active){
+    return `<section class="serviceSearch" aria-labelledby="serviceSearchTitle">
+      <h2 id="serviceSearchTitle">${t('serviceSearchTitle')}</h2>
+      <nav class="serviceSearch__choices" aria-label="${t('serviceSearchTitle')}">
+        ${[['search','keyhouse','serviceStays'],['yachts','yacht','serviceYachts'],['excursions','star','serviceExcursions']].map(([view,ic,key])=>
+          `<button type="button" class="serviceSearch__choice${active===view?' is-on':''}" data-go="${view}"${active===view?' aria-current="page"':''}>${icon(ic)}<span>${t(key)}</span></button>`).join('')}
+      </nav>
+    </section>`;
+  }
+
   function excCard(e){
     return `<article class="card fade-up" data-exc="${e.id}" role="button" tabindex="0">
       <div class="card__media" style="aspect-ratio:16/10">
@@ -1900,22 +1924,21 @@
         <div class="card__loc" style="color:var(--gold)">${esc(loc(e.dur))}</div>
         <h3 class="card__name">${esc(loc(e.n))}</h3>
         <p class="card__desc">${esc(loc(e.d))}</p>
+        <span class="excCard__action">${e.id==='yacht-tour'?t('serviceYachts'):t('excRequest')}${icon('chev')}</span>
       </div>
     </article>`;
   }
   function vExcursions(){
-    return `<section class="bandHero">
+    return `${appbar({})}${serviceSearchNav('excursions')}<section class="bandHero">
       ${bgVideo('./video/onlyone-excursions-v2.mp4','./images/onlyone-excursions-poster.webp')}
       <div class="bandHero__scrim"></div>
-      <div class="gal__bar"><span></span>
-        <button class="iconBtn" data-act="menu" aria-label="${t('menu')}">${icon('menu')}</button></div>
       <div class="bandHero__txt">
         <div class="eyebrow">${t('excSub')}</div>
         <h1 class="h-xl" style="margin-top:8px">${t('excursions')}</h1>
       </div>
     </section>
     <div class="wrap" style="padding-top:26px">
-      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 30px">${t('excNote')}</p>
+      <p class="muted" style="font-size:13px;line-height:1.65;margin:0 0 30px">${t('excStandaloneNote')}</p>
       <div class="cardList">${EXCURSIONS.map(excCard).join('')}</div>
     </div>
     <div class="pageBottom"></div>${tabbar('excursions')}`;
@@ -1982,7 +2005,7 @@
   function fleetHead(o){
     /* o: {eyebrow,title,note,chips} — the calm listing head: no hero, the
        photographs belong to the fleet itself. */
-    return `${appbar({back:true})}
+    return `${appbar({back:true})}${o.service?serviceSearchNav(o.service):''}
     <section class="fleetIntro">
       <div class="eyebrow">${esc(o.eyebrow)}</div>
       <h1 class="h-xl">${esc(o.title)}</h1>
@@ -2006,6 +2029,7 @@
     const chips=[`<button class="chip${CHARTERF.size?'':' is-on'}" data-ysize="">${hx('Все','Alle','All')}</button>`]
       .concat(FLEET_SIZES.map(s=>`<button class="chip${CHARTERF.size===s.id?' is-on':''}" data-ysize="${s.id}">${esc(loc(s.l))}</button>`)).join('');
     return `${fleetHead({
+      service:'yachts',
       eyebrow:'ONLYONE · '+hx('ПРИВАТНЫЙ ЧАРТЕР','PRIVATCHARTER','PRIVATE CHARTER'),
       title:hx('Наши яхты','Unsere Yachten','Our yachts'),
       note:t('yachtRequestNote'),
@@ -2022,7 +2046,7 @@
         <button class="btn btn--primary" data-go="concierge">${t('flyCta')}</button>
       </div>
     </div>
-    <div class="pageBottom"></div>${tabbar('')}`;
+    <div class="pageBottom"></div>${tabbar('search')}`;
   }
 
   function vTransfers(){
@@ -2553,7 +2577,7 @@
     const gl=`${s.adults} ${t('adultsShort')}${s.children?` · ${s.children} ${t('childrenShort')}`:''}`;
     const dl=(s.from&&s.to)?`${fmtDate(s.from)} – ${fmtDate(s.to)}`:t('datesPh');
     const n=activeFilters();
-    return `${appbar({})}
+    return `${appbar({})}${serviceSearchNav('search')}
     <div class="wrap" style="padding-top:16px">
       <div class="searchCard">
         <button class="searchRow" data-act="pick-region">${icon('pin')}
@@ -2750,7 +2774,7 @@
       from:W.from,to:W.to,adults:W.adults,children:W.children,childAges:W.childAges.slice(0,W.children),
       wishes:W.wishes.slice(),excursions:W.excursions.slice(),note:W.note,
       contact:{first:W.first,last:W.last,phone:W.phone,email:W.email,wa:W.wa},
-      status:'new',createdAt:Date.now(),offer:null,payment:null,staffNote:'',messages:[],
+      status:'new',createdAt:Date.now(),offer:null,payment:null,folio:null,staffNote:'',messages:[],
       history:[{s:'new',at:Date.now()}]
     });
     save();
@@ -2809,6 +2833,77 @@
     }).join('')}</div>`;
   }
 
+  /* ====================================================================
+     Travel folio / payments
+
+     HotelRunner's cashier is useful as a reference, but a ONLYONE folio is
+     centred on a journey rather than a room. Every stay, yacht, excursion,
+     transfer and extra can therefore share one payment ledger. The old
+     `request.payment` object remains the public checkout state; `folio` is
+     the staff ledger and also keeps partial payments and refunds auditable.
+     ==================================================================== */
+  function ensureFolio(r){
+    if(!r)return null;
+    if(!r.folio&&(!r.offer||!Number.isFinite(Number(r.offer.price))))return null;
+    if(!r.folio||typeof r.folio!=='object')r.folio={currency:(r.offer&&r.offer.currency)||'EUR',payments:[],closed:false};
+    if(!Array.isArray(r.folio.payments))r.folio.payments=[];
+    if(r.offer&&Number.isFinite(Number(r.offer.price))){
+      r.folio.total=Number(r.offer.price);
+      r.folio.currency=r.offer.currency||r.folio.currency||'EUR';
+    }
+    /* Requests created before the folio ledger shipped can still be marked
+       paid from the existing customer flow. Import that one payment once. */
+    if(r.payment&&r.payment.status==='paid'&&r.payment.paidAt&&
+       !r.folio.payments.some(p=>p.legacyPaidAt===r.payment.paidAt||p.id===r.payment.requestId||p.paidAt===r.payment.paidAt)){
+      r.folio.payments.push({id:'legacy-'+r.payment.paidAt,type:'balance',method:r.payment.provider||'online',amount:Number(r.payment.amount)||Number(r.offer&&r.offer.price)||0,currency:(r.offer&&r.offer.currency)||'EUR',exchangeRate:1,reference:r.code,notes:'',status:'paid',createdAt:r.payment.paidAt,legacyPaidAt:r.payment.paidAt,staff:'system'});
+    }
+    return r.folio;
+  }
+  function folioPayments(r){return (ensureFolio(r)||{payments:[]}).payments||[];}
+  function paymentTotals(r){
+    const total=Number((r&&r.folio&&r.folio.total)||(r&&r.offer&&r.offer.price))||0;
+    let paid=0,refunded=0,pending=0;
+    folioPayments(r).forEach(p=>{
+      const n=Math.max(0,Number(p.amount)||0);
+      if(p.status==='pending')pending+=n;
+      else if(p.status==='paid'&&p.type==='refund')refunded+=n;
+      else if(p.status==='paid')paid+=n;
+    });
+    return {total,paid,refunded,net:Math.max(0,paid-refunded),due:Math.max(0,total-paid+refunded),pending};
+  }
+  function paymentAmount(r){
+    const totals=paymentTotals(r);
+    return totals.due>0?totals.due:totals.total;
+  }
+  function paymentMethodName(v){
+    return ({ziraat:t('ziraatPos'),transfer:t('bankTransfer'),cash:t('cash'),card:t('cardManual'),online:'Online'})[v]||v||'—';
+  }
+  function paymentTypeName(v){return ({deposit:t('deposit'),balance:t('balancePayment'),refund:t('refund')})[v]||v||'—';}
+  function paymentStatusName(v){return ({pending:t('paymentPending'),paid:t('paymentStatusPaid'),failed:t('paymentStatusFailed'),refunded:t('paymentRefunded')})[v]||v||'—';}
+  function recordFolioPayment(r,o){
+    const f=ensureFolio(r);if(!f)return null;
+    const p=Object.assign({id:'p'+Date.now()+Math.random().toString(36).slice(2,6),currency:f.currency||'EUR',exchangeRate:1,status:'paid',createdAt:Date.now(),staff:S.staff||'Staff'},o||{});
+    p.amount=Number(p.amount)||0;
+    f.payments.push(p);save();return p;
+  }
+  function staffFolioCard(r){
+    const f=ensureFolio(r),totals=paymentTotals(r),payments=folioPayments(r).slice().reverse();
+    const currency=(f&&f.currency)||'EUR';
+    return `<div class="listCard staffFolio" style="border:1.5px solid var(--gold)">
+      <div class="listCard__h"><div><div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('folio')}</div><b style="display:block;margin-top:4px">${esc(r.code)}</b></div>
+        <span class="badge badge--gold">${esc(currency)}</span></div>
+      <div class="grid3s" style="margin-top:13px">
+        <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:19px">${money(totals.total,currency)}</b><span>${t('serviceTotal')}</span></div>
+        <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:19px;color:var(--ok)">${money(totals.net,currency)}</b><span>${t('paidTotal')}</span></div>
+        <div class="statBox" style="padding:11px;background:var(--paper)"><b style="font-size:19px;color:${totals.due?'var(--danger)':'var(--ok)'}">${money(totals.due,currency)}</b><span>${t('balanceDue')}</span></div>
+      </div>
+      <div class="btnRow" style="margin-top:13px"><button class="btn btn--primary btn--sm" data-act="payment-form" data-id="${r.id}">${icon('plus')}${t('addPayment')}</button></div>
+      <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase;margin-top:16px">${t('paymentHistory')}</div>
+      ${payments.length?payments.slice(0,5).map(p=>`<div class="kv" style="align-items:flex-start;gap:8px"><span class="muted">${esc(paymentTypeName(p.type))}<br><small>${esc(paymentMethodName(p.method))} · ${esc(paymentStatusName(p.status))}</small></span><b>${p.type==='refund'?'−':''}${money(p.amount,p.currency||currency)}</b></div>`).join(''):`<p class="muted tiny" style="margin:10px 0 0">${t('noPayments')}</p>`}
+      ${payments.length>5?`<div class="muted tiny" style="margin-top:8px">+${payments.length-5} ${t('total_')}</div>`:''}
+    </div>`;
+  }
+
   function vSent(id){
     const r=request(id);if(!r)return vHome();
     const h=hotel(r.hotelId);
@@ -2844,7 +2939,7 @@
           <div class="listCard__h">
             <div style="min-width:0">
               <b style="font-size:15.5px">${esc(charter?r.item.name:h.name)}</b>
-              <div class="muted tiny" style="margin-top:4px">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
+              <div class="muted tiny" style="margin-top:4px">${charter?`${charterWhen(r)} · ${charterGuests(r)}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
               <div class="muted mini" style="margin-top:3px">${r.code}</div>
             </div>
             <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
@@ -2869,7 +2964,7 @@
         ${r.item.img?`<div class="card__media" style="aspect-ratio:16/10"><img src="${r.item.img}" alt=""></div>`:pendingMedia()}
         <div class="card__body">
           <h2 class="charterCard__name">${esc(r.item.name)}</h2>
-          <div class="charterCard__line">${charterWhen(r)} · ${r.adults} ${t('adultsShort')}</div>
+          <div class="charterCard__line">${charterWhen(r)} · ${charterGuests(r)}</div>
           ${r.route?`<div class="charterCard__line charterCard__line--soft">${esc(r.route)}</div>`:''}
         </div>
       </article>
@@ -3062,7 +3157,7 @@
           <div class="muted mini">${r.code}</div>
           <b style="font-size:15px;display:block;margin-top:3px">${esc(r.contact.first||'—')} ${esc(r.contact.last||'')}</b>
           <div class="muted tiny" style="margin-top:3px">${esc(charter?r.item.name:h.name)}</div>
-          <div class="muted tiny">${charter?`${charterWhen(r)} · ${r.adults} ${t('adultsShort')}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
+          <div class="muted tiny">${charter?`${charterWhen(r)} · ${charterGuests(r)}`:`${fmtDate(r.from)} – ${fmtDate(r.to)} · ${r.adults} ${t('adultsShort')}`}</div>
         </div>
         <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
       </div>
@@ -3154,10 +3249,10 @@
         ${r.contact.wa?`<div class="kv"><span class="muted">WhatsApp</span><b>${esc(r.contact.wa)}</b></div>`:''}
       </div>
       ${charter?`<div class="listCard">
-        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${hx('Чартер','Charter','Charter')}</div>
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${r.item.t==='excursion'?t('serviceExcursions'):hx('Чартер','Charter','Charter')}</div>
         <div class="kv" style="margin-top:8px"><span class="muted">${hx('Объект','Objekt','Item')}</span><b>${esc(r.item.name)}</b></div>
         <div class="kv"><span class="muted">${hx('Дата','Datum','Date')}</span><b>${charterWhen(r)}</b></div>
-        <div class="kv"><span class="muted">${t('guests')}</span><b>${r.adults} ${t('adultsShort')}</b></div>
+        <div class="kv"><span class="muted">${t('guests')}</span><b>${charterGuests(r)}</b></div>
         ${r.route?`<div class="kv"><span class="muted">${hx('Маршрут','Strecke','Route')}</span><b>${esc(r.route)}</b></div>`:''}
       </div>`:`<div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotel')}</div>
@@ -3192,6 +3287,7 @@
         <div class="kv" style="margin-top:8px"><span class="muted">${t('sellPrice')}</span><b>${money(r.offer.price,r.offer.currency)}</b></div>
         ${r.offer.internalNote?`<div class="kv"><span class="muted">${t('internalNote')}</span><b>${esc(r.offer.internalNote)}</b></div>`:''}
       </div>`:''}
+      ${r.offer?staffFolioCard(r):''}
       <div style="margin-top:14px">${staffActions(r)}</div>
       ${/* Direct bookings skip enquiry stages; new yacht enquiries follow the offer timeline. */''}
       ${!charter||(r.history&&r.history[0]&&r.history[0].s==='new')?`<div class="listCard">${statusTimeline(r)}</div>`:''}
@@ -3240,12 +3336,45 @@
   function vStaffMore(){
     return `<div class="staffTop"><h1 class="h-xl">${t('more')}</h1></div>
     <div class="wrap" style="padding-top:14px">
+      <button class="listCard" style="display:flex;width:100%;text-align:left;align-items:center;gap:12px" data-go="s-fin">
+        <span style="color:var(--gold-ink)">${icon('card')}</span><span style="flex:1"><b>${t('finances')}</b><small class="muted" style="display:block;margin-top:3px">${t('paymentHistory')}</small></span>${icon('chev')}
+      </button>
       <div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('hotels')}</div>
         ${REGIONS.map(r=>`<div class="kv"><span>${esc(loc(r.name))}</span><b>${PUBLIC_HOTELS.filter(h=>h.region===r.id).length}</b></div>`).join('')}
       </div>
       <div class="noteBox">${t('noInternalPrices')}</div>
       <div style="margin-top:14px"><button class="btn btn--ghost" data-act="logout">${t('backToCust')}</button></div>
+    </div><div class="pageBottom"></div>${staffTabbar('s-more')}`;
+  }
+  function vStaffFinance(){
+    const rows=[];
+    let received=0,pending=0,refunded=0;
+    S.requests.forEach(r=>{
+      folioPayments(r).forEach(p=>{
+        const n=Math.max(0,Number(p.amount)||0);
+        if(p.status==='pending')pending+=n;
+        if(p.status==='paid'&&p.type==='refund')refunded+=n;
+        if(p.status==='paid'&&p.type!=='refund')received+=n;
+        rows.push({r,p});
+      });
+    });
+    rows.sort((a,b)=>(b.p.createdAt||0)-(a.p.createdAt||0));
+    return `${appbar({back:true,title:t('finances'),menu:false})}
+    <div class="wrap" style="padding-top:16px">
+      <div class="grid2s">
+        <div class="statBox"><b style="font-size:21px;color:var(--ok)">${money(received,'EUR')}</b><span>${t('received')}</span></div>
+        <div class="statBox"><b style="font-size:21px;color:var(--danger)">${money(Math.max(0,refunded),'EUR')}</b><span>${t('refund')}</span></div>
+        <div class="statBox"><b style="font-size:21px">${money(pending,'EUR')}</b><span>${t('pendingPayments')}</span></div>
+        <div class="statBox"><b style="font-size:21px">${S.requests.filter(r=>r.offer).length}</b><span>${t('folio')}</span></div>
+      </div>
+      <div class="section__head" style="margin-top:22px"><h2 class="h-lg">${t('paymentHistory')}</h2><span class="muted tiny">${rows.length} ${t('total_')}</span></div>
+      ${rows.length?rows.map(({r,p})=>`<div class="listCard">
+        <div class="listCard__h"><div style="min-width:0"><b>${esc(r.contact.first||'—')} ${esc(r.contact.last||'')}</b><div class="muted mini" style="margin-top:4px">${esc(r.code)} · ${esc(paymentTypeName(p.type))}</div></div>
+          <b style="color:${p.type==='refund'?'var(--danger)':p.status==='paid'?'var(--ok)':'var(--gold-ink)'}">${p.type==='refund'?'−':''}${money(p.amount,p.currency||'EUR')}</b></div>
+        <div class="kv" style="margin-top:10px"><span class="muted">${paymentMethodName(p.method)}</span><span>${paymentStatusName(p.status)}</span></div>
+        ${p.reference?`<div class="muted tiny" style="margin-top:4px">${t('reference')}: ${esc(p.reference)}</div>`:''}
+      </div>`).join(''):`<div class="empty">${icon('card')}<b>${t('noPayments')}</b></div>`}
     </div><div class="pageBottom"></div>${staffTabbar('s-more')}`;
   }
 
@@ -3837,6 +3966,7 @@
       case 's-book':    html=S.staff?vStaffBookings():vStaffLogin();break;
       case 's-cust':    html=S.staff?vStaffCustomers():vStaffLogin();break;
       case 's-more':    html=S.staff?vStaffMore():vStaffLogin();break;
+      case 's-fin':     html=S.staff?vStaffFinance():vStaffLogin();break;
       default:          html=vHome();
     }
     a.innerHTML=`<div class="view">${html}</div>`;
@@ -4073,7 +4203,7 @@
         <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
       <div class="sheet__body">
         <div class="noteBox" style="margin-top:0;display:flex;gap:9px;align-items:flex-start">${icon('lock')}<span>${t('staffOnly')}</span></div>
-        <div class="kv" style="margin-top:12px"><span class="muted">${charter?hx('Яхта','Yacht','Yacht'):t('hotel')}</span><b>${esc(charter?r.item.name:h.name)}</b></div>
+        <div class="kv" style="margin-top:12px"><span class="muted">${charter?t('serviceItem'):t('hotel')}</span><b>${esc(charter?r.item.name:h.name)}</b></div>
         <div class="kv"><span class="muted">${t('period')}</span><b>${charter?charterWhen(r):`${fmtDate(r.from)} – ${fmtDate(r.to)}`}</b></div>
         ${charter?'':`<div class="field"><label class="label">${t('rooms')}</label>
           <select class="input" id="oRoom">${h.rooms.map(x=>`<option value="${x.id}"${r.roomId===x.id?' selected':''}>${esc(loc(x.n))}</option>`).join('')}</select></div>`}
@@ -4090,6 +4220,7 @@
       <div class="sheet__foot"><button class="btn btn--primary" data-act="offer-save" data-id="${id}">${t('sendOffer')}</button></div>`);
   }
   function sheetExcursion(id){
+    if(id==='yacht-tour'){closeSheet();go('yachts');return;}
     const e=excursion(id);if(!e)return;
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${esc(loc(e.n))}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
@@ -4098,10 +4229,36 @@
         <img src="${e.img}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="kv" style="margin-top:12px"><span class="muted">${t('duration')}</span><b>${esc(loc(e.dur))}</b></div>
       <p class="muted" style="font-size:13.5px;line-height:1.6;margin-top:12px">${esc(loc(e.d))}</p>
-      <div class="noteBox">${t('excNote')}</div>
+      <div class="noteBox">${t('excStandaloneNote')}</div>
     </div>
-    <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-add" data-id="${id}">${t('addToReq')}</button></div>`);
+    <div class="sheet__foot excursionActions">
+      <button class="btn btn--primary" data-act="exc-request" data-id="${id}">${t('excRequest')}</button>
+      <button class="btn btn--ghost btn--sm" data-act="exc-add" data-id="${id}">${t('excAddHotel')}</button>
+    </div>`);
   }
+  function sheetExcursionRequest(id){
+    if(id==='yacht-tour'){closeSheet();go('yachts');return;}
+    const e=excursion(id);if(!e)return;
+    const search=S.search;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('excRequest')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <h4 class="h-lg">${esc(loc(e.n))}</h4>
+      <div class="kv"><span class="muted">${t('duration')}</span><b>${esc(loc(e.dur))}</b></div>
+      <div class="noteBox">${t('excStandaloneNote')}</div>
+      <div class="field"><label class="label" for="erDate">${t('excStart')} *</label><input class="input" id="erDate" type="date" min="${today()}" value="${esc(search.from||'')}" required></div>
+      <div class="grid2">
+        <div class="field"><label class="label" for="erAdults">${t('adults')} *</label><input class="input" id="erAdults" type="number" inputmode="numeric" min="1" step="1" value="${search.adults||2}" required></div>
+        <div class="field"><label class="label" for="erChildren">${t('children')}</label><input class="input" id="erChildren" type="number" inputmode="numeric" min="0" step="1" value="${search.children||0}"></div>
+      </div>
+      <div class="field"><label class="label" for="erName">${t('yourName')} *</label><input class="input" id="erName" autocomplete="name" required></div>
+      <div class="field"><label class="label" for="erPhone">${t('phone')} *</label><input class="input" id="erPhone" type="tel" autocomplete="tel" required></div>
+      <div class="field"><label class="label" for="erPickup">${t('excPickup')}</label><input class="input" id="erPickup"></div>
+      <div class="field"><label class="label" for="erNote">${t('otherWishes')}</label><textarea class="input" id="erNote" rows="2" placeholder="${t('excWishesPlaceholder')}"></textarea></div>
+    </div>
+    <div class="sheet__foot"><button class="btn btn--primary" data-act="exc-send" data-id="${id}">${t('sendRequest')}</button></div>`);
+  }
+
   function sheetYacht(id){
     const y=yachtById(id);if(!y)return;
     const kv=(l,v)=>`<div class="kv"><span class="muted">${l}</span><b>${esc(v)}</b></div>`;
@@ -4158,7 +4315,7 @@
   }
   function startBankPayment(r,provider){
     fetch('./api/pay/start',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({provider,oid:r.id,amount:r.offer.price,currency:r.offer.currency||'EUR',lang:LANG})})
+      body:JSON.stringify({provider,oid:r.id,amount:paymentAmount(r),currency:r.offer.currency||'EUR',lang:LANG})})
     .then(x=>x.json().then(j=>({ok:x.ok,j})).catch(()=>({ok:false,j:null})))
     .then(({ok,j})=>{
       if(ok&&j&&j.mode==='redirect'&&j.url){location.href=j.url;return;}
@@ -4183,6 +4340,7 @@
   function sheetPay(id){
     const r=request(id);
     if(!r||!r.offer||r.status!=='payopen')return;
+    const payAmount=paymentAmount(r), payCurrency=(r.offer&&r.offer.currency)||'EUR';
     /* A real payment link on the request outranks the bank chooser: the
        assistant created it in the payment provider's panel (today that is
        provider-neutral), so it is the path where real money flows.
@@ -4193,7 +4351,7 @@
         <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
       <div class="sheet__body">
         <div class="priceBox" style="margin-top:0"><div class="lbl">${t('total')}</div>
-          <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+          <div class="amt">${money(payAmount,payCurrency)}</div></div>
         <div class="listCard" style="display:flex;align-items:center;gap:11px">
           <span style="color:var(--turq-600)">${icon('lock')}</span>
           <span class="muted mini">${hx('Оплата проходит на защищённой странице нашего платёжного партнёра (3-D Secure). Мы не видим и не храним данные карты.',
@@ -4210,7 +4368,7 @@
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
       <div class="priceBox" style="margin-top:0"><div class="lbl">${t('total')}</div>
-        <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+        <div class="amt">${money(payAmount,payCurrency)}</div></div>
       <div class="field"><label class="label">${hx('Способ оплаты','Zahlungsweg','Payment method')}</label>
         ${PAY_PROVIDERS.map(m=>`<button class="check${m.id===PAYSEL?' is-on':''}" data-paymethod="${m.id}">
           <span class="check__box">${icon('check')}</span>
@@ -4241,21 +4399,24 @@
   function newCharterBooking(o){
     S.seq+=1;
     const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
-    const enquiry=o.t==='yacht';
+    const enquiry=o.t==='yacht'||o.t==='excursion';
     const status=enquiry?'new':'payopen';
     const req={id:'r'+Date.now(),code,kind:'charter',hotelId:null,
       item:{t:o.t,id:o.id,name:o.name,img:o.img||''},
-      from:o.date,to:o.to||'',adults:o.guests,children:0,childAges:[],
+      from:o.date,to:o.to||'',adults:o.guests,children:o.children||0,childAges:[],
       route:o.route||'',note:o.note||'',wishes:[],excursions:[],
       contact:{first:o.first,last:'',phone:o.phone,email:'',wa:''},
       status,createdAt:Date.now(),
       offer:enquiry?null:{price:o.price,currency:'EUR'},
       payment:enquiry?null:{link:'',status:'open'},staffNote:'',messages:[],
-      history:[{s:status,at:Date.now()}]};
+      history:[{s:status,at:Date.now()}],
+      folio:enquiry?null:{total:Number(o.price)||0,currency:'EUR',payments:[],closed:false}};
+    if(req.offer)ensureFolio(req);
     S.requests.unshift(req);save();
     return req;
   }
   /* One charter day reads as its date; a weekly charter as its week. */
+  const charterGuests=r=>`${r.adults} ${t('adultsShort')}${r.children?` · ${r.children} ${t('childrenShort')}`:''}`;
   const charterWhen=r=>fmtDate(r.from)+(r.to?' – '+fmtDate(r.to):'');
   function sheetBookCharter(bt,bid){
     if(bt==='yacht'){sheetYacht(bid);return;}
@@ -4294,7 +4455,7 @@
       <div class="eyebrow">DEMO · 3-D SECURE</div>
       <div class="kv" style="margin-top:10px"><span class="muted">${hx('Банк','Bank','Bank')}</span><b>${esc(p.n)}</b></div>
       <div class="priceBox"><div class="lbl">${t('total')}</div>
-        <div class="amt">${money(r.offer.price,r.offer.currency)}</div></div>
+        <div class="amt">${money(paymentAmount(r),r.offer.currency)}</div></div>
       <div class="noteBox">${t('payDemoNote')}</div>
       <button class="btn btn--ghost" style="margin-top:14px" data-act="pay-demo-fail">${hx('Симулировать отказ','Fehlschlag simulieren','Simulate a decline')}</button>
     </div>
@@ -4309,7 +4470,7 @@
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('createPayLink')}</h3>
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
-      <div class="kv" style="margin-top:0"><span class="muted">${t('total')}</span><b>${money(r.offer.price,r.offer.currency)}</b></div>
+      <div class="kv" style="margin-top:0"><span class="muted">${t('paymentRequestFor')}</span><b>${money(paymentAmount(r),r.offer.currency)}</b></div>
       <div class="field"><label class="label">${hx('Ссылка на страницу оплаты','Link zur Zahlungsseite','Payment page link')} *</label>
         <input class="input" id="plUrl" type="url" inputmode="url" placeholder="https://…" value="${esc((r.payment&&r.payment.link)||'')}"></div>
       <div class="noteBox">${hx('Создайте оплату в панели вашего платёжного сервиса и вставьте сюда ссылку на страницу оплаты. Гость откроет её прямо в приложении и оплатит безопасно.',
@@ -4317,6 +4478,43 @@
         'Create the payment in your payment provider’s panel and paste the payment page link here. The guest opens it right in the app and pays securely.')}</div>
     </div>
     <div class="sheet__foot"><button class="btn btn--primary" data-act="paylink-save" data-id="${id}">${hx('Сохранить ссылку','Link speichern','Save link')}</button></div>`);
+  }
+
+  function sheetPaymentForm(id){
+    const r=request(id);if(!r||!r.offer)return;
+    const totals=paymentTotals(r), currency=(r.offer&&r.offer.currency)||'EUR';
+    const reference=r.code;
+    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('addPayment')}</h3>
+      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
+    <div class="sheet__body">
+      <div class="listCard" style="margin-top:0;background:rgba(217,176,156,.14)">
+        <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('paymentRequestFor')}</div>
+        <b style="display:block;margin-top:5px">${esc(r.contact.first||'—')} ${esc(r.contact.last||'')} · ${esc(r.code)}</b>
+        <div class="kv" style="margin-top:9px"><span class="muted">${t('serviceTotal')}</span><b>${money(totals.total,currency)}</b></div>
+        <div class="kv"><span class="muted">${t('balanceDue')}</span><b>${money(totals.due,currency)}</b></div>
+      </div>
+      <div class="field"><label class="label" for="pfType">${t('paymentType')}</label>
+        <select class="input" id="pfType"><option value="deposit">${t('deposit')}</option><option value="balance">${t('balancePayment')}</option><option value="refund">${t('refund')}</option></select></div>
+      <div class="field"><label class="label" for="pfMethod">${t('paymentMethod')}</label>
+        <select class="input" id="pfMethod"><option value="ziraat">${t('ziraatPos')}</option><option value="transfer">${t('bankTransfer')}</option><option value="cash">${t('cash')}</option><option value="card">${t('cardManual')}</option></select></div>
+      <div class="grid2">
+        <div class="field"><label class="label" for="pfAmount">${t('amount')} *</label><input class="input" id="pfAmount" type="number" inputmode="decimal" min="0.01" step="0.01" value="${(totals.due||totals.total).toFixed(2)}"></div>
+        <div class="field"><label class="label" for="pfCurrency">${t('currency')}</label><select class="input" id="pfCurrency"><option${currency==='EUR'?' selected':''}>EUR</option><option${currency==='TRY'?' selected':''}>TRY</option><option${currency==='USD'?' selected':''}>USD</option><option${currency==='GBP'?' selected':''}>GBP</option></select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label class="label" for="pfRate">${t('exchangeRate')}</label><input class="input" id="pfRate" type="number" inputmode="decimal" min="0.0001" step="0.0001" value="1"></div>
+        <div class="field"><label class="label" for="pfBase">${t('baseCurrency')}</label><input class="input" id="pfBase" value="EUR" readonly></div>
+      </div>
+      <div class="field"><label class="label" for="pfRef">${t('reference')}</label><input class="input" id="pfRef" value="${esc(reference)}"></div>
+      <div class="field"><label class="label" for="pfNotes">${t('notes')}</label><textarea class="input" id="pfNotes" rows="2" placeholder="${esc(hx('z. B. Anzahlung für Yachtcharter','z. B. Anzahlung für Yachtcharter','e.g. yacht charter deposit'))}"></textarea></div>
+      <div class="noteBox" id="pfNote">${t('ziraatPaymentNote')}</div>
+    </div>
+    <div class="sheet__foot">
+      <div class="btnRow"><button class="btn btn--ghost" data-act="payment-save" data-id="${id}" data-payment-mode="paid">${t('recordPaid')}</button>
+      <button class="btn btn--primary" data-act="payment-save" data-id="${id}" data-payment-mode="request">${t('requestPayment')}</button></div>
+    </div>`);
+    const method=$('#pfMethod'),note=$('#pfNote');
+    if(method&&note)method.addEventListener('change',()=>{note.textContent=method.value==='ziraat'?t('ziraatPaymentNote'):t('manualPaymentNote');});
   }
   /* The quick way for the assistant: an ad-hoc payment request — label,
      amount, payment link — that lands in the guest area as an open
@@ -4601,6 +4799,26 @@
       case 'fapply': closeSheet();setTimeout(render,260);break;
       case 'do-search': render();toast(`${filtered().length} ${t('results')}`);break;
       case 'compare': sheetCompare();break;
+      case 'exc-request': sheetExcursionRequest(id);break;
+      case 'exc-send': {
+        if(a.disabled)break;
+        const e=excursion(id);if(!e||e.id==='yacht-tour')break;
+        const value=selector=>(($(selector)||{}).value||'').trim();
+        const date=value('#erDate'),first=value('#erName'),phone=value('#erPhone');
+        const adults=Number(value('#erAdults')),children=Number(value('#erChildren'));
+        if(!date||!first||!phone){toast(t('required'));break;}
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date||date<today()){
+          toast(t('yachtDatesInvalid'));break;
+        }
+        if(!Number.isSafeInteger(adults)||adults<1||!Number.isSafeInteger(children)||children<0){toast(t('excGuestError'));break;}
+        const end=new Date(date+'T12:00:00Z');end.setUTCDate(end.getUTCDate()+(e.days||1)-1);
+        const to=e.days>1?end.toISOString().slice(0,10):'';
+        a.disabled=true;
+        const req=newCharterBooking({t:'excursion',id:e.id,name:loc(e.n),img:e.img,
+          date,to,guests:adults,children,first,phone,route:value('#erPickup'),note:value('#erNote')});
+        closeSheet();setTimeout(()=>{go('trip',req.id);toast(t('reqSent'));},330);
+        break;
+      }
       case 'exc-add': {
         // Vor der Anfrage vormerken; der Wizard übernimmt die Auswahl in Schritt 4.
         S.pendingExc = S.pendingExc || [];
@@ -4612,6 +4830,38 @@
       case 'accept': setStatus(request(id),'accepted');render();toast(t('offerAccepted'));break;
       case 'ask': toast(t('questionSent'));break;
       case 'pay': sheetPay(id);break;
+      case 'payment-form': sheetPaymentForm(id);break;
+      case 'payment-save': {
+        const r=request(id);if(!r||!r.offer)break;
+        const type=(($('#pfType')||{}).value||'deposit');
+        const method=(($('#pfMethod')||{}).value||'ziraat');
+        const currency=(($('#pfCurrency')||{}).value||r.offer.currency||'EUR').toUpperCase();
+        const amount=Number.parseFloat(String((($('#pfAmount')||{}).value||'')).replace(',','.'));
+        const rate=Number.parseFloat(String((($('#pfRate')||{}).value||'1')).replace(',','.'));
+        const reference=((($('#pfRef')||{}).value||'')).trim()||r.code;
+        const notes=((($('#pfNotes')||{}).value||'')).trim();
+        const totals=paymentTotals(r);
+        if(!Number.isFinite(amount)||amount<=0||!Number.isFinite(rate)||rate<=0){toast(t('required'));break;}
+        if(type==='refund'&&amount>totals.net+0.01){toast(hx('Die Erstattung darf den bezahlten Betrag nicht überschreiten.','Die Erstattung darf den bezahlten Betrag nicht überschreiten.','A refund cannot exceed the amount already paid.'));break;}
+        if(type!=='refund'&&totals.due>0&&amount>totals.due+0.01){toast(hx('Der Betrag überschreitet den offenen Betrag.','Der Betrag überschreitet den offenen Betrag.','The amount is higher than the balance due.'));break;}
+        const mode=a.dataset.paymentMode==='request'?'request':'paid';
+        const p=recordFolioPayment(r,{type,method,amount,currency,exchangeRate:rate,baseCurrency:(($('#pfBase')||{}).value||'EUR'),reference,notes,status:mode==='request'?'pending':'paid'});
+        if(!p)break;
+        r.payment=Object.assign({},r.payment||{}, {amount,currency,provider:method,requestId:p.id,requestType:type});
+        if(mode==='request'){
+          r.payment.status='open';
+          if(r.status==='accepted')setStatus(r,'payopen');else save();
+          closeSheet();setTimeout(()=>{render();toast(t('paymentRequested'));},280);
+          break;
+        }
+        r.payment.status='paid';r.payment.paidAt=Date.now();
+        const after=paymentTotals(r);
+        if(after.due<=0.01&&r.status!=='confirmed')setStatus(r,'paid');
+        else if(r.status==='accepted')setStatus(r,'payopen');
+        else save();
+        closeSheet();setTimeout(()=>{render();toast(t('paymentRecorded'));},280);
+        break;
+      }
       case 'book-pay': {
         if(a.disabled)break;
         const bt=a.dataset.bt,bid=a.dataset.bid,it=bookable(bt,bid);if(!it)break;
@@ -4674,8 +4924,12 @@
         break;
       case 'pay-do': {
         const r=request(id);
-        r.payment.status='paid';r.payment.paidAt=Date.now();
-        setStatus(r,'paid');
+        const amount=paymentAmount(r),now=Date.now();
+        const pending=folioPayments(r).find(p=>p.status==='pending'&&p.id===((r.payment||{}).requestId));
+        if(pending){pending.status='paid';pending.paidAt=now;}
+        else recordFolioPayment(r,{type:'balance',method:PAYSEL,amount,currency:(r.offer&&r.offer.currency)||'EUR',reference:r.code,status:'paid'});
+        r.payment=r.payment||{};r.payment.status='paid';r.payment.amount=amount;r.payment.paidAt=now;
+        if(paymentTotals(r).due<=0.01)setStatus(r,'paid');else save();
         closeSheet();
         /* Whoever paid from a catalogue page must land on the paid trip,
            not back among the cards as if nothing had happened. */
@@ -4710,6 +4964,7 @@
           internalNote:($('#oNote')||{}).value||'',
           createdAt:Date.now()
         };
+        ensureFolio(r);
         setStatus(r,'offer');
         closeSheet();setTimeout(()=>{render();toast(t('offerSent'));},280);break;
       }
@@ -4745,8 +5000,13 @@
            checks the provider's panel and closes the loop here. */
         const r=request(id);if(!r)break;
         r.payment=r.payment||{};
-        r.payment.status='paid';r.payment.paidAt=Date.now();
-        setStatus(r,'paid');render();
+        const amount=Number(r.payment.amount)||paymentAmount(r),now=Date.now();
+        const pending=folioPayments(r).find(p=>p.status==='pending'&&p.id===r.payment.requestId);
+        if(pending){pending.status='paid';pending.paidAt=now;}
+        else recordFolioPayment(r,{type:r.payment.requestType||'balance',method:r.payment.provider||'online',amount,currency:r.payment.currency||(r.offer&&r.offer.currency)||'EUR',reference:r.code,status:'paid'});
+        r.payment.status='paid';r.payment.paidAt=now;
+        if(paymentTotals(r).due<=0.01&&r.status!=='confirmed')setStatus(r,'paid');else save();
+        render();
         toast(hx('Отмечено как оплачено','Als bezahlt markiert','Marked as paid'));break;
       }
       case 'pay-open-link': {
@@ -4809,10 +5069,14 @@
       const ok=PAYRET.get('pay')==='ok';
       const r=S.requests.find(x=>x.id===PAYRET.get('oid'));
       if(r&&ok&&r.status!=='paid'&&r.status!=='confirmed'){
+        const amount=paymentAmount(r),now=Date.now();
+        const pending=folioPayments(r).find(p=>p.status==='pending'&&p.id===((r.payment||{}).requestId));
+        if(pending){pending.status='paid';pending.paidAt=now;}
+        else recordFolioPayment(r,{type:'balance',method:PAYRET.get('provider')||'online',amount,currency:(r.offer&&r.offer.currency)||'EUR',reference:r.code,status:'paid'});
         r.payment=r.payment||{};
-        r.payment.status='paid';r.payment.paidAt=Date.now();
+        r.payment.status='paid';r.payment.amount=amount;r.payment.paidAt=now;
         r.payment.provider=PAYRET.get('provider')||'';
-        setStatus(r,'paid');
+        if(paymentTotals(r).due<=0.01)setStatus(r,'paid');else save();
       }
       VIEW=r?{name:'trip',param:r.id}:{name:'trips',param:null};
       const msg=ok?t('paidOk'):hx('Платёж не выполнен. Попробуйте ещё раз или напишите VIP-ассистенту.',
