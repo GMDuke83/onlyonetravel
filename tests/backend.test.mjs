@@ -119,3 +119,9 @@ test('server strips injected image markup and rejects invalid status regressions
  let result=await f.call('requests','POST',{request:{...f.input,kind:'charter',item:{t:'service',name:'Untrusted',img:'x" onerror="alert(1)'}}},guest);assert.equal(result.data.request.item.img,'');
  let r=await f.get(f.input.id,staff);r.status='review';await f.put(r,staff);r=await f.get(r.id,staff);r.status='new';assert.equal((await f.put(r,staff)).status,409);
 });
+
+test('exchange rates target the offer currency rather than a hardcoded EUR base',async()=>{
+ const f=fixture(),guest=await f.login(),staff=await f.login(true);let r=await f.create(guest);r=await f.get(r.id,staff);r.offer={price:1000,currency:'TRY'};r.status='offer';r=(await f.put(r,staff)).data.request;
+ r.folio.payments.push({id:'foreign123',type:'deposit',method:'cash',amount:10,currency:'USD',exchangeRate:30,baseCurrency:'EUR',status:'paid'});
+ assert.equal((await f.put(r,staff)).status,400);r.folio.payments[0].baseCurrency='TRY';const result=await f.put(r,staff);assert.equal(result.status,200);assert.equal(result.data.request.folio.payments[0].baseAmount,300);
+});

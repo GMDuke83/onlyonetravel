@@ -60,6 +60,7 @@ export function updateRequest(old,input,role,name) {
       if(!r.offer)fail(409,'offer-required');const p=incoming.at(-1);
       if(!/^[A-Za-z0-9_-]{3,100}$/.test(p.id)||previous.some(x=>x.id===p.id))fail(400,'invalid-payment-id');
       if(!['deposit','balance','refund'].includes(p.type)||!['pending','paid'].includes(p.status))fail(400,'invalid-payment');
+      if(p.baseCurrency&&p.baseCurrency!==r.offer.currency)fail(400,'base-currency-mismatch');
       const amount=money(p.amount),cur=currency(p.currency),rate=cur===r.offer.currency?1:num(p.exchangeRate,0.000001,1000000);
       const base=Math.round(amount*rate*100),t=totals(r);
       if(base>(p.type==='refund'?t.paid:t.due))fail(409,'amount-exceeds-balance');

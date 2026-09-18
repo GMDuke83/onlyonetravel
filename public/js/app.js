@@ -4503,7 +4503,7 @@
       </div>
       <div class="grid2">
         <div class="field"><label class="label" for="pfRate">${t('exchangeRate')}</label><input class="input" id="pfRate" type="number" inputmode="decimal" min="0.0001" step="0.0001" value="1"></div>
-        <div class="field"><label class="label" for="pfBase">${t('baseCurrency')}</label><input class="input" id="pfBase" value="EUR" readonly></div>
+        <div class="field"><label class="label" for="pfBase">${t('baseCurrency')}</label><input class="input" id="pfBase" value="${esc(currency)}" readonly></div>
       </div>
       <div class="field"><label class="label" for="pfRef">${t('reference')}</label><input class="input" id="pfRef" value="${esc(reference)}"></div>
       <div class="field"><label class="label" for="pfNotes">${t('notes')}</label><textarea class="input" id="pfNotes" rows="2" placeholder="${esc(hx('z. B. Anzahlung für Yachtcharter','z. B. Anzahlung für Yachtcharter','e.g. yacht charter deposit'))}"></textarea></div>
