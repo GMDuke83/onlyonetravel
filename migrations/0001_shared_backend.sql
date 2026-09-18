@@ -1,0 +1,13 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE sessions (token_hash TEXT PRIMARY KEY, role TEXT NOT NULL CHECK(role IN ('guest','staff')), name TEXT NOT NULL, expires_at INTEGER NOT NULL, credential_hash TEXT);
+CREATE TABLE requests (id TEXT PRIMARY KEY, owner TEXT NOT NULL, data TEXT NOT NULL CHECK(json_valid(data)), version INTEGER NOT NULL DEFAULT 1, updated_at INTEGER NOT NULL, actor TEXT NOT NULL);
+CREATE INDEX requests_owner ON requests(owner);
+CREATE TABLE grants (request_id TEXT NOT NULL REFERENCES requests(id), session_hash TEXT NOT NULL, PRIMARY KEY(request_id,session_hash));
+CREATE TABLE access_links (token_hash TEXT PRIMARY KEY, request_id TEXT NOT NULL REFERENCES requests(id), expires_at INTEGER NOT NULL);
+CREATE TABLE request_events (id INTEGER PRIMARY KEY AUTOINCREMENT, request_id TEXT NOT NULL, version INTEGER NOT NULL, actor TEXT NOT NULL, at INTEGER NOT NULL, data TEXT NOT NULL);
+CREATE TRIGGER request_created AFTER INSERT ON requests BEGIN INSERT INTO request_events(request_id,version,actor,at,data) VALUES(NEW.id,NEW.version,NEW.actor,NEW.updated_at,NEW.data); END;
+CREATE TRIGGER request_updated AFTER UPDATE ON requests BEGIN INSERT INTO request_events(request_id,version,actor,at,data) VALUES(NEW.id,NEW.version,NEW.actor,NEW.updated_at,NEW.data); END;
+CREATE TABLE payment_attempts (id TEXT PRIMARY KEY, request_id TEXT NOT NULL REFERENCES requests(id), provider TEXT NOT NULL, amount_minor INTEGER NOT NULL CHECK(amount_minor>0), currency TEXT NOT NULL, base_minor INTEGER NOT NULL, ledger_id TEXT, status TEXT NOT NULL DEFAULT 'pending', created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL);
+CREATE UNIQUE INDEX one_pending_payment ON payment_attempts(request_id) WHERE status='pending';
+CREATE TABLE rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires_at INTEGER NOT NULL);
+CREATE TABLE legacy_imports (request_id TEXT PRIMARY KEY REFERENCES requests(id), data TEXT NOT NULL, imported_at INTEGER NOT NULL);
