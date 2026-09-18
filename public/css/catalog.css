@@ -1,0 +1,8 @@
+.catalogNav{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.catalogField{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:14px}
+.catalogField .input{display:block;width:100%;padding:12px;border:1px solid var(--line,#ddd);border-radius:10px;background:var(--paper,#fff);color:inherit;font:inherit;box-sizing:border-box}
+.catalogField textarea{min-height:90px;resize:vertical}
+.catalogForm{border:1px solid var(--gold-ink,#a88748)}
+[data-catalog-error]{color:var(--danger,#a12626);white-space:pre-wrap}
+[data-catalog-root] article[hidden]{display:none}
+[data-catalog-root] article p{margin:8px 0;overflow-wrap:anywhere}
