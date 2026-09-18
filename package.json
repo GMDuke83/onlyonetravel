@@ -2,16 +2,26 @@
   "name": "onlyone-luxury-travel",
   "version": "0.1.0",
   "private": true,
-  "description": "ONLYONE LUXURY TRAVEL — mobile-first cinematic luxury travel experience.",
+  "description": "ONLYONE LUXURY TRAVEL \u2014 mobile-first cinematic luxury travel experience.",
   "scripts": {
     "dev": "node scripts/dev-server.js",
     "start": "node scripts/dev-server.js",
-    "build": "echo \"No build step — 'public/' is deployed as-is.\" && exit 0",
+    "build": "echo \"No build step \u2014 'public/' is deployed as-is.\" && exit 0",
     "stamp": "node scripts/stamp-build.js",
-    "stamp:check": "node scripts/stamp-build.js --check"
+    "stamp:check": "node scripts/stamp-build.js --check",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node scripts/stamp-build.js && playwright test",
+    "dev:backend": "wrangler pages dev public --port 8791",
+    "db:migrate:local": "wrangler d1 migrations apply onlyone-travel --local",
+    "check:functions": "wrangler pages functions build --outdir .wrangler/functions-build",
+    "check": "node scripts/check.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "wrangler": "^4.134.0"
+  }
 }
