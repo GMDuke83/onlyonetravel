@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');
 const {mkdirSync}=require('node:fs');
 const base='http://localhost:8791',staffKey='local-test-only-staff-key-12345678901234567890';
 async function api(ctx,path,method='GET',data){const r=await ctx.request.fetch(base+'/api/v1/'+path,{method,headers:{Origin:base},...(data?{data}:{})});expect(r.ok(),await r.text()).toBeTruthy();return r.json();}
-async function boot(page){await page.goto('/');await page.waitForFunction(()=>!!window.ONLYONE?.boot);await page.evaluate(()=>{window.ONLYONE.boot();document.getElementById('intro')?.remove();document.getElementById('main').classList.add('is-active','is-instant');document.getElementById('main').setAttribute('aria-hidden','false');});await page.waitForFunction(()=>{const v=document.querySelector('.view');return v&&getComputedStyle(v).opacity==='1';});}
+async function boot(page){await page.goto('/');await page.waitForFunction(()=>!!window.ONLYONE?.boot);await page.evaluate(async()=>{const loading=window.ONLYONE.boot();document.getElementById('intro')?.remove();document.getElementById('main').classList.add('is-active','is-instant');document.getElementById('main').setAttribute('aria-hidden','false');await loading;});await page.waitForFunction(()=>{const v=document.querySelector('.view');return v&&getComputedStyle(v).opacity==='1';});}
 test('complete UI journey: enquiry, claim, quote, customer acceptance, partner payment, booking and calendar',async({browser})=>{
  mkdirSync('docs/screenshots',{recursive:true});
  const guest=await browser.newContext({viewport:{width:390,height:844},locale:'de-DE'}),staff=await browser.newContext({viewport:{width:1440,height:900}});

@@ -5066,7 +5066,10 @@
     if(q){sessionStorage.removeItem('onlyone.payreturn');PAYRET=new URLSearchParams(q);}
   }catch(e){}
   window.ONLYONE.boot = async function(){
-    await BACKEND.init();
+    const loading=BACKEND.init();
+    if(!VIEW.name)VIEW={name:'home',param:null};
+    render();
+    await loading;
     if(PAYRET&&PAYRET.get('pay')){
       const ok=S.requests.some(r=>r.id===PAYRET.get('oid')&&r.payment?.status==='paid');
       const r=S.requests.find(x=>x.id===PAYRET.get('oid'));

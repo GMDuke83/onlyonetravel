@@ -17,3 +17,5 @@
  .wrap{max-width:1240px;margin-inline:auto;padding-left:32px;padding-right:32px}
  .pHero .appbar{z-index:30}
 }
+
+.priceBox .muted{color:#eaded1}.wrap{--ok:#216348}
