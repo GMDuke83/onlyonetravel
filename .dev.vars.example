@@ -1,0 +1,6 @@
+# Copy to .dev.vars for LOCAL development only. Never commit .dev.vars.
+STAFF_LOGIN_KEY="replace-with-a-random-secret-of-at-least-32-characters"
+SITE_URL="http://localhost:8788"
+# ZIRAAT_CLIENT_ID="bank-issued-client-id"
+# ZIRAAT_STORE_KEY="bank-issued-secret"
+# ZIRAAT_GATE_URL="bank-approved-test-gateway"

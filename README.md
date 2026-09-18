@@ -1,5 +1,10 @@
 # ONLYONE LUXURY TRAVEL
 
+> **Shared backend:** requests, offers, bookings, messages and payments now use
+> Cloudflare Pages Functions + D1. Start with [setup, migration, API and deployment](docs/shared-backend.md).
+> Older demo/localStorage and bank notes below describe the pre-backend behavior;
+> the new guide is authoritative for persistence, access and payments.
+
 Mobile-first cinematic luxury travel experience.
 
 Luxury editorial · cinematic travel experience · personal concierge.

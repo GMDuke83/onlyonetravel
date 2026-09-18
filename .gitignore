@@ -29,3 +29,9 @@ Thumbs.db
 # local video working files (the shipped hero lives in public/video/)
 /tmp-video/
 *.mov
+
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+playwright-report/
+test-results/

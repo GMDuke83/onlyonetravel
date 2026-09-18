@@ -1621,7 +1621,18 @@
     try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&typeof r==='object')return Object.assign({},DEF,r);}catch(e){}
     return JSON.parse(JSON.stringify(DEF));
   }
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+  const BACKEND=window.createOnlyoneBackend({getState:()=>S,render:()=>render(),notify:msg=>toast(msg)});
+  function save(){
+    // Callback/transfer leads are real shared requests too.
+    for(const lead of S.leads||[]){
+      S.requests.unshift({id:'r'+crypto.randomUUID().replace(/-/g,''),kind:'charter',item:{t:'service',id:lead.type,name:lead.type,img:''},
+        contact:{first:lead.name,last:'',phone:lead.phone,email:'',wa:''},from:lead.date||'',to:'',adults:lead.guests||1,children:0,
+        note:JSON.stringify(lead),route:lead.from||'',wishes:[],excursions:[],childAges:[],status:'new',createdAt:Date.now(),offer:null,payment:null,folio:null,staffNote:'',messages:[],history:[{s:'new',at:Date.now()}]});
+    }
+    S.leads=[];
+    try{localStorage.setItem(KEY,JSON.stringify({...S,requests:[],leads:[],staff:null}));}catch(e){}
+    BACKEND.capture();
+  }
   LANG = S.lang || detectLang();
   /* The standard `lang` attribute only. A `data-lang` copy used to sit here as
      well; nothing read it — no CSS rule, no other line of script — but it put
@@ -1646,6 +1657,7 @@
   const $$=(s,r)=>Array.prototype.slice.call((r||document).querySelectorAll(s));
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const hotel=id=>PUBLIC_HOTELS.find(h=>h.id===id);
+  const FALLBACK_HOTEL={name:'Travel request',rooms:[],imgs:[''],stars:0,region:''};
   const request=id=>S.requests.find(r=>r.id===id);
   const stars=n=>'★'.repeat(n);
   const rateWord=r=>r>=9.3?t('exceptional'):r>=8.8?t('wonderful'):t('veryGood');
@@ -1675,6 +1687,7 @@
     return many;};
   let toastTimer;
   function toast(msg){
+    if(BACKEND.pending)msg='Changes are awaiting server confirmation.';
     const el=$('#toast');if(!el)return;
     el.textContent=msg;el.classList.add('is-in');
     clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('is-in'),2100);
@@ -1991,14 +2004,14 @@
         <div class="charterCard__line">${esc(o.l1)}</div>
         <div class="charterCard__line charterCard__line--soft">${esc(o.l2)}</div>
         <div class="charterCard__rate">
-          <div class="charterCard__rateVal">${o.enquire?`<span>${t('yachtOnRequest')}</span>`:`<span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b>`}</div>
+          <div class="charterCard__rateVal">${(o.enquire||o.onRequest)?`<span>${t('yachtOnRequest')}</span>`:`<span>${esc(o.rateLabel)}</span><b>${esc(o.rate)}</b>`}</div>
           ${/* No handler of its own: the tap bubbles to the card, which is
                 the sheet's door anyway — the button only says the door is
                 there. */''}
           <button class="charterCard__more" type="button">${hx('Детали','Details','Details')}${icon('chev')}</button>
         </div>
         ${o.enquire?`<button class="btn btn--gold charterCard__book" type="button" data-yacht="${o.enquire}">${t('yachtRequest')}</button>`:''}
-        ${o.book?`<button class="btn btn--gold charterCard__book" type="button" data-book="${o.book}">${hx('Забронировать и оплатить','Buchen & bezahlen','Book & pay')}</button>`:''}
+        ${o.book?`<button class="btn btn--gold charterCard__book" type="button" data-book="${o.book}">${t('requestOffer')}</button>`:''}
       </div>
     </article>`;
   }
@@ -2056,16 +2069,14 @@
     return `${fleetHead({
       eyebrow:'ONLYONE · '+hx('VIP-ТРАНСФЕР','VIP-TRANSFER','VIP TRANSFER'),
       title:hx('VIP-транспорт','VIP-Transport','VIP transport'),
-      note:hx('Лимузин, VIP-бус или вертолёт — с водителем или пилотом, встречей и сопровождением. Цены ориентировочные, по региону Антальи.',
-              'Limousine, VIP-Bus oder Helikopter — mit Chauffeur oder Pilot, Empfang und Begleitung. Die Preise sind Richtwerte für die Region Antalya.',
-              'Limousine, VIP bus or helicopter — with chauffeur or pilot, welcome and escort. Rates are a guide for the Antalya region.'),
+      note:t('noPricesNote'),
       chips})}
     <div class="wrap">
       <div class="cardList">${list.length?list.map(v=>charterCard({
         attr:`data-vehicle="${v.id}"`, img:v.img, name:vehName(v),
         l1:loc(v.kind), l2:loc(v.cap),
         rateLabel:rateWordFleet(v.perFlight),
-        rate:eur(v.from), book:'vehicle:'+v.id})).join(''):fleetEmpty()}</div>
+        onRequest:true, book:'vehicle:'+v.id})).join(''):fleetEmpty()}</div>
       <div class="listCard blockAsk fleetAsk">
         <p>${hx('Кортеж, эскорт, встреча борта бизнес-авиации или машина на весь день — организуем по запросу.',
                 'Konvoi, Eskorte, Empfang eines Privatjets oder ein Wagen für den ganzen Tag — organisieren wir auf Anfrage.',
@@ -2766,11 +2777,13 @@
     if(W.step===4){const n=$('#wNote');if(n)W.note=n.value;}
     if(W.step===5){W.first=g('#wFirst');W.last=g('#wLast');W.phone=g('#wPhone');W.email=g('#wEmail');W.wa=g('#wWa');}
   }
-  function submitRequest(){
+  async function submitRequest(){
+    if(!BACKEND.ready||BACKEND.busy||BACKEND.blocked){toast('Backend unavailable or saving. Please try again.');return;}
+    if(W.requestId){if(await BACKEND.flush()){const id=W.requestId;W=null;STACK.length=0;go('sent',id,true);}return;}
     S.seq+=1;
     const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
     S.requests.unshift({
-      id:'r'+Date.now(),code,hotelId:W.hotelId,roomId:W.roomId,
+      id:'r'+crypto.randomUUID().replace(/-/g,''),code,hotelId:W.hotelId,roomId:W.roomId,
       from:W.from,to:W.to,adults:W.adults,children:W.children,childAges:W.childAges.slice(0,W.children),
       wishes:W.wishes.slice(),excursions:W.excursions.slice(),note:W.note,
       contact:{first:W.first,last:W.last,phone:W.phone,email:W.email,wa:W.wa},
@@ -2778,7 +2791,8 @@
       history:[{s:'new',at:Date.now()}]
     });
     save();
-    const id=S.requests[0].id;
+    const id=S.requests[0].id;W.requestId=id;
+    if(!await BACKEND.flush())return;
     W=null;
     STACK.length=0;
     go('sent',id,true);
@@ -2909,7 +2923,7 @@
 
   function vSent(id){
     const r=request(id);if(!r)return vHome();
-    const h=hotel(r.hotelId);
+    const h=(hotel(r.hotelId)||FALLBACK_HOTEL);
     return `<section class="confirmBg">
       ${bgVideo('./video/onlyone-confirm-v2.mp4','./images/onlyone-confirm-poster.webp')}
       <div class="confirmBg__scrim"></div>
@@ -2934,10 +2948,10 @@
   function vTrips(){
     return `${appbar({})}
     <div class="wrap" style="padding-top:18px">
-      <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myTrips')}</h1>
+      <h1 class="h-xl" style="font-family:var(--serif);font-weight:400">${t('myTrips')}</h1>${BACKEND.toolbar()}
       ${S.requests.length?S.requests.map(r=>{
         const charter=r.kind==='charter';
-        const h=charter?null:hotel(r.hotelId);
+        const h=charter?null:(hotel(r.hotelId)||FALLBACK_HOTEL);
         return `<div class="listCard fade-up">
           <div class="listCard__h">
             <div style="min-width:0">
@@ -2949,7 +2963,7 @@
           </div>
           <div style="margin-top:12px">
             <button class="btn ${(r.status==='offer'||r.status==='payopen')?'btn--primary':'btn--ghost'} btn--sm" style="width:100%" data-trip="${r.id}">
-              ${r.status==='offer'?t('viewOffer'):r.status==='payopen'?t('payNow'):t('details')}</button>
+              ${r.status==='offer'?t('viewOffer'):['accepted','payopen'].includes(r.status)?t('payNow'):t('details')}</button>
           </div>
         </div>`;}).join(''):
         `<div class="empty">${icon('trip')}<b>${t('noTrips')}</b></div>`}
@@ -2964,7 +2978,7 @@
     return `${appbar({back:true,title:r.code,menu:false})}
     <div class="wrap" style="padding-top:16px">
       <article class="card charterCard" style="pointer-events:none">
-        ${r.item.img?`<div class="card__media" style="aspect-ratio:16/10"><img src="${r.item.img}" alt=""></div>`:pendingMedia()}
+        ${r.item.img?`<div class="card__media" style="aspect-ratio:16/10"><img src="${esc(r.item.img)}" alt=""></div>`:pendingMedia()}
         <div class="card__body">
           <h2 class="charterCard__name">${esc(r.item.name)}</h2>
           <div class="charterCard__line">${charterWhen(r)} · ${charterGuests(r)}</div>
@@ -2979,7 +2993,7 @@
         ${r.offer.custInfo?`<p class="muted">${esc(r.offer.custInfo)}</p>`:''}
       </div>`:`<div class="noteBox">${t('yachtRequestNote')}</div>`}
       ${r.status==='offer'?`<button class="btn btn--primary" data-act="accept" data-id="${r.id}">${t('acceptOffer')}</button>`:''}
-      ${r.status==='payopen'?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
+      ${['accepted','payopen'].includes(r.status)?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
       ${paid?`<div class="listCard" style="display:flex;align-items:center;gap:11px;background:rgba(40,168,121,.10)">
         <span style="color:var(--ok);display:grid;place-items:center">${icon('check')}</span>
         <b style="font-size:14px;color:var(--ok)">${t('paid')}</b></div>`:''}
@@ -2995,7 +3009,7 @@
   function vTrip(id){
     const r=request(id);if(!r)return vTrips();
     if(r.kind==='charter')return vTripCharter(r);
-    const h=hotel(r.hotelId);
+    const h=(hotel(r.hotelId)||FALLBACK_HOTEL);
     const roomId=(r.offer&&r.offer.roomId)||r.roomId;
     const room=roomId?h.rooms.find(x=>x.id===roomId):null;
     const showOffer=r.offer&&['offer','accepted','payopen','paid','confirmed'].indexOf(r.status)>-1;
@@ -3028,7 +3042,7 @@
         <button class="btn btn--ghost" data-act="ask">${t('askBack')}</button>
         <button class="btn btn--primary" data-act="accept" data-id="${r.id}">${t('acceptOffer')}</button></div>
       <div style="margin-top:10px"><button class="btn btn--gold" data-act="accept-pay" data-id="${r.id}">${icon('card')}${hx('Принять и оплатить сейчас','Annehmen & jetzt bezahlen','Accept & pay now')}</button></div>`:''}
-      ${r.status==='payopen'?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
+      ${['accepted','payopen'].includes(r.status)?`<div style="margin-top:12px"><button class="btn btn--primary" data-act="pay" data-id="${r.id}">${icon('card')}${t('payNow')}</button></div>`:''}
       ${(r.status==='paid'||r.status==='confirmed')?`<div class="listCard" style="display:flex;align-items:center;gap:11px;background:rgba(40,168,121,.10)">
         <span style="color:var(--ok);display:grid;place-items:center">${icon('check')}</span>
         <b style="font-size:14px;color:var(--ok)">${r.status==='confirmed'?t('tripConfirmed'):t('paid')}</b></div>`:''}
@@ -3146,14 +3160,14 @@
     <div class="wrap" style="padding-top:30px">
       <div style="width:60px;height:60px;border-radius:18px;background:var(--navy);display:grid;place-items:center;color:var(--gold-light)">${icon('lock')}</div>
       <h1 class="h-xl" style="margin-top:16px;font-family:var(--serif);font-weight:400">${t('staffArea')}</h1>
-      <p class="muted tiny" style="margin-top:8px">${t('loginNote')}</p>
-      <div class="field"><label class="label">${t('yourName')}</label><input class="input" id="stName" value="Maria"></div>
+      <p class="muted tiny" style="margin-top:8px">Staff access requires the private staff key.</p>
+      <div class="field"><label class="label">${t('yourName')}</label><input class="input" id="stName" autocomplete="username"></div><div class="field"><label class="label">Staff key</label><input class="input" id="stKey" type="password" autocomplete="current-password"></div>
       <div style="margin-top:16px"><button class="btn btn--primary" data-act="do-login">${t('login')}</button></div>
     </div>`;
   }
   function staffReqCard(r){
     const charter=r.kind==='charter';
-    const h=charter?null:hotel(r.hotelId);
+    const h=charter?null:(hotel(r.hotelId)||FALLBACK_HOTEL);
     return `<div class="listCard fade-up">
       <div class="listCard__h">
         <div style="min-width:0">
@@ -3239,7 +3253,7 @@
     const r=request(id);if(!r)return vStaffReqs();
     markRead(r,'staff');
     const charter=r.kind==='charter';
-    const h=charter?null:hotel(r.hotelId);
+    const h=charter?null:(hotel(r.hotelId)||FALLBACK_HOTEL);
     const room=(h&&r.roomId)?h.rooms.find(x=>x.id===r.roomId):null;
     return `${appbar({back:true,title:r.code,menu:false})}
     <div class="wrap" style="padding-top:16px">
@@ -3312,7 +3326,7 @@
       if(!map[k])map[k]={c:r.contact,reqs:0,books:0,last:null};
       map[k].reqs++;
       if(['paid','confirmed'].indexOf(r.status)>-1)map[k].books++;
-      const lh=hotel(r.hotelId);
+      const lh=(hotel(r.hotelId)||FALLBACK_HOTEL);
       if(lh)map[k].last=lh;
     });
     const list=Object.keys(map).map(k=>map[k]);
@@ -3943,6 +3957,7 @@
      ==================================================================== */
   function render(restore){
     const a=$('#app');if(!a)return;
+    if(VIEW.name?.startsWith('s-')&&!S.staff)VIEW={name:'staff',param:null};
     restore=restore||0;
     let html='';
     switch(VIEW.name){
@@ -3973,6 +3988,9 @@
       case 's-fin':     html=S.staff?vStaffFinance():vStaffLogin();break;
       default:          html=vHome();
     }
+    if(['trip','s-reqd'].includes(VIEW.name)&&VIEW.param)html='<div class="wrap" style="padding-top:42px"><button class="btn btn--ghost" data-backend="share" data-id="'+esc(VIEW.param)+'">Copy private travel access link</button></div>'+html;
+    if(VIEW.name==='s-reqd'&&S.staff)html='<div class="wrap"><button class="btn btn--ghost" data-backend="legacy" data-id="'+esc(VIEW.param)+'">Download legacy review data</button><button class="btn btn--ghost" data-backend="reconcile" data-outcome="paid" data-id="'+esc(VIEW.param)+'">Bank verified: received</button><button class="btn btn--ghost" data-backend="reconcile" data-outcome="failed" data-id="'+esc(VIEW.param)+'">Bank verified: failed / cancelled</button></div>'+html;
+    if(['s-dash','s-req','s-more'].includes(VIEW.name))html=BACKEND.toolbar()+html;
     a.innerHTML=`<div class="view">${html}</div>`;
     /* The view animation moves, and an element with a transform becomes the
        containing block for every position:fixed inside it — which is how the
@@ -4202,7 +4220,7 @@
     </div>`);
   }
   function sheetOffer(id){
-    const r=request(id),charter=r.kind==='charter',h=charter?null:hotel(r.hotelId);
+    const r=request(id),charter=r.kind==='charter',h=charter?null:(hotel(r.hotelId)||FALLBACK_HOTEL);
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('createOffer')}</h3>
         <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
       <div class="sheet__body">
@@ -4343,8 +4361,8 @@
   }
   function sheetPay(id){
     const r=request(id);
-    if(!r||!r.offer||r.status!=='payopen')return;
-    const payAmount=paymentAmount(r), payCurrency=(r.offer&&r.offer.currency)||'EUR';
+    if(!r||!r.offer||!['accepted','payopen'].includes(r.status))return;
+    const payAmount=r.payment?.status==='open'&&r.payment?.amount?r.payment.amount:paymentAmount(r), payCurrency=r.payment?.currency||(r.offer&&r.offer.currency)||'EUR';
     /* A real payment link on the request outranks the bank chooser: the
        assistant created it in the payment provider's panel (today that is
        provider-neutral), so it is the path where real money flows.
@@ -4388,7 +4406,7 @@
     <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-start" data-id="${id}">${hx('Перейти к оплате','Weiter zur Bank','Continue to the bank')}</button></div>`);
     probePay().then(c=>{
       const n=$('#payModeNote');if(!n)return;
-      if(!c){n.hidden=false;n.textContent=t('payDemoNote');}
+      if(!c){n.hidden=false;n.textContent='Payment service unavailable. No payment will be recorded.';}
     });
   }
   /* --------------------------------------------------------------------
@@ -4403,9 +4421,9 @@
   function newCharterBooking(o){
     S.seq+=1;
     const code=`OO-${new Date().getFullYear()}-${String(S.seq).padStart(5,'0')}`;
-    const enquiry=o.t==='yacht'||o.t==='excursion';
+    const enquiry=!S.staff||o.t!=='service';
     const status=enquiry?'new':'payopen';
-    const req={id:'r'+Date.now(),code,kind:'charter',hotelId:null,
+    const req={id:'r'+crypto.randomUUID().replace(/-/g,''),code,kind:'charter',hotelId:null,
       item:{t:o.t,id:o.id,name:o.name,img:o.img||''},
       from:o.date,to:o.to||'',adults:o.guests,children:o.children||0,childAges:[],
       route:o.route||'',note:o.note||'',wishes:[],excursions:[],
@@ -4433,7 +4451,7 @@
       <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
     <div class="sheet__body">
       <div class="kv" style="margin-top:0"><span class="muted">${hx('Что бронируем','Gebucht wird','You are booking')}</span><b>${esc(name)}</b></div>
-      <div class="priceBox"><div class="lbl">${esc(rateLabel)}</div><div class="amt">${eur(it.from)}</div></div>
+      <div class="noteBox">${t('noPricesNote')}</div>
       <div class="grid2"><div class="field"><label class="label">${week?hx('Начало · 1 неделя','Start · 1 Woche','Start · 1 week'):hx('Дата','Datum','Date')} *</label>
           <input class="input" type="date" id="bcDate" min="${today()}"></div>
         <div class="field"><label class="label">${t('guests')}</label>
@@ -4443,32 +4461,10 @@
       <div class="field"><label class="label">${hx('Имя','Name','Name')} *</label><input class="input" id="bcName" autocomplete="name"></div>
       <div class="field"><label class="label">${hx('Телефон','Telefon','Phone')} *</label><input class="input" id="bcPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+90 ..."></div>
       <div class="field"><label class="label">${hx('Комментарий','Hinweis','Note')}</label><input class="input" id="bcNote"></div>
-      <div class="noteBox">${hx('Сейчас оплачивается цена «от». Финальные детали и возможные доплаты VIP-ассистент подтвердит с вами до начала.',
-        'Bezahlt wird jetzt der Ab-Preis. Finale Details und etwaige Aufpreise bestätigt Ihr VIP-Assistent vor Antritt persönlich.',
-        'You pay the from-rate now. Final details and any extras are confirmed personally by your VIP assistant before the start.')}</div>
+      <div class="noteBox">${t('nonBinding')}</div>
     </div>
-    <div class="sheet__foot"><button class="btn btn--gold" data-act="book-pay" data-bt="${bt}" data-bid="${bid}">${hx('Забронировать и оплатить','Buchen & bezahlen','Book & pay')}</button></div>`);
+    <div class="sheet__foot"><button class="btn btn--gold" data-act="book-pay" data-bt="${bt}" data-bid="${bid}">${t('requestOffer')}</button></div>`);
   }
-  function sheetPayDemo(id,provider){
-    const r=request(id);
-    const p=PAY_PROVIDERS.find(x=>x.id===provider)||PAY_PROVIDERS[0];
-    /* Deliberately neutral: a labelled simulator, not a bank's page. */
-    openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('demoPay')}</h3>
-      <button class="iconBtn" data-sheet-close>${icon('close')}</button></div>
-    <div class="sheet__body">
-      <div class="eyebrow">DEMO · 3-D SECURE</div>
-      <div class="kv" style="margin-top:10px"><span class="muted">${hx('Банк','Bank','Bank')}</span><b>${esc(p.n)}</b></div>
-      <div class="priceBox"><div class="lbl">${t('total')}</div>
-        <div class="amt">${money(paymentAmount(r),r.offer.currency)}</div></div>
-      <div class="noteBox">${t('payDemoNote')}</div>
-      <button class="btn btn--ghost" style="margin-top:14px" data-act="pay-demo-fail">${hx('Симулировать отказ','Fehlschlag simulieren','Simulate a decline')}</button>
-    </div>
-    <div class="sheet__foot"><button class="btn btn--primary" data-act="pay-do" data-id="${id}">${hx('Симулировать успешную оплату','Erfolgreiche Zahlung simulieren','Simulate a successful payment')}</button></div>`);
-  }
-  /* The link the assistant pastes here comes from the panel of whatever
-     payment provider the company uses — the mechanism is deliberately
-     provider-neutral. The app never fabricates a link; only a real page
-     may face a paying guest. */
   function sheetPayLink(id){
     const r=request(id);if(!r||!r.offer)return;
     openSheet(`<div class="sheet__head"><h3 class="h-lg">${t('createPayLink')}</h3>
@@ -4560,8 +4556,9 @@
     }
   },true);
 
-  document.addEventListener('click',e=>{
+  document.addEventListener('click',async e=>{
     const T=e.target;
+    if(BACKEND.busy){toast('Saving changes…');return;}
     if(T.closest('[data-sheet-close]')){closeSheet();return;}
 
     const bl=T.closest('[data-block]');
@@ -4731,6 +4728,8 @@
     const a=T.closest('[data-act]');
     if(!a)return;
     const act=a.dataset.act,id=a.dataset.id;
+    const writes=['vip-callback','transfer-quick-send','transfer-send','yacht-send','exc-send','accept','payment-save','book-pay','accept-pay','pay-start','pay-do','save-note','offer-save','paylink-save','payreq-save','mark-paid','c-send','s-send','confirm-hotel'];
+    if(writes.includes(act)&&(!BACKEND.ready||BACKEND.blocked)){toast('Backend unavailable. Your request has not been sent.');return;}
     switch(act){
       case 'vip-callback': {
         const form=a.closest('[data-vip-lead-form]');
@@ -4896,14 +4895,13 @@
           note:(($('#bcNote')||{}).value||'').trim(),first,phone});
         /* Straight into the payment sheet — swapping the open sheet's
            content leaves no gap for a back gesture or a double tap. */
-        sheetPay(req.id);
+        save();if(await BACKEND.flush()){if(req.offer)sheetPay(req.id);else {closeSheet();go('trip',req.id);}}
         break;
       }
       case 'accept-pay': {
         const r=request(id);if(!r)break;
         setStatus(r,'accepted');
-        r.payment={link:'',status:'open'};
-        setStatus(r,'payopen');
+        await BACKEND.flush();
         render();
         sheetPay(r.id);
         break;
@@ -4912,7 +4910,7 @@
         const r=request(id);if(!r||!r.offer)break;
         const provider=PAYSEL;
         probePay().then(c=>{
-          if(!c){sheetPayDemo(id,provider);return;}
+          if(!c){toast('Payment service unavailable. No payment was recorded.');return;}
           if(!(c.providers&&c.providers[provider])){
             toast(hx('Оплата через этот банк ещё не подключена.',
                      'Diese Bank ist noch nicht freigeschaltet.',
@@ -4927,28 +4925,13 @@
         closeSheet();
         setTimeout(()=>toast(hx('Платёж не выполнен (демо).','Zahlung fehlgeschlagen (Demo).','Payment failed (demo).')),330);
         break;
-      case 'pay-do': {
-        const r=request(id);
-        const amount=paymentAmount(r),now=Date.now();
-        const pending=folioPayments(r).find(p=>p.status==='pending'&&p.id===((r.payment||{}).requestId));
-        if(pending){pending.status='paid';pending.paidAt=now;}
-        else recordFolioPayment(r,{type:'balance',method:PAYSEL,amount,currency:(r.offer&&r.offer.currency)||'EUR',reference:r.code,status:'paid'});
-        r.payment=r.payment||{};r.payment.status='paid';r.payment.amount=amount;r.payment.paidAt=now;
-        if(paymentTotals(r).due<=0.01)setStatus(r,'paid');else save();
-        closeSheet();
-        /* Whoever paid from a catalogue page must land on the paid trip,
-           not back among the cards as if nothing had happened. */
-        setTimeout(()=>{
-          if(VIEW.name==='trip'&&VIEW.param===r.id)render();
-          else go('trip',r.id);
-          toast(t('paidOk'));
-        },280);break;
-      }
+      case 'pay-do': toast('Demo payments are disabled.');break;
       case 'do-login': {
-        const n=$('#stName');
-        S.staff=(n&&n.value.trim())||'Staff';save();go('s-dash',null,true);break;
+        try{await BACKEND.login(($('#stName')||{}).value||'Staff',($('#stKey')||{}).value||'');go('s-dash',null,true);}
+        catch(error){toast(error.message);}break;
       }
-      case 'logout': S.staff=null;save();STACK.length=0;go('home',null,true);break;
+      case 'logout':
+        try{await BACKEND.logout();STACK.length=0;go('home',null,true);}catch(error){toast(error.message);}break;
       case 'save-note': {
         const r=request(id),n=$('#sNote');
         if(n){r.staffNote=n.value;}
@@ -5059,30 +5042,18 @@
      13 · Public API for the intro
      ==================================================================== */
   window.ONLYONE = window.ONLYONE || {};
-  /* A visitor coming back from a bank carries the outcome in the stash the
-     document wrote before it stripped the query. Read once, here, so the
-     platform opens on the trip with its new state instead of the home page.
-     The bank's callback function has already verified the cryptography —
-     this only mirrors the result into the on-device state. */
+  /* Bank-return URLs only select the journey. All payment state is loaded
+     from D1 after the server has verified and recorded the callback. */
   let PAYRET=null;
   try{
     const q=sessionStorage.getItem('onlyone.payreturn');
     if(q){sessionStorage.removeItem('onlyone.payreturn');PAYRET=new URLSearchParams(q);}
   }catch(e){}
-  window.ONLYONE.boot = function(){
+  window.ONLYONE.boot = async function(){
+    await BACKEND.init();
     if(PAYRET&&PAYRET.get('pay')){
-      const ok=PAYRET.get('pay')==='ok';
+      const ok=S.requests.some(r=>r.id===PAYRET.get('oid')&&r.payment?.status==='paid');
       const r=S.requests.find(x=>x.id===PAYRET.get('oid'));
-      if(r&&ok&&r.status!=='paid'&&r.status!=='confirmed'){
-        const amount=paymentAmount(r),now=Date.now();
-        const pending=folioPayments(r).find(p=>p.status==='pending'&&p.id===((r.payment||{}).requestId));
-        if(pending){pending.status='paid';pending.paidAt=now;}
-        else recordFolioPayment(r,{type:'balance',method:PAYRET.get('provider')||'online',amount,currency:(r.offer&&r.offer.currency)||'EUR',reference:r.code,status:'paid'});
-        r.payment=r.payment||{};
-        r.payment.status='paid';r.payment.amount=amount;r.payment.paidAt=now;
-        r.payment.provider=PAYRET.get('provider')||'';
-        if(paymentTotals(r).due<=0.01)setStatus(r,'paid');else save();
-      }
       VIEW=r?{name:'trip',param:r.id}:{name:'trips',param:null};
       const msg=ok?t('paidOk'):hx('Платёж не выполнен. Попробуйте ещё раз или напишите VIP-ассистенту.',
         'Die Zahlung wurde nicht ausgeführt. Bitte erneut versuchen oder dem VIP-Assistenten schreiben.',
