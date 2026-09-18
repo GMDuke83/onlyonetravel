@@ -2,6 +2,7 @@ import { json } from '../pay/util.js';
 import { safely, fail, sameOrigin, bodyJSON, session, createSession, digest, token, rateLimit, owned } from '../../_lib/security.js';
 import { settlePayment } from '../../_lib/payments.js';
 import { createRequest, updateRequest, publicRequest } from '../../_lib/model.js';
+import { catalog, serviceOffer } from '../../_lib/catalog.js';
 export async function onRequest({request,env}) { return safely(async()=>{
   if(!env.DB)fail(503,'database-not-configured');
   const url=new URL(request.url),path=url.pathname.replace(/^\/api\/v1\/?/,'').split('/'),method=request.method;
@@ -29,6 +30,7 @@ export async function onRequest({request,env}) { return safely(async()=>{
     }
   }
   if(!s)fail(401,'session-required');
+  if(['partners','services'].includes(path[0]))return catalog({request,env,s,path,url});
   if(path[0]==='access'&&method==='POST'){
     const b=await bodyJSON(request);await rateLimit(env,'access:'+s.token_hash,30);
     const link=await env.DB.prepare('SELECT request_id FROM access_links WHERE token_hash=? AND expires_at>?').bind(await digest(String(b.token)),Date.now()).first();
@@ -44,13 +46,15 @@ export async function onRequest({request,env}) { return safely(async()=>{
       return json({requests:rows.results.map(r=>publicRequest(r,s.role)),cursor:rows.results.length===100?rows.results.at(-1).id:null});
     }
     if(method==='POST'){
-      const b=await bodyJSON(request),input=b.request;
+      const b=await bodyJSON(request);let input=b.request;
       if(!input||!/^r[A-Za-z0-9_-]{8,80}$/.test(input.id))fail(400,'invalid-request-id');
       // Idempotency is scoped to the creating session. Knowing an ID never grants access.
       const existing=await env.DB.prepare('SELECT * FROM requests WHERE id=?').bind(input.id).first();
       if(existing){if(existing.owner!==s.token_hash)fail(409,'id-conflict');return json({request:publicRequest(existing,s.role)});}
+      if(input.sourceServiceId)input=await serviceOffer(env,s,input);
       await rateLimit(env,'create:'+s.token_hash,30);
       let r=createRequest(input,input.id,s.role==='staff'||b.legacy===true);
+      if(input.sourceServiceId)r.sourcing=input.sourcing;
       if(s.role==='staff'&&!b.legacy&&input.offer){
         r=updateRequest(r,{...r,offer:input.offer,status:'offer'},'staff',s.name);
         if(input.payment)r=updateRequest(r,{...r,payment:input.payment,status:input.status==='payopen'?'payopen':'offer'},'staff',s.name);

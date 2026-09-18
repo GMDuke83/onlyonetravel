@@ -1621,7 +1621,7 @@
     try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&typeof r==='object')return Object.assign({},DEF,r);}catch(e){}
     return JSON.parse(JSON.stringify(DEF));
   }
-  const BACKEND=window.createOnlyoneBackend({getState:()=>S,render:()=>render(),notify:msg=>toast(msg)});
+  const BACKEND=window.createOnlyoneBackend({getState:()=>S,render:()=>{if(!document.querySelector('[data-catalog-root]'))render();},notify:msg=>toast(msg)});
   function save(){
     // Callback/transfer leads are real shared requests too.
     for(const lead of S.leads||[]){
@@ -3184,6 +3184,8 @@
   function vStaffDash(){
     const c=s=>S.requests.filter(r=>r.status===s).length;
     const feed=S.requests.slice(0,6);
+    const nextSteps={new:'Anfrage prüfen',review:'Angebot vorbereiten',accepted:'Bestätigung und Zahlungsanforderung prüfen',payopen:'Offene Zahlung prüfen',paid:'Buchungsbestätigung prüfen'};
+    const tasks=S.requests.filter(r=>nextSteps[r.status]).sort((a,b)=>a.createdAt-b.createdAt).slice(0,8);
     return `<div class="staffTop">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div><div class="mini" style="opacity:.62;letter-spacing:.16em;text-transform:uppercase">${t('staffArea')}</div>
@@ -3192,6 +3194,7 @@
       </div></div>
     <div class="wrap" style="padding-top:18px">
       <div class="muted mini" style="letter-spacing:.14em;text-transform:uppercase">${t('today')}</div>
+      <div class="catalogNav"><button class="btn btn--primary" data-go="s-catalog">Partner & eigene Leistungen</button><button class="btn btn--ghost" data-go="s-fin">${t('finances')}</button></div>
       <div class="grid2s" style="margin-top:11px">
         <div class="statBox"><b>${c('new')}</b><span>${t('newReq')}</span></div>
         <div class="statBox"><b>${c('offer')}</b><span>${t('openOffers')}</span></div>
@@ -3201,6 +3204,8 @@
       <div class="statBox" style="margin-top:11px"><b>${c('paid')+c('confirmed')}</b><span>${t('newBook')}</span></div>
       <button class="btn btn--gold" style="margin-top:11px" data-act="payreq-form">${icon('card')}${hx('Запросить оплату','Zahlung anfordern','Request a payment')}</button>
       <div class="noteBox" style="display:flex;gap:9px;align-items:flex-start">${icon('lock')}<span>${t('staffOnly')}</span></div>
+      <h2 class="h-lg" style="margin-top:22px">Nächste Schritte</h2>
+      ${tasks.length?tasks.map(r=>`<button class="listCard" style="display:block;width:100%;text-align:left" data-sreq="${esc(r.id)}"><b>${esc(nextSteps[r.status])}</b><small class="muted" style="display:block;margin-top:5px">${esc(r.code)} · ${esc(r.contact.first)} ${esc(r.contact.last||'')}</small></button>`).join(''):'<p class="muted">Aktuell keine offenen Arbeitsschritte.</p>'}
       <div class="section__head" style="margin-top:22px"><h2 class="h-lg">${t('requests')}</h2>
         <button class="tiny muted" data-go="s-req" style="font-weight:600">${t('all')}</button></div>
       ${feed.length?feed.map(staffReqCard).join(''):`<div class="empty">${icon('inbox')}<b>${t('noTrips')}</b></div>`}
@@ -3259,6 +3264,7 @@
     <div class="wrap" style="padding-top:16px">
       <span class="pill ${STATUS_PILL[r.status]}">${t(STATUS_LABEL[r.status])}</span>
       <h1 class="h-lg" style="margin-top:12px">${esc(r.contact.first)} ${esc(r.contact.last)}</h1>
+      ${r.sourcing?`<div class="listCard"><b>Eigene Leistung · Einkaufskonditionen</b><div class="kv"><span>Partner</span><b>${esc(r.sourcing.partner)}</b></div><div class="kv"><span>${r.sourcing.quantity} × ${esc(r.sourcing.unit)}</span><b>${money(r.sourcing.costMinor*r.sourcing.quantity/100,r.sourcing.currency)}</b></div><p class="muted mini">Konditionen zum Zeitpunkt der Angebotserstellung. Eine Partnerbuchung wird nicht automatisch ausgelöst.</p></div>`:''}
       <div class="listCard">
         <div class="muted mini" style="letter-spacing:.12em;text-transform:uppercase">${t('guestData')}</div>
         <div class="kv" style="margin-top:8px"><span class="muted">${t('phone')}</span><b>${esc(r.contact.phone||'—')}</b></div>
@@ -3353,6 +3359,7 @@
   function vStaffMore(){
     return `<div class="staffTop"><h1 class="h-xl">${t('more')}</h1></div>
     <div class="wrap" style="padding-top:14px">
+      <button class="listCard" style="display:block;width:100%;text-align:left" data-go="s-catalog"><b>Partner & eigene Leistungen</b><small class="muted" style="display:block">Partner verwalten, Einkaufskonditionen pflegen und Angebote erstellen</small></button>
       <button class="listCard" style="display:flex;width:100%;text-align:left;align-items:center;gap:12px" data-go="s-fin">
         <span style="color:var(--gold-ink)">${icon('card')}</span><span style="flex:1"><b>${t('finances')}</b><small class="muted" style="display:block;margin-top:3px">${t('paymentHistory')}</small></span>${icon('chev')}
       </button>
@@ -3986,12 +3993,14 @@
       case 's-cust':    html=S.staff?vStaffCustomers():vStaffLogin();break;
       case 's-more':    html=S.staff?vStaffMore():vStaffLogin();break;
       case 's-fin':     html=S.staff?vStaffFinance():vStaffLogin();break;
+      case 's-catalog': html=S.staff?`${appbar({back:true,title:'Partner & Leistungen',menu:false})}<div class="wrap" data-catalog-root style="padding-top:16px"></div><div class="pageBottom"></div>${staffTabbar('s-more')}`:vStaffLogin();break;
       default:          html=vHome();
     }
     if(['trip','s-reqd'].includes(VIEW.name)&&VIEW.param)html='<div class="wrap" style="padding-top:42px"><button class="btn btn--ghost" data-backend="share" data-id="'+esc(VIEW.param)+'">Copy private travel access link</button></div>'+html;
     if(VIEW.name==='s-reqd'&&S.staff)html='<div class="wrap"><button class="btn btn--ghost" data-backend="legacy" data-id="'+esc(VIEW.param)+'">Download legacy review data</button><button class="btn btn--ghost" data-backend="reconcile" data-outcome="paid" data-id="'+esc(VIEW.param)+'">Bank verified: received</button><button class="btn btn--ghost" data-backend="reconcile" data-outcome="failed" data-id="'+esc(VIEW.param)+'">Bank verified: failed / cancelled</button></div>'+html;
     if(['s-dash','s-req','s-more'].includes(VIEW.name))html=BACKEND.toolbar()+html;
     a.innerHTML=`<div class="view">${html}</div>`;
+    if(VIEW.name==='s-catalog'&&S.staff)window.mountOnlyoneCatalog(a.querySelector('[data-catalog-root]'),{onCreated:async r=>{await BACKEND.refresh();go('s-reqd',r.id);toast('Angebot gespeichert. Partnerbestätigung steht noch aus.');}});
     /* The view animation moves, and an element with a transform becomes the
        containing block for every position:fixed inside it — which is how the
        tab bar once scrolled away with the page. So the fixed furniture is

@@ -29,6 +29,7 @@ export function totals(r) {
 export function publicRequest(row,role) {
   const r=typeof row.data==='string'?JSON.parse(row.data):structuredClone(row.data);
   if(role!=='staff'){
+    delete r.sourcing;
     delete r.staffNote;if(r.offer)delete r.offer.internalNote;
     if(r.folio)r.folio.payments=r.folio.payments.map(p=>Object.fromEntries(['id','type','method','amount','currency','exchangeRate','baseAmount','status','createdAt','paidAt'].filter(k=>p[k]!==undefined).map(k=>[k,p[k]])));
     if(!r.offer){r.payment=null;r.folio=null;}

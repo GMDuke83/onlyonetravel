@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { onRequest as api } from '../functions/api/v1/[[path]].js';
 import { onRequestPost as start } from '../functions/api/pay/start.js';
 import { onRequest as callback } from '../functions/api/pay/return/[provider].js';
@@ -10,7 +10,7 @@ import { nestpayHashVer3 } from '../functions/api/pay/util.js';
 // Execute the actual migration and SQL against SQLite, adapting only D1's
 // async result shape. Transactional batch behavior is preserved.
 function database(){
-  const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('../migrations/0001_shared_backend.sql',import.meta.url),'utf8'));
+  const db=new DatabaseSync(':memory:');for(const file of readdirSync(new URL('../migrations/',import.meta.url)).filter(f=>f.endsWith('.sql')).sort())db.exec(readFileSync(new URL('../migrations/'+file,import.meta.url),'utf8'));
   const wrap=(sql,args=[])=>({bind:(...values)=>wrap(sql,values),
     first:async()=>db.prepare(sql).get(...args)||null,
     all:async()=>({results:db.prepare(sql).all(...args)}),
@@ -37,6 +37,53 @@ function fixture(){
   return {env,call,login,input,create,put,get,bankStart,bankReturn};
 }
 async function offered(f,guest,staff,price=1000){let r=await f.create(guest);r=await f.get(r.id,staff);r.offer={price,currency:'EUR',internalNote:'PRIVATE',custInfo:'Your trip'};r.status='offer';const response=await f.put(r,staff);assert.equal(response.status,200,JSON.stringify(response.data));return response.data.request;}
+
+async function catalogFixture(){
+ const f=fixture(),staff=await f.login(true),guest=await f.login();
+ const partner=(await f.call('partners','POST',{record:{name:'Own supplier',email:'partner@example.test',notes:'PRIVATE CONTRACT',active:true}},staff)).data.record;
+ const service=(await f.call('services','POST',{record:{name:'Private transfer',partnerId:partner.id,category:'transfer',unit:'vehicle',costMinor:8500,currency:'EUR',active:true}},staff)).data.record;
+ return {...f,staff,guest,partner,service};
+}
+test('catalog is staff-only, versioned, audited and shared between staff sessions',async()=>{
+ const f=await catalogFixture(),other=await f.login(true);
+ for(const path of ['partners','services','partners/'+f.partner.id,'services/'+f.service.id]){
+   assert.equal((await f.call(path,'GET',null,f.guest)).status,403);
+   assert.equal((await f.call(path)).status,401);
+ }
+ assert.equal((await f.call('services','GET',null,other)).data.records[0].name,f.service.name);
+ assert.equal((await f.call('partners','POST',{record:f.partner},f.guest)).status,403);
+ assert.equal((await f.call('services/'+f.service.id,'PUT',{record:f.service,version:1},f.guest)).status,403);
+ const edit={record:{...f.service,costMinor:9500},version:1};
+ assert.equal((await f.call('services/'+f.service.id,'PUT',edit,other)).status,200);
+ assert.equal((await f.call('services/'+f.service.id,'PUT',edit,f.staff)).status,409);
+ assert.equal((await f.call('services/'+f.service.id,'GET',null,f.staff)).data.record.costMinor,9500);
+ const events=f.env.DB.raw.prepare("SELECT * FROM catalog_events WHERE kind='service' ORDER BY version").all();
+ assert.equal(events.length,2);assert.equal(JSON.parse(events[0].data).costMinor,8500);assert.match(events[1].actor,/Maria/);
+ assert.equal((await f.call('services','POST',{record:{...f.service,costMinor:-1}},f.staff)).status,400);
+ assert.equal((await f.call('services','POST',{record:{...f.service,partnerId:'missing'}},f.staff)).status,400);
+});
+test('own-service offers snapshot supplier costs and never disclose them to the customer',async()=>{
+ const f=await catalogFixture();
+ const input={...f.input,sourceServiceId:f.service.id,serviceVersion:1,quantity:2,offer:{price:250,currency:'USD',validUntil:'2099-12-31',custInfo:'Return transfer'}};
+ assert.equal((await f.call('requests','POST',{request:input},f.guest)).status,403);
+ const created=await f.call('requests','POST',{request:input},f.staff);assert.equal(created.status,201,JSON.stringify(created.data));
+ const r=created.data.request;assert.equal(r.status,'offer');assert.equal(r.payment,null);assert.equal(r.offer.currency,'EUR');assert.equal(r.sourcing.costMinor,8500);assert.equal(r.sourcing.quantity,2);
+ assert.equal((await f.call('requests','POST',{request:input},f.staff)).data.request.id,r.id);
+ const link=(await f.call('requests/'+r.id+'/access-link','POST',{},f.staff)).data.url;
+ await f.call('access','POST',{token:new URLSearchParams(new URL(link).hash.slice(1)).get('access')},f.guest);
+ const visible=await f.get(r.id,f.guest);assert.equal(visible.sourcing,undefined);assert.equal(visible.offer.price,250);assert.equal(visible.offer.internalNote,undefined);
+ visible.status='accepted';assert.equal((await f.put(visible,f.guest)).status,200);
+ await f.call('services/'+f.service.id,'PUT',{record:{...f.service,costMinor:9900},version:1},f.staff);
+ assert.equal((await f.get(r.id,f.staff)).sourcing.costMinor,8500);
+ assert.equal((await f.call('requests','POST',{request:{...input,id:'rstaleversion0001'}},f.staff)).status,409);
+});
+test('archived partners block new catalog offers and active services',async()=>{
+ const f=await catalogFixture();await f.call('partners/'+f.partner.id,'PUT',{record:{...f.partner,active:false},version:1},f.staff);
+ const input={...f.input,sourceServiceId:f.service.id,serviceVersion:1,quantity:1,offer:{price:100,validUntil:'2099-12-31'}};
+ assert.equal((await f.call('requests','POST',{request:input},f.staff)).status,409);
+ assert.equal((await f.call('services','POST',{record:f.service},f.staff)).status,409);
+ assert.equal((await f.call('services/'+f.service.id,'PUT',{record:{...f.service,active:false},version:1},f.staff)).status,200);
+});
 
 test('separate devices share requests, offers, messages, acceptance, payments and confirmation',async()=>{
   const f=fixture(),guest=await f.login(),staff=await f.login(true),other=await f.login();

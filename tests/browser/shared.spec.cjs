@@ -3,6 +3,28 @@ const base='http://localhost:8788';
 const staffKey=process.env.ONLYONE_TEST_STAFF_KEY||'local-test-only-staff-key-12345678901234567890';
 async function call(ctx,path,method='GET',data){const res=await ctx.request.fetch(base+'/api/v1/'+path,{method,headers:{Origin:base},...(data?{data}:{})});expect(res.ok(),await res.text()).toBeTruthy();return res.json();}
 async function openApp(page){await page.route('**/*',route=>['image','media','font'].includes(route.request().resourceType())||!route.request().url().startsWith(base)?route.abort():route.continue());await page.goto('/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>!!window.ONLYONE?.boot);await page.evaluate(()=>window.ONLYONE.boot());await page.evaluate(()=>{document.getElementById('intro')?.remove();document.getElementById('main').classList.add('is-active','is-instant');document.getElementById('main').setAttribute('aria-hidden','false');});}
+
+test('staff creates a partner, own service and customer offer through the real UI',async({browser})=>{
+ const staff=await browser.newContext({viewport:{width:390,height:844}}),second=await browser.newContext(),guest=await browser.newContext();
+ await call(staff,'session','POST',{name:'Catalog staff',staffKey});await call(second,'session','POST',{name:'Second device',staffKey});await call(guest,'session','POST',{});
+ const page=await staff.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await openApp(page);
+ await page.locator('[data-act="menu"]').click();await page.locator('[data-mgo="staff"]').click();await page.locator('[data-go="s-catalog"]').click();
+ const name='Partner '+crypto.randomUUID();
+ await page.getByRole('button',{name:'Partner anlegen',exact:true}).click();await page.getByLabel('Name',{exact:true}).fill(name);await page.getByLabel('Interne Notizen').fill('Private supplier terms');await page.getByRole('button',{name:'Speichern',exact:true}).click();
+ await expect(page.locator('[data-catalog-form]')).toHaveCount(0);
+ const partner=(await call(second,'partners')).records.find(p=>p.name===name);expect(partner).toBeTruthy();
+ await page.getByRole('button',{name:'Leistung anlegen',exact:true}).click();await page.getByLabel('Name',{exact:true}).fill('Airport service '+name);await page.getByLabel('Partner',{exact:true}).selectOption(partner.id);await page.getByLabel('Kategorie').selectOption('transfer');await page.getByLabel('Preiseinheit,').fill('Fahrzeug');await page.getByLabel('Einkaufspreis').fill('85');await page.getByRole('button',{name:'Speichern',exact:true}).click();await expect(page.locator('[data-catalog-form]')).toHaveCount(0);
+ const service=(await call(second,'services')).records.find(s=>s.partnerId===partner.id);expect(service.costMinor).toBe(8500);
+ await page.getByLabel('Partner oder Leistung suchen').fill(name);
+ await page.screenshot({path:test.info().outputPath('catalog-mobile.png'),fullPage:true});
+ await page.locator('[data-catalog-offer="'+service.id+'"]').click();await page.getByLabel('Kundenname').fill('Own offer customer');await page.getByLabel('Telefon',{exact:true}).fill('+49 123');await page.getByLabel('Von',{exact:true}).fill('2099-10-01');await page.getByLabel('Bis',{exact:true}).fill('2099-10-02');await page.getByLabel('Anzahl Preiseinheiten').fill('2');await page.getByLabel('Kundenpreis gesamt').fill('250');await page.getByLabel('Angebot gültig bis').fill('2099-09-30');await expect(page.locator('[data-catalog-margin]')).toContainText('80,00');
+ await page.getByRole('button',{name:'Angebot freigeben'}).click();await expect(page.locator('#app')).toContainText('Eigene Leistung · Einkaufskonditionen');
+ const r=(await call(second,'requests')).requests.find(r=>r.item?.id===service.id);expect(r.offer.price).toBe(250);expect(r.sourcing.costMinor).toBe(8500);expect(r.payment).toBeNull();
+ const privateLink=await call(second,'requests/'+r.id+'/access-link','POST',{});await call(guest,'access','POST',{token:new URLSearchParams(new URL(privateLink.url).hash.slice(1)).get('access')});const visible=(await call(guest,'requests/'+r.id)).request;expect(visible.sourcing).toBeUndefined();expect(visible.offer.price).toBe(250);
+ expect((await guest.request.get(base+'/api/v1/services')).status()).toBe(403);
+ const storage=await page.evaluate(()=>JSON.stringify({...localStorage}));expect(storage).not.toContain('Private supplier terms');expect(storage).not.toContain(service.id);
+ expect(errors).toEqual([]);await staff.close();await second.close();await guest.close();
+});
 test('real Pages/D1: separate browser sessions see the same request and private offer',async({browser})=>{
  const guest=await browser.newContext(),staff=await browser.newContext(),other=await browser.newContext();
  await call(guest,'session','POST',{});await call(staff,'session','POST',{name:'Browser staff',staffKey});await call(other,'session','POST',{});

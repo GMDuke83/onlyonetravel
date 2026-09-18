@@ -243,3 +243,9 @@ Cloudflare Git integration, not both. Protect the production GitHub environment.
   volume. Polling can be replaced by push updates later.
 - This branch supplies code and deployment instructions. A remote D1 database,
   runtime secrets and live deployment must be provisioned in the target account.
+
+## Eigene Partner und Leistungen
+
+Die Erweiterung mit Migration `0002_catalog.sql` und dem Mitarbeiterablauf
+Partner → Leistung → individuelles Angebot ist in [staff-catalog.md](staff-catalog.md)
+beschrieben. Sie benötigt keine zusätzlichen Secrets oder Bindings.

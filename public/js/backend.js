@@ -128,6 +128,7 @@
     setInterval(async()=>{if(document.hidden||busy||blocked||!ready)return;capture();if(!await flush())return;try{if(!document.activeElement?.matches('input,textarea,select')&&await pull())render();}catch{status('Connection interrupted. Showing last saved data.');}},15000);
     window.addEventListener('online',async()=>{if(!ready)await init();else await flush();render();});
     window.addEventListener('beforeunload',e=>{if(pending.size){e.preventDefault();e.returnValue='';}});
-    return {init,capture,flush,login,logout,toolbar,get blocked(){return blocked;},get busy(){return busy;},get ready(){return ready;},get pending(){return pending.size>0;}};
+    async function refresh(){capture();if(!await flush())throw new Error('Save or review pending changes first.');await pull();}
+    return {init,capture,flush,login,logout,toolbar,refresh,get blocked(){return blocked;},get busy(){return busy;},get ready(){return ready;},get pending(){return pending.size>0;}};
   };
 })(window);
