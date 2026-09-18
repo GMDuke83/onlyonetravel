@@ -1,0 +1,26 @@
+name: Backend checks
+on:
+  pull_request:
+  push:
+    branches: [main, develop, feature/shared-cloudflare-backend]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run check:functions
+      - run: npm run db:migrate:local
+      - run: npx playwright install --with-deps chromium
+      - name: Configure test-only local staff key
+        run: echo 'STAFF_LOGIN_KEY="local-test-only-staff-key-12345678901234567890"' > .dev.vars
+      - run: npm run test:browser
+      - run: npm run stamp && npm run stamp:check

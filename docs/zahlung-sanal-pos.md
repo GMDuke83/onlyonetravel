@@ -1,3 +1,5 @@
+> Backend update: See [shared backend](shared-backend.md) for the authoritative payment flow. Amounts now come from D1; URL results cannot credit payments. Vakif is disabled pending verified bank inquiry.
+
 # Zahlungsmodul — Ziraat & VakıfBank Sanal POS
 
 Was eingebaut wurde, wie „Sanal POS" überhaupt funktioniert, und was noch

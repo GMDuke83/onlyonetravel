@@ -13,12 +13,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<link rel="manifest" href="./manifest.webmanifest?v=20260827-1658-ec13c15">
+<link rel="manifest" href="./manifest.webmanifest?v=20260918-1022-6b54ced">
 <link rel="preload" as="image" href="./images/onlyone-hero-poster-v4.webp">
 <!-- The platform hero shows the moment the intro ends. Fetching its first
      photograph now, while the intro is still playing, means it is decoded and
      waiting instead of starting from zero at the hand-over. -->
-<link rel="stylesheet" href="./css/app.css?v=20260827-1658-ec13c15">
+<link rel="stylesheet" href="./css/app.css?v=20260918-1022-6b54ced">
 </head>
 <body>
 
@@ -148,7 +148,7 @@
      is maintained by hand.
      ====================================================================== */
 
-  var CURRENT_BUILD = "20260827-1658-ec13c15";
+  var CURRENT_BUILD = "20260918-1022-6b54ced";
   window.ONLYONE_BUILD = CURRENT_BUILD;
 
   var VERSION_URL = "./version.json";
@@ -352,7 +352,7 @@
     try {
       if (/[?&]pay=/.test(location.search)) sessionStorage.setItem("onlyone.payreturn", location.search);
     } catch (e) {}
-    try { history.replaceState(history.state, "", location.pathname); } catch (e) {}
+    try { history.replaceState(history.state, "", location.pathname + location.hash); } catch (e) {}
   }
 
   window.onlyoneCheckBuild = function(){ check(true); };
@@ -380,6 +380,9 @@
   check(true);
 })();
 </script>
-<script src="./js/app.js?v=20260827-1658-ec13c15" defer></script>
+<link rel="stylesheet" href="./css/catalog.css?v=20260918-1022-6b54ced">
+<script src="./js/catalog.js?v=20260918-1022-6b54ced" defer></script>
+<script src="./js/backend.js?v=20260918-1022-6b54ced" defer></script>
+<script src="./js/app.js?v=20260918-1022-6b54ced" defer></script>
 </body>
 </html>
