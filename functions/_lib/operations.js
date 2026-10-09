@@ -31,9 +31,10 @@ export async function operations({request,env,s,path,url}){
     return json({events:(await env.DB.prepare('SELECT id,action,actor,entity_id,at FROM audit_events ORDER BY id DESC LIMIT 200').all()).results,requests:(await env.DB.prepare('SELECT id,request_id,version,actor,at FROM request_events ORDER BY id DESC LIMIT 200').all()).results});
   }
   if(route==='operations'&&method==='GET'){
-    const rows=(await env.DB.prepare('SELECT id,data FROM requests ORDER BY updated_at DESC LIMIT 500').all()).results;
-    const attention=rows.map(r=>{const d=JSON.parse(r.data);return {id:r.id,code:d.code,status:d.status,name:d.contact?.first,assignedTo:d.assignedTo||null,from:d.from,until:d.offer?.validUntil};});
-    return json({attention,role:s.permissionRole,permissions:['admin','audit','sales','finance','operate','costs'].filter(p=>can(s,p))});
+    const rows=(await env.DB.prepare('SELECT id,data,updated_at FROM requests ORDER BY updated_at DESC,id DESC LIMIT 501').all()).results;
+    // Explicit projection: the workspace index must never expose costs, notes or tokens.
+    const attention=rows.slice(0,500).map(r=>{const d=JSON.parse(r.data);return {id:r.id,code:d.code,status:d.status,name:[d.contact?.first,d.contact?.last].filter(Boolean).join(' '),phone:d.contact?.phone||'',email:d.contact?.email||'',itemTitle:d.item?.name||'',hasOffer:!!d.offer,updatedAt:r.updated_at,assignedTo:d.assignedTo||null,from:d.from,until:d.offer?.validUntil};});
+    return json({attention,truncated:rows.length>500,role:s.permissionRole,permissions:['admin','audit','sales','finance','operate','costs'].filter(p=>can(s,p))});
   }
   if(route==='calendar'){
     if(method==='GET'){

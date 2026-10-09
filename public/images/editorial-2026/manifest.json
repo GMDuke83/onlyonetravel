@@ -1,0 +1,65 @@
+{
+  "created": "2026-10-09",
+  "method": "Built-in image generation; WebP export without upscaling",
+  "nativeSize": {
+    "width": 1672,
+    "height": 941
+  },
+  "usage": "AI-generated editorial inspiration; not evidence of a named hotel or bookable property",
+  "assets": [
+    {
+      "name": "coast",
+      "file": "public/images/editorial-2026/coast-960.webp",
+      "width": 960,
+      "bytes": 101990
+    },
+    {
+      "name": "coast",
+      "file": "public/images/editorial-2026/coast-1280.webp",
+      "width": 1280,
+      "bytes": 173634
+    },
+    {
+      "name": "coast",
+      "file": "public/images/editorial-2026/coast-1672.webp",
+      "width": 1672,
+      "bytes": 277818
+    },
+    {
+      "name": "terrace",
+      "file": "public/images/editorial-2026/terrace-960.webp",
+      "width": 960,
+      "bytes": 73940
+    },
+    {
+      "name": "terrace",
+      "file": "public/images/editorial-2026/terrace-1280.webp",
+      "width": 1280,
+      "bytes": 121272
+    },
+    {
+      "name": "terrace",
+      "file": "public/images/editorial-2026/terrace-1672.webp",
+      "width": 1672,
+      "bytes": 190324
+    },
+    {
+      "name": "cappadocia",
+      "file": "public/images/editorial-2026/cappadocia-960.webp",
+      "width": 960,
+      "bytes": 95168
+    },
+    {
+      "name": "cappadocia",
+      "file": "public/images/editorial-2026/cappadocia-1280.webp",
+      "width": 1280,
+      "bytes": 150066
+    },
+    {
+      "name": "cappadocia",
+      "file": "public/images/editorial-2026/cappadocia-1672.webp",
+      "width": 1672,
+      "bytes": 223604
+    }
+  ]
+}

@@ -1,21 +1,97 @@
-/* Additive desktop layout: preserve the existing mobile experience. */
-:focus-visible{outline:3px solid #985b38!important;outline-offset:3px}
-@media(min-width:820px){
+/* Shared brand tokens remain in app.css. Layout follows the available space. */
+:root{--content-width:1320px;--page-gutter:clamp(20px,4vw,64px)}
+:focus-visible{outline:3px solid var(--gold-ink)!important;outline-offset:3px}
+.priceBox .muted{color:#eaded1}.wrap{--ok:#216348}
+.pHero__slides picture{display:contents}
+.heroImageCredit{display:none}
+.imageCredit{display:block;margin:10px 20px 0;color:var(--txt-2);font-size:11px;line-height:1.5}
+.heroMotionToggle{position:absolute;z-index:4;right:20px;bottom:18px;width:44px;height:44px;border:1px solid rgba(255,255,255,.6);border-radius:50%;background:rgba(21,16,11,.62);color:#fff;display:grid;place-items:center}
+.heroMotionToggle svg{width:18px;height:18px;fill:currentColor}
+.pHero.is-paused .pHero__img{animation-play-state:paused!important}
+.pHero.is-paused .pHero__script{animation:none!important}
+.iconBtn,.homeOfferCard__fav,.homeOfferCard--small .homeOfferCard__fav{min-width:44px;min-height:44px}
+.homeTextLink,.pHero__cta{min-height:44px}
+.homeVipCallback__form input,.homeTransferQuick input,.input{font-size:16px}
+.homeVipCallback__form small{font-size:12px;line-height:1.6;color:rgba(255,255,255,.76)}
+.homeTransferQuick label span,.homeVipCallback__form label span{font-size:11px}
+.homeEditorialHead--row{flex-wrap:wrap}.homeEditorialHead--row>div{min-width:0}
+.homeOfferCard__copy b,.travelWorld__copy b{overflow-wrap:break-word}
+@media(min-width:700px){
+ .heroImageCredit{display:block;position:absolute;bottom:20px;left:var(--page-gutter);z-index:3;color:white;font-size:10px;text-shadow:0 1px 5px black}
+ .pHero{background-image:none}
  .main{inset:0!important;width:100%!important;height:100svh!important;transform:none!important;border-radius:0!important;box-shadow:none!important}
- .edgeLed{display:none} .tabbar{position:fixed!important;left:0;right:0;width:100%;justify-content:center;gap:35px}
- .tabbar button{flex:0 1 180px}.appbar{padding-left:5vw;padding-right:5vw}
- .homeEditorialHead{padding-left:5vw;padding-right:5vw}.homeOfferCard--featured{max-width:850px;margin-left:auto;margin-right:auto}
- .homeOffersGrid,.hotelGrid,.fleetGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
- .sheetWrap{position:fixed!important}.sheet{max-width:700px;margin-inline:auto}.stickyCta{position:fixed!important}
+ .edgeLed{display:none}
+ .wrap,.detailSec{max-width:var(--content-width);margin-inline:auto;padding-inline:var(--page-gutter)}
+ .homeGateway,.homeEditorialHead,.homePromos__rail,.travelWorlds__rail,.homeVipServices__rail,.homeVipServices__links{padding-left:max(var(--page-gutter),calc((100% - var(--content-width))/2));padding-right:max(var(--page-gutter),calc((100% - var(--content-width))/2))}
+ .homeGateway{padding-block:32px 12px}.homeGateway__grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+ .homePromos{padding-top:48px}
+ .homePromos .homeEditorialHead--row{display:flex;justify-content:space-between;align-items:end}
+ .homePromos .homeEditorialHead h2{font-size:clamp(28px,3vw,40px);max-width:30ch}
+ .homePromos .homeEditorialHead__sub{max-width:60ch;font-size:16px}
+ .homeSuperDeal .homeEditorialHead{padding-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2))}
+ .serviceSearch{max-width:var(--content-width);margin-inline:auto;padding-inline:var(--page-gutter)}
+ .homeGatewayTile__copy b{font-size:17px}.homeGatewayTile__copy i{font-size:13px}
+ .homeEditorialHead{padding-top:48px;padding-bottom:24px}
+ .homeEditorialHead h2{font-size:clamp(28px,3vw,40px);max-width:26ch}
+ .homeEditorialHead__sub{font-size:16px;max-width:58ch}
+ .homePromos__rail,.homeVipServices__rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;overflow:visible}
+ .homePromoCard,.vipServiceCard,.vipServiceCard--featured{width:100%;min-width:0;aspect-ratio:5/4}
+ .homePromos>.railBar,.homeVipServices>.railBar{display:none}
+ .homePromoCard__copy b,.vipServiceCard__copy b{font-size:clamp(22px,2.2vw,30px)}
+ .vipServiceCard__copy p,.vipServiceCard--featured .vipServiceCard__copy p{font-size:14px;max-width:38ch}
+ .homeSuperDealCard{margin-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2));width:auto;min-height:440px;aspect-ratio:2/1}
+ .homeSuperDealCard__copy{left:40px;bottom:36px}.homeSuperDealCard__copy b{font-size:clamp(34px,4vw,52px);max-width:16ch}
+ .homeSuperDealCard__copy em{font-size:16px;max-width:42ch}
+ .homeSuperDeal>.imageCredit{margin-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2))}
+ .homeVipCallback{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;padding:48px max(var(--page-gutter),calc((100% - var(--content-width))/2))}
+ .homeVipCallback__form{margin:0}.homeVipCallback__icon{display:none}.homeVipCallback__head p{font-size:15px;max-width:44ch}
+ .homeOfferCard--featured{max-width:900px;margin-inline:auto}.homeOfferCard--featured .homeOfferCard__media{aspect-ratio:16/9}
+ .homeOfferGrid{grid-template-columns:repeat(4,minmax(0,1fr));padding:24px max(var(--page-gutter),calc((100% - var(--content-width))/2)) 0;gap:18px}
+ .homeOfferCard--small .homeOfferCard__media{aspect-ratio:3/4}
+ .cardList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 24px}.cardList>*{min-width:0}
+ .sheetWrap{position:fixed!important}.sheet{max-width:720px;margin-inline:auto}.tabbar,.stickyCta{position:fixed!important}
  .intro__copy{max-width:1000px}.headline{font-size:clamp(60px,7vw,100px)}
+ .homeTransferRequest{min-height:600px}.homeTransferRequest__copy{left:max(var(--page-gutter),calc((100% - var(--content-width))/2));right:var(--page-gutter)}
+ .homeTransferRequest__copy h2{max-width:20ch;font-size:44px}
+ .homeAviationFinal{padding-left:max(var(--page-gutter),calc((100% - var(--content-width))/2))}
+}
+@media(min-width:1100px){
+ :root{--desktop-header:84px}
+ #app{scroll-padding-top:calc(var(--desktop-header) + 20px);scrollbar-width:thin}#app::-webkit-scrollbar{display:block;width:8px}
+ .appbar,.appbar--over,.appbar--over.is-solid{height:var(--desktop-header);padding:0 var(--page-gutter);background:var(--ground);color:var(--txt);border-bottom:1px solid var(--hair);text-shadow:none;backdrop-filter:none}
+ .appbar--over{margin-bottom:calc(-1 * var(--desktop-header))}.appbar--over .iconBtn{background:var(--ground-2);backdrop-filter:none}
+ .appbar__brand{max-width:240px}.appbar>.iconBtn:last-child{margin-left:auto}.brandLogo--bar{width:128px}
+ .tabbar:not(.tabbar--staff){top:0;bottom:auto;left:310px;right:110px;width:auto;height:var(--desktop-header);display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,32px);padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}
+ .tabbar:not(.tabbar--staff) .tab{flex:0 1 auto;flex-direction:row;align-items:center;justify-content:center;gap:8px;padding:8px 12px;min-height:46px;border-radius:3px}
+ .tabbar:not(.tabbar--staff) .tab>span:last-of-type{font-size:13px;white-space:nowrap}
+ .tabbar:not(.tabbar--staff) .tab__ic{width:26px;height:28px;background:none;color:inherit}.tabbar:not(.tabbar--staff) .tab.is-on{background:var(--ground-3);color:var(--txt)}
+ #app:not(:has(.appbar))>.tabbar:not(.tabbar--staff){background:var(--ground);left:0;right:0;border-bottom:1px solid var(--hair)}
+ #app:not(:has(.appbar))>.view{padding-top:var(--desktop-header)}
+ .tabbar--staff{top:auto;bottom:0}
+ .pHero{min-height:700px;height:min(900px,92svh);padding-top:var(--desktop-header);background-color:var(--navy-deep);background-image:none}
+ .pHero__scrim{background:linear-gradient(90deg,rgba(21,16,11,.67),rgba(21,16,11,.22) 55%,rgba(21,16,11,.06)),linear-gradient(0deg,rgba(21,16,11,.25),transparent 70%)}
+ .pHero__script{margin-left:max(var(--page-gutter),calc((100% - var(--content-width))/2));font-size:clamp(42px,4vw,68px);max-width:none;letter-spacing:.12em}
+ .pHero__body{margin:0 0 80px max(var(--page-gutter),calc((100% - var(--content-width))/2));padding:18px 0 0;max-width:650px}
+ .pHero__title{font-size:clamp(46px,4.1vw,72px);max-width:15ch;line-height:1.06}.pHero__sub{font-size:18px;max-width:42ch}
+ .pHero__cta{font-size:12px;margin-top:28px}.heroMotionToggle{right:var(--page-gutter);bottom:32px}
+ .homePromos__rail{grid-template-columns:repeat(3,minmax(0,1fr))}.homePromoCard{aspect-ratio:1.15}
+ .travelWorlds__rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;overflow:visible}
+ .travelWorld{width:100%;min-width:0;aspect-ratio:3/5}.travelWorld__copy b{font-size:22px;line-height:1.15}.travelWorld__copy i{font-size:10px;letter-spacing:.04em}
+ .travelWorlds>.railBar{display:none}.homeVipServices__rail{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .vipServiceCard,.vipServiceCard--featured{aspect-ratio:3/5}.vipServiceCard__copy b,.vipServiceCard--featured .vipServiceCard__copy b{font-size:26px}
+ .vipServiceCard__copy p,.vipServiceCard--featured .vipServiceCard__copy p{font-size:13px}
+ .homeBestHotels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:24px max(var(--page-gutter),calc((100% - var(--content-width))/2)) 56px}
+ .homeBestHotels>.homeEditorialHead{grid-column:1/-1;padding-inline:0}.homeBestHotels>.homeOfferCard--featured{width:100%;max-width:none;margin:0}
+ .homeBestHotels>.homeOfferCard--featured .homeOfferCard__media{height:100%;aspect-ratio:4/5}
+ .homeBestHotels>.homeOfferGrid{padding:0;grid-template-columns:1fr 1fr;gap:18px}.homeBestHotels .homeOfferCard--small .homeOfferCard__media{height:100%;aspect-ratio:4/3}
+ .homeBestHotels .homeOfferCard--small .homeOfferCard__copy b{font-size:20px}
+ .cardList{grid-template-columns:repeat(3,minmax(0,1fr))}.searchCard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.searchRow+.searchRow{border-top:0;border-left:1px solid var(--hair)}
+ .gal,.gal__track{max-height:580px}
+ .stickyCta{bottom:0;max-width:850px;left:50%;right:auto;width:100%;transform:translateX(-50%);border:1px solid var(--hair);border-radius:8px 8px 0 0}
+ .pageBottom{height:40px}.pageBottom--cta{height:110px}.serviceSearchNav{top:var(--desktop-header)}
+}
+@media(max-width:699px){
+ .homeOfferCard--small .homeOfferCard__media{aspect-ratio:3/5}.homeOfferCard--small .homeOfferCard__copy b{font-size:clamp(16px,4.2vw,20px)}
+ .homeVipCallback__form,.homeTransferQuick{column-gap:12px}.homeEditorialHead__sub{font-size:15px;line-height:1.6}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-
-@media(min-width:1100px){
- .tabbar{top:64px;bottom:auto;border-bottom:1px solid var(--hair-soft);box-shadow:none;min-height:60px}
- .pHero__body{margin-left:5vw;max-width:650px}.pHero__title{font-size:56px;max-width:600px}.pHero__sub{font-size:18px;max-width:42ch}
- .wrap{max-width:1240px;margin-inline:auto;padding-left:32px;padding-right:32px}
- .pHero .appbar{z-index:30}
-}
-
-.priceBox .muted{color:#eaded1}.wrap{--ok:#216348}
