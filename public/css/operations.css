@@ -25,7 +25,8 @@ aside{overflow-y:auto}aside nav{gap:4px}aside nav button{line-height:1.35}
 .srOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:1150px){.contactGrid{grid-template-columns:1fr}.workspaceHead{align-items:start}.workspaceFilters .filterQuery{flex-basis:100%}}
 @media(max-width:750px){
- .workspaceHead{display:block}.workspaceHead>button{margin-top:16px}.workspaceFilters{padding:16px}.workspaceFilters label{flex-basis:100%}
+ .workspaceHead{display:block}.workspaceHead>button{margin-top:16px}.workspaceFilters{padding:16px}.workspaceFilters label{flex-basis:calc(50% - 8px)}
+ .workspaceFilters .filterQuery{flex-basis:100%}.workspaceFilters>button{flex:1 1 100px}
  .recordsCard{padding:0;background:none;border:0}.records,.records tbody{display:block;width:100%}
  .records thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
  .records tr{display:block;margin-bottom:14px;padding:16px;background:#fffdf9;border:1px solid #e0d5c8;border-radius:10px}
@@ -40,3 +41,4 @@ aside{overflow-y:auto}aside nav{gap:4px}aside nav button{line-height:1.35}
  aside #logout{position:absolute;right:20px;top:17px;font-size:12px;padding:8px}
  .workspaceHead{margin-top:24px}.metrics{grid-template-columns:1fr}.workspaceFilters{margin-top:20px}
 }
+body:has(#demo-banner){padding-bottom:60px}
