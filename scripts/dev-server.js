@@ -9,6 +9,10 @@
 
    Usage:  npm run dev        →  http://localhost:4173
            PORT=8080 npm run dev
+
+   The static test build (scripts/build-demo.js) can be previewed the way
+   GitHub Pages serves it, under the repository's sub-path:
+           SERVE_DIR=dist BASE_PATH=/onlyonetravel/ npm run dev
    ========================================================================== */
 
 'use strict';
@@ -17,7 +21,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..', 'public');
+const ROOT = path.resolve(__dirname, '..', process.env.SERVE_DIR || 'public');
+const BASE = (process.env.BASE_PATH || '/').replace(/\/?$/, '/');
 const PORT = Number(process.env.PORT) || 4173;
 const HOST = process.env.HOST || '0.0.0.0';
 
@@ -37,6 +42,7 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
+  '.wasm': 'application/wasm',
   '.txt': 'text/plain; charset=utf-8'
 };
 
@@ -61,6 +67,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (!pathname.startsWith(BASE)) {
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end('<h1>404</h1><p>Not found: ' + pathname + '</p>');
+    return;
+  }
+  pathname = pathname.slice(BASE.length - 1);
   if (pathname.endsWith('/')) pathname += 'index.html';
 
   // Resolve inside ROOT only — no path traversal.
@@ -130,7 +142,7 @@ server.listen(PORT, HOST, () => {
   console.log('');
   console.log('  ONLYONE LUXURY TRAVEL — dev server');
   console.log('  ----------------------------------');
-  console.log(`  local:    http://localhost:${PORT}`);
+  console.log(`  local:    http://localhost:${PORT}${BASE}`);
   console.log(`  serving:  ${ROOT}`);
   console.log('');
   console.log('  Test on a phone: open http://<your-computer-ip>:' + PORT);

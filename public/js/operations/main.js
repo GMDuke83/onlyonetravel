@@ -47,4 +47,4 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(b.dataset.disable){await api('users/'+b.dataset.disable,'PUT',{role:b.dataset.role,active:false});await refresh('users');}
  if(b.id==='logout'){await api('session','DELETE');location.reload();}
  });});
-run(async()=>{const s=await api('session');if(s.role==='staff')await signedIn(s);});
+run(async()=>{const s=await api('session').catch(e=>{if(e.status===401)return null;throw e;});if(s?.role==='staff')await signedIn(s);});
