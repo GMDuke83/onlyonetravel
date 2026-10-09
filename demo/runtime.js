@@ -103,7 +103,7 @@ for(const method of ['set','append']){
 }
 
 /* ---- Runtime ----------------------------------------------------------- */
-export async function start({root,demoDir}){
+export async function start({root,demoDir,buildQuery=''}){
   await loadScript(demoDir+'vendor/sql-wasm.js');
   const SQL=await window.initSqlJs({locateFile:file=>demoDir+'vendor/'+file});
   const migrations=await (await fetch(demoDir+'migrations.json',{cache:'no-store'})).json();
@@ -146,7 +146,7 @@ export async function start({root,demoDir}){
     if(d1.db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='staff_credentials'").length===0){
       d1.db.exec(migrations.find(m=>m.name==='0006_staff_passwords.sql').sql);d1.dirty=true;
     }
-    const {hashPassword}=await import(demoDir+'functions/_lib/passwords.js');
+    const {hashPassword}=await import(demoDir+'functions/_lib/passwords.js'+buildQuery);
     for(const [id,,,,username,password] of STAFF){
       const existing=d1.db.exec('SELECT user_id FROM staff_credentials WHERE user_id=?',[id]);
       if(!existing.length){d1.db.run('INSERT INTO staff_credentials VALUES(?,?,?,?)',[id,username,await hashPassword(password),Date.now()]);d1.dirty=true;}
@@ -161,7 +161,7 @@ export async function start({root,demoDir}){
     const url=new URL(request.url),sub=url.pathname.slice(rootPath.length+'api/'.length);
     for(const [pattern,file,params] of ROUTES){
       const m=sub.match(pattern);if(!m)continue;
-      if(!modules.has(file))modules.set(file,import(demoDir+'functions/'+file));
+      if(!modules.has(file))modules.set(file,import(demoDir+'functions/'+file+buildQuery));
       const mod=await modules.get(file);
       const verb=request.method.charAt(0)+request.method.slice(1).toLowerCase();
       const handler=mod['onRequest'+verb]||mod.onRequest;

@@ -11,6 +11,7 @@
 (function(){
   'use strict';
   var self=document.currentScript.src;
+  var buildQuery=new URL(self).search;
   var demoDir=new URL('./',self).href;
   var root=new URL('../',self);
   var apiPrefix=root.pathname+'api/';
@@ -18,7 +19,7 @@
   var runtime=null;
 
   function load(){
-    if(!runtime)runtime=import(demoDir+'runtime.js').then(function(m){return m.start({root:root.href,demoDir:demoDir});});
+    if(!runtime)runtime=import(demoDir+'runtime.js'+buildQuery).then(function(m){return m.start({root:root.href,demoDir:demoDir,buildQuery:buildQuery});});
     return runtime;
   }
 
@@ -72,7 +73,7 @@
       var hint=document.createElement('div');
       hint.className='loginDemo';
       login.insertAdjacentElement('afterend',hint);
-      import(new URL('../js/operations/i18n.js',self).href).then(function(i18n){
+      import(new URL('../js/operations/i18n.js'+buildQuery,self).href).then(function(i18n){
         function translate(){
           text.textContent=i18n.t('demoVersion');text.title=i18n.t('demoInfo');
           reset.textContent=i18n.t('demoReset');
