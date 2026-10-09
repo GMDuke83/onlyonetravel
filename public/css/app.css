@@ -265,6 +265,8 @@ svg{
 .intro.is-leaving{ opacity:0; pointer-events:none; }
 .intro.is-hidden{ display:none; }
 
+.intro__poster,
+.intro__poster img,
 .intro__video{
   position:absolute;
   inset:0;
@@ -273,8 +275,11 @@ svg{
   object-fit:cover;
   object-position:center;
   z-index:0;
-  background:var(--navy);
   pointer-events:none;            /* taps belong to the hero, not the player */
+}
+.intro__video{
+  /* The responsive poster underneath remains visible before playback. */
+  background:transparent;
   transform:translateZ(0);
   -webkit-backface-visibility:hidden;
   backface-visibility:hidden;
