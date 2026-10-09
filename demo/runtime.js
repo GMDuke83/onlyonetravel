@@ -19,11 +19,11 @@ const KEY_DB='onlyone.demo.db.v1', KEY_REV='onlyone.demo.rev';
 // server both share one cookie jar, and a staff login also applies to the site.)
 const KEY_JAR='onlyone.demo.cookies.'+(/operations\.html$/.test(location.pathname)?'operations':'site');
 
-// Demo staff, created on first start. Same tokens are listed in shim.js.
+// Public test accounts only. No demo passwords exist in the production Functions.
 const STAFF=[
-  ['demo-owner','Demo Inhaber','owner','demo-inhaber'],
-  ['demo-sales','Demo Vertrieb','sales','demo-vertrieb'],
-  ['demo-finance','Demo Finanzen','finance','demo-finanzen'],
+  ['demo-owner','Demo Admin','owner','demo-inhaber','admin','admin'],
+  ['demo-sales','Demo Sales','sales','demo-vertrieb','vertrieb','vertrieb'],
+  ['demo-finance','Demo Finance','finance','demo-finanzen','finanzen','finanzen'],
 ];
 
 // File names with brackets are renamed by the build; see scripts/build-demo.js.
@@ -140,7 +140,22 @@ export async function start({root,demoDir}){
     if(!saved)return true;
     open(fromBase64(saved));revision=current;return false;
   }
-  if(sync())await create();
+  // Upgrade previous browser demos in place; never erase their travel records.
+  // Web Locks serialize this with the normal API transaction queue across tabs.
+  async function upgradePasswords(){
+    if(d1.db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='staff_credentials'").length===0){
+      d1.db.exec(migrations.find(m=>m.name==='0006_staff_passwords.sql').sql);d1.dirty=true;
+    }
+    const {hashPassword}=await import(demoDir+'functions/_lib/passwords.js');
+    for(const [id,,,,username,password] of STAFF){
+      const existing=d1.db.exec('SELECT user_id FROM staff_credentials WHERE user_id=?',[id]);
+      if(!existing.length){d1.db.run('INSERT INTO staff_credentials VALUES(?,?,?,?)',[id,username,await hashPassword(password),Date.now()]);d1.dirty=true;}
+    }
+    save();
+  }
+  const withDatabaseLock=fn=>navigator.locks?navigator.locks.request('onlyone-demo-db',fn):fn();
+  async function prepare(){if(sync())await create();await upgradePasswords();}
+  await withDatabaseLock(prepare);
 
   async function route(request){
     const url=new URL(request.url),sub=url.pathname.slice(rootPath.length+'api/'.length);
@@ -179,11 +194,11 @@ export async function start({root,demoDir}){
   let queue=Promise.resolve();
   return {
     handle(request){
-      const task=queue.then(async()=>{
-        try{if(sync())await create();return await route(request);}
+      const task=queue.then(()=>withDatabaseLock(async()=>{
+        try{await prepare();return await route(request);}
         catch(e){console.error('Demo backend failure',e);return new Response(JSON.stringify({error:'server-error'}),{status:500,headers:{'content-type':'application/json'}});}
         finally{save();}
-      });
+      }));
       queue=task.catch(()=>{});
       return task;
     },

@@ -42,3 +42,7 @@ aside{overflow-y:auto}aside nav{gap:4px}aside nav button{line-height:1.35}
  .workspaceHead{margin-top:24px}.metrics{grid-template-columns:1fr}.workspaceFilters{margin-top:20px}
 }
 body:has(#demo-banner){padding-bottom:60px}
+header{align-items:center;flex-wrap:wrap}.headerTools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:16px;min-width:0}
+.languagePicker{display:flex;align-items:center;gap:10px;margin:0;font-size:13px;letter-spacing:0}.languagePicker select{width:auto;min-width:150px;max-width:100%;font-size:16px}
+.fieldHint{display:block;color:#716557;font-size:12px;margin-top:-6px}.loginDemo{margin-top:20px;padding:16px;border:1px dashed #b9a99a;border-radius:10px;max-width:650px}.loginDemo p{margin:6px 0}
+@media(max-width:650px){.headerTools{justify-content:flex-start;width:100%}.languagePicker{flex-wrap:wrap}.languagePicker select{max-width:220px}header{gap:14px}.workspaceHead>button{max-width:100%;white-space:normal}}

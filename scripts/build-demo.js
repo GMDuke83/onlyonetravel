@@ -33,7 +33,7 @@ function copyFunctions(from,to){
   for(const entry of fs.readdirSync(from,{withFileTypes:true})){
     const src=path.join(from,entry.name);
     if(entry.isDirectory())copyFunctions(src,path.join(to,entry.name));
-    else if(entry.name.endsWith('.js'))fs.copyFileSync(src,path.join(to,RENAME[entry.name]||entry.name));
+    else if(entry.name.endsWith('.js')||entry.name.endsWith('LICENSE.txt'))fs.copyFileSync(src,path.join(to,RENAME[entry.name]||entry.name));
   }
 }
 copyFunctions(path.join(ROOT,'functions'),path.join(DEMO,'functions'));

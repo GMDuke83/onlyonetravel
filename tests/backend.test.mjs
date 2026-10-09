@@ -36,6 +36,34 @@ function fixture(){
   };
   return {env,call,login,input,create,put,get,bankStart,bankReturn};
 }
+
+test('personal username/password login enforces roles, hides hashes and revokes blocked accounts',async()=>{
+ const f=fixture(),owner=await f.login(true),guest=await f.login();
+ const input={name:'Maria',username:'Maria.Example',password:'A long personal password!',role:'sales'};
+ assert.equal((await f.call('users','POST',input,guest)).status,403);
+ const created=await f.call('users','POST',input,owner);assert.equal(created.status,201);assert.deepEqual(Object.keys(created.data).sort(),['id','username']);
+ assert.equal(created.data.username,'maria.example');
+ const stored=f.env.DB.raw.prepare('SELECT * FROM staff_credentials').get();assert.notEqual(stored.password_hash,input.password);assert.match(stored.password_hash,/^pbkdf2-sha256\$600000\$/);
+ assert.equal((await f.call('users','POST',input,owner)).status,409);
+ assert.equal((await f.call('users','POST',{...input,username:'short-password',password:'admin'},owner)).status,400);
+ const login=await f.call('session','POST',{username:' MARIA.EXAMPLE ',password:input.password});
+ assert.equal(login.status,200);assert.equal(login.data.permissionRole,'sales');assert.ok(login.cookie);
+ const colleague=(await f.call('session','POST',{username:input.username,password:input.password})).cookie;
+ assert.equal((await f.call('users','GET',null,login.cookie)).status,403);
+ const users=await f.call('users','GET',null,owner);assert.equal(users.data.users[0].username,'maria.example');assert.doesNotMatch(JSON.stringify(users.data),/password|token/);
+ assert.equal((await f.call('session','POST',{username:input.username,password:'wrong'})).status,401);
+ assert.equal((await f.call('session','POST',{username:'does-not-exist',password:input.password})).data.error,'invalid-credentials');
+ assert.equal((await f.call('session','POST',{username:input.username,password:input.password},'','https://evil.test')).status,403);
+ await f.call('users/'+created.data.id,'PUT',{role:'sales',active:false},owner);
+ assert.equal((await f.call('operations','GET',null,login.cookie)).status,401);assert.equal((await f.call('operations','GET',null,colleague)).status,401);
+ assert.equal((await f.call('session','POST',{username:input.username,password:input.password})).status,401);
+ assert.doesNotMatch(JSON.stringify(f.env.DB.raw.prepare('SELECT * FROM audit_events').all()),/A long personal password|pbkdf2/);
+});
+test('password login has no default admin account and rate limits repeated attempts',async()=>{
+ const f=fixture();delete f.env.ALLOW_LEGACY_STAFF;delete f.env.STAFF_LOGIN_KEY;
+ for(let i=0;i<10;i++)assert.equal((await f.call('session','POST',{username:'admin',password:'admin'})).status,401);
+ assert.equal((await f.call('session','POST',{username:'admin',password:'admin'})).status,429);
+});
 async function offered(f,guest,staff,price=1000){let r=await f.create(guest);r=await f.get(r.id,staff);r.offer={price,currency:'EUR',internalNote:'PRIVATE',custInfo:'Your trip'};r.status='offer';const response=await f.put(r,staff);assert.equal(response.status,200,JSON.stringify(response.data));return response.data.request;}
 
 async function catalogFixture(){

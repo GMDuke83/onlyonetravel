@@ -16,7 +16,9 @@ npx wrangler d1 execute onlyone-travel --local --file=.local/bootstrap-owner.sql
 npm run dev:backend
 ```
 
-Open `http://localhost:8791` (customers) or `http://localhost:8791/operations.html` (staff). Use the personal owner token in `.local/owner-token.txt`. Set local variables in ignored `.dev.vars`; see `.dev.vars.example` / `.env.example`. Never commit tokens. `npm run dev` remains a static design preview only.
+Open `http://localhost:8791` (customers) or `http://localhost:8791/operations.html` (staff). Use the generated username and password in `.local/owner-login.txt`. Set local variables in ignored `.dev.vars`; see `.dev.vars.example` / `.env.example`. Never commit credentials. `npm run dev` remains a static design preview only.
+
+The operations console supports German, English, Turkish, Ukrainian and Russian. Its language selector also works before login and preserves unsaved form values when switching. For the public browser-local [test version](docs/testversion.md), use **admin / admin**. These public credentials never exist as a production backend default.
 
 ## Working flow
 

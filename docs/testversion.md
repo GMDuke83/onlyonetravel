@@ -26,11 +26,18 @@ Damit man die Plattform trotzdem ohne Server ausprobieren kann, gibt es eine
   eigene Anmeldung (Kunde bzw. Mitarbeiter).
 - Test-Zugänge für den Mitarbeiterbereich (`operations.html`):
 
-  | Token | Rolle |
-  |---|---|
-  | `demo-inhaber` | Inhaber (alle Rechte) |
-  | `demo-vertrieb` | Vertrieb |
-  | `demo-finanzen` | Finanzen |
+  | Anmeldename | Kennwort | Rolle |
+  |---|---|---|
+  | `admin` | `admin` | Inhaber (alle Rechte) |
+  | `vertrieb` | `vertrieb` | Vertrieb |
+  | `finanzen` | `finanzen` | Finanzen |
+
+- Die öffentlichen Testzugänge existieren ausschließlich in der lokalen
+  Demo-Datenbank. Bestehende Testdaten werden beim Update beibehalten.
+- Mitarbeiter wählen Deutsch, Englisch, Türkisch, Ukrainisch oder Russisch
+  bereits vor der Anmeldung. Anfangs gilt die Kundensprache oder Browsersprache;
+  danach bleibt die eigene Auswahl gespeichert. Ein Sprachwechsel erhält
+  ungespeicherte Formulare und Suchfilter. Kundeneingaben werden nicht übersetzt.
 
 - **Keine echte Zahlung:** Es gibt keine Bank-Zugangsdaten. Die Bankzahlung
   meldet „noch nicht freigeschaltet“. Zahlungseingänge kann ein Mitarbeiter

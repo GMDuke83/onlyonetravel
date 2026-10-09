@@ -1,3 +1,35 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>OnlyOne · Travel Operations</title><link rel="stylesheet" href="./css/operations.css"></head>
-<body><a class="skip" href="#workspace">Zum Inhalt</a><aside><a class="brand" href="./">ONLY ONE<small>LUXURY TRAVEL</small></a><p>TRAVEL OPERATIONS</p><nav aria-label="Arbeitsbereiche"><button data-view="dashboard">Übersicht</button><button data-view="requests">Anfragen & Reisen</button><button data-view="customers">Kunden</button><button data-view="quotes">Angebote</button><button data-view="bookings">Buchungen</button><button data-view="calendar">Kalender</button><button data-view="tasks">Aufgaben</button><button data-view="users">Mitarbeiter</button><button data-view="audit">Audit-Protokoll</button></nav><a href="./">Kundenwebsite ↗</a><button id="logout" hidden>Abmelden</button></aside><main id="workspace" tabindex="-1"><header><span>ONLYONE / OPERATIONS</span><span id="identity"></span></header><div id="notice" role="status" aria-live="polite"></div><section id="screen"><h1>Ihr Arbeitstag.<br>Alles an einem Ort.</h1><p>Melden Sie sich mit Ihrem persönlichen Mitarbeiterzugang an.</p><form id="login"><label>Zugangstoken<input name="token" type="password" autocomplete="current-password" required></label><button>Anmelden</button></form></section></main><script type="module" src="./js/operations/main.js"></script></body></html>
+<html lang="de">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>OnlyOne · Mitarbeiterbereich</title><link rel="stylesheet" href="./css/operations.css"></head>
+<body>
+<a class="skip" href="#workspace" data-i18n="skip">Zum Inhalt</a>
+<aside>
+ <a class="brand" href="./">ONLY ONE<small>LUXURY TRAVEL</small></a><p data-i18n="operations">Reiseorganisation</p>
+ <nav aria-label="Arbeitsbereiche" data-i18n-label="areas">
+  <button data-view="dashboard" data-i18n="dashboard">Übersicht</button>
+  <button data-view="requests" data-i18n="requests">Anfragen &amp; Reisen</button>
+  <button data-view="customers" data-i18n="customers">Kunden</button>
+  <button data-view="quotes" data-i18n="quotes">Angebote</button>
+  <button data-view="bookings" data-i18n="bookings">Buchungen</button>
+  <button data-view="calendar" data-i18n="calendar">Kalender</button>
+  <button data-view="tasks" data-i18n="tasks">Aufgaben</button>
+  <button data-view="users" data-i18n="users">Mitarbeiter</button>
+  <button data-view="audit" data-i18n="audit">Audit-Protokoll</button>
+ </nav>
+ <a href="./" data-i18n="customerSite">Kundenwebsite ↗</a><button id="logout" hidden data-i18n="logout">Abmelden</button>
+</aside>
+<main id="workspace" tabindex="-1">
+ <header><span>ONLYONE / <span data-i18n="operations">Reiseorganisation</span></span><div class="headerTools"><span id="identity"></span><label class="languagePicker"><span data-i18n="language">Sprache</span><select id="operationsLanguage"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option><option value="tr" lang="tr">Türkçe</option><option value="uk" lang="uk">Українська</option><option value="ru" lang="ru">Русский</option></select></label></div></header>
+ <div id="notice" role="status" aria-live="polite"></div>
+ <section id="screen">
+  <h1><span data-i18n="loginTitle">Ihr Arbeitstag.</span><br><span data-i18n="loginSubtitle">Alles an einem Ort.</span></h1>
+  <p data-i18n="loginDescription">Melden Sie sich mit Ihrem Anmeldenamen und Kennwort an.</p>
+  <form id="login">
+   <label><span data-i18n="username">Anmeldename</span><input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="64" required></label>
+   <label><span data-i18n="password">Kennwort</span><input name="password" type="password" autocomplete="current-password" maxlength="128" required></label>
+   <button data-i18n="login">Anmelden</button>
+  </form>
+ </section>
+</main>
+<script type="module" src="./js/operations/main.js"></script>
+</body></html>

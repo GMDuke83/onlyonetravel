@@ -37,9 +37,9 @@
       location.reload();
     },
     staff:[
-      {token:'demo-inhaber',role:'Inhaber (alle Rechte)'},
-      {token:'demo-vertrieb',role:'Vertrieb'},
-      {token:'demo-finanzen',role:'Finanzen'}
+      {username:'admin',password:'admin',role:'owner'},
+      {username:'vertrieb',password:'vertrieb',role:'sales'},
+      {username:'finanzen',password:'finanzen',role:'finance'}
     ]
   };
 
@@ -66,23 +66,25 @@
     bar.appendChild(text);bar.appendChild(reset);
     document.body.appendChild(bar);
 
-    // Operations console: the login needs a personal token. Show the demo ones.
+    // These public credentials belong only to each visitor's local test database.
     var login=document.getElementById('login');
     if(login){
       var hint=document.createElement('div');
-      hint.style.cssText='margin-top:16px;padding:12px 14px;border:1px dashed currentColor;border-radius:10px;font-size:14px;line-height:1.5';
-      var title=document.createElement('strong');
-      title.textContent='Testzugänge (nur Testversion):';
-      hint.appendChild(title);
-      window.ONLYONE_DEMO.staff.forEach(function(u){
-        var line=document.createElement('div');
-        var code=document.createElement('code');
-        code.textContent=u.token;
-        line.appendChild(code);
-        line.appendChild(document.createTextNode(' — '+u.role));
-        hint.appendChild(line);
-      });
+      hint.className='loginDemo';
       login.insertAdjacentElement('afterend',hint);
+      import(new URL('../js/operations/i18n.js',self).href).then(function(i18n){
+        function translate(){
+          text.textContent=i18n.t('demoVersion');text.title=i18n.t('demoInfo');
+          reset.textContent=i18n.t('demoReset');
+          reset.onclick=function(){if(confirm(i18n.t('demoResetConfirm')))window.ONLYONE_DEMO.reset();};
+          hint.replaceChildren();
+          var title=document.createElement('strong');title.textContent=i18n.t('demoAccess');hint.appendChild(title);
+          window.ONLYONE_DEMO.staff.forEach(function(u){
+            var line=document.createElement('div');line.textContent=i18n.label('role',u.role)+': '+i18n.t('username')+' '+u.username+' · '+i18n.t('password')+' '+u.password;hint.appendChild(line);
+          });
+        }
+        translate();window.addEventListener('onlyone:operations-language',translate);
+      });
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',banner);else banner();
