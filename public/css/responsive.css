@@ -39,7 +39,7 @@
  .homePromos>.railBar,.homeVipServices>.railBar{display:none}
  .homePromoCard__copy b,.vipServiceCard__copy b{font-size:clamp(22px,2.2vw,30px)}
  .vipServiceCard__copy p,.vipServiceCard--featured .vipServiceCard__copy p{font-size:14px;max-width:38ch}
- .homeSuperDealCard{margin-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2));width:auto;min-height:440px;aspect-ratio:2/1}
+ .homeSuperDealCard{margin-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2));width:calc(100% - 2 * max(var(--page-gutter),calc((100% - var(--content-width))/2)));min-height:440px;aspect-ratio:2/1}
  .homeSuperDealCard__copy{left:40px;bottom:36px}.homeSuperDealCard__copy b{font-size:clamp(34px,4vw,52px);max-width:16ch}
  .homeSuperDealCard__copy em{font-size:16px;max-width:42ch}
  .homeSuperDeal>.imageCredit{margin-inline:max(var(--page-gutter),calc((100% - var(--content-width))/2))}

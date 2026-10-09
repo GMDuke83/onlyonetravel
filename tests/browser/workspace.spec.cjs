@@ -25,12 +25,13 @@ test('workspace finds contacts, filters offers and keeps pending requests out of
 });
 
 test('hero chooses desktop art without sending it to the mobile slideshow and supports pause',async({browser})=>{
- for(const width of [390,1440]){
+ for(const width of [390,768,1440]){
   const ctx=await browser.newContext({locale:'de-DE',viewport:{width,height:900},reducedMotion:'reduce'}),page=await ctx.newPage();
   await page.goto('/');await page.waitForFunction(()=>!!window.ONLYONE?.boot);
   await page.evaluate(async()=>{await window.ONLYONE.boot();document.getElementById('intro')?.remove();document.getElementById('main').classList.add('is-active','is-instant');document.getElementById('main').setAttribute('aria-hidden','false');});
   const hero=page.locator('.pHero__img').first();await expect.poll(()=>hero.evaluate(i=>i.complete&&i.naturalWidth>0)).toBeTruthy();
   expect(await hero.evaluate(i=>i.currentSrc)).toContain(width>=700?'/editorial-2026/':'/hero/');
+  expect(await page.locator('#app').evaluate(e=>e.scrollWidth<=e.clientWidth+1)).toBeTruthy();
   const control=page.locator('[data-act="hero-motion"]');await expect(control).toHaveAttribute('aria-pressed','true');
   await control.click();await expect(control).toHaveAttribute('aria-pressed','false');await control.click();await expect(control).toHaveAttribute('aria-pressed','true');
   await ctx.close();
