@@ -4,7 +4,7 @@ import {mountWorkspace,workspaceViews} from './workspace.js';
 const screen=document.querySelector('#screen'),notice=document.querySelector('#notice');let permissions=[],current=null,view='dashboard',navigation=0;
 const tell=m=>{notice.textContent=m;};
 async function refresh(v=view){
- const ticket=++navigation;view=v;current=null;const ops=await api('operations');if(ticket!==navigation)return;permissions=ops.permissions;
+ const ticket=++navigation;view=v;current=null;screen.innerHTML='<p data-loading role="status">Arbeitsbereich wird geladen …</p>';const ops=await api('operations');if(ticket!==navigation)return;permissions=ops.permissions;
  document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===v);if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');b.hidden=(b.dataset.view==='users'&&!permissions.includes('admin'))||(b.dataset.view==='audit'&&!permissions.includes('audit'));});
  if(workspaceViews.includes(v))mountWorkspace(screen,ops,v);
  if(v==='calendar'){
@@ -21,7 +21,7 @@ async function refresh(v=view){
  }
 }
 async function openTrip(id){const ticket=++navigation;const result=await tripView(id,permissions);if(ticket!==navigation)return;current=result.r;screen.innerHTML=result.html;}
-async function run(fn){try{tell('');screen.setAttribute('aria-busy','true');await fn();}catch(e){tell(e.message);}finally{screen.setAttribute('aria-busy','false');}}
+async function run(fn){try{tell('');screen.setAttribute('aria-busy','true');await fn();}catch(e){tell(e.message);const loading=screen.querySelector('[data-loading]');if(loading)loading.textContent='Arbeitsbereich konnte nicht geladen werden. Bitte wählen Sie den Bereich erneut.';}finally{screen.setAttribute('aria-busy','false');}}
 async function signedIn(s){document.querySelector('#identity').textContent=s.name+' · '+(s.permissionRole||'');document.querySelector('#logout').hidden=false;await refresh();}
 document.addEventListener('submit',e=>{e.preventDefault();run(async()=>{
  const f=e.target,b=Object.fromEntries(new FormData(f));
