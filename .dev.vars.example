@@ -1,0 +1,7 @@
+# Copy to ignored .dev.vars for LOCAL development. Personal users are stored in D1.
+SITE_URL="http://localhost:8791"
+ALLOW_LEGACY_STAFF="false"
+ZIRAAT_VERIFIED="false"
+# ZIRAAT_CLIENT_ID="bank-issued-client-id"
+# ZIRAAT_STORE_KEY="bank-issued-secret"
+# ZIRAAT_GATE_URL="bank-approved-hosted-test-gateway"

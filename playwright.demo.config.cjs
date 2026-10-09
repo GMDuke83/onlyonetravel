@@ -1,0 +1,3 @@
+const {defineConfig}=require('@playwright/test');
+// The static test build (scripts/build-demo.js), served the way GitHub Pages serves it.
+module.exports=defineConfig({testDir:'tests/demo',timeout:120000,expect:{timeout:20000},workers:1,use:{actionTimeout:15000,baseURL:'http://localhost:8792/onlyonetravel/',headless:true,launchOptions:{executablePath:process.env.CHROMIUM_PATH||undefined}},webServer:{command:'node scripts/dev-server.js',env:{SERVE_DIR:'dist',BASE_PATH:'/onlyonetravel/',PORT:'8792',HOST:'127.0.0.1'},url:'http://localhost:8792/onlyonetravel/',reuseExistingServer:false,timeout:60000}});

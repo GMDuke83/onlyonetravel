@@ -1,9 +1,10 @@
 name: Deploy to GitHub Pages
 
-# Publishes public/ to GitHub Pages.
+# Publishes the static test version of the platform to GitHub Pages.
 #
 # GitHub Pages can otherwise only serve the repository root or /docs — this
-# workflow uploads public/ as the Pages artifact, so no files have to move.
+# workflow uploads the test build (public/ plus the in-browser backend from
+# demo/, see docs/testversion.md) as the Pages artifact.
 #
 # Before the first run, enable it once:
 #   Settings → Pages → Build and deployment → Source: GitHub Actions
@@ -74,13 +75,21 @@ jobs:
       - name: Stamp the build id
         run: node scripts/stamp-build.js
 
+      # GitHub Pages has no server, so the API, the database and the staff
+      # area cannot run there. The test build answers /api/* inside each
+      # visitor's browser instead (demo/, docs/testversion.md): everything
+      # can be tried out, every visitor only sees their own data, and no
+      # bank payment can start.
+      - name: Build the test version
+        run: node scripts/build-demo.js dist
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload public/
+      - name: Upload the test version
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     needs: build
