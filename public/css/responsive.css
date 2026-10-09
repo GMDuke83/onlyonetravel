@@ -89,6 +89,7 @@
  .gal,.gal__track{max-height:580px}
  .stickyCta{bottom:0;max-width:850px;left:50%;right:auto;width:100%;transform:translateX(-50%);border:1px solid var(--hair);border-radius:8px 8px 0 0}
  .pageBottom{height:40px}.pageBottom--cta{height:110px}.serviceSearchNav{top:var(--desktop-header)}
+ #app:has(.tabbar--staff) .pageBottom{height:calc(var(--nav-h) + 24px)}
 }
 @media(max-width:699px){
  .homeOfferCard--small .homeOfferCard__media{aspect-ratio:3/5}.homeOfferCard--small .homeOfferCard__copy b{font-size:clamp(16px,4.2vw,20px)}
