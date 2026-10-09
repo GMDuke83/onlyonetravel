@@ -1,5 +1,7 @@
 /* Shared brand tokens remain in app.css. Layout follows the available space. */
 :root{--content-width:1320px;--page-gutter:clamp(20px,4vw,64px)}
+/* Keep the test-version controls clear of the logo and main navigation. */
+#demo-banner{top:calc(64px + env(safe-area-inset-top))!important}
 :focus-visible{outline:3px solid var(--gold-ink)!important;outline-offset:3px}
 .priceBox .muted{color:#eaded1}.wrap{--ok:#216348}
 .pHero__slides picture{display:contents}
@@ -57,6 +59,7 @@
 }
 @media(min-width:1100px){
  :root{--desktop-header:84px}
+ #demo-banner{top:calc(var(--desktop-header) + 10px)!important}
  #app{scroll-padding-top:calc(var(--desktop-header) + 20px);scrollbar-width:thin}#app::-webkit-scrollbar{display:block;width:8px}
  .appbar,.appbar--over,.appbar--over.is-solid{height:var(--desktop-header);padding:0 var(--page-gutter);background:var(--ground);color:var(--txt);border-bottom:1px solid var(--hair);text-shadow:none;backdrop-filter:none}
  .appbar--over{margin-bottom:calc(-1 * var(--desktop-header))}.appbar--over .iconBtn{background:var(--ground-2);backdrop-filter:none}
