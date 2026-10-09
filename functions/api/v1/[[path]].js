@@ -1,4 +1,5 @@
 import { operations } from '../../_lib/operations.js';
+import {verifyPassword} from '../../_lib/passwords.js';
 import { can, requirePermission, visibility } from '../../_lib/permissions.js';
 import { json } from '../pay/util.js';
 import { safely, fail, sameOrigin, bodyJSON, session, createSession, digest, token, rateLimit, owned, localOnly } from '../../_lib/security.js';
@@ -15,6 +16,17 @@ export async function onRequest({request,env}) { return safely(async()=>{
     if(method==='GET')return s?json({role:s.role,name:s.name,permissionRole:s.permissionRole,scope:s.token_hash.slice(0,16)}):json({role:null},401);
     if(method==='POST'){
       const b=await bodyJSON(request);
+      if(b.username!==undefined||b.password!==undefined){
+        await rateLimit(env,'password-login:'+(request.headers.get('CF-Connecting-IP')||'local'),10);
+        if(typeof b.username!=='string'||b.username.length>64||typeof b.password!=='string'||b.password.length>128)fail(401,'invalid-credentials');
+        const login=b.username.trim().toLowerCase();
+        await rateLimit(env,'password-account:'+login,20);
+        const user=await env.DB.prepare('SELECT u.id,u.name,u.role,u.active,c.password_hash FROM staff_credentials c JOIN users u ON u.id=c.user_id WHERE c.username=?').bind(login).first();
+        const valid=await verifyPassword(b.password,user?.password_hash);
+        await env.DB.prepare('INSERT INTO audit_events(action,actor,entity_id,at) VALUES(?,?,NULL,?)').bind(valid&&user?.active?'login-success':'login-failed',valid&&user?.active?user.id:'anonymous',Date.now()).run();
+        if(!valid||!user?.active)fail(401,'invalid-credentials');
+        return createSession(request,env,'staff',user.name,user);
+      }
       if(b.staffKey!==undefined){
         await rateLimit(env,'login:'+(request.headers.get('CF-Connecting-IP')||'local'),10);
         const hash=await digest(String(b.staffKey));

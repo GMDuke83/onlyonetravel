@@ -1,6 +1,7 @@
 import { json } from '../api/pay/util.js';
 import { bodyJSON, fail, digest, token } from './security.js';
 import { can, roles, requirePermission } from './permissions.js';
+import {username,validatePassword,hashPassword} from './passwords.js';
 
 const statement=(env,action,s,id)=>env.DB.prepare('INSERT INTO audit_events(action,actor,entity_id,at) VALUES(?,?,?,?)').bind(action,s.user_id||s.name,id,Date.now());
 const text=(v,max=200)=>{if(typeof v!=='string'||!v.trim()||v.length>max)fail(400,'invalid-text');return v.trim();};
@@ -11,10 +12,20 @@ export async function operations({request,env,s,path,url}){
   const [route,id]=path,method=request.method;
   if(route==='users'){
     requirePermission(s,'admin');
-    if(method==='GET')return json({users:(await env.DB.prepare('SELECT id,name,role,active,created_at,updated_at FROM users ORDER BY name').all()).results});
+    if(method==='GET')return json({users:(await env.DB.prepare('SELECT u.id,u.name,u.role,u.active,u.created_at,u.updated_at,c.username FROM users u LEFT JOIN staff_credentials c ON c.user_id=u.id ORDER BY u.name').all()).results});
     if(method==='POST'&&!id){
       const b=await bodyJSON(request);if(!roles.includes(b.role)||b.role==='owner')fail(400,'invalid-role');
       const name=text(b.name),raw=token(),uid=crypto.randomUUID(),now=Date.now();
+      if(b.username!==undefined||b.password!==undefined){
+        const login=username(b.username);validatePassword(b.password);
+        if(await env.DB.prepare('SELECT user_id FROM staff_credentials WHERE username=?').bind(login).first())fail(409,'username-taken');
+        const passwordHash=await hashPassword(b.password);
+        try{await env.DB.batch([
+          env.DB.prepare('INSERT INTO users VALUES(?,?,?,?,1,?,?,?)').bind(uid,name,b.role,await digest(raw),now,now,s.user_id||s.name),
+          env.DB.prepare('INSERT INTO staff_credentials VALUES(?,?,?,?)').bind(uid,login,passwordHash,now),statement(env,'user-created',s,uid)
+        ]);}catch(e){if(String(e.message).includes('staff_credentials.username'))fail(409,'username-taken');throw e;}
+        return json({id:uid,username:login},201);
+      }
       await env.DB.batch([env.DB.prepare('INSERT INTO users VALUES(?,?,?,?,1,?,?,?)').bind(uid,name,b.role,await digest(raw),now,now,s.user_id||s.name),statement(env,'user-created',s,uid)]);
       return json({id:uid,token:raw},201);
     }

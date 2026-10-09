@@ -4,13 +4,15 @@
 
 Node 24, `npm ci`, `npm run db:migrate:local`. `.dev.vars.example` nach `.dev.vars` kopieren, SITE_URL auf `http://localhost:8791` setzen. `npm run dev:backend` startet die **echten Pages Functions mit lokaler D1** auf Port 8791. `npm run dev` ist weiterhin nur die statische Vorschau, nicht die Plattform.
 
-`node scripts/bootstrap-owner.js` erzeugt einen zufälligen persönlichen Zugang in `.local/owner-token.txt` und ausschließlich dessen SHA-256-Hash in `.local/bootstrap-owner.sql`. Beide Dateien sind ignoriert. SQL lokal anwenden:
+`node scripts/bootstrap-owner.js` erzeugt den Anmeldenamen `owner` mit einem zufälligen Kennwort in `.local/owner-login.txt`. In `.local/bootstrap-owner.sql` stehen nur Hashes. Beide Dateien sind ignoriert. Erst alle Migrationen einschließlich `0006_staff_passwords.sql`, dann SQL lokal anwenden:
 
 ```sh
 npx wrangler d1 execute onlyone-travel --local --file=.local/bootstrap-owner.sql
 ```
 
-`/operations.html` öffnen, Token aus der lokalen Datei verwenden. Weitere Mitarbeiter über Mitarbeiterverwaltung erstellen, Token sicher und manuell übergeben. Sperren beendet alle Sessions dieses Benutzers. Kein Kennwort und keine Session im localStorage. Für verlorenen Inhaberzugang muss ein berechtigter Infrastrukturadministrator den Tokenhash direkt ersetzen und zugehörige Sessions löschen; Self-Service-Recovery ist noch nicht implementiert.
+`/operations.html` öffnen und mit den Angaben aus der lokalen Datei anmelden. Weitere Mitarbeiter über die Mitarbeiterverwaltung mit Anmeldenamen und persönlichem Kennwort (12–128 Zeichen) erstellen. Sperren beendet alle Sessions dieses Benutzers. Kennwörter werden mit PBKDF2-SHA256, 600.000 Runden und zufälligem 128-Bit-Salt gespeichert. Der native WebCrypto-Pfad hat einen getesteten Fallback über `@noble/hashes` für Workers mit Iterationslimit (reproduzierbarer Build: `node scripts/build-password-kdf.js`). Sitzungen bleiben im Echtbetrieb HttpOnly-Cookies; weder Kennwort noch Session stehen im localStorage.
+
+Bei bestehenden Inhaberzugängen muss ein berechtigter Infrastrukturadministrator die zugehörige `staff_credentials`-Zeile mit einem neuen, nach demselben Verfahren erstellten Hash provisionieren und bestehende Sessions löschen. Vorhandene individuelle Token bleiben für die bisherige Kundenansicht kompatibel; die Operations-Oberfläche fragt keine Token mehr ab. Self-Service-Recovery, Einladungen und MFA sind noch nicht implementiert. `admin/admin` existiert ausschließlich in der statischen Testversion, niemals als Backend-Standardzugang.
 
 Der gemeinsame `STAFF_LOGIN_KEY` funktioniert **nur** auf localhost/127.0.0.1 oder `.test`, mit explizitem `ALLOW_LEGACY_STAFF=true`, ausschließlich als automatisierte Testhilfe. In Staging/Produktion individuelle Benutzer verwenden und diese Variablen nicht setzen.
 
@@ -22,7 +24,7 @@ Prüfung: `npm run check`, `npm test`, `npm run check:functions`, `npx playwrigh
 - Separates Pages-Projekt und separate D1 für Staging erstellen. IDs in `wrangler.jsonc` ersetzen; Platzhalter sind absichtlich nicht deployfähig.
 - SITE_URL exakt auf den Staging-Origin setzen. Kein Wildcard-CORS.
 - D1 vor Migration exportieren; `npx wrangler d1 migrations apply onlyone-travel-preview --remote --env preview` mit geprüften Bindings ausführen.
-- Inhaber in der **Staging-Datenbank** über Hash-SQL anlegen; Klartexttoken niemals committen oder als CI-Log ausgeben.
+- Inhaber in der **Staging-Datenbank** über Hash-SQL anlegen; Klartextkennwörter niemals committen oder als CI-Log ausgeben.
 - `npm run check:functions`, dann ausdrücklich Preview-Branch deployen, z. B. `npx wrangler pages deploy public --project-name=YOUR-STAGING-PROJECT --branch=codex/oo-travel-platform`.
 - Zwei echte Geräte: Anfrage, Angebot, Annahme, belegte Zahlung, Bestätigung, Kalender, Aufgaben, Portal und Audit prüfen. Unberechtigte Rollen testen. CSP/SameSite/Secure über HTTPS prüfen.
 - Historischen localStorage-Import mit Kopie testen. Vorschau bestätigen, Wiederholung darf keine Dublette erzeugen. Originale bleiben erhalten; alte Zahlungen werden nicht übernommen.
@@ -46,4 +48,4 @@ DSGVO/KVKK: Verantwortlichen, Zwecke, Rechtsgrundlagen, Aufbewahrungsfristen, Au
 
 ## Bekannte Grenzen dieser Strecke
 
-Noch kein vollständiger Positionseditor/PDF, kein automatischer E-Mail-Versand, keine Passwortreset-/MFA-/Einladungsstrecke, keine private Dokumentenverwaltung, keine iCal-/Google-/Microsoft-Anbindung, keine vollständige Finanzbuchhaltung/Partnerabrechnung/Reports oder CRM-Zusammenführung. Kalender: Agenda plus bestätigte Planungsänderung und Ressourcenkonflikte; Tag/Woche/Monat und wiederkehrende Termine folgen. Öffentliche vorhandene fünf Sprachen bleiben erhalten; Operations ist zunächst deutsch. API-Listen im Operations-Dashboard sind auf 500 Einträge begrenzt, Audit auf 200 je Quelle. Das ist ein erster vertikaler Meilenstein, keine fertig abgenommene Gesamtplattform.
+Noch kein vollständiger Positionseditor/PDF, kein automatischer E-Mail-Versand, keine Passwortreset-/MFA-/Einladungsstrecke, keine private Dokumentenverwaltung, keine iCal-/Google-/Microsoft-Anbindung, keine vollständige Finanzbuchhaltung/Partnerabrechnung/Reports oder CRM-Zusammenführung. Kalender: Agenda plus bestätigte Planungsänderung und Ressourcenkonflikte; Tag/Woche/Monat und wiederkehrende Termine folgen. Kundenseite und Operations unterstützen Deutsch, Englisch, Türkisch, Ukrainisch und Russisch. API-Listen im Operations-Dashboard sind auf 500 Einträge begrenzt, Audit auf 200 je Quelle. Das ist ein erster vertikaler Meilenstein, keine fertig abgenommene Gesamtplattform.

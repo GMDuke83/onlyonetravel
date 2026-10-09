@@ -33,7 +33,7 @@ function copyFunctions(from,to){
   for(const entry of fs.readdirSync(from,{withFileTypes:true})){
     const src=path.join(from,entry.name);
     if(entry.isDirectory())copyFunctions(src,path.join(to,entry.name));
-    else if(entry.name.endsWith('.js'))fs.copyFileSync(src,path.join(to,RENAME[entry.name]||entry.name));
+    else if(entry.name.endsWith('.js')||entry.name.endsWith('LICENSE.txt'))fs.copyFileSync(src,path.join(to,RENAME[entry.name]||entry.name));
   }
 }
 copyFunctions(path.join(ROOT,'functions'),path.join(DEMO,'functions'));
@@ -49,10 +49,26 @@ fs.writeFileSync(path.join(DEMO,'migrations.json'),JSON.stringify(migrations));
 let build='demo';
 try{build=JSON.parse(fs.readFileSync(path.join(OUT,'version.json'),'utf8')).build||build;}catch{}
 const tag=`<script src="./demo/shim.js?v=${encodeURIComponent(build)}"></script>`;
+// GitHub Pages caches JS for ten minutes. Version the complete module graph so
+// a new login form cannot accidentally load an older token-based controller.
+function versionModules(dir){
+  for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+    const file=path.join(dir,entry.name);
+    if(entry.isDirectory())versionModules(file);
+    else if(entry.name.endsWith('.js')){
+      const source=fs.readFileSync(file,'utf8');
+      const next=source.replace(/(\bfrom\s*|\bimport\s*\()(['"])(\.\.?\/[^'"]+?\.js)(?:\?v=[^'"]*)?\2/g,
+        (_,prefix,quote,href)=>prefix+quote+href+'?v='+encodeURIComponent(build)+quote);
+      if(next!==source)fs.writeFileSync(file,next);
+    }
+  }
+}
+versionModules(path.join(OUT,'js','operations'));versionModules(path.join(DEMO,'functions'));
 for(const page of ['index.html','operations.html']){
   const file=path.join(OUT,page);
   if(!fs.existsSync(file))continue;
   let html=fs.readFileSync(file,'utf8');
+  if(page==='operations.html')html=html.replace(/((?:src|href)="\.\/(?:js|css)\/[^"?]+)(?:\?v=[^"]*)?"/g,(_,asset)=>asset+'?v='+encodeURIComponent(build)+'"');
   const charset=html.match(/<meta charset="[^"]*">/i);
   if(charset)html=html.replace(charset[0],charset[0]+tag);
   else html=html.replace(/<head>/i,m=>m+tag);
