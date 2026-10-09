@@ -1,0 +1,24 @@
+{
+  "method": "Built-in image generation",
+  "nativeSize": "1672x941",
+  "exports": [
+    960,
+    1280,
+    1672
+  ],
+  "usage": "Editorial inspiration only. Existing hotel listing photographs are unchanged.",
+  "prompts": [
+    {
+      "key": "coast",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution desktop hero for ONLYONE, a luxury travel service in Türkiye. Create one wide landscape photograph, 16:9, at the highest available native resolution, ideally 2560x1440 or higher. Elevated editorial view of a secluded Aegean Turkish coastal bay, clear turquoise water becoming deep blue, rugged limestone shoreline with Mediterranean pines extending across the right half, a very small elegant white sailing yacht near the right third, hazy Taurus-like hills in the distance. Natural late afternoon sun, subtle warm stone and copper highlights, refined believable travel photography, rich fine details in water and trees, realistic geography but no claim to depict a specific named hotel or exact bay. Composition: uninterrupted open sea and softly shaded foreground occupying the left 45 percent where a website headline will be overlaid; clean horizon in upper third; no dominant objects behind the left-side headline; wide breathing room. No text, lettering, watermark, collage, frame, logo, or identifiable people. No oversaturation, fantasy cliffs, oversized yacht or aerial map aesthetic."
+    },
+    {
+      "key": "terrace",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution wide desktop hero and travel inspiration banner for ONLYONE luxury travel in Türkiye. Generate a single panoramic 16:9 photo at highest available native resolution, ideally 2560x1440 or higher. An intimate contemporary Mediterranean private villa terrace looking across the tranquil Turkish Aegean sea at golden hour: elegant natural limestone, warm off-white linen loungers, one small olive tree, an understated infinity pool reflecting the sky. Architecture and furnishings arranged in the right half, sea and subtle darker stone foreground with quiet negative space on the left 45 percent for website copy. Photograph from human height, architectural editorial photography with fine authentic textures, gentle light, beautiful but understated, no impossible geometry. This is a fictional unbranded inspiration scene, not an actual hotel listing. No text, logos, watermark, lettering, people, mountains impossibly tall, excessive furniture or collage."
+    },
+    {
+      "key": "cappadocia",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution 16:9 desktop travel website hero for ONLYONE Türkiye. Create a single wide landscape editorial photograph at highest available native resolution, ideally 2560x1440 or higher. Cappadocia-inspired soft volcanic tuff valleys and fairy chimneys at sunrise, warm blush and peach light on pale stone, subtle soft atmospheric layers, just four small hot-air balloons realistically spaced at different distances in the upper right half. Elevated overlook with expansive valley; left 45 percent has broad softly shaded valley formations and uncluttered atmosphere suitable for a large overlaid headline, horizon in upper third. Refined, natural luxury travel photography, sharp realistic detail, not oversaturated. No buildings or people in foreground, no text, lettering, logos, watermarks, collage, frame, surreal formations or giant balloons."
+    }
+  ]
+}

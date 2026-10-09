@@ -194,6 +194,7 @@
     if (homeWarmStarted) return;
     homeWarmStarted = true;
     HOME_WARM_IMAGES.forEach(function(src){
+      if (window.matchMedia('(min-width:700px)').matches && src.indexOf('/hero/') !== -1) return;
       var im = new Image();
       try { im.decoding = 'async'; } catch (e) {}
       im.src = src;
@@ -2104,6 +2105,9 @@
     './images/hero/hero-04.webp',
   ];
   const HERO_HOLD_MS=8800;
+  const HERO_WIDE=['coast','terrace','cappadocia'];
+  const editorialSrcset=name=>[960,1280,1672].map(w=>`./images/editorial-2026/${name}-${w}.webp ${w}w`).join(', ');
+  let heroPaused=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   const HERO_FADE_MS=1800;
   let heroTimer=null;
   let heroIndex=0;
@@ -2112,9 +2116,9 @@
   function heroSlides(){
     if(!HERO_SLIDES.length)return '';
     return `<div class="pHero__slides" id="heroSlides" aria-hidden="true">
-      ${HERO_SLIDES.map((src,i)=>`<img class="pHero__img${i===0?' is-active':''}"
-        src="${src}" alt="" ${i===0?'fetchpriority="high"':'fetchpriority="low"'} decoding="async"
-        style="--hero-delay:${-2.5-(i*5)}s">`).join('')}
+      ${HERO_SLIDES.map((src,i)=>`<picture><source media="(min-width:700px)" srcset="${editorialSrcset(HERO_WIDE[i])}" sizes="100vw"><img class="pHero__img${i===0?' is-active':''}"
+        src="${src}" alt="" ${i===0?'fetchpriority="high"':'fetchpriority="low"'} decoding="async" width="720" height="1279"
+        style="--hero-delay:${-2.5-(i*5)}s"></picture>`).join('')}
     </div>`;
   }
 
@@ -2133,7 +2137,7 @@
   }
 
   function showNextHero(box,imgs){
-    if(!box||!document.body.contains(box)||imgs.length<2)return;
+    if(!box||!document.body.contains(box)||imgs.length<2||heroPaused)return;
     const current=imgs[heroIndex];
     const nextIndex=(heroIndex+1)%imgs.length;
     const next=imgs[nextIndex];
@@ -2169,7 +2173,7 @@
 
     heroIndex=0;
     const hero=box.closest('.pHero');
-    if(hero)hero.dataset.heroSlide='0';
+    if(hero){hero.dataset.heroSlide='0';hero.classList.toggle('is-paused',heroPaused);}
     imgs.forEach((img,i)=>{
       img.classList.toggle('is-active',i===0);
       img.classList.remove('is-prev');
@@ -2180,9 +2184,26 @@
        screen; there is still no empty transition. */
     Promise.all(imgs.map(heroImageReady)).then(()=>{
       if(!document.body.contains(box)||imgs.length<2)return;
-      heroTimer=setInterval(()=>showNextHero(box,imgs),HERO_HOLD_MS);
+      if(!heroPaused&&!heroTimer)heroTimer=setInterval(()=>showNextHero(box,imgs),HERO_HOLD_MS);
     });
+    hero?.addEventListener('focusin',e=>{if(!e.target.closest('[data-act="hero-motion"]'))setHeroPaused(true);});
   }
+
+  function heroMotionButton(){
+    return `<button class="heroMotionToggle" data-act="hero-motion" aria-pressed="${heroPaused}" aria-label="${esc(heroPaused?hx('Продолжить показ','Bildwechsel fortsetzen','Resume slideshow'):hx('Остановить показ','Bildwechsel pausieren','Pause slideshow'))}"><svg viewBox="0 0 24 24" aria-hidden="true">${heroPaused?'<path d="m8 5 11 7-11 7z"/>':'<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>'}</svg></button>`;
+  }
+  function setHeroPaused(paused){
+    heroPaused=paused;
+    if(heroTimer){clearInterval(heroTimer);heroTimer=null;}
+    const hero=$('.pHero'),button=hero?.querySelector('[data-act="hero-motion"]');
+    hero?.classList.toggle('is-paused',paused);
+    if(button){
+      const holder=document.createElement('div');holder.innerHTML=heroMotionButton();const next=holder.firstElementChild;
+      button.setAttribute('aria-label',next.getAttribute('aria-label'));button.setAttribute('aria-pressed',String(paused));button.innerHTML=next.innerHTML;
+    }
+    if(!paused){const box=$('#heroSlides');heroTimer=setInterval(()=>showNextHero(box,$$('.pHero__img',box)),HERO_HOLD_MS);}
+  }
+  window.matchMedia('(prefers-reduced-motion:reduce)').addEventListener('change',e=>{if(e.matches)setHeroPaused(true);});
 
   /* One cloud layer. Every value that makes a cloud feel near or far is a
      number on its own row, so the whole sky can be re-tuned by reading a table
@@ -2339,7 +2360,7 @@
       {img:'./images/excursions/exc-pamukkale.webp',tag:hx('ТУР','TOUR','TOUR'),title:hx('Памуккале · приватный день','Pamukkale · Private Day','Pamukkale · private day'),meta:hx('Индивидуально · без цены на сайте','Individuell · ohne Onlinepreis','Private · no online price'),attr:'data-exc="pamukkale"'}
     ];
 
-    const superDeal={img:'./images/r18/super-deal-resort.webp',title:hx('Спецпредложение · отдых на курорте','Super Deal · Auszeit im Resort','Super Deal · Resort Escape'),meta:hx('Большой приватный отдых у моря · по запросу','Großer privater Erholungsaufenthalt am Meer · auf Anfrage','Large private seaside escape · on request'),attr:'data-go="search"'};
+    const superDeal={img:'./images/editorial-2026/terrace-960.webp',title:hx('Ваш отдых у моря','Ihr Rückzugsort am Meer','Your retreat by the sea'),meta:hx('Найдём место для вашего отдыха — по вашим пожеланиям.','Wir finden den passenden Ort für Ihre Auszeit – persönlich für Sie ausgewählt.','A place for your escape — selected personally for you.'),attr:'data-go="search"'};
 
     const categories=[
       {img:'./images/worlds/villas.webp',title:hx('Виллы','Villen','Villas'),meta:hx('Приватно · индивидуально','Privat · individuell','Private · individual'),attr:'data-world="villas"'},
@@ -2382,6 +2403,8 @@
       <span class="pHero__script" aria-hidden="true">${t('heroScript')}</span>
       <div class="pHero__body"><h1 class="pHero__title">${t('heroTitle')}</h1><p class="pHero__sub">${t('heroSub')}</p>
         <button class="pHero__cta" type="button" data-go="concierge">${t('heroCta')}${icon('chev')}</button></div>
+      ${heroMotionButton()}
+      <small class="heroImageCredit">${hx('Изображения созданы ИИ для вдохновения','KI-generierte Reiseinspiration','AI-generated travel inspiration')}</small>
     </section>
 
     <section class="homeGateway">
@@ -2407,13 +2430,14 @@
     <section class="homeSuperDeal">
       <div class="homeEditorialHead homeEditorialHead--row"><div><div class="eyebrow">ONLYONE · ${hx('СПЕЦПРЕДЛОЖЕНИЕ','TOP-ANGEBOT','SUPER DEAL')}</div>
         <h2>${hx('Спецпредложение','Top-Angebot','Super Deal')}</h2>
-        <p class="homeEditorialHead__sub">${hx('Крупное предложение месяца — более высокий акцент и больше пространства.','Das große Angebot des Monats – mit mehr Höhe und mehr Raum inszeniert.','The big offer of the month — presented larger with more breathing room.')}</p>
+        <p class="homeEditorialHead__sub">${hx('Особенные места для вашего отдыха. Предложение составим лично для вас.','Besondere Orte für Ihre Auszeit. Ihr Angebot stellen wir persönlich zusammen.','Special places for your escape. Your offer is prepared personally.')}</p>
       </div><button class="homeTextLink" type="button" ${superDeal.attr}>${hx('Смотреть','Ansehen','View')}</button></div>
       <button class="homeSuperDealCard" type="button" ${superDeal.attr}>
-        <img src="${superDeal.img}" alt="${esc(superDeal.title)}" loading="lazy" decoding="async">
+        <img src="${superDeal.img}" srcset="${editorialSrcset('terrace')}" sizes="(min-width:1440px) 1320px, 100vw" width="1672" height="941" alt="${esc(superDeal.title)}" loading="lazy" decoding="async">
         <span class="homeSuperDealCard__shade"></span>
         <span class="homeSuperDealCard__copy"><i>ONLYONE · ${hx('СПЕЦПРЕДЛОЖЕНИЕ','TOP-ANGEBOT','SUPER DEAL')}</i><b>${esc(superDeal.title)}</b><em>${esc(superDeal.meta)}</em><span>${hx('VIP-запрос','VIP-Anfrage','VIP enquiry')}${icon('chev')}</span></span>
       </button>
+      <small class="imageCredit">${hx('Вдохновение, созданное ИИ. Не изображение конкретного отеля.','KI-generiertes Inspirationsmotiv. Keine Abbildung eines bestimmten Hotels.','AI-generated inspiration. Not a photograph of a specific hotel.')}</small>
     </section>
 
     <section class="homeVipCallback">
@@ -4573,6 +4597,7 @@
 
   document.addEventListener('click',async e=>{
     const T=e.target;
+    if(T.closest('[data-act="hero-motion"]')){setHeroPaused(!heroPaused);return;}
     if(BACKEND.busy){toast('Saving changes…');return;}
     if(T.closest('[data-sheet-close]')){closeSheet();return;}
 

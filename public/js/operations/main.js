@@ -1,14 +1,12 @@
 import {api,esc,money,when,status,field} from './api.js';
 import {tripView,saveTrip} from './trips.js';
+import {mountWorkspace,workspaceViews} from './workspace.js';
 const screen=document.querySelector('#screen'),notice=document.querySelector('#notice');let permissions=[],current=null,view='dashboard',navigation=0;
 const tell=m=>{notice.textContent=m;};
 async function refresh(v=view){
- const ticket=++navigation;view=v;current=null;const ops=await api('operations');if(ticket!==navigation)return;permissions=ops.permissions;
- document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===v);b.hidden=(b.dataset.view==='users'&&!permissions.includes('admin'))||(b.dataset.view==='audit'&&!permissions.includes('audit'));});
- if(v==='dashboard'||v==='requests'){
-  const rows=ops.attention,open=rows.filter(r=>r.status!=='confirmed');
-  screen.innerHTML=`<p class="muted">Ihr persönlicher Operations-Arbeitsplatz</p><h1>${v==='dashboard'?'Reisen möglich machen.':'Anfragen & Reisen'}</h1>${v==='dashboard'?`<div class="grid"><article class="card"><span class="muted">NEUE ANFRAGEN</span><b class="metric">${rows.filter(r=>r.status==='new').length}</b></article><article class="card"><span class="muted">ANGEBOTE OFFEN</span><b class="metric">${rows.filter(r=>r.status==='offer').length}</b></article><article class="card"><span class="muted">ZAHLUNG AUSSTEHEND</span><b class="metric">${rows.filter(r=>['accepted','payopen'].includes(r.status)).length}</b></article></div>`:''}<h2>${v==='dashboard'?'Braucht Aufmerksamkeit':'Alle Reiseakten'}</h2><p class="muted">${v==='dashboard'?'Offene Vorgänge, Angebote und Zahlungsfristen.':'Anfragen werden geräteübergreifend gespeichert.'}</p><div class="card">${(v==='dashboard'?open:rows).length?`<table><thead><tr><th>Reise / Kunde</th><th>Status</th><th class="desktop-only">Reisedatum</th><th>Aktion</th></tr></thead><tbody>${(v==='dashboard'?open:rows).map(r=>`<tr><td>${esc(r.code)}<br><strong>${esc(r.name)}</strong></td><td><span class="badge">${status[r.status]}</span></td><td class="desktop-only">${esc(r.from||'Offen')}</td><td><button data-trip="${r.id}">Öffnen</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">Keine offenen Vorgänge. Neue Kundenanfragen erscheinen hier.</p>'}</div>`;
- }
+ const ticket=++navigation;view=v;current=null;screen.innerHTML='<p data-loading role="status">Arbeitsbereich wird geladen …</p>';const ops=await api('operations');if(ticket!==navigation)return;permissions=ops.permissions;
+ document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===v);if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');b.hidden=(b.dataset.view==='users'&&!permissions.includes('admin'))||(b.dataset.view==='audit'&&!permissions.includes('audit'));});
+ if(workspaceViews.includes(v))mountWorkspace(screen,ops,v);
  if(v==='calendar'){
   const {events}=await api('calendar');if(ticket!==navigation)return;screen.innerHTML=`<h1>Kalender</h1><p>Operations-Agenda · Europe/Istanbul</p>${events.length?events.map(e=>`<article class="card"><div class="row"><div><span class="badge">Bestätigte Reise</span><h2>${esc(e.title)}</h2><p>${when(e.starts_at)} — ${when(e.ends_at)}</p><small>Ressource: ${esc(e.resource||'Nicht zugewiesen')}</small></div><button data-trip="${e.request_id}">Reiseakte öffnen</button></div>${permissions.includes('operate')?`<details><summary>Planungszeit / Ressource ändern</summary><form data-event="${e.id}" data-version="${e.version}">${field('Beginn (UTC)','starts_at','datetime-local',e.starts_at.slice(0,16),'required')}${field('Ende (UTC)','ends_at','datetime-local',e.ends_at.slice(0,16),'required')}${field('Ressource (z. B. Fahrzeug-ID)','resource','text',e.resource)}<label><input type="checkbox" name="confirmChange" required>Planungsänderung bestätigen; Kundenreisedaten bleiben separat.</label><button>Termin speichern</button></form></details>`:''}</article>`).join(''):'<p class="empty">Bestätigte Reisen erscheinen hier automatisch.</p>'}`;
  }
@@ -23,7 +21,7 @@ async function refresh(v=view){
  }
 }
 async function openTrip(id){const ticket=++navigation;const result=await tripView(id,permissions);if(ticket!==navigation)return;current=result.r;screen.innerHTML=result.html;}
-async function run(fn){try{tell('');await fn();}catch(e){tell(e.message);}}
+async function run(fn){try{tell('');screen.setAttribute('aria-busy','true');await fn();}catch(e){tell(e.message);const loading=screen.querySelector('[data-loading]');if(loading)loading.textContent='Arbeitsbereich konnte nicht geladen werden. Bitte wählen Sie den Bereich erneut.';}finally{screen.setAttribute('aria-busy','false');}}
 async function signedIn(s){document.querySelector('#identity').textContent=s.name+' · '+(s.permissionRole||'');document.querySelector('#logout').hidden=false;await refresh();}
 document.addEventListener('submit',e=>{e.preventDefault();run(async()=>{
  const f=e.target,b=Object.fromEntries(new FormData(f));

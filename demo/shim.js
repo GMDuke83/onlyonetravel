@@ -53,6 +53,9 @@
       'display:flex;align-items:center;gap:6px;padding:3px 3px 3px 10px;border-radius:999px;background:rgba(43,33,24,.88);color:#f6efe4;'+
       'font:600 10px/1.2 system-ui,sans-serif;letter-spacing:.05em;white-space:nowrap;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.2)';
     var text=document.createElement('span');
+    if(/operations\.html$/.test(location.pathname)){
+      bar.style.top='auto';bar.style.bottom='12px';bar.style.left='auto';bar.style.right='12px';bar.style.transform='none';
+    }
     text.textContent='TESTVERSION';
     text.title='Alle Daten bleiben in diesem Browser. Keine echten Zahlungen.';
     var reset=document.createElement('button');

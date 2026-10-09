@@ -44,6 +44,21 @@ async function catalogFixture(){
  const service=(await f.call('services','POST',{record:{name:'Private transfer',partnerId:partner.id,category:'transfer',unit:'vehicle',costMinor:8500,currency:'EUR',active:true}},staff)).data.record;
  return {...f,staff,guest,partner,service};
 }
+
+test('operations workspace index is staff-only and exposes contact summaries without internal or payment data',async()=>{
+ const f=fixture(),staff=await f.login(true),guest=await f.login();
+ const r=await offered(f,guest,staff);
+ assert.equal((await f.call('operations')).status,401);
+ assert.equal((await f.call('operations','GET',null,guest)).status,403);
+ const user=await f.call('users','POST',{name:'Read only colleague',role:'readonly'},staff);
+ const reader=(await f.call('session','POST',{staffKey:user.data.token})).cookie;
+ const response=await f.call('operations','GET',null,reader),row=response.data.attention[0];
+ assert.equal(response.status,200);assert.equal(row.id,r.id);assert.equal(row.name,'Ada');
+ assert.equal(row.phone,'+49 123');assert.equal(row.hasOffer,true);assert.equal(response.data.truncated,false);
+ assert.deepEqual(response.data.permissions,[]);
+ for(const key of ['offer','staffNote','sourcing','folio','payment','token'])assert.equal(key in row,false);
+ assert.equal(JSON.stringify(response.data).includes('PRIVATE'),false);
+});
 test('catalog is staff-only, versioned, audited and shared between staff sessions',async()=>{
  const f=await catalogFixture(),other=await f.login(true);
  for(const path of ['partners','services','partners/'+f.partner.id,'services/'+f.service.id]){
